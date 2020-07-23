@@ -10,4 +10,3 @@ These view functions and classes implement API endpoints
 # from rest_framework.response import Response
 
 # TODO: implement me!
-

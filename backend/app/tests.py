@@ -4,9 +4,14 @@ Tests for the main app.
 
 from django.test import TestCase
 
+
 class MainTests(TestCase):
-    def setUp(self):
-        return super().setUp()
+    """
+    Backend TestCase
+    """
+    # def setUp(self):
+    #     super().setUp()
+    #     do any setup here
 
     def test_sample(self):
         """

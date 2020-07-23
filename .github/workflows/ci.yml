@@ -62,7 +62,7 @@ jobs:
     - name: Install frontend deps and eslint
       run: |
         cd frontend
-        npm install
+        npm ci
     - name: Run eslint on frontend/src
       run: |
         cd frontend
@@ -78,10 +78,9 @@ jobs:
     - name: Install frontend deps
       run: |
         cd frontend
-        npm install
+        npm ci
     - name: Run frontend tests
       run: |
         cd frontend
         CI=true npm run test
-
 
