@@ -1,0 +1,35 @@
+/*
+ * Import all styles. This file is imported in app.js.
+ */
+@import "../../node_modules/bootstrap/scss/bootstrap";
+@import '../about/about';
+@import '../index/index';
+
+html {
+    position: relative;
+    height: 100% !important;
+}
+
+body {
+    height: 100% !important;
+}
+
+#root {
+    height: 100% !important;
+    @extend .d-flex;
+    @extend .flex-column;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+.footer-img {
+    height: 80px;
+    max-height: 10vh;
+    max-width: 20vw;
+    object-fit: contain;
+}

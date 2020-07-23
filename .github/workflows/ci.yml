@@ -1,0 +1,87 @@
+name: CI
+
+on:
+    push:
+        branches:
+        - master
+        - '*_CI'  # run on branches suffixed with _CI
+    pull_request:
+        branches:
+        - '*'
+
+jobs:
+  ##############################################################################
+  # Python jobs
+  ##############################################################################
+  python_linters:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.7'
+        architecture: 'x64'
+    - name: Install Python packages
+      run: |
+        pip install -r requirements.txt
+        pip install pylint
+    - name: Run pylint on backend/
+      run: pylint backend/
+    - name: Run pylint on analysis/
+      run: pylint analysis/
+
+
+  backend_tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.7'
+        architecture: 'x64'
+    - name: Install Python packages
+      run: |
+        pip install -r requirements.txt
+    - name: Run Django tests
+      run: |
+        cd backend
+        python manage.py test
+
+
+  ##############################################################################
+  # JS jobs
+  ##############################################################################
+
+  js_linters:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+    - name: Install frontend deps and eslint
+      run: |
+        cd frontend
+        npm install
+    - name: Run eslint on frontend/src
+      run: |
+        cd frontend
+        ./node_modules/.bin/eslint --max-warnings 0 src
+
+  frontend_tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+    - name: Install frontend deps
+      run: |
+        cd frontend
+        npm install
+    - name: Run frontend tests
+      run: |
+        cd frontend
+        CI=true npm run test
+
+

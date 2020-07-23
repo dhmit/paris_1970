@@ -1,0 +1,33 @@
+{% load render_bundle from webpack_loader %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <title>This was Paris in 1970</title>
+    </head>
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="root"></div>
+        {% render_bundle 'undefined' %}
+        {% render_bundle 'runtime~main' %}
+        {% render_bundle 'main' %}
+        <script>
+            // NOTE(ra): what follows is a use of the Django templating engine
+            //           to inject variable names into JavaScript. This confuses PyCharm,
+            //           which thinks this is a plain HTML/JS file.
+            const ReactDOM = window.app_modules.ReactDOM;
+            const React = window.app_modules.React;
+            const {{ component_name }} = window.app_modules.{{ component_name }};
+            const react_el = React.createElement({{ component_name }});
+            ReactDOM.render(
+                react_el,
+                document.getElementById('root')
+            );
+        </script>
+    </body>
+</html>
+
