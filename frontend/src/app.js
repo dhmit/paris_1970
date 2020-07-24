@@ -7,8 +7,9 @@ import ReactDOM from 'react-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { IndexView } from './index/index.js';
-import About from './about/about.js';
+import { IndexView } from './index/index';
+import { PhotoView } from './photoView/photoView';
+import About from './about/about';
 
 // Import all styles
 import './UILibrary/styles.scss';
@@ -20,4 +21,5 @@ window.app_modules = {
     // Add all frontend views here
     IndexView,
     About,
+    PhotoView,
 };
