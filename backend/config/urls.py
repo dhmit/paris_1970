@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 
 from app.common import render_react_view
-# from app.views import VIEWS_GO_HERE
+from app.views import photo
 
 
 def react_view_path(route, component_name):
@@ -37,7 +37,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # API endpoints
-    # path('api/API_ENDPOINT_NAME')
+    path('api/photo/', photo),
 
     # React views
     react_view_path('', 'IndexView'),

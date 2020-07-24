@@ -4,4 +4,8 @@ Models for the paris_1970 app.
 """
 from django.db import models
 
-# TODO: implement me!
+
+class Photo(models.Model):
+    title = models.CharField(max_length=252)
+    src = models.CharField(max_length=252)
+    alt = models.CharField(max_length=252)

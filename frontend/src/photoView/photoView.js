@@ -4,12 +4,6 @@ import Navbar from '../about/Navbar';
 import { Footer } from '../UILibrary/components';
 
 
-const PROTOTYPING_FAKE_DATA = {
-    title: 'some title',
-    src: 'img_src.jpg',
-    alt: 'image alt text',
-};
-
 export class PhotoView extends React.Component {
     constructor(props) {
         super(props);
@@ -18,11 +12,14 @@ export class PhotoView extends React.Component {
         };
     }
 
-    componentDidMount() {
-        // TODO: get data from the backend instead of faking it
-        this.setState({
-            photo_data: PROTOTYPING_FAKE_DATA,
-        });
+    async componentDidMount() {
+        try {
+            const response = await fetch('/api/photo/');
+            const photo_data = await response.json();
+            this.setState({ photo_data });
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     render() {
