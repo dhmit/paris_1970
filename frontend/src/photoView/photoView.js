@@ -1,5 +1,5 @@
 import React from 'react';
-// import * as PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import Navbar from '../about/Navbar';
 import { Footer } from '../UILibrary/components';
 
@@ -14,7 +14,8 @@ export class PhotoView extends React.Component {
 
     async componentDidMount() {
         try {
-            const response = await fetch('/api/photo/');
+            const photoId = this.props.id;
+            const response = await fetch(`/api/photo/${photoId}/`);
             const photo_data = await response.json();
             this.setState({ photo_data });
         } catch (e) {
@@ -36,9 +37,12 @@ export class PhotoView extends React.Component {
             <Navbar />
             <div style={{ height: '75px' }}>-</div>
             <p>Hello world.</p>
-            <img src={src} alt={alt}/>
+            <img width={500} height={500} src={src} alt={alt}/>
             <p>{title}</p>
             <Footer />
         </>);
     }
 }
+PhotoView.propTypes = {
+    id: PropTypes.number,
+};

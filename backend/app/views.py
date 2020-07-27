@@ -14,8 +14,8 @@ from .serializers import PhotoSerializer
 
 
 @api_view(['GET'])
-def photo(request):
-    photo_obj = Photo.objects.first()
+def photo(request, photo_id):
+    photo_obj = Photo.objects.get(pk=photo_id)
     serializer = PhotoSerializer(photo_obj)
     return Response(serializer.data)
 

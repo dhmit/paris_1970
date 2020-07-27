@@ -37,10 +37,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # API endpoints
-    path('api/photo/', photo),
+    path('api/photo/<int:photo_id>/', photo),
 
     # React views
     react_view_path('', 'IndexView'),
-    react_view_path('photos/', 'PhotoView'),
+    react_view_path('photos/<int:object_id>/', 'PhotoView'),
     react_view_path('about/', 'About'),
 ]
