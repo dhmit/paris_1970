@@ -20,3 +20,10 @@ def photo(request, photo_id):
     return Response(serializer.data)
 
 
+@api_view(['GET'])
+def all_photos(request):
+    photo_obj = Photo.objects.all()
+    serializer = PhotoSerializer(photo_obj, many=True)
+    return Response(serializer.data)
+
+
