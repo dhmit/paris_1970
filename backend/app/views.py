@@ -9,8 +9,8 @@ These view functions and classes implement API endpoints
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Photo
-from .serializers import PhotoSerializer
+from .models import Photo, MapSquare
+from .serializers import PhotoSerializer, MapSquareSerializer
 
 
 @api_view(['GET'])
@@ -26,4 +26,10 @@ def all_photos(request):
     serializer = PhotoSerializer(photo_obj, many=True)
     return Response(serializer.data)
 
+
+@api_view(['GET'])
+def all_map_squares(request):
+    map_square_obj = MapSquare.objects.all()
+    serializer = MapSquareSerializer(map_square_obj, many=True)
+    return Response(serializer.data)
 

@@ -9,3 +9,8 @@ class Photo(models.Model):
     title = models.CharField(max_length=252)
     src = models.CharField(max_length=252)
     alt = models.CharField(max_length=252)
+
+
+class MapSquare(models.Model):
+    name = models.CharField(max_length=252)
+    boundaries = models.CharField(max_length=252)

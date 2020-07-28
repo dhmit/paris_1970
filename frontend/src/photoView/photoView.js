@@ -48,7 +48,7 @@ export class PhotoView extends React.Component {
 
         return (<>
             <Navbar />
-            <div style={{ padding: '100px 50px'}}>
+            <div style={{ padding: '100px 50px' }}>
                 <h2>{title}</h2>
                 <img width={500} height={500} src={src} alt={alt}/>
                 <br/>

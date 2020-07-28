@@ -16,6 +16,7 @@ export class IndexView extends React.Component {
         super(props);
         this.state = {
             photo_data: null,
+            map_data: [{ name: 'Map Square 1', boundaries: '10, 10' }],
         };
     }
 
@@ -30,25 +31,29 @@ export class IndexView extends React.Component {
     }
 
     render() {
-        if (!this.state.photo_data) {
+        if (!this.state.photo_data || !this.state.map_data) {
             return (<>
                 Loading...
             </>);
         }
+        const mapSquares = this.state.map_data.map((mapSquare) => {
+            const pictureList = this.state.photo_data.map((photo, k) => (
+                <li key={k} className='col-lg-12 col-md-12'>
+                    <a href={`/photos/${photo.id}`}>
+                        <h3>{photo.title}</h3>
+                    </a>
+                </li>));
+            return (<>
+                <p className='map-square'>{mapSquare.name}</p>
+                <ul>{pictureList}</ul>
+            </>);
+        });
         return (<>
             <div className='landing-page'>
                 <Navbar/>
                 <div className="row" >
-                    <div className='col-lg-6 col-md-12'>
-                        Hello, World!
-                    </div>
                     <div className='col-lg-12 col-md-12'>
-                        {this.state.photo_data.map((photo, k) => (
-                            <a key={k} href={`/photos/${photo.id}`}>
-                                <h3>{photo.title}</h3>
-                                <img width={500} height={500} src={photo.src} alt={photo.alt}/>
-                            </a>
-                        ))}
+                        {mapSquares}
                     </div>
                 </div>
             </div>

@@ -4,10 +4,16 @@ in ways that can be transported across the backend/frontend divide, or
 allow the frontend to suggest changes to the backend/database.
 """
 from rest_framework import serializers
-from .models import Photo
+from .models import Photo, MapSquare
 
 
 class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
         fields = ['id', 'src', 'alt', 'title']
+
+
+class MapSquareSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MapSquare
+        fields = ['id', 'boundaries', 'name']
