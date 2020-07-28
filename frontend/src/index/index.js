@@ -46,7 +46,12 @@ export class IndexView extends React.Component {
                         {this.state.photo_data.map((photo, k) => (
                             <a key={k} href={`/photos/${photo.id}`}>
                                 <h3>{photo.title}</h3>
-                                <img width={500} height={500} src={photo.src} alt={photo.alt}/>
+                                <img
+                                    width={500}
+                                    height={500}
+                                    src={photo.front_src}
+                                    alt={photo.alt}
+                                />
                             </a>
                         ))}
                     </div>

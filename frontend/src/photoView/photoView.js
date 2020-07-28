@@ -42,15 +42,19 @@ export class PhotoView extends React.Component {
                 <a href={`/photos/${this.props.id + 1}/`}>Next</a>
             </>);
         }
-        const src = this.state.photo_data.src;
-        const alt = this.state.photo_data.alt;
-        const title = this.state.photo_data.title;
+        const {
+            title,
+            alt,
+            front_src,
+            back_src,
+        } = this.state.photo_data;
 
         return (<>
             <Navbar />
-            <div style={{ padding: '100px 50px'}}>
+            <div style={{ padding: '100px 50px' }}>
                 <h2>{title}</h2>
-                <img width={500} height={500} src={src} alt={alt}/>
+                <img width={500} height={500} src={front_src} alt={alt}/>
+                <img width={500} height={500} src={back_src} alt={alt}/>
                 <br/>
                 <a href={`/photos/${this.props.id - 1}/`}>Prev</a>
                 <br/>
