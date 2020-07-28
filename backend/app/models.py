@@ -14,4 +14,8 @@ class Photo(models.Model):
 
 class MapSquare(models.Model):
     name = models.CharField(max_length=252)
+    photo_ids = models.ManyToManyField(
+        Photo,
+        blank=True,
+    )
     boundaries = models.CharField(max_length=252)
