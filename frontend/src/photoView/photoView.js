@@ -49,8 +49,6 @@ export class PhotoView extends React.Component {
             back_src,
         } = this.state.photo_data;
 
-        console.log(this.state.photo_data);
-
         return (<>
             <Navbar />
             <div style={{ padding: '100px 50px' }}>
