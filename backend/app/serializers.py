@@ -8,26 +8,9 @@ from .models import Photo, MapSquare, Photographer
 
 
 class PhotoSerializer(serializers.ModelSerializer):
-
-    photographer = serializers.SerializerMethodField()
-    map_square = serializers.SerializerMethodField()
-
-    def get_photographer(self, instance):
-        return PhotographerForPhotosSerializer(instance.photographer_obj).data
-
-    def get_map_square(self, instance):
-        return MapSquareSerializer(instance.map_square_obj).data
-
     class Meta:
         model = Photo
-        fields = ['id', 'front_src', 'back_src', 'alt', 'title', 'photographer', 'map_square']
-
-
-# This is to avoid an infinite recursion depth
-class PhotographerForPhotosSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Photographer
-        fields = ['id', 'name', 'type', 'sentiment']
+        fields = ['id', 'front_src', 'back_src', 'alt', 'title', 'photographer_obj', 'map_square']
 
 
 class MapSquareSerializer(serializers.ModelSerializer):
@@ -37,16 +20,6 @@ class MapSquareSerializer(serializers.ModelSerializer):
 
 
 class PhotographerSerializer(serializers.ModelSerializer):
-
-    photos = serializers.SerializerMethodField()
-    map_square = serializers.SerializerMethodField()
-
-    def get_photos(self, instance):
-        return PhotoSerializer(instance.photo_ids, many=True).data
-
-    def get_map_square(self, instance):
-        return MapSquareSerializer(instance.map_square_obj).data
-
     class Meta:
         model = Photographer
-        fields = ['id', 'name', 'type', 'sentiment', 'photos', 'map_square']
+        fields = ['id', 'name', 'type', 'sentiment', 'photo_ids', 'map_square']

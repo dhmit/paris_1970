@@ -34,10 +34,8 @@ export class IndexView extends React.Component {
         try {
             const photo_response = await fetch('/api/all_photos/');
             const photo_data = await photo_response.json();
-            console.log(photo_data);
             const map_response = await fetch('/api/all_map_squares/');
             const map_data = await map_response.json();
-            console.log(map_data);
             this.setState({ photo_data, map_data, loading: false });
         } catch (e) {
             console.log(e);
