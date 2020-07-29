@@ -11,7 +11,6 @@ class Photo(models.Model):
     back_src = models.CharField(max_length=252)
     alt = models.CharField(max_length=252)
     map_square = models.ForeignKey('MapSquare', on_delete=models.SET_NULL, null=True)
-    photographer_obj = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
 
 
 class MapSquare(models.Model):
