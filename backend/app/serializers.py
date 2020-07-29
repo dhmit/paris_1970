@@ -10,7 +10,7 @@ from .models import Photo, MapSquare, Photographer
 class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
-        fields = ['id', 'front_src', 'back_src', 'alt', 'title']
+        fields = ['id', 'front_src', 'back_src', 'alt', 'title', 'photographer_obj', 'map_square']
 
 
 class MapSquareSerializer(serializers.ModelSerializer):
