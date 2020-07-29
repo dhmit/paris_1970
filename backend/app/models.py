@@ -10,7 +10,7 @@ class Photo(models.Model):
     front_src = models.CharField(max_length=252)
     back_src = models.CharField(max_length=252)
     alt = models.CharField(max_length=252)
-    map_square = models.ForeignKey('MapSquare', on_delete=models.SET_NULL, null=True)
+    map_square_obj = models.ForeignKey('MapSquare', on_delete=models.SET_NULL, null=True)
     photographer_obj = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
 
 
@@ -31,4 +31,4 @@ class Photographer(models.Model):
         'Photo',
         blank=True,
     )
-    map_square = models.ForeignKey('MapSquare', on_delete=models.SET_NULL, null=True)
+    map_square_obj = models.ForeignKey('MapSquare', on_delete=models.SET_NULL, null=True)
