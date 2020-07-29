@@ -14,6 +14,11 @@ class PhotoSerializer(serializers.ModelSerializer):
 
 
 class MapSquareSerializer(serializers.ModelSerializer):
+    photos = serializers.SerializerMethodField()
+
+    def get_photos(self, instance):
+        return PhotoSerializer(instance.photo_ids, many=True).data
+
     class Meta:
         model = MapSquare
-        fields = ['id', 'photo_ids', 'boundaries', 'name']
+        fields = ['id', 'photos', 'photo_ids', 'boundaries', 'name']

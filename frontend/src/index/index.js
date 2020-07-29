@@ -15,42 +15,28 @@ export class IndexView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            photo_data: null,
             map_data: null,
         };
     }
 
-    getPhotos(photo_ids) {
-        const photos = [];
-        for (const photo of Object.values(this.state.photo_data)) {
-            if (photo_ids.includes(photo.id)) {
-                photos.push(photo);
-            }
-        }
-        return photos;
-    }
-
     async componentDidMount() {
         try {
-            const photo_response = await fetch('/api/all_photos/');
-            const photo_data = await photo_response.json();
             const map_response = await fetch('/api/all_map_squares/');
             const map_data = await map_response.json();
-            this.setState({ photo_data, map_data, loading: false });
+            this.setState({ map_data, loading: false });
         } catch (e) {
             console.log(e);
         }
     }
 
     render() {
-        if (!this.state.photo_data || !this.state.map_data) {
+        if (!this.state.map_data) {
             return (<>
                 Loading...
             </>);
         }
         const mapSquares = this.state.map_data.map((mapSquare) => {
-            const photo_data = this.getPhotos(mapSquare.photo_ids);
-            const pictureList = photo_data.map((photo, k) => (
+            const pictureList = mapSquare.photos.map((photo, k) => (
                 <li key={k} className='col-lg-12 col-md-12'>
                     <a href={`/photos/${photo.id}`}>
                         <h3>{photo.title}</h3>
