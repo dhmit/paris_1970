@@ -16,7 +16,7 @@ class PhotoSerializer(serializers.ModelSerializer):
         return PhotographerForPhotosSerializer(instance.photographer_obj).data
 
     def get_map_square(self, instance):
-        return MapSquareSerializer(instance.map_square_obj).data
+        return MapSquareForPhotosSerializer(instance.map_square_obj).data
 
     class Meta:
         model = Photo
@@ -28,6 +28,12 @@ class PhotographerForPhotosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photographer
         fields = ['id', 'name', 'type', 'sentiment']
+
+
+class MapSquareForPhotosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MapSquare
+        fields = ['id', 'name', 'photo_ids', 'boundaries']
 
 
 class MapSquareSerializer(serializers.ModelSerializer):
