@@ -56,7 +56,7 @@ class PhotographerSerializer(serializers.ModelSerializer):
         return PhotoSerializer(instance.photo_ids, many=True).data
 
     def get_map_square(self, instance):
-        return MapSquareSerializer(instance.map_square_obj).data
+        return MapSquareForPhotosSerializer(instance.map_square_obj).data
 
     class Meta:
         model = Photographer
