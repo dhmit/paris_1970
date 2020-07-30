@@ -37,9 +37,6 @@ export class PhotoView extends React.Component {
         if (!this.state.photo_data) {
             return (<>
                 Photo with id {this.props.id} is not in database.
-                <a href={`/photos/${this.props.id - 1}/`}>Prev</a>
-                <br/>
-                <a href={`/photos/${this.props.id + 1}/`}>Next</a>
             </>);
         }
         const {
@@ -49,8 +46,6 @@ export class PhotoView extends React.Component {
             back_src,
         } = this.state.photo_data;
 
-        console.log(this.state.photo_data);
-
         return (<>
             <Navbar />
             <div style={{ padding: '100px 50px' }}>
@@ -58,9 +53,6 @@ export class PhotoView extends React.Component {
                 <img width={500} height={500} src={front_src} alt={alt}/>
                 <img width={500} height={500} src={back_src} alt={alt}/>
                 <br/>
-                <a href={`/photos/${this.props.id - 1}/`}>Prev</a>
-                <br/>
-                <a href={`/photos/${this.props.id + 1}/`}>Next</a>
             </div>
             <Footer />
         </>);
