@@ -16,7 +16,7 @@ class Photo(models.Model):
 
 class MapSquare(models.Model):
     name = models.CharField(max_length=252)
-    photo_ids = models.ManyToManyField(
+    photo_objects = models.ManyToManyField(
         'Photo',
         blank=True,
     )
@@ -27,7 +27,7 @@ class Photographer(models.Model):
     name = models.CharField(max_length=252)
     type = models.CharField(max_length=252)
     sentiment = models.CharField(max_length=252)
-    photo_ids = models.ManyToManyField(
+    photo_objects = models.ManyToManyField(
         'Photo',
         blank=True,
     )

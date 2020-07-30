@@ -8,7 +8,6 @@ from .models import Photo, MapSquare, Photographer
 
 
 class PhotoSerializer(serializers.ModelSerializer):
-
     photographer = serializers.SerializerMethodField()
     map_square = serializers.SerializerMethodField()
 
@@ -23,37 +22,23 @@ class PhotoSerializer(serializers.ModelSerializer):
         fields = ['id', 'front_src', 'back_src', 'alt', 'title', 'photographer', 'map_square']
 
 
-# This is to avoid an infinite recursion depth
-class PhotographerForPhotosSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Photographer
-        fields = ['id', 'name', 'type', 'sentiment']
-
-
-class MapSquareForPhotosSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MapSquare
-        fields = ['id', 'name', 'photo_ids', 'boundaries']
-
-
 class MapSquareSerializer(serializers.ModelSerializer):
     photos = serializers.SerializerMethodField()
 
     def get_photos(self, instance):
-        return PhotoSerializer(instance.photo_ids, many=True).data
+        return PhotosForMapSquareSerializer(instance.photo_objects, many=True).data
 
     class Meta:
         model = MapSquare
-        fields = ['id', 'photos', 'photo_ids', 'boundaries', 'name']
+        fields = ['id', 'photos', 'boundaries', 'name']
 
 
 class PhotographerSerializer(serializers.ModelSerializer):
-
     photos = serializers.SerializerMethodField()
     map_square = serializers.SerializerMethodField()
 
     def get_photos(self, instance):
-        return PhotoSerializer(instance.photo_ids, many=True).data
+        return PhotoForPhotographerSerializer(instance.photo_objects, many=True).data
 
     def get_map_square(self, instance):
         return MapSquareForPhotosSerializer(instance.map_square_obj).data
@@ -61,3 +46,38 @@ class PhotographerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photographer
         fields = ['id', 'name', 'type', 'sentiment', 'photos', 'map_square']
+
+
+# These methods are used to avoid an infinite recursion depth
+class PhotographerForPhotosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Photographer
+        fields = ['id', 'name', 'type', 'sentiment']
+
+
+class PhotoForPhotographerSerializer(serializers.ModelSerializer):
+    map_square = serializers.SerializerMethodField()
+
+    def get_map_square(self, instance):
+        return MapSquareForPhotosSerializer(instance.map_square_obj).data
+
+    class Meta:
+        model = Photo
+        fields = ['id', 'front_src', 'back_src', 'alt', 'title', 'map_square']
+
+
+class MapSquareForPhotosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MapSquare
+        fields = ['id', 'name', 'photo_objects', 'boundaries']
+
+
+class PhotosForMapSquareSerializer(serializers.ModelSerializer):
+    photographer = serializers.SerializerMethodField()
+
+    def get_photographer(self, instance):
+        return PhotographerForPhotosSerializer(instance.photographer_obj).data
+
+    class Meta:
+        model = Photo
+        fields = ['id', 'front_src', 'back_src', 'alt', 'title', 'photographer']
