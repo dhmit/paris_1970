@@ -8,28 +8,52 @@ TODO(ra): link Google Sheet here
 
 
 import pickle
-import os.path
+import os
+from textwrap import dedent
 
-from django.core.management.base import BaseCommand
+from django.contrib.auth.models import User
 from django.conf import settings
+from django.core.management import call_command
+from django.core.management.base import BaseCommand
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
-# If modifying these scopes, delete the file token.pickle.
+from app.models import Photo
+
+# The scope of our access to the Google Sheets Account
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
-# The ID and range of a sample spreadsheet.
+# Our metadata spreadsheet lives here:
+# https://docs.google.com/spreadsheets/d/1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I/edit#gid=0
 METADATA_SPREADSHEET_ID = '1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I'
-SAMPLE_RANGE_NAME = 'Sheet1!A1:A2'
+
+
+def print_header(header_str):
+    print(dedent(f'''
+        ################################################################################
+        # {header_str}
+        ################################################################################
+    '''))
 
 
 class Command(BaseCommand):
     help = 'Syncs local db with data from project Google Sheet'
 
+    def add_arguments(self, parser):
+        parser.add_argument('--range', action='store', type=str)
+
     def handle(self, *args, **options):
-        self.stdout.write(self.style.SUCCESS('Hello, world!'))
+        # TODO: get the range dynamically -- iterate until we hit a blank row
+        maybe_range = options.get('range', '')
+        if maybe_range:
+            # TODO: validate that this will work
+            spreadsheet_range = 'Sheet1!' + maybe_range
+        else:
+            spreadsheet_range = 'Sheet1!A2:D5'
+
+        print_header(f'Will import range {spreadsheet_range}')
 
         # TODO(ra): clean up authentication pickling routines --
         # do we even want to cache auth to disk? probably not...
@@ -60,12 +84,33 @@ class Command(BaseCommand):
         # Call the Sheets API
         sheet = service.spreadsheets()
         get_values_cmd = \
-            sheet.values().get(spreadsheetId=METADATA_SPREADSHEET_ID, range=SAMPLE_RANGE_NAME)
+            sheet.values().get(spreadsheetId=METADATA_SPREADSHEET_ID, range=spreadsheet_range)
         result = get_values_cmd.execute()
         values = result.get('values', [])
 
+        # TODO(ra): handle case where the server is running and using the db
+        if os.path.exists(settings.DB_PATH):
+            print_header('Deleting existing db...')
+            os.remove(settings.DB_PATH)
+            print('\nDone!')
+
+        print_header('Rebuilding db from migrations...')
+        call_command('migrate')
+        print('Done!')
+
+        # THIS IS JUST FOR PROTOTYPING NEVER EVER EVER EVER IN PRODUCTION do this
+        superuser = User.objects.create_superuser('admin', password='adminadmin')
+
         if not values:
-            print('No data found.')
+            print_header('No data found.')
         else:
+            print_header('Importing these values from the spreadsheet')
             for row in values:
                 print(row)
+                photo = Photo(
+                    title=row[0],
+                    front_src=row[1],
+                    back_src=row[2],
+                    alt=row[3],
+                )
+                photo.save()
