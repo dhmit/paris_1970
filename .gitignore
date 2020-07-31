@@ -124,6 +124,7 @@ dmypy.json
 .idea/dataSources.local.xml
 .idea/usage.statistics.xml
 .idea/tasks.xml
+.idea/runConfigurations
 
 # dependencies
 frontend/node_modules
