@@ -22,8 +22,7 @@
             const ReactDOM = window.app_modules.ReactDOM;
             const React = window.app_modules.React;
             const {{ component_name }} = window.app_modules.{{ component_name }};
-            const id = {{ id }};
-            const react_el = React.createElement({{ component_name }}, { id: id });
+            const react_el = React.createElement({{ component_name }});
             ReactDOM.render(
                 react_el,
                 document.getElementById('root')

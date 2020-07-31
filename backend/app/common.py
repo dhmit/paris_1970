@@ -4,7 +4,7 @@ Miscellaneous utility functions useful throughout the system
 from django.shortcuts import render
 
 
-def render_react_view(request, object_id=0, component_name=None):
+def render_react_view(request, id, component_name=None):
     """
     A view function to render views that are entirely managed
     in the frontend by a single React component. This lets us use
@@ -18,6 +18,5 @@ def render_react_view(request, object_id=0, component_name=None):
     template = 'index.html'
     context = {
         'component_name': component_name,
-        'id': object_id,
     }
     return render(request, template, context)

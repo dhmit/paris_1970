@@ -15,7 +15,7 @@ export class PhotoView extends React.Component {
 
     async componentDidMount() {
         try {
-            const photoId = this.props.id;
+            const photoId = window.location.pathname.split('/')[2];
             const response = await fetch(`/api/photo/${photoId}/`);
             if (!response.ok) {
                 this.setState({ loading: false });
@@ -36,7 +36,7 @@ export class PhotoView extends React.Component {
         }
         if (!this.state.photo_data) {
             return (<>
-                Photo with id {this.props.id} is not in database.
+                Photo with id {window.location.pathname.split('/')[2]} is not in database.
             </>);
         }
         const {
