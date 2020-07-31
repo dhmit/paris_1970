@@ -23,6 +23,7 @@ from google.auth.transport.requests import Request
 from app.models import Photo
 
 # The scope of our access to the Google Sheets Account
+# TODO: reduce this scope, if possible, to only access a single specified sheet
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # Our metadata spreadsheet lives here:
