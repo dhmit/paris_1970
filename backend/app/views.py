@@ -39,4 +39,3 @@ def all_photographers(request):
     photographer_obj = Photographer.objects.all()
     serializer = PhotographerSerializer(photographer_obj, many=True)
     return Response(serializer.data)
-
