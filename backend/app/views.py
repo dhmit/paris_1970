@@ -15,6 +15,9 @@ from .serializers import PhotoSerializer, MapSquareSerializer, PhotographerSeria
 
 @api_view(['GET'])
 def photo(request, photo_id):
+    """
+    API endpoint to get a photo with a primary key of photo_id
+    """
     photo_obj = Photo.objects.get(pk=photo_id)
     serializer = PhotoSerializer(photo_obj)
     return Response(serializer.data)
@@ -22,6 +25,9 @@ def photo(request, photo_id):
 
 @api_view(['GET'])
 def all_photos(request):
+    """
+    API endpoint to get all photos in the database
+    """
     photo_obj = Photo.objects.all()
     serializer = PhotoSerializer(photo_obj, many=True)
     return Response(serializer.data)
@@ -29,6 +35,9 @@ def all_photos(request):
 
 @api_view(['GET'])
 def all_map_squares(request):
+    """
+    API endpoint to get all map squares in the database
+    """
     map_square_obj = MapSquare.objects.all()
     serializer = MapSquareSerializer(map_square_obj, many=True)
     return Response(serializer.data)
@@ -36,6 +45,9 @@ def all_map_squares(request):
 
 @api_view(['GET'])
 def all_photographers(request):
+    """
+    API endpoint to get all photographers in the database
+    """
     photographer_obj = Photographer.objects.all()
     serializer = PhotographerSerializer(photographer_obj, many=True)
     return Response(serializer.data)

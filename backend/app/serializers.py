@@ -8,6 +8,9 @@ from .models import Photo, MapSquare, Photographer
 
 
 class PhotoSerializer(serializers.ModelSerializer):
+    """
+    Serializes a photo
+    """
     photographer = serializers.SerializerMethodField()
     map_square = serializers.SerializerMethodField()
 
@@ -23,6 +26,9 @@ class PhotoSerializer(serializers.ModelSerializer):
 
 
 class MapSquareSerializer(serializers.ModelSerializer):
+    """
+    Serializes a map square
+    """
     photos = serializers.SerializerMethodField()
 
     def get_photos(self, instance):
@@ -34,6 +40,9 @@ class MapSquareSerializer(serializers.ModelSerializer):
 
 
 class PhotographerSerializer(serializers.ModelSerializer):
+    """
+    Serializes a photographer
+    """
     photos = serializers.SerializerMethodField()
     map_square = serializers.SerializerMethodField()
 
@@ -50,12 +59,19 @@ class PhotographerSerializer(serializers.ModelSerializer):
 
 # These methods are used to avoid an infinite recursion depth
 class PhotographerForPhotosSerializer(serializers.ModelSerializer):
+    """
+    Serializes a Photographer for the Photo model, but without a reference to the list of photos
+    or the map square
+    """
     class Meta:
         model = Photographer
         fields = ['id', 'name', 'type', 'sentiment']
 
 
 class PhotoForPhotographerSerializer(serializers.ModelSerializer):
+    """
+    Serializes a Photo for the Photographer model, but without a reference to the photographer
+    """
     map_square = serializers.SerializerMethodField()
 
     def get_map_square(self, instance):
@@ -67,12 +83,18 @@ class PhotoForPhotographerSerializer(serializers.ModelSerializer):
 
 
 class MapSquareForPhotosSerializer(serializers.ModelSerializer):
+    """
+    Serializes a Map Square for the Photo model, but without a reference to the list of photos
+    """
     class Meta:
         model = MapSquare
         fields = ['id', 'name', 'photo_objects', 'boundaries']
 
 
 class PhotosForMapSquareSerializer(serializers.ModelSerializer):
+    """
+    Serializes a Photo for the Map Square model, but without a reference to the map square
+    """
     photographer = serializers.SerializerMethodField()
 
     def get_photographer(self, instance):
