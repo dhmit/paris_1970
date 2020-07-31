@@ -105,6 +105,8 @@ class Command(BaseCommand):
             print_header('No data found.')
         else:
             print_header('Importing these values from the spreadsheet')
+
+            # TODO: can we get the data as a dictionary per row (with a header) rather than a list?
             for row in values:
                 print(row)
                 photo = Photo(
