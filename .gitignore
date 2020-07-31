@@ -152,4 +152,7 @@ yarn-error.log*
 webpack-stats-dev.json
 webpack-stats.json
 
+# Google authentication byproducts
+token.pickle
+
 
