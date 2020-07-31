@@ -12,13 +12,47 @@ import Navbar from '../about/Navbar';
 import { Footer } from '../UILibrary/components';
 
 export class IndexView extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            map_data: null,
+        };
+    }
+
+    async componentDidMount() {
+        try {
+            const map_response = await fetch('/api/all_map_squares/');
+            const map_data = await map_response.json();
+            this.setState({ map_data, loading: false });
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
     render() {
+        if (!this.state.map_data) {
+            return (<>
+                Loading...
+            </>);
+        }
+        const mapSquares = this.state.map_data.map((mapSquare) => {
+            const pictureList = mapSquare.photos.map((photo, k) => (
+                <li key={k} className='col-lg-12 col-md-12'>
+                    <a href={`/photos/${photo.id}`}>
+                        <h3>{photo.title}</h3>
+                    </a>
+                </li>));
+            return (<>
+                <p className='map-square'>{mapSquare.name}</p>
+                <ul>{pictureList}</ul>
+            </>);
+        });
         return (<>
             <div className='landing-page'>
                 <Navbar/>
                 <div className="row" >
-                    <div className='col-lg-6 col-md-12'>
-                        Hello, World!
+                    <div className='col-lg-12 col-md-12'>
+                        {mapSquares}
                     </div>
                 </div>
             </div>
