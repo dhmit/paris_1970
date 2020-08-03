@@ -32,7 +32,8 @@ class MapSquareSerializer(serializers.ModelSerializer):
     photos = serializers.SerializerMethodField()
 
     def get_photos(self, instance):
-        return PhotosForMapSquareSerializer(instance.photo_objects, many=True).data
+        photo_obj = Photo.objects.filter(map_square_obj_id=instance.id)
+        return PhotosForMapSquareSerializer(photo_obj, many=True).data
 
     class Meta:
         model = MapSquare
@@ -47,7 +48,8 @@ class PhotographerSerializer(serializers.ModelSerializer):
     map_square = serializers.SerializerMethodField()
 
     def get_photos(self, instance):
-        return PhotoForPhotographerSerializer(instance.photo_objects, many=True).data
+        photo_obj = Photo.objects.filter(map_square_obj_id=instance.id)
+        return PhotosForMapSquareSerializer(photo_obj, many=True).data
 
     def get_map_square(self, instance):
         return MapSquareForPhotosSerializer(instance.map_square_obj).data
@@ -88,7 +90,7 @@ class MapSquareForPhotosSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = MapSquare
-        fields = ['id', 'name', 'photo_objects', 'boundaries']
+        fields = ['id', 'name', 'boundaries']
 
 
 class PhotosForMapSquareSerializer(serializers.ModelSerializer):
