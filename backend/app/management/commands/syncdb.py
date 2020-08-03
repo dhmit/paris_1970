@@ -48,9 +48,7 @@ class Command(BaseCommand):
 
         print_header(f'Will import range {spreadsheet_range}')
 
-        # TODO(ra): clean up authentication pickling routines --
         # Settings for pickle file
-        # do we even want to cache auth to disk? probably not...
 
         creds = None
         # The file token.pickle stores the user's access and refresh tokens, and is
@@ -82,7 +80,6 @@ class Command(BaseCommand):
         result = get_values_cmd.execute()
         values = result.get('values', [])
 
-        # TODO(ra): handle case where the server is running and using the db
         if os.path.exists(settings.DB_PATH):
             print_header('Deleting existing db...')
             os.remove(settings.DB_PATH)
@@ -100,7 +97,6 @@ class Command(BaseCommand):
         else:
             print_header('Importing these values from the spreadsheet')
 
-            # TODO: can we get the data as a dictionary per row (with a header) rather than a list?
             header = values[0]
             values_as_a_dict = [{header[i]: entry for i, entry in enumerate(row)}
                                 for row in values[1:]]
