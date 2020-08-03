@@ -2,9 +2,7 @@
 Django management command syncdb
 
 Syncs local db with data from project Google Sheet
-
-TODO(ra): link Google Sheet here
-"""
+s"""
 
 
 import pickle
@@ -102,13 +100,16 @@ class Command(BaseCommand):
             print_header('Importing these values from the spreadsheet')
 
             # TODO: can we get the data as a dictionary per row (with a header) rather than a list?
-            print(values, len(values))
-            for row in values:
+            header = values[0]
+            values_as_a_dict = [{header[i]: entry for i, entry in enumerate(row)}
+                                for row in values[1:]]
+
+            for row in values_as_a_dict:
                 print(row)
                 photo = Photo(
-                    title=row[0],
-                    front_src=row[1],
-                    back_src=row[2],
-                    alt=row[3],
+                    title=row["title"],
+                    front_src=row["front_src"],
+                    back_src=row["back_src"],
+                    alt=row["alt"],
                 )
                 photo.save()
