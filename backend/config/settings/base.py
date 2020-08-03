@@ -17,6 +17,7 @@ DB_PATH = os.path.join(BACKEND_DIR, 'db.sqlite3')
 PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
 BACKEND_DATA_DIR = os.path.join(BACKEND_DIR, 'data')
 GOOGLE_API_CREDENTIALS_FILE = os.path.join(SETTINGS_DIR, 'google_api_credentials.json')
+GOOGLE_TOKEN_FILE = os.path.join(BACKEND_DIR, 'token.pickle')
 
 
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/

@@ -44,18 +44,34 @@ class Command(BaseCommand):
         parser.add_argument('--range', action='store', type=str)
 
     def handle(self, *args, **options):
-        spreadsheet_range = 'Sheet1!A:D'
+        spreadsheet_range = 'Photo!A:D'
 
         print_header(f'Will import range {spreadsheet_range}')
 
         # TODO(ra): clean up authentication pickling routines --
+        # Settings for pickle file
         # do we even want to cache auth to disk? probably not...
 
-        flow = InstalledAppFlow.from_client_secrets_file(
-            settings.GOOGLE_API_CREDENTIALS_FILE,
-            SCOPES
-        )
-        creds = flow.run_local_server(port=8080)
+        creds = None
+        # The file token.pickle stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+        if os.path.exists(settings.GOOGLE_TOKEN_FILE):
+            with open(settings.GOOGLE_TOKEN_FILE, 'rb') as token:
+                creds = pickle.load(token)
+        # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    settings.GOOGLE_API_CREDENTIALS_FILE,
+                    SCOPES
+                )
+                creds = flow.run_local_server(port=8080)
+            # Save the credentials for the next run
+            with open(settings.GOOGLE_TOKEN_FILE, 'wb') as token:
+                pickle.dump(creds, token)
 
         service = build('sheets', 'v4', credentials=creds)
 
