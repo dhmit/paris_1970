@@ -11,9 +11,13 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 CONFIG_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SETTINGS_DIR = os.path.join(CONFIG_DIR, 'settings')
 BACKEND_DIR = os.path.dirname(CONFIG_DIR)
+DB_PATH = os.path.join(BACKEND_DIR, 'db.sqlite3')
 PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
 BACKEND_DATA_DIR = os.path.join(BACKEND_DIR, 'data')
+GOOGLE_API_CREDENTIALS_FILE = os.path.join(SETTINGS_DIR, 'google_api_credentials.json')
+
 
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 

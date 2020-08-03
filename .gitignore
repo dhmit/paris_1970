@@ -124,6 +124,7 @@ dmypy.json
 .idea/dataSources.local.xml
 .idea/usage.statistics.xml
 .idea/tasks.xml
+.idea/runConfigurations
 
 # dependencies
 frontend/node_modules
@@ -151,5 +152,8 @@ yarn-error.log*
 # Build byproducts
 webpack-stats-dev.json
 webpack-stats.json
+
+# Google authentication byproducts
+token.pickle
 
 
