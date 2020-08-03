@@ -46,13 +46,7 @@ class Command(BaseCommand):
         parser.add_argument('--range', action='store', type=str)
 
     def handle(self, *args, **options):
-        # TODO: get the range dynamically -- iterate until we hit a blank row
-        maybe_range = options.get('range', '')
-        if maybe_range:
-            # TODO: validate that this will work
-            spreadsheet_range = 'Sheet1!' + maybe_range
-        else:
-            spreadsheet_range = 'Sheet1!A2:D5'
+        spreadsheet_range = 'Sheet1!A:D'
 
         print_header(f'Will import range {spreadsheet_range}')
 
@@ -108,6 +102,7 @@ class Command(BaseCommand):
             print_header('Importing these values from the spreadsheet')
 
             # TODO: can we get the data as a dictionary per row (with a header) rather than a list?
+            print(values, len(values))
             for row in values:
                 print(row)
                 photo = Photo(
