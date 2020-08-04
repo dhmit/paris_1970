@@ -102,19 +102,19 @@ class Command(BaseCommand):
                 model_name = spreadsheet_ranges[m]
                 print_header(f'{model_name}: Importing these values from the spreadsheet')
 
-                header = values[0][:-1]
-                values_as_a_dict = [{header[i]: entry for i, entry in enumerate(row[:-1])}
+                header = values[0]
+                values_as_a_dict = [{header[i]: entry for i, entry in enumerate(row)}
                                     for row in values[1:]]
 
                 for row in values_as_a_dict:
                     print(row)
                     if model_name == 'Photo' or model_name == 'Photographer':
-                        map_square_name = row['map_square_obj']
+                        map_square_name = row.get('map_square_obj', '')
                         row['map_square_obj'] = \
                             MapSquare.objects.get(name=map_square_name)\
                             if map_square_name else None
                     if model_name == 'Photo':
-                        photographer_name = row['photographer_obj']
+                        photographer_name = row.get('photographer_obj', '')
                         row['photographer_obj'] = \
                             Photographer.objects.get(name=photographer_name)\
                             if photographer_name else None
