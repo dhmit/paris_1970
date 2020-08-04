@@ -110,13 +110,12 @@ class Command(BaseCommand):
                     print(row)
                     if model_name == 'Photo' or model_name == 'Photographer':
                         map_square_name = row.get('map_square_obj', '')
+                        # Returns the object that matches or None if there is no match
                         row['map_square_obj'] = \
-                            MapSquare.objects.get(name=map_square_name)\
-                            if map_square_name else None
+                            MapSquare.objects.filter(name=map_square_name).first()
                     if model_name == 'Photo':
                         photographer_name = row.get('photographer_obj', '')
                         row['photographer_obj'] = \
-                            Photographer.objects.get(name=photographer_name)\
-                            if photographer_name else None
+                            Photographer.objects.filter(name=photographer_name).first()
                     model_instance = eval(f'{model_name}(**row)')
                     model_instance.save()
