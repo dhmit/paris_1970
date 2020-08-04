@@ -2,9 +2,7 @@
 Django management command syncdb
 
 Syncs local db with data from project Google Sheet
-
-TODO(ra): link Google Sheet here
-"""
+s"""
 
 
 import pickle
@@ -46,25 +44,18 @@ class Command(BaseCommand):
         parser.add_argument('--range', action='store', type=str)
 
     def handle(self, *args, **options):
-        # TODO: get the range dynamically -- iterate until we hit a blank row
-        maybe_range = options.get('range', '')
-        if maybe_range:
-            # TODO: validate that this will work
-            spreadsheet_range = 'Sheet1!' + maybe_range
-        else:
-            spreadsheet_range = 'Sheet1!A2:D5'
+        spreadsheet_range = 'Photo!A:D'
 
         print_header(f'Will import range {spreadsheet_range}')
 
-        # TODO(ra): clean up authentication pickling routines --
-        # do we even want to cache auth to disk? probably not...
+        # Settings for pickle file
 
         creds = None
         # The file token.pickle stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
         # time.
-        if os.path.exists('token.pickle'):
-            with open('token.pickle', 'rb') as token:
+        if os.path.exists(settings.GOOGLE_TOKEN_FILE):
+            with open(settings.GOOGLE_TOKEN_FILE, 'rb') as token:
                 creds = pickle.load(token)
         # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
@@ -77,7 +68,7 @@ class Command(BaseCommand):
                 )
                 creds = flow.run_local_server(port=8080)
             # Save the credentials for the next run
-            with open('token.pickle', 'wb') as token:
+            with open(settings.GOOGLE_TOKEN_FILE, 'wb') as token:
                 pickle.dump(creds, token)
 
         service = build('sheets', 'v4', credentials=creds)
@@ -89,7 +80,6 @@ class Command(BaseCommand):
         result = get_values_cmd.execute()
         values = result.get('values', [])
 
-        # TODO(ra): handle case where the server is running and using the db
         if os.path.exists(settings.DB_PATH):
             print_header('Deleting existing db...')
             os.remove(settings.DB_PATH)
@@ -107,13 +97,16 @@ class Command(BaseCommand):
         else:
             print_header('Importing these values from the spreadsheet')
 
-            # TODO: can we get the data as a dictionary per row (with a header) rather than a list?
-            for row in values:
+            header = values[0]
+            values_as_a_dict = [{header[i]: entry for i, entry in enumerate(row)}
+                                for row in values[1:]]
+
+            for row in values_as_a_dict:
                 print(row)
                 photo = Photo(
-                    title=row[0],
-                    front_src=row[1],
-                    back_src=row[2],
-                    alt=row[3],
+                    title=row["title"],
+                    front_src=row["front_src"],
+                    back_src=row["back_src"],
+                    alt=row["alt"],
                 )
                 photo.save()
