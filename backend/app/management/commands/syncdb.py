@@ -2,7 +2,7 @@
 Django management command syncdb
 
 Syncs local db with data from project Google Sheet
-s"""
+"""
 
 
 import pickle
@@ -44,7 +44,7 @@ class Command(BaseCommand):
         parser.add_argument('--range', action='store', type=str)
 
     def handle(self, *args, **options):
-        spreadsheet_ranges = ['MapSquare!A:B', 'Photographer!A:D', 'Photo!A:F']
+        spreadsheet_ranges = ['MapSquare', 'Photographer', 'Photo']
 
         print_header(f'Will import ranges {", ".join(spreadsheet_ranges)}')
 
@@ -99,20 +99,24 @@ class Command(BaseCommand):
             print_header('No data found.')
         else:
             for m, values in enumerate(databases):
-                model_name = spreadsheet_ranges[m].split('!')[0]
+                model_name = spreadsheet_ranges[m]
                 print_header(f'{model_name}: Importing these values from the spreadsheet')
 
-                header = values[0]
-                values_as_a_dict = [{header[i]: entry for i, entry in enumerate(row)}
+                header = values[0][:-1]
+                values_as_a_dict = [{header[i]: entry for i, entry in enumerate(row[:-1])}
                                     for row in values[1:]]
 
                 for row in values_as_a_dict:
                     print(row)
                     if model_name == 'Photo' or model_name == 'Photographer':
                         map_square_name = row['map_square_obj']
-                        row['map_square_obj'] = MapSquare.objects.get(name=map_square_name)
+                        row['map_square_obj'] = \
+                            MapSquare.objects.get(name=map_square_name)\
+                            if map_square_name else None
                     if model_name == 'Photo':
                         photographer_name = row['photographer_obj']
-                        row['photographer_obj'] = Photographer.objects.get(name=photographer_name)
+                        row['photographer_obj'] = \
+                            Photographer.objects.get(name=photographer_name)\
+                            if photographer_name else None
                     model_instance = eval(f'{model_name}(**row)')
                     model_instance.save()
