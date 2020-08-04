@@ -109,10 +109,10 @@ class Command(BaseCommand):
                 for row in values_as_a_dict:
                     print(row)
                     if model_name == 'Photo' or model_name == 'Photographer':
-                        map_square_id = int(row['map_square_obj'])
-                        row['map_square_obj'] = MapSquare.objects.get(pk=map_square_id)
+                        map_square_name = row['map_square_obj']
+                        row['map_square_obj'] = MapSquare.objects.get(name=map_square_name)
                     if model_name == 'Photo':
-                        photographer_id = int(row['photographer_obj'])
-                        row['photographer_obj'] = Photographer.objects.get(pk=photographer_id)
+                        photographer_name = row['photographer_obj']
+                        row['photographer_obj'] = Photographer.objects.get(name=photographer_name)
                     model_instance = eval(f'{model_name}(**row)')
                     model_instance.save()
