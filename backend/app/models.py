@@ -16,8 +16,8 @@ class Photo(models.Model):
     front_src = models.CharField(max_length=252)
     back_src = models.CharField(max_length=252)
     alt = models.CharField(max_length=252)
-    map_square_obj = models.ForeignKey('MapSquare', on_delete=models.SET_NULL, null=True)
-    photographer_obj = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
+    map_square = models.ForeignKey('MapSquare', on_delete=models.SET_NULL, null=True)
+    photographer = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
 
 
 class MapSquare(models.Model):
@@ -27,10 +27,6 @@ class MapSquare(models.Model):
     the boundary of this Map Square.
     """
     name = models.CharField(max_length=252)
-    photo_objects = models.ManyToManyField(
-        'Photo',
-        blank=True,
-    )
     boundaries = models.CharField(max_length=252)
 
 
@@ -43,8 +39,4 @@ class Photographer(models.Model):
     name = models.CharField(max_length=252)
     type = models.CharField(max_length=252)
     sentiment = models.CharField(max_length=252)
-    photo_objects = models.ManyToManyField(
-        'Photo',
-        blank=True,
-    )
-    map_square_obj = models.ForeignKey('MapSquare', on_delete=models.SET_NULL, null=True)
+    map_square = models.ForeignKey('MapSquare', on_delete=models.SET_NULL, null=True)
