@@ -108,7 +108,7 @@ class Command(BaseCommand):
             print_header(f'{model_name}: Importing these values from the spreadsheet')
 
             header = values[0]
-            values_as_a_dict = [{header[i]: entry for i, entry in enumerate(row)}
+            values_as_a_dict = [{header_val: entry for header_val, entry in zip(header, row)}
                                 for row in values[1:]]
 
             for row in values_as_a_dict:
