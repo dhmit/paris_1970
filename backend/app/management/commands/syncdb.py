@@ -37,6 +37,9 @@ def print_header(header_str):
     '''))
 
 
+MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
+
+
 class Command(BaseCommand):
     help = 'Syncs local db with data from project Google Sheet'
 
@@ -44,6 +47,8 @@ class Command(BaseCommand):
         parser.add_argument('--range', action='store', type=str)
 
     def handle(self, *args, **options):
+        # The order of these ranges matter. The Photographer model needs to have foreign keys to
+        # the MapSquare database, so we add the Map Squares first
         spreadsheet_ranges = ['MapSquare', 'Photographer', 'Photo']
 
         print_header(f'Will import ranges {", ".join(spreadsheet_ranges)}')
@@ -97,25 +102,27 @@ class Command(BaseCommand):
 
         if not databases:
             print_header('No data found.')
-        else:
-            for m, values in enumerate(databases):
-                model_name = spreadsheet_ranges[m]
-                print_header(f'{model_name}: Importing these values from the spreadsheet')
+            return
 
-                header = values[0]
-                values_as_a_dict = [{header[i]: entry for i, entry in enumerate(row)}
-                                    for row in values[1:]]
+        for model_name, values in zip(spreadsheet_ranges, databases):
+            print_header(f'{model_name}: Importing these values from the spreadsheet')
 
-                for row in values_as_a_dict:
-                    print(row)
-                    if model_name == 'Photo' or model_name == 'Photographer':
-                        map_square_name = row.get('map_square_obj', '')
-                        # Returns the object that matches or None if there is no match
-                        row['map_square_obj'] = \
-                            MapSquare.objects.filter(name=map_square_name).first()
-                    if model_name == 'Photo':
-                        photographer_name = row.get('photographer_obj', '')
-                        row['photographer_obj'] = \
-                            Photographer.objects.filter(name=photographer_name).first()
-                    model_instance = eval(f'{model_name}(**row)')
-                    model_instance.save()
+            header = values[0]
+            values_as_a_dict = [{header[i]: entry for i, entry in enumerate(row)}
+                                for row in values[1:]]
+
+            for row in values_as_a_dict:
+                print(row)
+                if model_name == 'Photo' or model_name == 'Photographer':
+                    map_square_name = row.get('map_square', '')
+                    # Returns the object that matches or None if there is no match
+                    row['map_square'] = \
+                        MapSquare.objects.filter(name=map_square_name).first()
+
+                if model_name == 'Photo':
+                    photographer_name = row.get('photographer', '')
+                    row['photographer'] = \
+                        Photographer.objects.filter(name=photographer_name).first()
+
+                model_instance = MODEL_NAME_TO_MODEL[model_name](**row)
+                model_instance.save()

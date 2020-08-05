@@ -15,10 +15,10 @@ class PhotoSerializer(serializers.ModelSerializer):
     map_square = serializers.SerializerMethodField()
 
     def get_photographer(self, instance):
-        return PhotographerForPhotosSerializer(instance.photographer_obj).data
+        return PhotographerForPhotosSerializer(instance.photographer).data
 
     def get_map_square(self, instance):
-        return MapSquareForPhotosSerializer(instance.map_square_obj).data
+        return MapSquareForPhotosSerializer(instance.map_square).data
 
     class Meta:
         model = Photo
@@ -32,7 +32,7 @@ class MapSquareSerializer(serializers.ModelSerializer):
     photos = serializers.SerializerMethodField()
 
     def get_photos(self, instance):
-        photo_obj = Photo.objects.filter(map_square_obj_id=instance.id)
+        photo_obj = Photo.objects.filter(map_square_id=instance.id)
         return PhotosForMapSquareSerializer(photo_obj, many=True).data
 
     class Meta:
@@ -48,11 +48,11 @@ class PhotographerSerializer(serializers.ModelSerializer):
     map_square = serializers.SerializerMethodField()
 
     def get_photos(self, instance):
-        photo_obj = Photo.objects.filter(map_square_obj_id=instance.id)
+        photo_obj = Photo.objects.filter(map_square_id=instance.id)
         return PhotosForMapSquareSerializer(photo_obj, many=True).data
 
     def get_map_square(self, instance):
-        return MapSquareForPhotosSerializer(instance.map_square_obj).data
+        return MapSquareForPhotosSerializer(instance.map_square).data
 
     class Meta:
         model = Photographer
@@ -77,7 +77,7 @@ class PhotoForPhotographerSerializer(serializers.ModelSerializer):
     map_square = serializers.SerializerMethodField()
 
     def get_map_square(self, instance):
-        return MapSquareForPhotosSerializer(instance.map_square_obj).data
+        return MapSquareForPhotosSerializer(instance.map_square).data
 
     class Meta:
         model = Photo
@@ -100,7 +100,7 @@ class PhotosForMapSquareSerializer(serializers.ModelSerializer):
     photographer = serializers.SerializerMethodField()
 
     def get_photographer(self, instance):
-        return PhotographerForPhotosSerializer(instance.photographer_obj).data
+        return PhotographerForPhotosSerializer(instance.photographer).data
 
     class Meta:
         model = Photo
