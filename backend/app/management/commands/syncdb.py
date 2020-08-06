@@ -125,10 +125,35 @@ class Command(BaseCommand):
                 model_field_names = [field.name for field in model_fields]
                 model_kwargs = {}
                 for header in row.keys():
-                    if header in model_field_names:
-                        model_kwargs[header] = row[header]
+                    if header in model_field_names or header == 'map_square_number':
+                        # Check if value in column is a number
+                        value = row[header]
+                        if (header == 'number' or header == 'map_square_number' or
+                            header == 'photographer'):
+                            try:
+                                value = int(value)
+                                if header == 'map_square_number':
+                                    header = 'map_square'
+                            except ValueError:
+                                continue
+                        # Evaluate value as a boolean
+                        elif header == 'contains_sticker':
+                            if value.lower() == 'yes':
+                                value = True
+                            elif value.lower() == 'no':
+                                value = False
+                            elif value.isdigit() and 0 <= int(value) <= 1:
+                                value = bool(value)
+                            else:
+                                continue
+                        model_kwargs[header] = value
+
+                # If no model fields found, do not create model instance
+                if len(model_kwargs) == 0:
+                    continue
 
                 print_header("model_kwargs: " + str(model_kwargs))
+
                 if model_name == 'Photo' or model_name == 'Photographer':
                     map_square_number = model_kwargs.get('map_square', None)
                     # Returns the object that matches or None if there is no match
