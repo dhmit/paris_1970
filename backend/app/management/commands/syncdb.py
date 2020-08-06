@@ -88,14 +88,21 @@ class Command(BaseCommand):
             values = result.get('values', [])
             databases.append(values)
 
-        if os.path.exists(settings.DB_PATH):
-            print_header('Deleting existing db...')
-            os.remove(settings.DB_PATH)
-            print('\nDone!')
+            # Delete database
+            if os.path.exists(settings.DB_PATH):
+                print_header('Deleting existing db...')
+                for file in os.listdir(settings.MIGRATIONS_DIR):
+                    if file != '__init__.py' and file != '__pycache__':
+                        file_path = os.path.join(settings.MIGRATIONS_DIR, file)
+                        os.remove(file_path)
+                os.remove(settings.DB_PATH)
+                print('\nDone!')
 
-        print_header('Rebuilding db from migrations...')
-        call_command('migrate')
-        print('Done!')
+            # Rebuild database
+            print_header('Rebuilding db from migrations...')
+            call_command('makemigrations')
+            call_command('migrate')
+            print('Done!')
 
         # THIS IS JUST FOR PROTOTYPING NEVER EVER EVER EVER IN PRODUCTION do this
         superuser = User.objects.create_superuser('admin', password='adminadmin')
