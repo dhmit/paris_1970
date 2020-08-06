@@ -7,6 +7,7 @@ Syncs local db with data from project Google Sheet
 
 import pickle
 import os
+import tqdm
 from textwrap import dedent
 
 from django.contrib.auth.models import User
@@ -22,7 +23,8 @@ from app.models import Photo, MapSquare, Photographer
 
 # The scope of our access to the Google Sheets Account
 # TODO: reduce this scope, if possible, to only access a single specified sheet
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly',
+          'https://www.googleapis.com/auth/drive.metadata.readonly']
 
 # Our metadata spreadsheet lives here:
 # https://docs.google.com/spreadsheets/d/1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I/edit#gid=0
@@ -35,6 +37,25 @@ def print_header(header_str):
         # {header_str}
         ################################################################################
     '''))
+
+
+def create_lookup_dict(drive_service, map_square_folders):
+    """
+    Creates a quick look up dictionary to get the image URL using map square number and source name
+    """
+    lookup_dict = {}
+    # tqdm is a library that shows a progress bar
+    for map_square in tqdm.tqdm(map_square_folders):
+        result = drive_service.files().list(
+            q=f"'{map_square['id']}' in parents",
+            fields="files(id, name)"
+        ).execute()
+        images = result.get('files', [])
+        lookup_dict[map_square['name']] = {
+            image['name']: f"https://drive.google.com/file/d/{image['id']}/view?usp=sharing"
+            for image in images
+        }
+    return lookup_dict
 
 
 MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
@@ -51,7 +72,8 @@ class Command(BaseCommand):
         # the MapSquare database, so we add the Map Squares first
         spreadsheet_ranges = ['MapSquare', 'Photographer', 'Photo']
 
-        print_header(f'Will import ranges {", ".join(spreadsheet_ranges)}')
+        print_header(f'''Will import ranges {", ".join(spreadsheet_ranges)}. (If nothing
+          is happening, please try again.)''')
 
         # Settings for pickle file
 
@@ -76,11 +98,20 @@ class Command(BaseCommand):
             with open(settings.GOOGLE_TOKEN_FILE, 'wb') as token:
                 pickle.dump(creds, token)
 
-        service = build('sheets', 'v4', credentials=creds)
+        sheets_service = build('sheets', 'v4', credentials=creds)
+        drive_service = build('drive', 'v3', credentials=creds)
+
+        print_header('Getting the URL for all photos (This might take a couple of minutes)...')
+        results = drive_service.files().list(
+            q="'1aiY1nFJn6T7khu5dhIs3U2o8RdHBu6V7' in parents",
+            fields="nextPageToken, files(id, name)"
+        ).execute()
+        items = results.get('files', [])
+        photo_url_lookup = create_lookup_dict(drive_service, items)
 
         # Call the Sheets API
         databases = []
-        sheet = service.spreadsheets()
+        sheet = sheets_service.spreadsheets()
         for spreadsheet_range in spreadsheet_ranges:
             get_values_cmd = \
                 sheet.values().get(spreadsheetId=METADATA_SPREADSHEET_ID, range=spreadsheet_range)
@@ -99,7 +130,6 @@ class Command(BaseCommand):
 
         # THIS IS JUST FOR PROTOTYPING NEVER EVER EVER EVER IN PRODUCTION do this
         superuser = User.objects.create_superuser('admin', password='adminadmin')
-
         if not databases:
             print_header('No data found.')
             return
@@ -112,7 +142,7 @@ class Command(BaseCommand):
                                 for row in values[1:]]
 
             for row in values_as_a_dict:
-                print(row)
+                # print(row)
                 if model_name == 'Photo' or model_name == 'Photographer':
                     map_square_name = row.get('map_square', '')
                     # Returns the object that matches or None if there is no match
@@ -120,9 +150,16 @@ class Command(BaseCommand):
                         MapSquare.objects.filter(name=map_square_name).first()
 
                 if model_name == 'Photo':
+                    map_square_num = row.get('map_square_number', '')
+                    front_src = row.get('front_src', '')
+                    back_src = row.get('back_src', '')
+                    map_square_folder = photo_url_lookup.get(map_square_num, '')
+                    if map_square_folder:
+                        row['front_src'] = map_square_folder.get(front_src, '')
+                        row['back_src'] = map_square_folder.get(back_src, '')
                     photographer_name = row.get('photographer', '')
                     row['photographer'] = \
                         Photographer.objects.filter(name=photographer_name).first()
-
-                model_instance = MODEL_NAME_TO_MODEL[model_name](**row)
-                model_instance.save()
+                print(row)
+                # model_instance = MODEL_NAME_TO_MODEL[model_name](**row)
+                # model_instance.save()
