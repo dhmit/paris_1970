@@ -120,16 +120,25 @@ class Command(BaseCommand):
 
             for row in values_as_a_dict:
                 print(row)
+                # Filter column headers for model fields
+                model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
+                model_field_names = [field.name for field in model_fields]
+                model_kwargs = {}
+                for header in row.keys():
+                    if header in model_field_names:
+                        model_kwargs[header] = row[header]
+
+                print_header("model_kwargs: " + str(model_kwargs))
                 if model_name == 'Photo' or model_name == 'Photographer':
-                    map_square_name = row.get('map_square', '')
+                    map_square_number = model_kwargs.get('map_square', None)
                     # Returns the object that matches or None if there is no match
-                    row['map_square'] = \
-                        MapSquare.objects.filter(name=map_square_name).first()
+                    model_kwargs['map_square'] = \
+                        MapSquare.objects.filter(number=map_square_number).first()
 
                 if model_name == 'Photo':
-                    photographer_name = row.get('photographer', '')
-                    row['photographer'] = \
-                        Photographer.objects.filter(name=photographer_name).first()
+                    photographer_number = model_kwargs.get('photographer', None)
+                    model_kwargs['photographer'] = \
+                        Photographer.objects.filter(name=photographer_number).first()
 
-                model_instance = MODEL_NAME_TO_MODEL[model_name](**row)
+                model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
                 model_instance.save()
