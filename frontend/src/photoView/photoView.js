@@ -29,9 +29,8 @@ export class PhotoView extends React.Component {
         }
     }
 
-     flipPhoto = (e) => {
+     flipPhoto = () => {
          if (this.state.display_side === 'front') {
-             console.log('time for a change...');
              this.setState({
                  display_side: 'back',
              });
@@ -72,14 +71,15 @@ export class PhotoView extends React.Component {
                      <h2>Photo Title: {title}</h2>
                      <img width={500} height={500} src={src} alt={alt}/>
                      <br/>
-                     <button onClick={(e) => this.flipPhoto(e)}> Flip photo </button>
+                     <button onClick={() => this.flipPhoto()}> Flip photo </button>
                  </div>
-                 <div className='imageInfo'style={{ padding: '100px 50px', float: 'left', marginTop: 50 }}>
+                 <div className='imageInfo'
+                     style={{ padding: '100px 50px', float: 'left', marginTop: 50 }}>
                      <div className='attributeTitle' style={{ fontWeight: 'bold' }}>
                         Photographer:
-                         <div className='attribute'style={{ fontWeight: 'normal' }}>
+                     <div className='attribute'style={{ fontWeight: 'normal' }}>
                             None
-                         </div>
+                     </div>
                      </div>
                      <div className='attributeTitle' style={{ fontWeight: 'bold' }}>
                         Categories
