@@ -77,9 +77,9 @@ export class PhotoView extends React.Component {
                      style={{ padding: '100px 50px', float: 'left', marginTop: 50 }}>
                      <div className='attributeTitle' style={{ fontWeight: 'bold' }}>
                         Photographer:
-                     <div className='attribute'style={{ fontWeight: 'normal' }}>
+                         <div className='attribute'style={{ fontWeight: 'normal' }}>
                             None
-                     </div>
+                         </div>
                      </div>
                      <div className='attributeTitle' style={{ fontWeight: 'bold' }}>
                         Categories
