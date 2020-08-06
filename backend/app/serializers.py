@@ -22,7 +22,9 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photo
-        fields = ['id', 'front_src', 'back_src', 'alt', 'title', 'photographer', 'map_square']
+        fields = ['id', 'number', 'front_src', 'back_src', 'alt', 'photographer',
+                  'map_square', 'shelfmark', 'librarian_caption', 'photographer_caption',
+                  'contains_sticker']
 
 
 class MapSquareSerializer(serializers.ModelSerializer):
@@ -32,12 +34,12 @@ class MapSquareSerializer(serializers.ModelSerializer):
     photos = serializers.SerializerMethodField()
 
     def get_photos(self, instance):
-        photo_obj = Photo.objects.filter(map_square_id=instance.id)
+        photo_obj = Photo.objects.filter(map_square__number=instance.number)
         return PhotosForMapSquareSerializer(photo_obj, many=True).data
 
     class Meta:
         model = MapSquare
-        fields = ['id', 'photos', 'boundaries', 'name']
+        fields = ['id', 'photos', 'boundaries', 'name', 'number']
 
 
 class PhotographerSerializer(serializers.ModelSerializer):
@@ -48,7 +50,7 @@ class PhotographerSerializer(serializers.ModelSerializer):
     map_square = serializers.SerializerMethodField()
 
     def get_photos(self, instance):
-        photo_obj = Photo.objects.filter(map_square_id=instance.id)
+        photo_obj = Photo.objects.filter(map_square__number=instance.number)
         return PhotosForMapSquareSerializer(photo_obj, many=True).data
 
     def get_map_square(self, instance):
@@ -56,7 +58,7 @@ class PhotographerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photographer
-        fields = ['id', 'name', 'type', 'sentiment', 'photos', 'map_square']
+        fields = ['id', 'name', 'number', 'type', 'sentiment', 'photos', 'map_square']
 
 
 # These methods are used to avoid an infinite recursion depth
@@ -67,7 +69,7 @@ class PhotographerForPhotosSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Photographer
-        fields = ['id', 'name', 'type', 'sentiment']
+        fields = ['id', 'name', 'number', 'type', 'sentiment']
 
 
 class PhotoForPhotographerSerializer(serializers.ModelSerializer):
@@ -81,7 +83,8 @@ class PhotoForPhotographerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photo
-        fields = ['id', 'front_src', 'back_src', 'alt', 'title', 'map_square']
+        fields = ['id', 'front_src', 'back_src', 'alt', 'map_square', 'number',
+                  'shelfmark', 'librarian_caption', 'photographer_caption', 'contains_sticker']
 
 
 class MapSquareForPhotosSerializer(serializers.ModelSerializer):
@@ -90,7 +93,7 @@ class MapSquareForPhotosSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = MapSquare
-        fields = ['id', 'name', 'boundaries']
+        fields = ['id', 'name', 'number', 'boundaries']
 
 
 class PhotosForMapSquareSerializer(serializers.ModelSerializer):
@@ -104,4 +107,5 @@ class PhotosForMapSquareSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photo
-        fields = ['id', 'front_src', 'back_src', 'alt', 'title', 'photographer']
+        fields = ['id', 'number', 'front_src', 'back_src', 'alt', 'photographer',
+                  'shelfmark', 'librarian_caption', 'photographer_caption', 'contains_sticker']
