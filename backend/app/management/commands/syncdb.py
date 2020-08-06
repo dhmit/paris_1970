@@ -138,7 +138,7 @@ class Command(BaseCommand):
                 if model_name == 'Photo':
                     photographer_number = model_kwargs.get('photographer', None)
                     model_kwargs['photographer'] = \
-                        Photographer.objects.filter(name=photographer_number).first()
+                        Photographer.objects.filter(number=photographer_number).first()
 
                 model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
                 model_instance.save()
