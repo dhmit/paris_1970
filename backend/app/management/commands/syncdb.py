@@ -128,8 +128,7 @@ class Command(BaseCommand):
                     if header in model_field_names or header == 'map_square_number':
                         # Check if value in column is a number
                         value = row[header]
-                        if (header == 'number' or header == 'map_square_number' or
-                            header == 'photographer'):
+                        if header in ['number', 'map_square_number', 'photographer']:
                             try:
                                 value = int(value)
                                 if header == 'map_square_number':
