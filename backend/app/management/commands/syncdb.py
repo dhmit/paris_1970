@@ -4,7 +4,6 @@ Django management command syncdb
 Syncs local db with data from project Google Sheet
 """
 
-
 import pickle
 import os
 import tqdm
@@ -52,7 +51,9 @@ def create_lookup_dict(drive_service, map_square_folders):
         ).execute()
         images = result.get('files', [])
         lookup_dict[map_square['name']] = {
-            image['name']: f"https://drive.google.com/file/d/{image['id']}/view?usp=sharing"
+            #  <img src = "https://drive.google.com/uc?id=0Bzgk4zncCwI7aDZCSHY4YU0zNUF&export=download">
+
+            image['name']: f"https://drive.google.com/uc?id={image['id']}&export=download"
             for image in images
         }
     return lookup_dict
@@ -102,6 +103,7 @@ class Command(BaseCommand):
         drive_service = build('drive', 'v3', credentials=creds)
 
         print_header('Getting the URL for all photos (This might take a couple of minutes)...')
+        # Create a lookup dictionary to get photo urls using Drive API
         results = drive_service.files().list(
             q="'1aiY1nFJn6T7khu5dhIs3U2o8RdHBu6V7' in parents",
             fields="nextPageToken, files(id, name)"
@@ -119,12 +121,19 @@ class Command(BaseCommand):
             values = result.get('values', [])
             databases.append(values)
 
+        # Delete database
         if os.path.exists(settings.DB_PATH):
             print_header('Deleting existing db...')
+            for file in os.listdir(settings.MIGRATIONS_DIR):
+                if file != '__init__.py' and file != '__pycache__':
+                    file_path = os.path.join(settings.MIGRATIONS_DIR, file)
+                    os.remove(file_path)
             os.remove(settings.DB_PATH)
             print('\nDone!')
 
+        # Rebuild database
         print_header('Rebuilding db from migrations...')
+        call_command('makemigrations')
         call_command('migrate')
         print('Done!')
 
@@ -142,24 +151,60 @@ class Command(BaseCommand):
                                 for row in values[1:]]
 
             for row in values_as_a_dict:
-                # print(row)
+                print(row)
+                # Filter column headers for model fields
+                model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
+                model_field_names = [field.name for field in model_fields]
+                model_kwargs = {}
+                for header in row.keys():
+                    if header in model_field_names or header == 'map_square_number':
+                        # Check if value in column is a number
+                        value = row[header]
+                        if header in ['number', 'map_square_number', 'photographer']:
+                            try:
+                                value = int(value)
+                                if header == 'map_square_number':
+                                    header = 'map_square'
+                            except ValueError:
+                                continue
+                        # Evaluate value as a boolean
+                        elif header == 'contains_sticker':
+                            if value.lower() == 'yes':
+                                value = True
+                            elif value.lower() == 'no':
+                                value = False
+                            elif value.isdigit() and 0 <= int(value) <= 1:
+                                value = bool(value)
+                            else:
+                                continue
+                        model_kwargs[header] = value
+
+                # If no model fields found, do not create model instance
+                if len(model_kwargs) == 0:
+                    continue
+
                 if model_name == 'Photo' or model_name == 'Photographer':
-                    map_square_name = row.get('map_square', '')
+                    map_square_number = model_kwargs.get('map_square', None)
                     # Returns the object that matches or None if there is no match
-                    row['map_square'] = \
-                        MapSquare.objects.filter(name=map_square_name).first()
+                    model_kwargs['map_square'] = \
+                        MapSquare.objects.filter(number=map_square_number).first()
 
                 if model_name == 'Photo':
-                    map_square_num = row.get('map_square_number', '')
-                    front_src = row.get('front_src', '')
-                    back_src = row.get('back_src', '')
-                    map_square_folder = photo_url_lookup.get(map_square_num, '')
+                    # Looks up the Photo URL of the front and back
+                    map_square_number = str(row.get('map_square_number', ''))
+                    front_src = model_kwargs.get('front_src', '')
+                    back_src = model_kwargs.get('back_src', '')
+                    map_square_folder = photo_url_lookup.get(map_square_number, '')
                     if map_square_folder:
-                        row['front_src'] = map_square_folder.get(front_src, '')
-                        row['back_src'] = map_square_folder.get(back_src, '')
-                    photographer_name = row.get('photographer', '')
-                    row['photographer'] = \
-                        Photographer.objects.filter(name=photographer_name).first()
-                print(row)
-                # model_instance = MODEL_NAME_TO_MODEL[model_name](**row)
-                # model_instance.save()
+                        model_kwargs['front_src'] = map_square_folder.get(front_src, '')
+                        model_kwargs['back_src'] = map_square_folder.get(back_src, '')
+
+                    # Get the corresponding Photographer objects
+                    photographer_number = model_kwargs.get('photographer', None)
+                    model_kwargs['photographer'] = \
+                        Photographer.objects.filter(number=photographer_number).first()
+
+                print_header("Final model_kwargs: " + str(model_kwargs))
+
+                model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
+                model_instance.save()

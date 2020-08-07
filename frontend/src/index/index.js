@@ -39,7 +39,7 @@ export class IndexView extends React.Component {
             const pictureList = mapSquare.photos.map((photo, k) => (
                 <li key={k} className='col-lg-12 col-md-12'>
                     <a href={`/photos/${photo.id}`}>
-                        <h3>{photo.title}</h3>
+                        <h3>Photo{photo.id}</h3>
                     </a>
                 </li>));
             return (<>

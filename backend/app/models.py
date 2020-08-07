@@ -12,10 +12,14 @@ class Photo(models.Model):
     to the Map Square that the photo belongs to and the Photographer who
     took the photo.
     """
-    title = models.CharField(max_length=252)
+    number = models.IntegerField(null=True)
+    shelfmark = models.CharField(max_length=252)
+    contains_sticker = models.BooleanField(null=True)
     front_src = models.CharField(max_length=252)
     back_src = models.CharField(max_length=252)
     alt = models.CharField(max_length=252)
+    librarian_caption = models.CharField(max_length=252)
+    photographer_caption = models.CharField(max_length=252)
     map_square = models.ForeignKey('MapSquare', on_delete=models.SET_NULL, null=True)
     photographer = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
 
@@ -27,6 +31,7 @@ class MapSquare(models.Model):
     the boundary of this Map Square.
     """
     name = models.CharField(max_length=252)
+    number = models.IntegerField(null=True)
     boundaries = models.CharField(max_length=252)
 
 
@@ -37,6 +42,7 @@ class Photographer(models.Model):
     assigned to
     """
     name = models.CharField(max_length=252)
+    number = models.IntegerField(null=True)
     type = models.CharField(max_length=252)
     sentiment = models.CharField(max_length=252)
     map_square = models.ForeignKey('MapSquare', on_delete=models.SET_NULL, null=True)

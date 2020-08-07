@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 CONFIG_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MIGRATIONS_DIR = os.path.join(os.path.dirname(CONFIG_DIR), 'app/migrations')
 SETTINGS_DIR = os.path.join(CONFIG_DIR, 'settings')
 BACKEND_DIR = os.path.dirname(CONFIG_DIR)
 DB_PATH = os.path.join(BACKEND_DIR, 'db.sqlite3')
