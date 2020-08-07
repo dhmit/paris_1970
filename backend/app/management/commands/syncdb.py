@@ -88,12 +88,19 @@ class Command(BaseCommand):
             values = result.get('values', [])
             databases.append(values)
 
+        # Delete database
         if os.path.exists(settings.DB_PATH):
             print_header('Deleting existing db...')
+            for file in os.listdir(settings.MIGRATIONS_DIR):
+                if file != '__init__.py' and file != '__pycache__':
+                    file_path = os.path.join(settings.MIGRATIONS_DIR, file)
+                    os.remove(file_path)
             os.remove(settings.DB_PATH)
             print('\nDone!')
 
+        # Rebuild database
         print_header('Rebuilding db from migrations...')
+        call_command('makemigrations')
         call_command('migrate')
         print('Done!')
 
@@ -113,16 +120,49 @@ class Command(BaseCommand):
 
             for row in values_as_a_dict:
                 print(row)
+                # Filter column headers for model fields
+                model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
+                model_field_names = [field.name for field in model_fields]
+                model_kwargs = {}
+                for header in row.keys():
+                    if header in model_field_names or header == 'map_square_number':
+                        # Check if value in column is a number
+                        value = row[header]
+                        if header in ['number', 'map_square_number', 'photographer']:
+                            try:
+                                value = int(value)
+                                if header == 'map_square_number':
+                                    header = 'map_square'
+                            except ValueError:
+                                continue
+                        # Evaluate value as a boolean
+                        elif header == 'contains_sticker':
+                            if value.lower() == 'yes':
+                                value = True
+                            elif value.lower() == 'no':
+                                value = False
+                            elif value.isdigit() and 0 <= int(value) <= 1:
+                                value = bool(value)
+                            else:
+                                continue
+                        model_kwargs[header] = value
+
+                # If no model fields found, do not create model instance
+                if len(model_kwargs) == 0:
+                    continue
+
+                print_header("model_kwargs: " + str(model_kwargs))
+
                 if model_name == 'Photo' or model_name == 'Photographer':
-                    map_square_name = row.get('map_square', '')
+                    map_square_number = model_kwargs.get('map_square', None)
                     # Returns the object that matches or None if there is no match
-                    row['map_square'] = \
-                        MapSquare.objects.filter(name=map_square_name).first()
+                    model_kwargs['map_square'] = \
+                        MapSquare.objects.filter(number=map_square_number).first()
 
                 if model_name == 'Photo':
-                    photographer_name = row.get('photographer', '')
-                    row['photographer'] = \
-                        Photographer.objects.filter(name=photographer_name).first()
+                    photographer_number = model_kwargs.get('photographer', None)
+                    model_kwargs['photographer'] = \
+                        Photographer.objects.filter(number=photographer_number).first()
 
-                model_instance = MODEL_NAME_TO_MODEL[model_name](**row)
+                model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
                 model_instance.save()
