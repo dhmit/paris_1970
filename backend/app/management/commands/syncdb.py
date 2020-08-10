@@ -72,17 +72,19 @@ class Command(BaseCommand):
         # Delete database
         if os.path.exists(settings.DB_PATH):
             print_header('Deleting existing db...')
-            for file in os.listdir(settings.MIGRATIONS_DIR):
-                if file != '__init__.py' and file != '__pycache__':
-                    file_path = os.path.join(settings.MIGRATIONS_DIR, file)
-                    os.remove(file_path)
             try:
                 os.remove(settings.DB_PATH)
             except PermissionError:
                 print_header('''Permission Error: Unable to delete the database file while the
                         backend is running. Please stop the "Run backend" process and try again.''')
                 return
-            print('\nDone!')
+
+        # Delete all migrations
+        for file in os.listdir(settings.MIGRATIONS_DIR):
+            if file != '__init__.py' and file != '__pycache__':
+                file_path = os.path.join(settings.MIGRATIONS_DIR, file)
+                os.remove(file_path)
+        print('Done!')
 
         # The order of these ranges matter. The Photographer model needs to have foreign keys to
         # the MapSquare database, so we add the Map Squares first
