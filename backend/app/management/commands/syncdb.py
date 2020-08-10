@@ -151,7 +151,7 @@ class Command(BaseCommand):
                                 for row in values[1:]]
 
             for row in values_as_a_dict:
-                print(row)
+                # print(row)
                 # Filter column headers for model fields
                 model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
                 model_field_names = [field.name for field in model_fields]

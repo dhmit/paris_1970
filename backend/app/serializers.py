@@ -50,8 +50,8 @@ class PhotographerSerializer(serializers.ModelSerializer):
     map_square = serializers.SerializerMethodField()
 
     def get_photos(self, instance):
-        photo_obj = Photo.objects.filter(map_square__number=instance.number)
-        return PhotosForMapSquareSerializer(photo_obj, many=True).data
+        photo_obj = Photo.objects.filter(photographer__number=instance.number)
+        return PhotoForPhotographerSerializer(photo_obj, many=True).data
 
     def get_map_square(self, instance):
         return MapSquareForPhotosSerializer(instance.map_square).data

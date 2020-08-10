@@ -74,7 +74,7 @@ export class PhotographerView extends React.Component {
                         {photos.map((photo, k) => (
                             <li key={k}>
                                 <a href={`/photos/${photo.id}`}>
-                                    <h3>Photo{photo.id}</h3>
+                                    <h3>Photo {photo.id}</h3>
                                 </a>
                             </li>
                         ))}
