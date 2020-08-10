@@ -1,5 +1,4 @@
 import React from 'react';
-import * as PropTypes from 'prop-types';
 import Navbar from '../about/Navbar';
 import { Footer } from '../UILibrary/components';
 
@@ -128,6 +127,3 @@ export class PhotoView extends React.Component {
          </>);
      }
 }
-PhotoView.propTypes = {
-    id: PropTypes.number,
-};
