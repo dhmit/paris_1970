@@ -81,7 +81,7 @@ TeamMember.propTypes = {
 class About extends React.Component {
     render() {
         return (<>
-            <div className='about'>
+            <div className='page'>
                 <Navbar currentPage='about'/>
                 <div className='about-title'>
                     About This Project

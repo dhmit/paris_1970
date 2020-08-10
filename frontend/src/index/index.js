@@ -48,7 +48,7 @@ export class IndexView extends React.Component {
             </>);
         });
         return (<>
-            <div className='landing-page'>
+            <div className='page'>
                 <Navbar/>
                 <div className="row" >
                     <div className='col-lg-12 col-md-12'>

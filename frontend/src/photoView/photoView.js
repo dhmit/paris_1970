@@ -66,60 +66,59 @@ export class PhotoView extends React.Component {
 
          return (<>
              <Navbar />
-             <div>
-                 <div className='imageView' style={{ padding: '100px 50px', float: 'left' }}>
+             <div className="page row">
+                 <div className='image-view col-12 col-lg-6'>
                      <h2>Photo Title: {title}</h2>
-                     <img width={500} height={500} src={src} alt={alt}/>
+                     <img className='image-photo' src={src} alt={alt}/>
                      <br/>
                      <button onClick={() => this.flipPhoto()}> Flip photo </button>
                  </div>
-                 <div className='imageInfo'
-                     style={{ padding: '100px 50px', float: 'left', marginTop: 50 }}>
-                     <div className='attributeTitle' style={{ fontWeight: 'bold' }}>
+                 <div className='image-info col-12 col-lg-6'>
+                     <div className='attribute-title'>
                         Photographer:
-                         <div className='attribute'style={{ fontWeight: 'normal' }}>
+                         <div className='attribute'>
                             None
                          </div>
                      </div>
-                     <div className='attributeTitle' style={{ fontWeight: 'bold' }}>
+                     <div className='attribute-title'>
                         Categories
-                         <div className='attribute'style={{ fontWeight: 'normal' }}>
+                         <div className='attribute'>
                             None
                          </div>
                      </div>
-                     <div className='attributeTitle' style={{ fontWeight: 'bold' }}>
+                     <div className='attribute-title'>
                         Whitespace
-                         <div className='attribute'style={{ fontWeight: 'normal' }}>
+                         <div className='attribute'>
                             None
                          </div>
                      </div>
-                     <div className='attributeTitle' style={{ fontWeight: 'bold' }}>
+                     <div className='attribute-title'>
                         Sentiment analysis:
-                         <div className='attribute'style={{ fontWeight: 'normal' }}>
+                         <div className='attribute'>
                             None
                          </div>
                      </div>
-                     <div className='attributeTitle' style={{ fontWeight: 'bold' }}>
+                     <div className='attribute-title'>
                         People detected:
-                         <div className='attribute'style={{ fontWeight: 'normal' }}>
+                         <div className='attribute'>
                             None
                          </div>
                      </div>
-                     <div className='attributeTitle' style={{ fontWeight: 'bold' }}>
+                     <div className='attribute-title'>
                         Text detected:
-                         <div className='attribute'style={{ fontWeight: 'normal' }}>
+                         <div className='attribute'>
                             None
                          </div>
                      </div>
-                     <div className='attributeTitle' style={{ fontWeight: 'bold' }}>
+                     <div className='attribute-title'>
                         Objects detected:
-                         <div className='attribute'style={{ fontWeight: 'normal' }}>
+                         <div className='attribute'>
                             None
                          </div>
                      </div>
-                     <div className='attributeTitle' style={{ fontWeight: 'bold' }}>
+                     <div className='attribute-title'>
                         Map Square Information:
-                         <div className='attribute'style={{ fontWeight: 'normal' }}>
+                         <div className='attribute'>
                             None
                          </div>
                      </div>
