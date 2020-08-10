@@ -128,7 +128,12 @@ class Command(BaseCommand):
                 if file != '__init__.py' and file != '__pycache__':
                     file_path = os.path.join(settings.MIGRATIONS_DIR, file)
                     os.remove(file_path)
-            os.remove(settings.DB_PATH)
+            try:
+                os.remove(settings.DB_PATH)
+            except PermissionError:
+                print_header('''Permission Error: Unable to delete the database file while the
+                backend is running. Please stop the "Run backend" process and try again.''')
+                return
             print('\nDone!')
 
         # Rebuild database
