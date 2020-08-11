@@ -15,7 +15,7 @@ class Navbar extends Component {
         );
 
         return (
-            <div>
+            <nav>
                 <div className='about-nav'>
                     <div className='d-sm-block d-none'>
                         <a className='nav-title' href='/'>
@@ -45,7 +45,7 @@ class Navbar extends Component {
                         <a className='alternate-link' href='/about/'>About</a>
                     </div>
                 }
-            </div>
+            </nav>
         );
     }
 }
