@@ -55,30 +55,23 @@ export class PhotographerView extends React.Component {
         return (<>
             <Navbar/>
             <div className='page'>
-                <div className='photographer-name'>
-                    {name} (ID: {number})
-                </div>
-                <div className='photographer-mapsquare'>
-                    Assigned to Map Square {map_square.number}
-                </div>
-                <div className='photographer-sentiment'>
-                    Sentiment on Paris: {sentiment === '' ? 'N/A' : sentiment }
-                </div>
-                <div className='photographer-type'>
-                    Type of Photographer: {type === '' ? 'N/A' : type }
-                </div>
-                <div className='photographer-photos'>
-                    Photos:
-                    <ul className='photo-list'>
-                        {photos.map((photo, k) => (
-                            <li key={k}>
-                                <a href={`/photos/${photo.id}`}>
-                                    <h3>Photo {photo.id}</h3>
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                <h1>{name} (ID: {number})</h1>
+                <h3>Assigned to:</h3>
+                <h5>Map Square {map_square.number}</h5>
+                <h3 className='photographer-heading'>Sentiment on Paris:</h3>
+                <h5>{sentiment === '' ? 'N/A' : sentiment }</h5>
+                <h3>Type of Photographer:</h3>
+                <h5>{type === '' ? 'N/A' : type }</h5>
+                <h3>Photos:</h3>
+                <ul className='photo-list'>
+                    {photos.map((photo, k) => (
+                        <li key={k}>
+                            <a href={`/photos/${photo.id}`}>
+                                <h3>Photo {photo.id}</h3>
+                            </a>
+                        </li>
+                    ))}
+                </ul>
             </div>
             <Footer/>
         </>);

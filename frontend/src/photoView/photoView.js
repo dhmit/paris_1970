@@ -42,14 +42,14 @@ export class PhotoView extends React.Component {
 
      render() {
          if (this.state.loading) {
-             return (<>
+             return (<h1>
                 Loading!
-             </>);
+             </h1>);
          }
          if (!this.state.photo_data) {
-             return (<>
+             return (<h1>
                 Photo with id {window.location.pathname.split('/')[2]} is not in database.
-             </>);
+             </h1>);
          }
          const {
              title,
@@ -67,60 +67,60 @@ export class PhotoView extends React.Component {
              <Navbar />
              <div className="page row">
                  <div className='image-view col-12 col-lg-6'>
-                     <h2>Photo Title: {title}</h2>
+                     <h1>Photo Title: {title}</h1>
                      <img className='image-photo' src={src} alt={alt}/>
                      <br/>
                      <button onClick={() => this.flipPhoto()}> Flip photo </button>
                  </div>
                  <div className='image-info col-12 col-lg-6'>
-                     <div className='attribute-title'>
+                     <h3>
                         Photographer:
-                         <div className='attribute'>
+                         <h5>
                             None
-                         </div>
-                     </div>
-                     <div className='attribute-title'>
+                         </h5>
+                     </h3>
+                     <h3>
                         Categories
-                         <div className='attribute'>
+                         <h5>
                             None
-                         </div>
-                     </div>
-                     <div className='attribute-title'>
+                         </h5>
+                     </h3>
+                     <h3>
                         Whitespace
-                         <div className='attribute'>
+                         <h5>
                             None
-                         </div>
-                     </div>
-                     <div className='attribute-title'>
+                         </h5>
+                     </h3>
+                     <h3>
                         Sentiment analysis:
-                         <div className='attribute'>
+                         <h5>
                             None
-                         </div>
-                     </div>
-                     <div className='attribute-title'>
+                         </h5>
+                     </h3>
+                     <h3>
                         People detected:
-                         <div className='attribute'>
+                         <h5>
                             None
-                         </div>
-                     </div>
-                     <div className='attribute-title'>
+                         </h5>
+                     </h3>
+                     <h3>
                         Text detected:
-                         <div className='attribute'>
+                         <h5>
                             None
-                         </div>
-                     </div>
-                     <div className='attribute-title'>
+                         </h5>
+                     </h3>
+                     <h3>
                         Objects detected:
-                         <div className='attribute'>
+                         <h5>
                             None
-                         </div>
-                     </div>
-                     <div className='attribute-title'>
+                         </h5>
+                     </h3>
+                     <h3>
                         Map Square Information:
-                         <div className='attribute'>
+                         <h5>
                             None
-                         </div>
-                     </div>
+                         </h5>
+                     </h3>
                  </div>
              </div>
              <Footer />
