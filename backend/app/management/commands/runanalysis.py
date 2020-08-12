@@ -4,20 +4,17 @@ Django management command syncdb
 Syncs local db with data from project Google Sheet
 """
 
+from importlib import import_module
+from typing import Callable
 import pickle
 import os
 import tqdm
 from textwrap import dedent
 
-from django.contrib.auth.models import User
 from django.conf import settings
-from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
-from app.models import Photo, MapSquare, Photographer
-
-def count_photos():
-    return Photo.objects.all().count()
+from app.models import Photo
 
 
 class Command(BaseCommand):
@@ -29,11 +26,22 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         analysis_name = options.get('analysis_name')
 
-        print(analysis_name)
+        analysis_module = import_module(f'.{analysis_name}', package='app.analysis')
 
-        analysis_results = None
-        if analysis_name == 'count_photos':
-            analysis_results = count_photos()
+        if analysis_module:
+            # TODO(ra): check for the existence of an already pickled analysis
+            # and provide a command line flag to rerun optionally or load from pickle
+
+            analysis_func: Callable[[], dict] = getattr(analysis_module, 'analysis')
+            model_field = getattr(analysis_module, 'model_field')
+            analysis_results = analysis_func()
+            for k in analysis_results.keys():
+                photo = Photo.objects.get(pk=k)
+                v = analysis_results.get(k)
+                setattr(photo, model_field, v)
+                photo.save()
+            # TODO(ra): pickle the analysis
+
         else:
             print('There is no such analysis with that name.')
             exit(1)

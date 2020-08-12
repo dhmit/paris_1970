@@ -21,6 +21,7 @@ class Photo(models.Model):
     alt = models.CharField(max_length=252)
     librarian_caption = models.CharField(max_length=252)
     photographer_caption = models.CharField(max_length=252)
+    photographer_caption_length = models.IntegerField(null=True)
     map_square = models.ForeignKey('MapSquare', on_delete=models.SET_NULL, null=True)
     photographer = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
 
