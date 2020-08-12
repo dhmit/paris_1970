@@ -76,59 +76,59 @@ export class PhotoView extends React.Component {
                                 </button>
                             );
                         }
-                        return (<></>);
+                        return '';
                     })}
 
                 </div>
                 <div className='image-info col-12 col-lg-6'>
                     <h3>
                         Photographer:
-                        <h5>
-                            None
-                        </h5>
                     </h3>
+                    <h5>
+                        None
+                    </h5>
                     <h3>
                         Categories
-                        <h5>
-                          None
-                        </h5>
                     </h3>
+                    <h5>
+                      None
+                    </h5>
                     <h3>
                         Whitespace
-                        <h5>
-                            None
-                        </h5>
                     </h3>
+                    <h5>
+                        None
+                    </h5>
                     <h3>
                         Sentiment analysis:
-                        <h5>
-                            None
-                        </h5>
                     </h3>
+                    <h5>
+                        None
+                    </h5>
                     <h3>
                         People detected:
-                        <h5>
-                            None
-                        </h5>
                     </h3>
+                    <h5>
+                        None
+                    </h5>
                     <h3>
                         Text detected:
-                        <h5>
-                            None
-                        </h5>
                     </h3>
+                    <h5>
+                        None
+                    </h5>
                     <h3>
                         Objects detected:
-                        <h5>
-                            None
-                        </h5>
                     </h3>
+                    <h5>
+                        None
+                    </h5>
                     <h3>
                         Map Square Information:
-                        <h5>
-                            None
-                        </h5>
                     </h3>
+                    <h5>
+                        None
+                    </h5>
                 </div>
             </div>
             <Footer />
