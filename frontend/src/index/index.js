@@ -42,7 +42,7 @@ export class IndexView extends React.Component {
                         <h3>Photo{photo.id}</h3>
                     </a>
                 </li>));
-            return (<div key={k}>
+            return (<div key={j}>
                 <a
                     href={`/map_square/${mapSquare.id}`}
                     className='map-square'
