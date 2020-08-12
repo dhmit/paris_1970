@@ -2,7 +2,11 @@ import React from 'react';
 import Navbar from '../about/Navbar';
 import { Footer } from '../UILibrary/components';
 
-const SIDES = ['front', 'back', 'binder'];
+const SIDES = {
+    FRONT: 'front',
+    BACK: 'back',
+    BINDER: 'binder',
+};
 
 export class PhotoView extends React.Component {
     constructor(props) {
@@ -23,7 +27,8 @@ export class PhotoView extends React.Component {
                 this.setState({ loading: false });
             } else {
                 const photo_data = await response.json();
-                const available_sides = SIDES.filter((side) => photo_data[`${side}_src`] !== '');
+                const available_sides = Object.values(SIDES)
+                    .filter((side) => photo_data[`${side}_src`] !== '');
                 const display_side = available_sides.length > 0 ? available_sides[0] : '';
                 this.setState({
                     photo_data,
