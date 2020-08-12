@@ -35,17 +35,17 @@ export class IndexView extends React.Component {
                 Loading...
             </>);
         }
-        const mapSquares = this.state.map_data.map((mapSquare) => {
+        const mapSquares = this.state.map_data.map((mapSquare, j) => {
             const pictureList = mapSquare.photos.map((photo, k) => (
                 <li key={k} className='col-lg-12 col-md-12'>
                     <a href={`/photos/${photo.id}`}>
                         <h3>Photo{photo.id}</h3>
                     </a>
                 </li>));
-            return (<>
+            return (<div key={j}>
                 <p className='map-square'>{mapSquare.name}</p>
                 <ul>{pictureList}</ul>
-            </>);
+            </div>);
         });
         return (<>
             <div className='page'>
