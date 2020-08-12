@@ -15,6 +15,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from app.models import Photo
+from app.common import print_header
 
 
 class Command(BaseCommand):
@@ -26,7 +27,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         analysis_name = options.get('analysis_name')
 
-        analysis_module = import_module(f'.{analysis_name}', package='app.analysis')
+        try:
+            analysis_module = import_module(f'.{analysis_name}', package='app.analysis')
+        except ModuleNotFoundError:
+            print_header('There is no analysis with that name.')
+            exit(1)
 
         if analysis_module:
             # TODO(ra): check for the existence of an already pickled analysis
@@ -41,10 +46,6 @@ class Command(BaseCommand):
                 setattr(photo, model_field, v)
                 photo.save()
             # TODO(ra): pickle the analysis
-
-        else:
-            print('There is no such analysis with that name.')
-            exit(1)
 
         print(analysis_results)
 
