@@ -77,9 +77,6 @@ MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": P
 class Command(BaseCommand):
     help = 'Syncs local db with data from project Google Sheet'
 
-    def add_arguments(self, parser):
-        parser.add_argument('--range', action='store', type=str)
-
     def handle(self, *args, **options):
         # Delete database
         if os.path.exists(settings.DB_PATH):
