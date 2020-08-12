@@ -17,6 +17,7 @@ class Photo(models.Model):
     contains_sticker = models.BooleanField(null=True)
     front_src = models.CharField(max_length=252)
     back_src = models.CharField(max_length=252)
+    binder_src = models.CharField(max_length=252)
     alt = models.CharField(max_length=252)
     librarian_caption = models.CharField(max_length=252)
     photographer_caption = models.CharField(max_length=252)

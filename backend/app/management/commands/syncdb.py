@@ -59,6 +59,18 @@ def create_lookup_dict(drive_service, map_square_folders):
     return lookup_dict
 
 
+def add_photo_srcs(model_kwargs, map_square_folder, photo_srcs):
+    """
+    Takes a list of photo sources and dynamically adds the Google Drive urls into the model kwargs
+    """
+    for src in photo_srcs:
+        try:
+            side = src.split("_")[1].split(".")[0]  # Gets front, back, or binder from the src
+        except IndexError:
+            print_header(f"The photo with source {src} is not named in the correct format")
+        model_kwargs[f"{side}_src"] = map_square_folder.get(src, '')
+
+
 MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
 
 
@@ -199,12 +211,19 @@ class Command(BaseCommand):
                 if model_name == 'Photo':
                     # Looks up the Photo URL of the front and back
                     map_square_number = str(row.get('map_square_number', ''))
-                    front_src = model_kwargs.get('front_src', '')
-                    back_src = model_kwargs.get('back_src', '')
+                    srcs = row.get('srcs', '')
+                    photo_srcs = []
+                    if ',' in srcs:
+                        for src in srcs.split(','):
+                            # strip removes whitespace from beginning or end of string in case
+                            # the person who entered the data added extra spaces
+                            photo_srcs.append(src.strip())
+                    else:
+                        photo_srcs.append(srcs)
                     map_square_folder = photo_url_lookup.get(map_square_number, '')
+
                     if map_square_folder:
-                        model_kwargs['front_src'] = map_square_folder.get(front_src, '')
-                        model_kwargs['back_src'] = map_square_folder.get(back_src, '')
+                        add_photo_srcs(model_kwargs, map_square_folder, photo_srcs)
 
                     # Get the corresponding Photographer objects
                     photographer_number = model_kwargs.get('photographer', None)
