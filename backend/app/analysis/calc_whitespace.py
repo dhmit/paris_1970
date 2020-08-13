@@ -35,10 +35,6 @@ def analysis() -> dict:
                 print(f'Successfully calculated whitespace ratio for photo {photo.id} {side}')
             except (ValueError, FileNotFoundError):
                 pass
-        if 'white_space_ratio_front' in new_attributes.keys():
-            photo.white_space_ratio_front = new_attributes['white_space_ratio_front']
-        if 'white_space_ratio_back' in new_attributes.keys():
-            photo.white_space_ratio_back = new_attributes['white_space_ratio_back']
         result[photo.id] = new_attributes
     return result
 
