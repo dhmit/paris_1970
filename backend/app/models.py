@@ -23,6 +23,9 @@ class Photo(models.Model):
     photographer_caption = models.CharField(max_length=252)
     photographer_caption_length = models.IntegerField(null=True)
     map_square = models.ForeignKey('MapSquare', on_delete=models.SET_NULL, null=True)
+    white_space_ratio_front = models.DecimalField(null=True,max_digits=5, decimal_places=4)
+    white_space_ratio_back = models.DecimalField(null=True,max_digits=5, decimal_places=4)
+    white_space_ratio_binder = models.DecimalField(null=True,max_digits=5, decimal_places=4)
     photographer = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
 
 
