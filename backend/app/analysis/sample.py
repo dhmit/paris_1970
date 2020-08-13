@@ -7,13 +7,10 @@ import unittest
 from ..models import Photo
 
 
-model_field = 'photographer_caption_length'
-
-
 def analysis() -> dict:
     result = {}
     for photo in Photo.objects.all():
-        result[photo.id] = len(photo.photographer_caption)
+        result[photo.id] = {'photographer_caption_length': len(photo.photographer_caption)}
     return result
 
 

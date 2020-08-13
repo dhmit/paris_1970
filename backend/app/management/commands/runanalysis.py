@@ -38,12 +38,13 @@ class Command(BaseCommand):
             # and provide a command line flag to rerun optionally or load from pickle
 
             analysis_func: Callable[[], dict] = getattr(analysis_module, 'analysis')
-            model_field = getattr(analysis_module, 'model_field')
             analysis_results = analysis_func()
             for k in analysis_results.keys():
                 photo = Photo.objects.get(pk=k)
-                v = analysis_results.get(k)
-                setattr(photo, model_field, v)
+                new_attributes = analysis_results.get(k)
+                for field in new_attributes.keys():
+                    value = new_attributes.get(field)
+                    setattr(photo, field, value)
                 photo.save()
             # TODO(ra): pickle the analysis
 
