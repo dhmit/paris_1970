@@ -44,25 +44,36 @@ def create_lookup_dict(drive_service, map_square_folders):
             fields="files(id, name)"
         ).execute()
         images = result.get('files', [])
-        lookup_dict[map_square['name']] = {
-            #  <img src = "https://drive.google.com/uc?id=0Bzgk4zncCwI7aDZCSHY4YU0zNUF&export=download">
 
-            image['name']: f"https://drive.google.com/uc?id={image['id']}&export=download"
-            for image in images
-        }
+        # Creates a dictionary mapping photo number to a list of the photo sources belonging to
+        # that number
+        map_square_dict = {}
+        for image in images:
+            photo_number = image['name'].split('_')[0]
+            photo_srcs = map_square_dict.get(photo_number, {})
+            photo_srcs[image['name']] = \
+                f"https://drive.google.com/uc?id={image['id']}&export=download"
+            map_square_dict[photo_number] = photo_srcs
+
+        lookup_dict[map_square['name']] = map_square_dict
     return lookup_dict
 
 
-def add_photo_srcs(model_kwargs, map_square_folder, photo_srcs):
+# Sides of a photo
+SIDES = ['front', 'back', 'binder']
+
+
+def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
     """
-    Takes a list of photo sources and dynamically adds the Google Drive urls into the model kwargs
+    Takes the map square folder and the photo number to dynamically adds the Google Drive urls
+    into the model kwargs
     """
-    for src in photo_srcs:
-        try:
-            side = src.split("_")[1].split(".")[0]  # Gets front, back, or binder from the src
-        except IndexError:
-            print_header(f"The photo with source {src} is not named in the correct format")
-        model_kwargs[f"{side}_src"] = map_square_folder.get(src, '')
+    photo_urls = map_square_folder.get(photo_number, '')
+    if photo_urls == '':
+        return
+    
+    for side in SIDES:
+        model_kwargs[f'{side}_src'] = photo_urls.get(f'{photo_number}_{side}.jpg', '')
 
 
 MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
@@ -205,21 +216,13 @@ class Command(BaseCommand):
                         MapSquare.objects.filter(number=map_square_number).first()
 
                 if model_name == 'Photo':
-                    # Looks up the Photo URL of the front and back
+                    # Gets the Map Square folder and the photo number to look up the URLs
                     map_square_number = str(row.get('map_square_number', ''))
-                    srcs = row.get('srcs', '')
-                    photo_srcs = []
-                    if ',' in srcs:
-                        for src in srcs.split(','):
-                            # strip removes whitespace from beginning or end of string in case
-                            # the person who entered the data added extra spaces
-                            photo_srcs.append(src.strip())
-                    else:
-                        photo_srcs.append(srcs)
                     map_square_folder = photo_url_lookup.get(map_square_number, '')
+                    photo_number = row.get('number', '')
 
                     if map_square_folder:
-                        add_photo_srcs(model_kwargs, map_square_folder, photo_srcs)
+                        add_photo_srcs(model_kwargs, map_square_folder, str(photo_number))
 
                     # Get the corresponding Photographer objects
                     photographer_number = model_kwargs.get('photographer', None)
