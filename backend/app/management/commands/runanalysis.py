@@ -23,7 +23,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('analysis_name', action='store', type=str)
-        parser.add_argument('rerun', action='store', type=str)
+        parser.add_argument('--rerun', action='store', type=str)
 
     def handle(self, *args, **options):
         analysis_name = options.get('analysis_name')
