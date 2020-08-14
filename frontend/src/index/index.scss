@@ -49,5 +49,10 @@ $side-padding: 100px;
 .map-square {
     font-size: 25px;
     font-weight: bold;
-    margin-bottom: 0px;
+    margin-bottom: 0;
+    color: black;
+}
+
+.map-square:hover {
+    color: black;
 }
