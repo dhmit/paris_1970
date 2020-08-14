@@ -6,12 +6,11 @@ count_photos.py - analysis to count all of the photos in the DB
 import unittest
 from ..models import Photo
 
+MODEL = Photo
 
-def analysis() -> dict:
-    result = {}
-    for photo in Photo.objects.all():
-        result[photo.id] = {'photographer_caption_length': len(photo.photographer_caption)}
-    return result
+
+def analysis(photo) -> dict:
+    return {'photographer_caption_length': len(photo.photographer_caption)}
 
 
 class TestSampleAnalysis(unittest.TestCase):
