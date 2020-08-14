@@ -17,6 +17,9 @@ from app.models import Photo
 
 
 def analysis() -> dict:
+    """
+    Calculates the whitespace for all sides of a photo
+    """
     result = {}
     number_of_photos = len(Photo.objects.all())
     for photo in Photo.objects.all():
