@@ -8,6 +8,9 @@ from ..models import Photo
 
 
 def analysis() -> dict:
+    """
+    Calculates the length of photo's photographer caption
+    """
     result = {}
     for photo in Photo.objects.all():
         result[photo.id] = {'photographer_caption_length': len(photo.photographer_caption)}
