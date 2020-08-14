@@ -11,9 +11,50 @@ from skimage import io
 import numpy as np
 import cv2
 from app.models import Photo
+from app.google_api import load_creds, callback
+from googleapiclient.discovery import build
+from googleapiclient.discovery import build
+from oauth2client.client import GoogleCredentials
+from django.conf import settings
 
+from google import auth
+from oauth2client.client import OAuth2Credentials
+
+from app.google_api import SCOPES
 
 def analysis() -> dict:
+    # creds = load_creds(['https://www.googleapis.com/auth/drive'])
+    creds = GoogleCredentials.from_json(settings.GOOGLE_API_CREDENTIALS_FILE)
+    drive_service = build('drive', 'v3', credentials=creds)
+    PROJECT = 'paris-1970'
+    request = drive_service.instances().list(project=PROJECT)
+    response = request.execute()
+
+    print(response)
+
+    file_id = '1zbeULibx8nZkhRlBkslso7M0lOVudKQH'
+
+    # print(type(drive_service))
+    # print(drive_service.permissions)
+
+    batch = drive_service.new_batch_http_request(callback=callback)
+    domain_permission = {
+        'type': 'domain',
+        'role': 'reader',
+        'domain': '127.0.0.1'
+    }
+    batch.add(drive_service.permissions().create(
+        fileId=file_id,
+        body=domain_permission,
+        fields='id',
+    ))
+    batch = creds.authorize(batch)
+    batch.execute()
+    print(batch)
+    return {}
+
+
+def analysisfd() -> dict:
     result = {}
     for photo in Photo.objects.all():
         photo_srcs = {'front_src': photo.front_src, 'back_src': photo.back_src,
@@ -22,6 +63,7 @@ def analysis() -> dict:
         for side in ['front', 'back', 'binder']:
             try:
                 url = photo_srcs[side + '_src']
+                print(url)
 
                 # Get image, will raise ValueError if src url is ''
                 # will raise FileNotFound error if src is just a filename
