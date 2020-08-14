@@ -4,6 +4,7 @@ Django management command syncdb
 Syncs local db with data from project Google Sheet
 """
 
+import pickle
 import os
 import tqdm
 from textwrap import dedent
@@ -14,11 +15,16 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
 from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 
 from app.models import Photo, MapSquare, Photographer
 from app.common import print_header
-from app.google_api import load_creds
-from app.google_api import SCOPES
+
+# The scope of our access to the Google Sheets Account
+# TODO: reduce this scope, if possible, to only access a single specified sheet
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly',
+          'https://www.googleapis.com/auth/drive.metadata.readonly']
 
 # Our metadata spreadsheet lives here:
 # https://docs.google.com/spreadsheets/d/1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I/edit#gid=0
@@ -97,7 +103,26 @@ class Command(BaseCommand):
 
         # Settings for pickle file
 
-        creds = load_creds(SCOPES)
+        creds = None
+        # The file token.pickle stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+        if os.path.exists(settings.GOOGLE_TOKEN_FILE):
+            with open(settings.GOOGLE_TOKEN_FILE, 'rb') as token:
+                creds = pickle.load(token)
+        # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    settings.GOOGLE_API_CREDENTIALS_FILE,
+                    SCOPES
+                )
+                creds = flow.run_local_server(port=8080)
+            # Save the credentials for the next run
+            with open(settings.GOOGLE_TOKEN_FILE, 'wb') as token:
+                pickle.dump(creds, token)
 
         sheets_service = build('sheets', 'v4', credentials=creds)
         drive_service = build('drive', 'v3', credentials=creds)
