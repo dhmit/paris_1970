@@ -68,10 +68,10 @@ def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
     Takes the map square folder and the photo number to dynamically adds the Google Drive urls
     into the model kwargs
     """
-    photo_urls = map_square_folder.get(photo_number, '')
+    photo_urls = map_square_folder.get(str(photo_number), '')
     if photo_urls == '':
         return
-    
+
     for side in SIDES:
         model_kwargs[f'{side}_src'] = photo_urls.get(f'{photo_number}_{side}.jpg', '')
 
@@ -222,7 +222,7 @@ class Command(BaseCommand):
                     photo_number = row.get('number', '')
 
                     if map_square_folder:
-                        add_photo_srcs(model_kwargs, map_square_folder, str(photo_number))
+                        add_photo_srcs(model_kwargs, map_square_folder, photo_number)
 
                     # Get the corresponding Photographer objects
                     photographer_number = model_kwargs.get('photographer', None)

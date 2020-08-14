@@ -5,8 +5,6 @@ to the size of the image
 
 """
 import unittest
-import os
-import time
 from skimage import io
 import numpy as np
 import cv2
@@ -16,6 +14,9 @@ MODEL = Photo
 
 
 def analysis(photo) -> dict:
+    """
+    Calculates the whitespace for all sides of a photo
+    """
     photo_srcs = {'front_src': photo.front_src, 'back_src': photo.back_src,
                   'binder_src': photo.binder_src}
     results = {}
