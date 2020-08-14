@@ -10,6 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { IndexView } from './index/index';
 import { PhotoView } from './photoView/photoView';
 import { PhotographerView } from './photographerView/photographerView';
+import { MapSquareView } from './mapSquareView/mapSquareView';
 import About from './about/about';
 
 // Import all styles
@@ -24,4 +25,5 @@ window.app_modules = {
     About,
     PhotoView,
     PhotographerView,
+    MapSquareView,
 };
