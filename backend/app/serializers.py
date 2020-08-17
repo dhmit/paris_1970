@@ -24,7 +24,8 @@ class PhotoSerializer(serializers.ModelSerializer):
         model = Photo
         fields = ['id', 'number', 'front_src', 'back_src', 'binder_src', 'alt', 'photographer',
                   'map_square', 'shelfmark', 'librarian_caption', 'photographer_caption',
-                  'contains_sticker']
+                  'contains_sticker', 'white_space_ratio_front', 'white_space_ratio_back',
+                  'white_space_ratio_binder']
 
 
 class MapSquareSerializer(serializers.ModelSerializer):

@@ -19,6 +19,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 from app.models import Photo, MapSquare, Photographer
+from app.common import print_header
 
 # The scope of our access to the Google Sheets Account
 # TODO: reduce this scope, if possible, to only access a single specified sheet
@@ -29,13 +30,6 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly',
 # https://docs.google.com/spreadsheets/d/1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I/edit#gid=0
 METADATA_SPREADSHEET_ID = '1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I'
 
-
-def print_header(header_str):
-    print(dedent(f'''
-        ################################################################################
-        # {header_str}
-        ################################################################################
-    '''))
 
 
 def create_lookup_dict(drive_service, map_square_folders):
@@ -88,9 +82,6 @@ MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": P
 class Command(BaseCommand):
     help = 'Syncs local db with data from project Google Sheet'
 
-    def add_arguments(self, parser):
-        parser.add_argument('--range', action='store', type=str)
-
     def handle(self, *args, **options):
         # Delete database
         if os.path.exists(settings.DB_PATH):
@@ -98,8 +89,13 @@ class Command(BaseCommand):
             try:
                 os.remove(settings.DB_PATH)
             except PermissionError:
-                print_header('''Permission Error: Unable to delete the database file while the
-                        backend is running. Please stop the "Run backend" process and try again.''')
+                # weird indentation because turns out dedent nests weirdly...
+                print_header('Permission Error')
+                print(dedent('''
+                    Unable to delete the database file while the backend is running.
+                    Please stop the "Run backend" process and try again.
+                '''))
+
                 return
 
         # Delete all migrations

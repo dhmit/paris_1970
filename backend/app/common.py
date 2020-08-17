@@ -1,6 +1,8 @@
 """
 Miscellaneous utility functions useful throughout the system
 """
+from textwrap import dedent
+
 from django.shortcuts import render
 
 
@@ -20,3 +22,13 @@ def render_react_view(request, object_id=1, component_name=None):
         'component_name': component_name,
     }
     return render(request, template, context)
+
+
+def print_header(header_str):
+    """
+    Print a header -- mostly for our command line tools.
+    """
+    print(dedent(f'''
+        ################################################################################
+        # {header_str}
+        ################################################################################'''))
