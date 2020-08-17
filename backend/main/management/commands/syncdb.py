@@ -18,8 +18,8 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
-from app.models import Photo, MapSquare, Photographer
-from app.common import print_header
+from main.models import Photo, MapSquare, Photographer
+from main.common import print_header
 
 # The scope of our access to the Google Sheets Account
 # TODO: reduce this scope, if possible, to only access a single specified sheet
@@ -71,7 +71,7 @@ def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
     photo_urls = map_square_folder.get(photo_number, '')
     if photo_urls == '':
         return
-    
+
     for side in SIDES:
         model_kwargs[f'{side}_src'] = photo_urls.get(f'{photo_number}_{side}.jpg', '')
 

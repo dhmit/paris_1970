@@ -13,7 +13,9 @@ from skimage import io
 import numpy as np
 import cv2
 
-from app.models import Photo
+from main.models import Photo
+
+from .tests import AnalysisTestBase
 
 
 def analysis() -> dict:
@@ -61,14 +63,14 @@ def analysis() -> dict:
     return result
 
 
-class TestSampleAnalysis(unittest.TestCase):
+class TestAnalysis(AnalysisTestBase):
     """
     Test cases to make sure things are running properly
     """
 
-    def setUp(self):
+    def test_basic(self):
+        """
+        TODO: write me!
+        """
         pass
 
-
-if __name__ == '__main__':
-    unittest.main()  # run the tests

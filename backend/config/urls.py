@@ -17,8 +17,8 @@ Including another URL configuration
 from django.contrib import admin
 from django.urls import path
 
-from app.common import render_react_view
-from app.views import photo, all_photos, all_map_squares, get_photographer, get_map_square
+from main.common import render_react_view
+from main.views import photo, all_photos, all_map_squares, get_photographer, get_map_square
 
 
 def react_view_path(route, component_name):

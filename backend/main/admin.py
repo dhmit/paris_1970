@@ -1,5 +1,5 @@
 """
-This file controls the administrative interface for paris_1970 app
+This file controls the administrative interface for paris_1970 main
 """
 
 from django.contrib import admin

@@ -14,8 +14,8 @@ from textwrap import dedent
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from app.models import Photo
-from app.common import print_header
+from main.models import Photo
+from main.common import print_header
 
 
 class Command(BaseCommand):
@@ -27,8 +27,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         analysis_name = options.get('analysis_name')
 
+        analysis_module = None
         try:
-            analysis_module = import_module(f'.{analysis_name}', package='app.analysis')
+            analysis_module = import_module(f'.{analysis_name}', package='main.analysis')
         except ModuleNotFoundError:
             print_header('There is no analysis with that name.')
             exit(1)
@@ -47,6 +48,5 @@ class Command(BaseCommand):
                     setattr(photo, field, value)
                 photo.save()
             # TODO(ra): pickle the analysis
-
-        print(analysis_results)
+            print(analysis_results)
 

@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 CONFIG_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MIGRATIONS_DIR = os.path.join(os.path.dirname(CONFIG_DIR), 'app/migrations')
+MIGRATIONS_DIR = os.path.join(os.path.dirname(CONFIG_DIR), 'main/migrations')
 SETTINGS_DIR = os.path.join(CONFIG_DIR, 'settings')
 BACKEND_DIR = os.path.dirname(CONFIG_DIR)
 DB_PATH = os.path.join(BACKEND_DIR, 'db.sqlite3')
@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'webpack_loader',
 
     # our application code
-    'app',
+    'main',
 ]
 
 MIDDLEWARE = [
@@ -68,7 +68,7 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BACKEND_DIR, 'templates'),
         ],
-        'APP_DIRS': True,  # our app doesn't, but our third party apps do!
+        'APP_DIRS': True,  # our main doesn't, but our third party apps do!
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',

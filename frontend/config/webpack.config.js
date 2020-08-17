@@ -50,7 +50,7 @@ module.exports = function(webpackEnv) {
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
 
-  // Webpack uses `publicPath` to determine where the app is being served from.
+  // Webpack uses `publicPath` to determine where the main is being served from.
   // It requires a trailing slash, or the file assets will get an incorrect path.
   // In development, we always serve from the root. This makes config easier.
   const publicPath = isEnvProduction
@@ -60,13 +60,13 @@ module.exports = function(webpackEnv) {
   // For these, "homepage" can be set to "." to enable relative asset paths.
   const shouldUseRelativeAssetPaths = publicPath === './';
 
-  // `publicUrl` is just like `publicPath`, but we will provide it to our app
+  // `publicUrl` is just like `publicPath`, but we will provide it to our main
   // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
   // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
   const publicUrl = isEnvProduction
     ? publicPath.slice(0, -1)
     : isEnvDevelopment && 'http://localhost:3000';
-  // Get environment variables to inject into our app.
+  // Get environment variables to inject into our main.
   const env = getClientEnvironment(publicUrl);
 
   // common function to get style loaders
@@ -141,10 +141,10 @@ module.exports = function(webpackEnv) {
       isEnvDevelopment && require.resolve('webpack-dev-server/client') + '?http://localhost:3000',
       isEnvDevelopment && require.resolve('webpack/hot/dev-server'),
       // isEnvDevelopment && require.resolve('react-dev-utils/webpackHotDevClient'),
-        
-      // Finally, this is your app's code:
+
+      // Finally, this is your main's code:
       paths.appIndexJs,
-      // We include the app code last so that if there is a runtime error during
+      // We include the main code last so that if there is a runtime error during
       // initialization, it doesn't blow up the WebpackDevServer client, and
       // changing JS code would still trigger a refresh.
     ].filter(Boolean),
@@ -309,7 +309,7 @@ module.exports = function(webpackEnv) {
               options: {
                 formatter: require.resolve('react-dev-utils/eslintFormatter'),
                 eslintPath: require.resolve('eslint'),
-                
+
               },
               loader: require.resolve('eslint-loader'),
             },
@@ -340,9 +340,9 @@ module.exports = function(webpackEnv) {
               loader: require.resolve('babel-loader'),
               options: {
                 customize: require.resolve(
-                  'babel-preset-react-app/webpack-overrides'
+                  'babel-preset-react-main/webpack-overrides'
                 ),
-                
+
                 plugins: [
                   [
                     require.resolve('babel-plugin-named-asset-import'),
@@ -363,7 +363,7 @@ module.exports = function(webpackEnv) {
                 compact: isEnvProduction,
               },
             },
-            // Process any JS outside of the app with Babel.
+            // Process any JS outside of the main with Babel.
             // Unlike the application JS, we only compile the standard ES features.
             {
               test: /\.(js|mjs)$/,
@@ -375,13 +375,13 @@ module.exports = function(webpackEnv) {
                 compact: false,
                 presets: [
                   [
-                    require.resolve('babel-preset-react-app/dependencies'),
+                    require.resolve('babel-preset-react-main/dependencies'),
                     { helpers: true },
                   ],
                 ],
                 cacheDirectory: true,
                 cacheCompression: isEnvProduction,
-                
+
                 // If an error happens in a package, it's possible to be
                 // because it was compiled. Thus, we don't want the browser
                 // debugger to show the original code. Instead, the code

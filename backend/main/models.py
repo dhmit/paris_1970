@@ -1,5 +1,5 @@
 """
-Models for the paris_1970 app.
+Models for the paris_1970 main.
 
 """
 from django.db import models

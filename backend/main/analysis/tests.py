@@ -1,17 +1,23 @@
 """
-Tests for the main app.
+Tests for the main main.
 """
 
 from django.test import TestCase
 
+from ..models import Photo
 
-class MainTests(TestCase):
+
+class AnalysisTestBase(TestCase):
     """
     Backend TestCase
     """
-    # def setUp(self):
-    #     super().setUp()
-    #     do any setup here
+    def setUp(self):
+        super().setUp()
+        p0 = Photo()
+        p0.save()
+        p1 = Photo()
+        p1.save()
+        self.photos = Photo.objects.all()
 
     def test_sample(self):
         """
