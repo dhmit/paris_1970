@@ -13,16 +13,14 @@ class AnalysisTestBase(TestCase):
     """
     def setUp(self):
         super().setUp()
-        p0 = Photo()
-        p0.save()
-        p1 = Photo()
-        p1.save()
-        self.photos = Photo.objects.all()
+        p_0 = Photo()
+        p_0.save()
+        p_1 = Photo()
+        p_1.save()
 
     def test_sample(self):
         """
         Remove me once we have real tests here.
         """
-        two = 2
-        another_two = 2
-        self.assertEqual(two + another_two, 4)
+        num_photos = Photo.objects.all().count()
+        self.assertEqual(num_photos, 2)

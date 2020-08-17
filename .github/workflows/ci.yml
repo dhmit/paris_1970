@@ -27,6 +27,7 @@ jobs:
     - name: Run Django tests
       run: |
         cd backend
+        python manage.py migrate
         python manage.py test
 
   python_linters:
