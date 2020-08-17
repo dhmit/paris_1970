@@ -4,7 +4,6 @@ calc_whitespace.py - analysis to calculate ratio of pixels above a certain thres
 to the size of the image
 
 """
-import unittest
 from urllib.error import HTTPError
 from http.client import RemoteDisconnected
 from textwrap import dedent
