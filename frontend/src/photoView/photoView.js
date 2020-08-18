@@ -145,7 +145,7 @@ export class PhotoView extends React.Component {
                         if (attributeValue) {
                             return (
                                 <div key={k}>
-                                    <h3>{ATTRIBUTES_TO_DISPLAY_NAME[attribute]}</h3>
+                                    <h3>{ATTRIBUTES_TO_DISPLAY_NAME[attribute]}:</h3>
                                     <h5>{attributeValue}</h5>
                                 </div>
                             );
