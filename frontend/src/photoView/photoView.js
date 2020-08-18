@@ -8,6 +8,12 @@ const SIDES = {
     BINDER: 'binder',
 };
 
+const ATTRIBUTES_TO_DISPLAY_NAME = {
+    white_space_ratio_back: 'White Space Ratio of Back Side',
+    white_space_ratio_front: 'White Space Ratio of Front Side',
+    white_space_ratio_binder: 'White Space Ratio of Binder Side',
+};
+
 export class PhotoView extends React.Component {
     constructor(props) {
         super(props);
@@ -134,6 +140,18 @@ export class PhotoView extends React.Component {
                     <h5>
                         None
                     </h5>
+                    {Object.keys(ATTRIBUTES_TO_DISPLAY_NAME).map((attribute, k) => {
+                        const attributeValue = this.state.photo_data[attribute];
+                        if (attributeValue) {
+                            return (
+                                <div key={k}>
+                                    <h3>{ATTRIBUTES_TO_DISPLAY_NAME[attribute]}</h3>
+                                    <h5>{attributeValue}</h5>
+                                </div>
+                            );
+                        }
+                        return '';
+                    })}
                 </div>
             </div>
             <Footer />
