@@ -6,12 +6,7 @@ Syncs local db with data from project Google Sheet
 
 from importlib import import_module
 from typing import Callable
-import pickle
-import os
-import tqdm
-from textwrap import dedent
 
-from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from app.models import Photo
@@ -19,6 +14,9 @@ from app.common import print_header
 
 
 class Command(BaseCommand):
+    """
+    Custom django-admin command used to run analysis from the app/analysis folder
+    """
     help = 'Run an analysis'
 
     def add_arguments(self, parser):
@@ -49,4 +47,3 @@ class Command(BaseCommand):
             # TODO(ra): pickle the analysis
 
         print(analysis_results)
-
