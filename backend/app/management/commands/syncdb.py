@@ -90,6 +90,8 @@ def load_creds(scopes):
     :param scopes: The list of scopes to request
     :return: Credentials object created with scopes :param scopes
     """
+    # Settings for pickle file
+
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -111,6 +113,24 @@ def load_creds(scopes):
         with open(settings.GOOGLE_TOKEN_FILE, 'wb') as token:
             pickle.dump(creds, token)
     return creds
+
+
+def call_sheets_api(sheets_service, spreadsheet_ranges):
+    """
+    Creates list of list of spreadsheet rows
+    :param sheets_service: Resource object for interacting with the google API
+    :param spreadsheet_ranges: Names of spreadsheets to import
+    :return: List of list of spreadsheet rows (by model)
+    """
+    databases = []
+    sheet = sheets_service.spreadsheets()
+    for spreadsheet_range in spreadsheet_ranges:
+        get_values_cmd = \
+            sheet.values().get(spreadsheetId=METADATA_SPREADSHEET_ID, range=spreadsheet_range)
+        result = get_values_cmd.execute()
+        values = result.get('values', [])
+        databases.append(values)
+    return databases
 
 
 def populate_database(model_name, values_as_a_dict, photo_url_lookup):
@@ -219,8 +239,6 @@ class Command(BaseCommand):
         print_header(f'''Will import ranges {", ".join(spreadsheet_ranges)}. (If nothing
           is happening, please try again.)''')
 
-        # Settings for pickle file
-
         creds = load_creds(SCOPES)
 
         sheets_service = build('sheets', 'v4', credentials=creds)
@@ -236,14 +254,7 @@ class Command(BaseCommand):
         photo_url_lookup = create_lookup_dict(drive_service, items)
 
         # Call the Sheets API
-        databases = []
-        sheet = sheets_service.spreadsheets()
-        for spreadsheet_range in spreadsheet_ranges:
-            get_values_cmd = \
-                sheet.values().get(spreadsheetId=METADATA_SPREADSHEET_ID, range=spreadsheet_range)
-            result = get_values_cmd.execute()
-            values = result.get('values', [])
-            databases.append(values)
+        databases = call_sheets_api(sheets_service, spreadsheet_ranges)
 
         # Rebuild database
         print_header('Rebuilding db from migrations...')
