@@ -146,6 +146,9 @@ def call_sheets_api(spreadsheet_ranges, creds):
     return databases
 
 
+MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
+
+
 def populate_database(model_name, values_as_a_dict, photo_url_lookup):
     """
     Adds model instances to the database based on the data imported from the google spreadsheet
@@ -211,9 +214,6 @@ def populate_database(model_name, values_as_a_dict, photo_url_lookup):
 
         model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
         model_instance.save()
-
-
-MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
 
 
 class Command(BaseCommand):
