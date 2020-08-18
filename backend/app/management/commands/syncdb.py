@@ -35,6 +35,10 @@ METADATA_SPREADSHEET_ID = '1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I'
 def create_lookup_dict(drive_service, map_square_folders):
     """
     Creates a quick look up dictionary to get the image URL using map square number and source name
+    :param drive_service: Resource object for interacting with the google API
+    :param map_square_folders: List of dictionaries containing id and name of map square folder
+    in the google drive
+    :return Look up dictionary to get the image URL using map square number and source name
     """
     lookup_dict = {}
     # tqdm is a library that shows a progress bar
@@ -67,6 +71,9 @@ def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
     """
     Takes the map square folder and the photo number to dynamically adds the Google Drive urls
     into the model kwargs
+    :param model_kwargs: Dictionary of keyword arguments to be used in creating the model
+    :param map_square_folder: Dictionary of photo sources with keys of photo_number
+    :param photo_number: The number of the desired photo in the map_square_folder
     """
     photo_urls = map_square_folder.get(photo_number, '')
     if photo_urls == '':
@@ -77,6 +84,12 @@ def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
 
 
 def load_creds(scopes):
+    """
+    Creates credentials that can be used to construct a Resource object for interacting with the
+    google API
+    :param scopes: The list of scopes to request
+    :return: Credentials object created with scopes :param scopes
+    """
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -101,6 +114,13 @@ def load_creds(scopes):
 
 
 def populate_database(model_name, values_as_a_dict, photo_url_lookup):
+    """
+    Adds model instances to the database based on the data imported from the google spreadsheet
+    :param model_name: Name of the model to create an instance of
+    :param values_as_a_dict: List of dictionaries representing spreadsheet rows in the form of
+    { column names: cell values }
+    :param photo_url_lookup: Dictionary of map square folders in the form of a dictionary
+    """
     for row in values_as_a_dict:
         # print(row)
         # Filter column headers for model fields
@@ -112,10 +132,10 @@ def populate_database(model_name, values_as_a_dict, photo_url_lookup):
                 # Check if value in column is a number
                 value = row[header]
                 if header in ['number', 'map_square_number', 'photographer']:
+                    if header == 'map_square_number':
+                        header = 'map_square'
                     try:
                         value = int(value)
-                        if header == 'map_square_number':
-                            header = 'map_square'
                     except ValueError:
                         continue
                 # Evaluate value as a boolean
@@ -134,7 +154,7 @@ def populate_database(model_name, values_as_a_dict, photo_url_lookup):
         if len(model_kwargs) == 0:
             continue
 
-        if model_name == 'Photo' or model_name == 'Photographer':
+        if model_name in ['Photo', 'Photographer']:
             map_square_number = model_kwargs.get('map_square', None)
             # Returns the object that matches or None if there is no match
             model_kwargs['map_square'] = \
@@ -187,7 +207,7 @@ class Command(BaseCommand):
 
         # Delete all migrations
         for file in os.listdir(settings.MIGRATIONS_DIR):
-            if file != '__init__.py' and file != '__pycache__':
+            if file not in ['__init__.py', '__pycache__']:
                 file_path = os.path.join(settings.MIGRATIONS_DIR, file)
                 os.remove(file_path)
         print('Done!')

@@ -6,6 +6,7 @@ Syncs local db with data from project Google Sheet
 
 from importlib import import_module
 from typing import Callable
+import sys
 
 from django.core.management.base import BaseCommand
 
@@ -29,7 +30,7 @@ class Command(BaseCommand):
             analysis_module = import_module(f'.{analysis_name}', package='app.analysis')
         except ModuleNotFoundError:
             print_header('There is no analysis with that name.')
-            exit(1)
+            sys.exit(1)
 
         if analysis_module:
             # TODO(ra): check for the existence of an already pickled analysis
