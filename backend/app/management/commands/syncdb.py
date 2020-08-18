@@ -32,14 +32,24 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly',
 METADATA_SPREADSHEET_ID = '1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I'
 
 
-def create_lookup_dict(drive_service, map_square_folders):
+def create_lookup_dict(creds):
     """
     Creates a quick look up dictionary to get the image URL using map square number and source name
-    :param drive_service: Resource object for interacting with the google API
-    :param map_square_folders: List of dictionaries containing id and name of map square folder
-    in the google drive
+    :param creds: Credentials object for drive service
     :return Look up dictionary to get the image URL using map square number and source name
     """
+    # Resource object for interacting with the google API
+    drive_service = build('drive', 'v3', credentials=creds)
+
+    # Get list of files in google drive folder
+    results = drive_service.files().list(
+        q="'1aiY1nFJn6T7khu5dhIs3U2o8RdHBu6V7' in parents",
+        fields="nextPageToken, files(id, name)"
+    ).execute()
+
+    # List of dictionaries containing id and name of map square folder in the google drive
+    map_square_folders = results.get('files', [])
+
     lookup_dict = {}
     # tqdm is a library that shows a progress bar
     for map_square in tqdm.tqdm(map_square_folders):
@@ -115,13 +125,16 @@ def load_creds(scopes):
     return creds
 
 
-def call_sheets_api(sheets_service, spreadsheet_ranges):
+def call_sheets_api(spreadsheet_ranges, creds):
     """
     Creates list of list of spreadsheet rows
-    :param sheets_service: Resource object for interacting with the google API
     :param spreadsheet_ranges: Names of spreadsheets to import
+    :param creds: Credentials object for drive service
     :return: List of list of spreadsheet rows (by model)
     """
+    # Resource object for interacting with the google API
+    sheets_service = build('sheets', 'v4', credentials=creds)
+
     databases = []
     sheet = sheets_service.spreadsheets()
     for spreadsheet_range in spreadsheet_ranges:
@@ -142,10 +155,12 @@ def populate_database(model_name, values_as_a_dict, photo_url_lookup):
     :param photo_url_lookup: Dictionary of map square folders in the form of a dictionary
     """
     for row in values_as_a_dict:
-        # print(row)
         # Filter column headers for model fields
         model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
-        model_field_names = [field.name for field in model_fields]
+        model_field_names = []
+        for field in model_fields:
+            model_field_names.append(field.name)
+
         model_kwargs = {}
         for header in row.keys():
             if header in model_field_names or header == 'map_square_number':
@@ -241,20 +256,12 @@ class Command(BaseCommand):
 
         creds = load_creds(SCOPES)
 
-        sheets_service = build('sheets', 'v4', credentials=creds)
-        drive_service = build('drive', 'v3', credentials=creds)
-
         print_header('Getting the URL for all photos (This might take a couple of minutes)...')
         # Create a lookup dictionary to get photo urls using Drive API
-        results = drive_service.files().list(
-            q="'1aiY1nFJn6T7khu5dhIs3U2o8RdHBu6V7' in parents",
-            fields="nextPageToken, files(id, name)"
-        ).execute()
-        items = results.get('files', [])
-        photo_url_lookup = create_lookup_dict(drive_service, items)
+        photo_url_lookup = create_lookup_dict(creds)
 
         # Call the Sheets API
-        databases = call_sheets_api(sheets_service, spreadsheet_ranges)
+        databases = call_sheets_api(spreadsheet_ranges, creds)
 
         # Rebuild database
         print_header('Rebuilding db from migrations...')
