@@ -157,9 +157,7 @@ def populate_database(model_name, values_as_a_dict, photo_url_lookup):
     for row in values_as_a_dict:
         # Filter column headers for model fields
         model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
-        model_field_names = []
-        for field in model_fields:
-            model_field_names.append(field.name)
+        model_field_names = [field.name for field in model_fields]
 
         model_kwargs = {}
         for header in row.keys():
@@ -280,7 +278,6 @@ class Command(BaseCommand):
             print_header(f'{model_name}: Importing these values from the spreadsheet')
 
             header = values[0]
-            values_as_a_dict = [{header_val: entry for header_val, entry in zip(header, row)}
-                                for row in values[1:]]
+            values_as_a_dict = [dict(zip(header, row)) for row in values[1:]]
 
             populate_database(model_name, values_as_a_dict, photo_url_lookup)
