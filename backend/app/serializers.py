@@ -4,7 +4,8 @@ in ways that can be transported across the backend/frontend divide, or
 allow the frontend to suggest changes to the backend/database.
 """
 from rest_framework import serializers
-from .models import Photo, MapSquare, Photographer
+import json
+from .models import Photo, MapSquare, Photographer, CorpusAnalysisResult
 
 
 class PhotoSerializer(serializers.ModelSerializer):
@@ -110,3 +111,18 @@ class PhotosForMapSquareSerializer(serializers.ModelSerializer):
         model = Photo
         fields = ['id', 'number', 'front_src', 'back_src', 'binder_src', 'alt', 'photographer',
                   'shelfmark', 'librarian_caption', 'photographer_caption', 'contains_sticker']
+
+
+class CorpusAnalysisResultsSerializer(serializers.ModelSerializer):
+    """
+    Serializes the corpus analysis results. It converts the string version of JSON to regular
+    JSON for the frontend to use.
+    """
+    analysis_result = serializers.SerializerMethodField()
+
+    def get_analysis_result(self, instance):
+        return json.loads(instance.analysis_result)
+
+    class Meta:
+        model = CorpusAnalysisResult
+        fields = ['analysis_name', 'analysis_result']
