@@ -1,3 +1,5 @@
+google
+googleapiclient
 asgiref==3.2.10
 backcall==0.2.0
 cachetools==4.1.1

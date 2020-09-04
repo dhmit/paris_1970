@@ -36,6 +36,30 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly',
 METADATA_SPREADSHEET_ID = '1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I'
 
 
+def authorize_google_apps():
+    credentials = None
+    # The file token.pickle stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists(settings.GOOGLE_TOKEN_FILE):
+        with open(settings.GOOGLE_TOKEN_FILE, 'rb') as token:
+            credentials = pickle.load(token)
+    # If there are no (valid) credentials available, let the user log in.
+    if not credentials or not credentials.valid:
+        if credentials and credentials.expired and credentials.refresh_token:
+            credentials.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                settings.GOOGLE_API_CREDENTIALS_FILE,
+                SCOPES
+            )
+            credentials = flow.run_local_server(port=8080)
+        # Save the credentials for the next run
+        with open(settings.GOOGLE_TOKEN_FILE, 'wb') as token:
+            pickle.dump(credentials, token)
+
+    return credentials
+
 
 def create_lookup_dict(drive_service, map_square_folders):
     """
@@ -84,7 +108,7 @@ def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
 
 
 def import_row(
-    row: List[dict],
+    row: dict,
     model_name: str,
     photo_url_lookup: dict
 ):
@@ -134,7 +158,7 @@ def import_row(
     if model_name == 'Photo':
         # Gets the Map Square folder and the photo number to look up the URLs
         map_square_number = str(row.get('map_square_number', ''))
-        map_square_folder = photo_url_lookup.get(map_square_number, '')
+        map_square_folder = photo_url_lookup.get(map_square_number, {})
         photo_number = row.get('number', '')
 
         if map_square_folder:
@@ -151,8 +175,6 @@ def import_row(
     model_instance.save()
 
 
-
-
 class Command(BaseCommand):
     """
     Syncs local db with data from project Google Sheet and Google Drive
@@ -161,6 +183,8 @@ class Command(BaseCommand):
     help = 'Syncs local db with data from project Google Sheet and Google Drive'
 
     def handle(self, *args, **options):
+        # pylint: disable=too-many-locals
+
         # Delete database
         if os.path.exists(settings.DB_PATH):
             print_header('Deleting existing db...')
@@ -192,29 +216,10 @@ class Command(BaseCommand):
 
         # Settings for pickle file
 
-        creds = None
-        # The file token.pickle stores the user's access and refresh tokens, and is
-        # created automatically when the authorization flow completes for the first
-        # time.
-        if os.path.exists(settings.GOOGLE_TOKEN_FILE):
-            with open(settings.GOOGLE_TOKEN_FILE, 'rb') as token:
-                creds = pickle.load(token)
-        # If there are no (valid) credentials available, let the user log in.
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    settings.GOOGLE_API_CREDENTIALS_FILE,
-                    SCOPES
-                )
-                creds = flow.run_local_server(port=8080)
-            # Save the credentials for the next run
-            with open(settings.GOOGLE_TOKEN_FILE, 'wb') as token:
-                pickle.dump(creds, token)
+        credentials = authorize_google_apps()
 
-        sheets_service = build('sheets', 'v4', credentials=creds)
-        drive_service = build('drive', 'v3', credentials=creds)
+        sheets_service = build('sheets', 'v4', credentials=credentials)
+        drive_service = build('drive', 'v3', credentials=credentials)
 
         print_header('Getting the URL for all photos (This might take a couple of minutes)...')
         # Create a lookup dictionary to get photo urls using Drive API
@@ -242,7 +247,8 @@ class Command(BaseCommand):
         print('Done!')
 
         # THIS IS JUST FOR PROTOTYPING NEVER EVER EVER EVER IN PRODUCTION do this
-        superuser = User.objects.create_superuser('admin', password='adminadmin')
+        User.objects.create_superuser('admin', password='adminadmin')
+
         if not databases:
             print_header('No data found.')
             return
@@ -251,8 +257,11 @@ class Command(BaseCommand):
             print_header(f'{model_name}: Importing these values from the spreadsheet')
 
             header = values[0]
-            values_as_a_dict = [{header_val: entry for header_val, entry in zip(header, row)}
-                                for row in values[1:]]
+            values_as_dicts = []
+            for row in values[1:]:
+                inner_dict = {}
+                for header, entry in zip(header, row):
+                    inner_dict[header] = entry
 
-            for row in values_as_a_dict:
+            for row in values_as_dicts:
                 import_row(row, model_name, photo_url_lookup)
