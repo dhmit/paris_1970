@@ -8,6 +8,7 @@ import pickle
 import os
 import tqdm
 from textwrap import dedent
+from typing import List
 
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -62,6 +63,8 @@ def create_lookup_dict(drive_service, map_square_folders):
 # Sides of a photo
 SIDES = ['front', 'back', 'binder']
 
+MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
+
 
 def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
     """
@@ -71,16 +74,77 @@ def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
     photo_urls = map_square_folder.get(photo_number, '')
     if photo_urls == '':
         return
-    
+
     for side in SIDES:
         model_kwargs[f'{side}_src'] = photo_urls.get(f'{photo_number}_{side}.jpg', '')
 
 
-MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
+def import_row(row: List[dict], model_name):
+    # Filter column headers for model fields
+    model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
+    model_field_names = [field.name for field in model_fields]
+    model_kwargs = {}
+    for header in row.keys():
+        if header in model_field_names or header == 'map_square_number':
+            # Check if value in column is a number
+            value = row[header]
+            if header in ['number', 'map_square_number', 'photographer']:
+                try:
+                    value = int(value)
+                    if header == 'map_square_number':
+                        header = 'map_square'
+                except ValueError:
+                    continue
+            # Evaluate value as a boolean
+            elif header == 'contains_sticker':
+                if value.lower() == 'yes':
+                    value = True
+                elif value.lower() == 'no':
+                    value = False
+                elif value.isdigit() and 0 <= int(value) <= 1:
+                    value = bool(value)
+                else:
+                    continue
+            model_kwargs[header] = value
+
+    # If no model fields found, do not create model instance
+    if len(model_kwargs) == 0:
+        continue
+
+    if model_name == 'Photo' or model_name == 'Photographer':
+        map_square_number = model_kwargs.get('map_square', None)
+        # Returns the object that matches or None if there is no match
+        model_kwargs['map_square'] = \
+            MapSquare.objects.filter(number=map_square_number).first()
+
+    if model_name == 'Photo':
+        # Gets the Map Square folder and the photo number to look up the URLs
+        map_square_number = str(row.get('map_square_number', ''))
+        map_square_folder = photo_url_lookup.get(map_square_number, '')
+        photo_number = row.get('number', '')
+
+        if map_square_folder:
+            add_photo_srcs(model_kwargs, map_square_folder, str(photo_number))
+
+        # Get the corresponding Photographer objects
+        photographer_number = model_kwargs.get('photographer', None)
+        model_kwargs['photographer'] = \
+            Photographer.objects.filter(number=photographer_number).first()
+
+    print_header("Final model_kwargs: " + str(model_kwargs))
+
+    model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
+    model_instance.save()
+
+
 
 
 class Command(BaseCommand):
-    help = 'Syncs local db with data from project Google Sheet'
+    """
+    Syncs local db with data from project Google Sheet and Google Drive
+    """
+
+    help = 'Syncs local db with data from project Google Sheet and Google Drive'
 
     def handle(self, *args, **options):
         # Delete database
@@ -100,7 +164,7 @@ class Command(BaseCommand):
 
         # Delete all migrations
         for file in os.listdir(settings.MIGRATIONS_DIR):
-            if file != '__init__.py' and file != '__pycache__':
+            if file not in ['__init__.py', '__pycache__']:
                 file_path = os.path.join(settings.MIGRATIONS_DIR, file)
                 os.remove(file_path)
         print('Done!')
@@ -177,59 +241,4 @@ class Command(BaseCommand):
                                 for row in values[1:]]
 
             for row in values_as_a_dict:
-                # print(row)
-                # Filter column headers for model fields
-                model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
-                model_field_names = [field.name for field in model_fields]
-                model_kwargs = {}
-                for header in row.keys():
-                    if header in model_field_names or header == 'map_square_number':
-                        # Check if value in column is a number
-                        value = row[header]
-                        if header in ['number', 'map_square_number', 'photographer']:
-                            try:
-                                value = int(value)
-                                if header == 'map_square_number':
-                                    header = 'map_square'
-                            except ValueError:
-                                continue
-                        # Evaluate value as a boolean
-                        elif header == 'contains_sticker':
-                            if value.lower() == 'yes':
-                                value = True
-                            elif value.lower() == 'no':
-                                value = False
-                            elif value.isdigit() and 0 <= int(value) <= 1:
-                                value = bool(value)
-                            else:
-                                continue
-                        model_kwargs[header] = value
-
-                # If no model fields found, do not create model instance
-                if len(model_kwargs) == 0:
-                    continue
-
-                if model_name == 'Photo' or model_name == 'Photographer':
-                    map_square_number = model_kwargs.get('map_square', None)
-                    # Returns the object that matches or None if there is no match
-                    model_kwargs['map_square'] = \
-                        MapSquare.objects.filter(number=map_square_number).first()
-
-                if model_name == 'Photo':
-                    # Gets the Map Square folder and the photo number to look up the URLs
-                    map_square_number = str(row.get('map_square_number', ''))
-                    map_square_folder = photo_url_lookup.get(map_square_number, '')
-                    photo_number = row.get('number', '')
-
-                    if map_square_folder:
-                        add_photo_srcs(model_kwargs, map_square_folder, str(photo_number))
-
-                    # Get the corresponding Photographer objects
-                    photographer_number = model_kwargs.get('photographer', None)
-                    model_kwargs['photographer'] = \
-                        Photographer.objects.filter(number=photographer_number).first()
-
-                print_header("Final model_kwargs: " + str(model_kwargs))
-
-                model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
-                model_instance.save()
+                import_row(row, model_name)
