@@ -4,7 +4,7 @@ Tests for the main main.
 
 from django.test import TestCase
 
-from ..models import Photo
+from app.models import Photo
 
 
 class AnalysisTestBase(TestCase):
@@ -24,3 +24,15 @@ class AnalysisTestBase(TestCase):
         """
         num_photos = Photo.objects.all().count()
         self.assertEqual(num_photos, 2)
+
+
+class TestCalcWhitespace(AnalysisTestBase):
+    """
+    Tests calc_whitespace
+    """
+
+    def test_analysis(self):
+        """
+        TODO: write me!
+        """
+        pass

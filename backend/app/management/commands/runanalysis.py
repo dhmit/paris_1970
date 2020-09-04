@@ -5,13 +5,9 @@ Syncs local db with data from project Google Sheet
 """
 
 from importlib import import_module
+import sys
 from typing import Callable
-import pickle
-import os
-import tqdm
-from textwrap import dedent
 
-from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from app.models import Photo
@@ -19,6 +15,9 @@ from app.common import print_header
 
 
 class Command(BaseCommand):
+    """
+    Run an analysis
+    """
     help = 'Run an analysis'
 
     def add_arguments(self, parser):
@@ -33,7 +32,7 @@ class Command(BaseCommand):
             analysis_module = import_module(f'.{analysis_name}', package='app.analysis')
         except ModuleNotFoundError:
             print_header('There is no analysis with that name.')
-            exit(1)
+            sys.exit(1)
 
         if analysis_module:
             result_path = os.path.join(settings.ANALYSIS_PICKLE_PATH, f'{analysis_name}.pickle')

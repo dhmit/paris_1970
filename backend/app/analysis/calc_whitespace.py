@@ -19,7 +19,6 @@ from .tests import AnalysisTestBase
 
 MODEL = Photo
 
-
 def analysis(photo) -> dict:
     """
     Calculates the whitespace for all sides of a photo
@@ -53,20 +52,10 @@ def analysis(photo) -> dict:
                 calculate whitespace for all the photos, even the first time. If it stops
                 working, you will have to wait a while before it is successfully able to make
                 requests again. ***
-
                 Successfully calculated whitespace ratio for {photo.id-1}/{number_of_photos}
                 photos.
-            '''))
-    return results
-
-
-class TestAnalysis(AnalysisTestBase):
-    """
-    Test cases to make sure things are running properly
-    """
-
-    def test_analysis(self):
-        """
-        TODO: write me!
-        """
-        pass
+                '''))
+                return result
+        result[photo.id] = new_attributes
+    print('Successfully calculated whitespace ratio for all photos.')
+    return result
