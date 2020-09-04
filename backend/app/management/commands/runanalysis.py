@@ -6,6 +6,10 @@ Syncs local db with data from project Google Sheet
 
 from importlib import import_module
 import sys
+import pickle
+import os
+
+from django.conf import settings
 from typing import Callable
 
 from django.core.management.base import BaseCommand

@@ -55,7 +55,6 @@ def analysis(photo) -> dict:
                 Successfully calculated whitespace ratio for {photo.id-1}/{number_of_photos}
                 photos.
                 '''))
-                return result
-        result[photo.id] = new_attributes
-    print('Successfully calculated whitespace ratio for all photos.')
-    return result
+            return results
+        print('Successfully calculated whitespace ratio for all photos.')
+        return results
