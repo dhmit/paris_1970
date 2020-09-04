@@ -86,7 +86,8 @@ class PhotoForPhotographerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
         fields = ['id', 'front_src', 'back_src', 'binder_src', 'alt', 'map_square', 'number',
-                  'shelfmark', 'librarian_caption', 'photographer_caption', 'contains_sticker']
+                  'shelfmark', 'librarian_caption', 'photographer_caption', 'contains_sticker',
+                  'white_space_ratio_front', 'white_space_ratio_back', 'white_space_ratio_binder']
 
 
 class MapSquareForPhotosSerializer(serializers.ModelSerializer):
@@ -110,8 +111,8 @@ class PhotosForMapSquareSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
         fields = ['id', 'number', 'front_src', 'back_src', 'binder_src', 'alt', 'photographer',
-                  'shelfmark', 'librarian_caption', 'photographer_caption', 'contains_sticker']
-
+                  'shelfmark', 'librarian_caption', 'photographer_caption', 'contains_sticker',
+                  'white_space_ratio_front', 'white_space_ratio_back', 'white_space_ratio_binder']
 
 class CorpusAnalysisResultsSerializer(serializers.ModelSerializer):
     """
