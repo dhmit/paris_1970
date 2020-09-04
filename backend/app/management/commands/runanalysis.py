@@ -9,12 +9,12 @@ import sys
 import pickle
 import os
 
-from django.conf import settings
 from typing import Callable
+from django.conf import settings
 
 from django.core.management.base import BaseCommand
 
-from app.models import Photo
+# from app.models import Photo
 from app.common import print_header
 
 
@@ -30,7 +30,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         analysis_name = options.get('analysis_name')
-        rerun = True if options.get('rerun') == 'rerun' else False
+        rerun = options.get('rerun') == 'rerun'
 
         try:
             analysis_module = import_module(f'.{analysis_name}', package='app.analysis')
@@ -56,8 +56,8 @@ class Command(BaseCommand):
                 if rerun or instance_identifier not in past_results:
                     try:
                         analysis_results = analysis_func(model_instance)
-                    except Exception as e:
-                        print(e)
+                    except Exception as error:
+                        print(error)
                         return
                 else:
                     analysis_results = past_results[instance_identifier]

@@ -15,7 +15,7 @@ import cv2
 
 from app.models import Photo
 
-from .tests import AnalysisTestBase
+# from .tests import AnalysisTestBase
 
 MODEL = Photo
 
@@ -56,5 +56,5 @@ def analysis(photo) -> dict:
                 photos.
                 '''))
             return results
-        print('Successfully calculated whitespace ratio for all photos.')
-        return results
+    print('Successfully calculated whitespace ratio for all photos.')
+    return results
