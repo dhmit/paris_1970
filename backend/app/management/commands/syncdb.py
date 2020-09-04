@@ -4,20 +4,24 @@ Django management command syncdb
 Syncs local db with data from project Google Sheet
 """
 
+# Python standard library
 import pickle
 import os
-import tqdm
 from textwrap import dedent
 
+# 3rd party
+import tqdm
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+
+# Django
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-
+# Ours
 from app.models import Photo, MapSquare, Photographer
 from app.common import print_header
 
@@ -30,6 +34,33 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly',
 # https://docs.google.com/spreadsheets/d/1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I/edit#gid=0
 METADATA_SPREADSHEET_ID = '1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I'
 
+
+def authorize_google_apps():
+    """
+    Authorization flow for letting our application talk with the Google API
+    """
+    credentials = None
+    # The file token.pickle stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists(settings.GOOGLE_TOKEN_FILE):
+        with open(settings.GOOGLE_TOKEN_FILE, 'rb') as token:
+            credentials = pickle.load(token)
+    # If there are no (valid) credentials available, let the user log in.
+    if not credentials or not credentials.valid:
+        if credentials and credentials.expired and credentials.refresh_token:
+            credentials.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                settings.GOOGLE_API_CREDENTIALS_FILE,
+                SCOPES
+            )
+            credentials = flow.run_local_server(port=8080)
+        # Save the credentials for the next run
+        with open(settings.GOOGLE_TOKEN_FILE, 'wb') as token:
+            pickle.dump(credentials, token)
+
+    return credentials
 
 
 def create_lookup_dict(drive_service, map_square_folders):
@@ -62,6 +93,8 @@ def create_lookup_dict(drive_service, map_square_folders):
 # Sides of a photo
 SIDES = ['front', 'back', 'binder']
 
+MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
+
 
 def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
     """
@@ -71,18 +104,89 @@ def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
     photo_urls = map_square_folder.get(photo_number, '')
     if photo_urls == '':
         return
-    
+
     for side in SIDES:
         model_kwargs[f'{side}_src'] = photo_urls.get(f'{photo_number}_{side}.jpg', '')
 
 
-MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
+def import_row(
+    row: dict,
+    model_name: str,
+    photo_url_lookup: dict
+):
+    """
+    Takes the data for a row out of the spreadsheet,
+    the model name for the sheet,
+    and the lookup dict for the photos,
+    and ingests all of the data into our database
+    """
+    # Filter column headers for model fields
+    model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
+    model_field_names = [field.name for field in model_fields]
+    model_kwargs = {}
+    for header in row.keys():
+        if header in model_field_names or header == 'map_square_number':
+            # Check if value in column is a number
+            value = row[header]
+            if header in ['number', 'map_square_number', 'photographer']:
+                try:
+                    value = int(value)
+                    if header == 'map_square_number':
+                        header = 'map_square'
+                except ValueError:
+                    continue
+            # Evaluate value as a boolean
+            elif header == 'contains_sticker':
+                if value.lower() == 'yes':
+                    value = True
+                elif value.lower() == 'no':
+                    value = False
+                elif value.isdigit() and 0 <= int(value) <= 1:
+                    value = bool(value)
+                else:
+                    continue
+            model_kwargs[header] = value
+
+    # If no model fields found, do not create model instance
+    if len(model_kwargs) == 0:
+        return
+
+    if model_name in ['Photo', 'Photographer']:
+        map_square_number = model_kwargs.get('map_square', None)
+        # Returns the object that matches or None if there is no match
+        model_kwargs['map_square'] = \
+            MapSquare.objects.filter(number=map_square_number).first()
+
+    if model_name == 'Photo':
+        # Gets the Map Square folder and the photo number to look up the URLs
+        map_square_number = str(row.get('map_square_number', ''))
+        map_square_folder = photo_url_lookup.get(map_square_number, {})
+        photo_number = row.get('number', '')
+
+        if map_square_folder:
+            add_photo_srcs(model_kwargs, map_square_folder, str(photo_number))
+
+        # Get the corresponding Photographer objects
+        photographer_number = model_kwargs.get('photographer', None)
+        model_kwargs['photographer'] = \
+            Photographer.objects.filter(number=photographer_number).first()
+
+    print_header("Final model_kwargs: " + str(model_kwargs))
+
+    model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
+    model_instance.save()
 
 
 class Command(BaseCommand):
-    help = 'Syncs local db with data from project Google Sheet'
+    """
+    Syncs local db with data from project Google Sheet and Google Drive
+    """
+
+    help = 'Syncs local db with data from project Google Sheet and Google Drive'
 
     def handle(self, *args, **options):
+        # pylint: disable=too-many-locals
+
         # Delete database
         if os.path.exists(settings.DB_PATH):
             print_header('Deleting existing db...')
@@ -100,7 +204,7 @@ class Command(BaseCommand):
 
         # Delete all migrations
         for file in os.listdir(settings.MIGRATIONS_DIR):
-            if file != '__init__.py' and file != '__pycache__':
+            if file not in ['__init__.py', '__pycache__']:
                 file_path = os.path.join(settings.MIGRATIONS_DIR, file)
                 os.remove(file_path)
         print('Done!')
@@ -114,29 +218,10 @@ class Command(BaseCommand):
 
         # Settings for pickle file
 
-        creds = None
-        # The file token.pickle stores the user's access and refresh tokens, and is
-        # created automatically when the authorization flow completes for the first
-        # time.
-        if os.path.exists(settings.GOOGLE_TOKEN_FILE):
-            with open(settings.GOOGLE_TOKEN_FILE, 'rb') as token:
-                creds = pickle.load(token)
-        # If there are no (valid) credentials available, let the user log in.
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    settings.GOOGLE_API_CREDENTIALS_FILE,
-                    SCOPES
-                )
-                creds = flow.run_local_server(port=8080)
-            # Save the credentials for the next run
-            with open(settings.GOOGLE_TOKEN_FILE, 'wb') as token:
-                pickle.dump(creds, token)
+        credentials = authorize_google_apps()
 
-        sheets_service = build('sheets', 'v4', credentials=creds)
-        drive_service = build('drive', 'v3', credentials=creds)
+        sheets_service = build('sheets', 'v4', credentials=credentials)
+        drive_service = build('drive', 'v3', credentials=credentials)
 
         print_header('Getting the URL for all photos (This might take a couple of minutes)...')
         # Create a lookup dictionary to get photo urls using Drive API
@@ -164,7 +249,8 @@ class Command(BaseCommand):
         print('Done!')
 
         # THIS IS JUST FOR PROTOTYPING NEVER EVER EVER EVER IN PRODUCTION do this
-        superuser = User.objects.create_superuser('admin', password='adminadmin')
+        User.objects.create_superuser('admin', password='adminadmin')
+
         if not databases:
             print_header('No data found.')
             return
@@ -173,63 +259,11 @@ class Command(BaseCommand):
             print_header(f'{model_name}: Importing these values from the spreadsheet')
 
             header = values[0]
-            values_as_a_dict = [{header_val: entry for header_val, entry in zip(header, row)}
-                                for row in values[1:]]
+            values_as_dicts = []
+            for row in values[1:]:
+                inner_dict = {}
+                for header, entry in zip(header, row):
+                    inner_dict[header] = entry
 
-            for row in values_as_a_dict:
-                # print(row)
-                # Filter column headers for model fields
-                model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
-                model_field_names = [field.name for field in model_fields]
-                model_kwargs = {}
-                for header in row.keys():
-                    if header in model_field_names or header == 'map_square_number':
-                        # Check if value in column is a number
-                        value = row[header]
-                        if header in ['number', 'map_square_number', 'photographer']:
-                            try:
-                                value = int(value)
-                                if header == 'map_square_number':
-                                    header = 'map_square'
-                            except ValueError:
-                                continue
-                        # Evaluate value as a boolean
-                        elif header == 'contains_sticker':
-                            if value.lower() == 'yes':
-                                value = True
-                            elif value.lower() == 'no':
-                                value = False
-                            elif value.isdigit() and 0 <= int(value) <= 1:
-                                value = bool(value)
-                            else:
-                                continue
-                        model_kwargs[header] = value
-
-                # If no model fields found, do not create model instance
-                if len(model_kwargs) == 0:
-                    continue
-
-                if model_name == 'Photo' or model_name == 'Photographer':
-                    map_square_number = model_kwargs.get('map_square', None)
-                    # Returns the object that matches or None if there is no match
-                    model_kwargs['map_square'] = \
-                        MapSquare.objects.filter(number=map_square_number).first()
-
-                if model_name == 'Photo':
-                    # Gets the Map Square folder and the photo number to look up the URLs
-                    map_square_number = str(row.get('map_square_number', ''))
-                    map_square_folder = photo_url_lookup.get(map_square_number, '')
-                    photo_number = row.get('number', '')
-
-                    if map_square_folder:
-                        add_photo_srcs(model_kwargs, map_square_folder, str(photo_number))
-
-                    # Get the corresponding Photographer objects
-                    photographer_number = model_kwargs.get('photographer', None)
-                    model_kwargs['photographer'] = \
-                        Photographer.objects.filter(number=photographer_number).first()
-
-                print_header("Final model_kwargs: " + str(model_kwargs))
-
-                model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
-                model_instance.save()
+            for row in values_as_dicts:
+                import_row(row, model_name, photo_url_lookup)
