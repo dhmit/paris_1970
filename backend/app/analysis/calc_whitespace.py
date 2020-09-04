@@ -62,13 +62,4 @@ def analysis() -> dict:
     return result
 
 
-class TestAnalysis(AnalysisTestBase):
-    """
-    Test cases to make sure things are running properly
-    """
 
-    def test_analysis(self):
-        """
-        TODO: write me!
-        """
-        pass
