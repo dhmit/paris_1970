@@ -8,7 +8,6 @@ Syncs local db with data from project Google Sheet
 import pickle
 import os
 from textwrap import dedent
-from typing import List
 
 # 3rd party
 import tqdm
@@ -37,6 +36,9 @@ METADATA_SPREADSHEET_ID = '1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I'
 
 
 def authorize_google_apps():
+    """
+    Authorization flow for letting our application talk with the Google API
+    """
     credentials = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
