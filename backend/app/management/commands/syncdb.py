@@ -4,21 +4,25 @@ Django management command syncdb
 Syncs local db with data from project Google Sheet
 """
 
+# Python standard library
 import pickle
 import os
-import tqdm
 from textwrap import dedent
 from typing import List
 
+# 3rd party
+import tqdm
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+
+# Django
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-
+# Ours
 from app.models import Photo, MapSquare, Photographer
 from app.common import print_header
 
@@ -79,7 +83,17 @@ def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
         model_kwargs[f'{side}_src'] = photo_urls.get(f'{photo_number}_{side}.jpg', '')
 
 
-def import_row(row: List[dict], model_name):
+def import_row(
+    row: List[dict],
+    model_name: str,
+    photo_url_lookup: dict
+):
+    """
+    Takes the data for a row out of the spreadsheet,
+    the model name for the sheet,
+    and the lookup dict for the photos,
+    and ingests all of the data into our database
+    """
     # Filter column headers for model fields
     model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
     model_field_names = [field.name for field in model_fields]
@@ -109,9 +123,9 @@ def import_row(row: List[dict], model_name):
 
     # If no model fields found, do not create model instance
     if len(model_kwargs) == 0:
-        continue
+        return
 
-    if model_name == 'Photo' or model_name == 'Photographer':
+    if model_name in ['Photo', 'Photographer']:
         map_square_number = model_kwargs.get('map_square', None)
         # Returns the object that matches or None if there is no match
         model_kwargs['map_square'] = \
@@ -241,4 +255,4 @@ class Command(BaseCommand):
                                 for row in values[1:]]
 
             for row in values_as_a_dict:
-                import_row(row, model_name)
+                import_row(row, model_name, photo_url_lookup)
