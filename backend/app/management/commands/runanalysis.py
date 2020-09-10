@@ -4,23 +4,22 @@ Django management command syncdb
 Syncs local db with data from project Google Sheet
 """
 
-from importlib import import_module
 import sys
 import pickle
 import os
 
+from importlib import import_module
 from typing import Callable
-from django.conf import settings
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
-# from app.models import Photo
 from app.common import print_header
 
 
 class Command(BaseCommand):
     """
-    Run an analysis
+    Custom django-admin command used to run an analysis from the app/analysis folder
     """
     help = 'Run an analysis'
 
