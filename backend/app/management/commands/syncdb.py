@@ -101,7 +101,7 @@ def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
     Takes the map square folder and the photo number to dynamically adds the Google Drive urls
     into the model kwargs
     """
-    photo_urls = map_square_folder.get(photo_number, '')
+    photo_urls = map_square_folder.get(str(photo_number), '')
     if photo_urls == '':
         return
 
