@@ -14,8 +14,8 @@ export function getCookie(name) {
     let cookieValue;
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
-        for (const raw_cookie of cookies) {
-            const cookie = raw_cookie.trim();
+        for (const rawCookie of cookies) {
+            const cookie = rawCookie.trim();
             // Does this cookie string begin with the name we want?
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
@@ -31,7 +31,7 @@ export function getCookie(name) {
  * projects all of the geometries from lon-lat into x-y coords in SVG-space,
  * and returns a list of objects containing these paths, and some metadata (iso, name)
  */
-export function project_features_and_create_svg_paths(geo_json, width = 800, height = 800) {
+export function projectFeaturesCreateSVGPaths(geoJSON, width = 800, height = 800) {
     const center = [2, 15];
 
     const projection = d3.geoMercator()
@@ -44,16 +44,16 @@ export function project_features_and_create_svg_paths(geo_json, width = 800, hei
                 height,
             ],
         ],
-        geo_json);
+        geoJSON);
     const geoGenerator = d3.geoPath().projection(projection);
 
-    const map_data = [];
-    for (const feature of geo_json.features) {
-        const svg_path = geoGenerator(feature.geometry);
+    const mapData = [];
+    for (const feature of geoJSON.features) {
+        const svgPath = geoGenerator(feature.geometry);
         const iso = feature.properties.ISO_A3;
         const { name } = feature.properties;
-        map_data.push({ svg_path, name, iso });
+        mapData.push({ svg_path: svgPath, name, iso });
     }
-    return map_data;
+    return mapData;
 }
 

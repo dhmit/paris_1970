@@ -16,7 +16,6 @@
 
     "rules": {
         "arrow-body-style": ["off"],
-        "camelcase": ["off"],
         "class-methods-use-this": ["off"],
         "comma-dangle": ["warn"],
         "dot-notation": ["off"],
