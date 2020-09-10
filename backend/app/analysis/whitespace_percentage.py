@@ -27,7 +27,7 @@ def analyze(photo: Photo):
 
     # Get the image from the source url
     image = photo.get_image_data()
-    if not image:
+    if image is None:
         return None
 
     # Convert image to grayscale

@@ -136,24 +136,28 @@ def add_photo_srcs(
 
     for side in SIDES:
         drive_file_id = photo_drive_file_ids.get(f'{photo_number}_{side}.jpg', '')
-        model_kwargs[f'{side}_google_drive_file_id'] = drive_file_id
 
-        if local_download and drive_file_id:
-            request = drive_service.files().get_media(fileId=drive_file_id)
-            local_map_square_folder = Path(settings.LOCAL_PHOTOS_DIR, map_square_number)
-            local_map_square_folder.mkdir(exist_ok=True)
-            local_photo_path = Path(local_map_square_folder, f'{photo_number}.jpg')
-            out_file = io.FileIO(local_photo_path, mode='wb')
-            downloader = MediaIoBaseDownload(out_file, request)
-            done = False
-            while done is False:
-                status, done = downloader.next_chunk()
-
-            src_url = local_photo_path
-            model_kwargs[f'{side}_src'] = src_url
-        else:
+        if drive_file_id:
             src_url = f"https://drive.google.com/uc?id={drive_file_id}&export=download"
             model_kwargs[f'{side}_src'] = src_url
+
+            if local_download:
+                request = drive_service.files().get_media(fileId=drive_file_id)
+                local_map_square_folder = Path(settings.LOCAL_PHOTOS_DIR, map_square_number)
+                local_map_square_folder.mkdir(exist_ok=True)
+                local_photo_path = Path(local_map_square_folder, f'{photo_number}.jpg')
+
+                out_file = io.FileIO(local_photo_path, mode='wb')
+                downloader = MediaIoBaseDownload(out_file, request)
+                done = False
+                while done is False:
+                    status, done = downloader.next_chunk()
+
+                model_kwargs[f'{side}_local_path'] = local_photo_path
+
+        else:
+            model_kwargs[f'{side}_src'] = None
+            model_kwargs[f'{side}_local_path'] = None
 
 
 def call_sheets_api(spreadsheet_ranges, sheets_service):
