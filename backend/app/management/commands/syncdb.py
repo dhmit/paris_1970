@@ -63,10 +63,24 @@ def authorize_google_apps():
     return credentials
 
 
-def create_lookup_dict(drive_service, map_square_folders):
+def create_lookup_dict(credentials):
     """
     Creates a quick look up dictionary to get the image URL using map square number and source name
+    :param credentials: Credentials object for drive service
+    :return Look up dictionary to get the image URL using map square number and source name
     """
+    # Resource object for interacting with the google API
+    drive_service = build('drive', 'v3', credentials=credentials)
+
+    # Get list of files in google drive folder
+    results = drive_service.files().list(
+        q="'1aiY1nFJn6T7khu5dhIs3U2o8RdHBu6V7' in parents",
+        fields="nextPageToken, files(id, name)"
+    ).execute()
+
+    # List of dictionaries containing id and name of map square folder in the google drive
+    map_square_folders = results.get('files', [])
+
     lookup_dict = {}
     # tqdm is a library that shows a progress bar
     for map_square in tqdm.tqdm(map_square_folders):
@@ -100,8 +114,11 @@ def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
     """
     Takes the map square folder and the photo number to dynamically adds the Google Drive urls
     into the model kwargs
+    :param model_kwargs: Dictionary of keyword arguments to be used in creating the model
+    :param map_square_folder: Dictionary of photo sources with keys of photo_number
+    :param photo_number: The number of the desired photo in the map_square_folder
     """
-    photo_urls = map_square_folder.get(photo_number, '')
+    photo_urls = map_square_folder.get(str(photo_number), '')
     if photo_urls == '':
         return
 
@@ -109,79 +126,98 @@ def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
         model_kwargs[f'{side}_src'] = photo_urls.get(f'{photo_number}_{side}.jpg', '')
 
 
-def import_row(
-    row: dict,
-    model_name: str,
-    photo_url_lookup: dict
-):
+def call_sheets_api(spreadsheet_ranges, creds):
     """
-    Takes the data for a row out of the spreadsheet,
-    the model name for the sheet,
-    and the lookup dict for the photos,
-    and ingests all of the data into our database
+    Creates list of list of spreadsheet rows
+    :param spreadsheet_ranges: Names of spreadsheets to import
+    :param creds: Credentials object for drive service
+    :return: List of list of spreadsheet rows (by model)
     """
-    # Filter column headers for model fields
-    model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
-    model_field_names = [field.name for field in model_fields]
-    model_kwargs = {}
-    for header in row.keys():
-        if header in model_field_names or header == 'map_square_number':
-            # Check if value in column is a number
-            value = row[header]
-            if header in ['number', 'map_square_number', 'photographer']:
-                try:
-                    value = int(value)
+    # Resource object for interacting with the google API
+    sheets_service = build('sheets', 'v4', credentials=creds)
+
+    databases = []
+    sheet = sheets_service.spreadsheets()
+    for spreadsheet_range in spreadsheet_ranges:
+        get_values_cmd = \
+            sheet.values().get(spreadsheetId=METADATA_SPREADSHEET_ID, range=spreadsheet_range)
+        result = get_values_cmd.execute()
+        values = result.get('values', [])
+        databases.append(values)
+    return databases
+
+
+def populate_database(model_name, values_as_a_dict, photo_url_lookup):
+    """
+    Adds model instances to the database based on the data imported from the google spreadsheet
+    :param model_name: Name of the model to create an instance of
+    :param values_as_a_dict: List of dictionaries representing spreadsheet rows in the form of
+    { column names: cell values }
+    :param photo_url_lookup: Dictionary of map square folders in the form of a dictionary
+    """
+    for row in values_as_a_dict:
+        # Filter column headers for model fields
+        model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
+        model_field_names = [field.name for field in model_fields]
+
+        model_kwargs = {}
+        for header in row.keys():
+            if header in model_field_names or header == 'map_square_number':
+                # Check if value in column is a number
+                value = row[header]
+                if header in ['number', 'map_square_number', 'photographer']:
                     if header == 'map_square_number':
                         header = 'map_square'
-                except ValueError:
-                    continue
-            # Evaluate value as a boolean
-            elif header == 'contains_sticker':
-                if value.lower() == 'yes':
-                    value = True
-                elif value.lower() == 'no':
-                    value = False
-                elif value.isdigit() and 0 <= int(value) <= 1:
-                    value = bool(value)
-                else:
-                    continue
-            model_kwargs[header] = value
+                    try:
+                        value = int(value)
+                    except ValueError:
+                        continue
+                # Evaluate value as a boolean
+                elif header == 'contains_sticker':
+                    if value.lower() == 'yes':
+                        value = True
+                    elif value.lower() == 'no':
+                        value = False
+                    elif value.isdigit() and 0 <= int(value) <= 1:
+                        value = bool(value)
+                    else:
+                        continue
+                model_kwargs[header] = value
 
-    # If no model fields found, do not create model instance
-    if len(model_kwargs) == 0:
-        return
+        # If no model fields found, do not create model instance
+        if len(model_kwargs) == 0:
+            continue
 
-    if model_name in ['Photo', 'Photographer']:
-        map_square_number = model_kwargs.get('map_square', None)
-        # Returns the object that matches or None if there is no match
-        model_kwargs['map_square'] = \
-            MapSquare.objects.filter(number=map_square_number).first()
+        if model_name in ['Photo', 'Photographer']:
+            map_square_number = model_kwargs.get('map_square', None)
+            # Returns the object that matches or None if there is no match
+            model_kwargs['map_square'] = \
+                MapSquare.objects.filter(number=map_square_number).first()
 
-    if model_name == 'Photo':
-        # Gets the Map Square folder and the photo number to look up the URLs
-        map_square_number = str(row.get('map_square_number', ''))
-        map_square_folder = photo_url_lookup.get(map_square_number, {})
-        photo_number = row.get('number', '')
+        if model_name == 'Photo':
+            # Gets the Map Square folder and the photo number to look up the URLs
+            map_square_number = str(row.get('map_square_number', ''))
+            map_square_folder = photo_url_lookup.get(map_square_number, '')
+            photo_number = row.get('number', '')
 
-        if map_square_folder:
-            add_photo_srcs(model_kwargs, map_square_folder, str(photo_number))
+            if map_square_folder:
+                add_photo_srcs(model_kwargs, map_square_folder, str(photo_number))
 
-        # Get the corresponding Photographer objects
-        photographer_number = model_kwargs.get('photographer', None)
-        model_kwargs['photographer'] = \
-            Photographer.objects.filter(number=photographer_number).first()
+            # Get the corresponding Photographer objects
+            photographer_number = model_kwargs.get('photographer', None)
+            model_kwargs['photographer'] = \
+                Photographer.objects.filter(number=photographer_number).first()
 
-    print_header("Final model_kwargs: " + str(model_kwargs))
+        print_header("Final model_kwargs: " + str(model_kwargs))
 
-    model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
-    model_instance.save()
+        model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
+        model_instance.save()
 
 
 class Command(BaseCommand):
     """
-    Syncs local db with data from project Google Sheet and Google Drive
+    Custom django-admin command used to sync the local db with data from project Google Sheet
     """
-
     help = 'Syncs local db with data from project Google Sheet and Google Drive'
 
     def handle(self, *args, **options):
@@ -209,39 +245,6 @@ class Command(BaseCommand):
                 os.remove(file_path)
         print('Done!')
 
-        # The order of these ranges matter. The Photographer model needs to have foreign keys to
-        # the MapSquare database, so we add the Map Squares first
-        spreadsheet_ranges = ['MapSquare', 'Photographer', 'Photo']
-
-        print_header(f'''Will import ranges {", ".join(spreadsheet_ranges)}. (If nothing
-          is happening, please try again.)''')
-
-        # Settings for pickle file
-
-        credentials = authorize_google_apps()
-
-        sheets_service = build('sheets', 'v4', credentials=credentials)
-        drive_service = build('drive', 'v3', credentials=credentials)
-
-        print_header('Getting the URL for all photos (This might take a couple of minutes)...')
-        # Create a lookup dictionary to get photo urls using Drive API
-        results = drive_service.files().list(
-            q="'1aiY1nFJn6T7khu5dhIs3U2o8RdHBu6V7' in parents",
-            fields="nextPageToken, files(id, name)"
-        ).execute()
-        items = results.get('files', [])
-        photo_url_lookup = create_lookup_dict(drive_service, items)
-
-        # Call the Sheets API
-        databases = []
-        sheet = sheets_service.spreadsheets()
-        for spreadsheet_range in spreadsheet_ranges:
-            get_values_cmd = \
-                sheet.values().get(spreadsheetId=METADATA_SPREADSHEET_ID, range=spreadsheet_range)
-            result = get_values_cmd.execute()
-            values = result.get('values', [])
-            databases.append(values)
-
         # Rebuild database
         print_header('Rebuilding db from migrations...')
         call_command('makemigrations')
@@ -251,6 +254,22 @@ class Command(BaseCommand):
         # THIS IS JUST FOR PROTOTYPING NEVER EVER EVER EVER IN PRODUCTION do this
         User.objects.create_superuser('admin', password='adminadmin')
 
+        # The order of these ranges matter. The Photographer model needs to have foreign keys to
+        # the MapSquare database, so we add the Map Squares first
+        spreadsheet_ranges = ['MapSquare', 'Photographer', 'Photo']
+
+        print_header(f'''Will import ranges {", ".join(spreadsheet_ranges)}. (If nothing
+          is happening, please try again.)''')
+
+        credentials = authorize_google_apps()
+        print_header('Getting the URL for all photos (This might take a couple of minutes)...')
+
+        # Call the Sheets API to get metadata values
+        databases = call_sheets_api(spreadsheet_ranges, credentials)
+
+        # Call Drive API to create a lookup dictionary for photo urls
+        photo_url_lookup = create_lookup_dict(credentials)
+
         if not databases:
             print_header('No data found.')
             return
@@ -259,12 +278,5 @@ class Command(BaseCommand):
             print_header(f'{model_name}: Importing these values from the spreadsheet')
 
             header = values[0]
-
-            # pylint: disable=unnecessary-comprehension
-            values_as_a_dict = [
-                {header_val: entry for header_val, entry in zip(header, row)}
-                for row in values[1:]
-            ]
-
-            for row in values_as_a_dict:
-                import_row(row, model_name, photo_url_lookup)
+            values_as_a_dict = [dict(zip(header, row)) for row in values[1:]]
+            populate_database(model_name, values_as_a_dict, photo_url_lookup)

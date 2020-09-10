@@ -5,28 +5,57 @@ allow the frontend to suggest changes to the backend/database.
 """
 import json
 from rest_framework import serializers
-from .models import Photo, MapSquare, Photographer, CorpusAnalysisResult
+from .models import (
+    CorpusAnalysisResult,
+    MapSquare,
+    Photo,
+    PhotoAnalysisResult,
+    Photographer,
+)
 
 
 class PhotoSerializer(serializers.ModelSerializer):
     """
     Serializes a photo
     """
-    photographer = serializers.SerializerMethodField()
-    map_square = serializers.SerializerMethodField()
+    photographer_name = serializers.SerializerMethodField()
+    photographer_number = serializers.SerializerMethodField()
+    map_square_number = serializers.SerializerMethodField()
+    analyses = serializers.SerializerMethodField()
 
-    def get_photographer(self, instance):
-        return PhotographerForPhotosSerializer(instance.photographer).data
+    @staticmethod
+    def get_photographer_name(instance):
+        """ Photographer name for serialization """
+        if instance.photographer:
+            return instance.photographer.name
+        else:
+            return None
 
-    def get_map_square(self, instance):
-        return MapSquareForPhotosSerializer(instance.map_square).data
+    @staticmethod
+    def get_photographer_number(instance):
+        """ Photographer number for serialization """
+        if instance.photographer:
+            return instance.photographer.number
+        else:
+            return None
+
+    @staticmethod
+    def get_map_square_number(instance):
+        return instance.map_square.number
+
+    @staticmethod
+    def get_analyses(instance):
+        analyses = PhotoAnalysisResult.objects.filter(photo=instance)
+        return PhotoAnalysisResultSerializer(analyses, many=True).data
 
     class Meta:
         model = Photo
-        fields = ['id', 'number', 'front_src', 'back_src', 'binder_src', 'alt', 'photographer',
-                  'map_square', 'shelfmark', 'librarian_caption', 'photographer_caption',
-                  'contains_sticker', 'white_space_ratio_front', 'white_space_ratio_back',
-                  'white_space_ratio_binder']
+        fields = [
+            'id', 'number', 'front_src', 'back_src', 'binder_src', 'alt',
+            'photographer_name', 'photographer_number',
+            'map_square_number', 'shelfmark', 'librarian_caption', 'photographer_caption',
+            'contains_sticker', 'analyses',
+        ]
 
 
 class MapSquareSerializer(serializers.ModelSerializer):
@@ -35,7 +64,8 @@ class MapSquareSerializer(serializers.ModelSerializer):
     """
     photos = serializers.SerializerMethodField()
 
-    def get_photos(self, instance):
+    @staticmethod
+    def get_photos(instance):
         photo_obj = Photo.objects.filter(map_square__number=instance.number)
         return PhotosForMapSquareSerializer(photo_obj, many=True).data
 
@@ -51,27 +81,18 @@ class PhotographerSerializer(serializers.ModelSerializer):
     photos = serializers.SerializerMethodField()
     map_square = serializers.SerializerMethodField()
 
-    def get_photos(self, instance):
+    @staticmethod
+    def get_photos(instance):
         photo_obj = Photo.objects.filter(photographer__number=instance.number)
-        return PhotoForPhotographerSerializer(photo_obj, many=True).data
+        return PhotoSerializer(photo_obj, many=True).data
 
-    def get_map_square(self, instance):
+    @staticmethod
+    def get_map_square(instance):
         return MapSquareForPhotosSerializer(instance.map_square).data
 
     class Meta:
         model = Photographer
         fields = ['id', 'name', 'number', 'type', 'sentiment', 'photos', 'map_square']
-
-
-# These methods are used to avoid an infinite recursion depth
-class PhotographerForPhotosSerializer(serializers.ModelSerializer):
-    """
-    Serializes a Photographer for the Photo model, but without a reference to the list of photos
-    or the map square
-    """
-    class Meta:
-        model = Photographer
-        fields = ['id', 'name', 'number', 'type', 'sentiment']
 
 
 class PhotoForPhotographerSerializer(serializers.ModelSerializer):
@@ -80,14 +101,15 @@ class PhotoForPhotographerSerializer(serializers.ModelSerializer):
     """
     map_square = serializers.SerializerMethodField()
 
-    def get_map_square(self, instance):
+    @staticmethod
+    def get_map_square(instance):
         return MapSquareForPhotosSerializer(instance.map_square).data
 
     class Meta:
         model = Photo
         fields = ['id', 'front_src', 'back_src', 'binder_src', 'alt', 'map_square', 'number',
                   'shelfmark', 'librarian_caption', 'photographer_caption', 'contains_sticker',
-                  'white_space_ratio_front', 'white_space_ratio_back', 'white_space_ratio_binder']
+        ]
 
 
 class MapSquareForPhotosSerializer(serializers.ModelSerializer):
@@ -103,16 +125,11 @@ class PhotosForMapSquareSerializer(serializers.ModelSerializer):
     """
     Serializes a Photo for the Map Square model, but without a reference to the map square
     """
-    photographer = serializers.SerializerMethodField()
-
-    def get_photographer(self, instance):
-        return PhotographerForPhotosSerializer(instance.photographer).data
-
     class Meta:
         model = Photo
-        fields = ['id', 'number', 'front_src', 'back_src', 'binder_src', 'alt', 'photographer',
-                  'shelfmark', 'librarian_caption', 'photographer_caption', 'contains_sticker',
-                  'white_space_ratio_front', 'white_space_ratio_back', 'white_space_ratio_binder']
+        fields = ['id', 'number', 'front_src', 'back_src', 'binder_src', 'alt',
+                  'shelfmark', 'librarian_caption', 'photographer_caption', 'contains_sticker']
+
 
 class CorpusAnalysisResultsSerializer(serializers.ModelSerializer):
     """
@@ -121,9 +138,16 @@ class CorpusAnalysisResultsSerializer(serializers.ModelSerializer):
     """
     analysis_result = serializers.SerializerMethodField()
 
-    def get_analysis_result(self, instance):
+    @staticmethod
+    def get_analysis_result(instance):
         return json.loads(instance.analysis_result)
 
     class Meta:
         model = CorpusAnalysisResult
-        fields = ['analysis_name', 'analysis_result']
+        fields = ['name', 'result']
+
+
+class PhotoAnalysisResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PhotoAnalysisResult
+        fields = ['name', 'result']
