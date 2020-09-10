@@ -156,4 +156,7 @@ webpack-stats.json
 # Google authentication byproducts
 token.pickle
 
+# Picked analysis results
+backend/app/analysis/analysis_results/
+
 

@@ -15,6 +15,14 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from app.common import print_header
+from app.models import (
+    MapSquare,
+    MapSquareAnalysisResult,
+    Photo,
+    PhotoAnalysisResult,
+    Photographer,
+    PhotographerAnalysisResult,
+)
 
 
 class Command(BaseCommand):
@@ -42,30 +50,38 @@ class Command(BaseCommand):
             result_path = os.path.join(settings.ANALYSIS_PICKLE_PATH, f'{analysis_name}.pickle')
             if os.path.exists(result_path):
                 with open(result_path, 'rb') as analysis_pickle:
-                    past_results = pickle.load(analysis_pickle)
+                    stored_results = pickle.load(analysis_pickle)
             else:
-                past_results = {}
+                stored_results = {}
 
-            analysis_func: Callable[[object], dict] = getattr(analysis_module, 'analysis')
+            analysis_func: Callable[[object], dict] = getattr(analysis_module, 'analyze')
             model = getattr(analysis_module, 'MODEL')
 
+            # TODO(ra): currently we _assume_ all analyses are on Photos
+            # Eventually we want to generalize to include analyses on MapSquares and Photographers
+            analysis_result_model = PhotoAnalysisResult
+
             for model_instance in model.objects.all():
-                print(model_instance.id)
-                instance_identifier = f'{model.__name__}_{model_instance.id}'
+                print(f'Running {analysis_name} on {model} {model_instance.id}')
+                instance_identifier = f'photo_{model_instance.number}_{model_instance.map_square}'
 
-                if rerun or instance_identifier not in past_results:
-                    analysis_results = analysis_func(model_instance)
+                if rerun or instance_identifier not in stored_results:
+                    result = analysis_func(model_instance)
                 else:
-                    analysis_results = past_results[instance_identifier]
+                    print('Using a found stored result. Pass the --rerun flag to rerun.')
+                    result = stored_results[instance_identifier]
 
-                for attribute, value in analysis_results.items():
-                    setattr(model_instance, attribute, value)
-                    model_instance.save()
+                    analysis_result = analysis_result_model(
+                        name=analysis_name,
+                        result=result,
+                        photo=model_instance,
+                    )
+                    analysis_result.save()
 
                 # Store the result
-                past_results[f'{model.__name__}_{model_instance.id}'] = analysis_results
+                stored_results[instance_identifier] = result
 
-                # Save the analysis results (not sure if we should do this inside of the loop for
-                # cases when the analysis fails because of the limit on http requests)
-                with open(result_path, 'wb') as analysis_pickle:
-                    pickle.dump(past_results, analysis_pickle)
+            # Save the analysis stored_results
+            # TODO: handle case where analysis fails (this won't pickle if something fails)
+            with open(result_path, 'wb') as analysis_pickle:
+                pickle.dump(stored_results, analysis_pickle)
