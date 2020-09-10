@@ -4,21 +4,24 @@ Django management command syncdb
 Syncs local db with data from project Google Sheet
 """
 
+# Python standard library
 import pickle
 import os
 from textwrap import dedent
 
+# 3rd party
 import tqdm
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 
+# Django
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-
+# Ours
 from app.models import Photo, MapSquare, Photographer
 from app.common import print_header
 
@@ -32,14 +35,42 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly',
 METADATA_SPREADSHEET_ID = '1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I'
 
 
-def create_lookup_dict(creds):
+def authorize_google_apps():
+    """
+    Authorization flow for letting our application talk with the Google API
+    """
+    credentials = None
+    # The file token.pickle stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists(settings.GOOGLE_TOKEN_FILE):
+        with open(settings.GOOGLE_TOKEN_FILE, 'rb') as token:
+            credentials = pickle.load(token)
+    # If there are no (valid) credentials available, let the user log in.
+    if not credentials or not credentials.valid:
+        if credentials and credentials.expired and credentials.refresh_token:
+            credentials.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                settings.GOOGLE_API_CREDENTIALS_FILE,
+                SCOPES
+            )
+            credentials = flow.run_local_server(port=8080)
+        # Save the credentials for the next run
+        with open(settings.GOOGLE_TOKEN_FILE, 'wb') as token:
+            pickle.dump(credentials, token)
+
+    return credentials
+
+
+def create_lookup_dict(credentials):
     """
     Creates a quick look up dictionary to get the image URL using map square number and source name
-    :param creds: Credentials object for drive service
+    :param credentials: Credentials object for drive service
     :return Look up dictionary to get the image URL using map square number and source name
     """
     # Resource object for interacting with the google API
-    drive_service = build('drive', 'v3', credentials=creds)
+    drive_service = build('drive', 'v3', credentials=credentials)
 
     # Get list of files in google drive folder
     results = drive_service.files().list(
@@ -76,6 +107,8 @@ def create_lookup_dict(creds):
 # Sides of a photo
 SIDES = ['front', 'back', 'binder']
 
+MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
+
 
 def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
     """
@@ -85,44 +118,12 @@ def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
     :param map_square_folder: Dictionary of photo sources with keys of photo_number
     :param photo_number: The number of the desired photo in the map_square_folder
     """
-    photo_urls = map_square_folder.get(photo_number, '')
+    photo_urls = map_square_folder.get(str(photo_number), '')
     if photo_urls == '':
         return
 
     for side in SIDES:
         model_kwargs[f'{side}_src'] = photo_urls.get(f'{photo_number}_{side}.jpg', '')
-
-
-def load_creds(scopes):
-    """
-    Creates credentials that can be used to construct a Resource object for interacting with the
-    google API
-    :param scopes: The list of scopes to request
-    :return: Credentials object created with scopes :param scopes
-    """
-    # Settings for pickle file
-
-    creds = None
-    # The file token.pickle stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists(settings.GOOGLE_TOKEN_FILE):
-        with open(settings.GOOGLE_TOKEN_FILE, 'rb') as token:
-            creds = pickle.load(token)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                settings.GOOGLE_API_CREDENTIALS_FILE,
-                scopes
-            )
-            creds = flow.run_local_server(port=8080)
-        # Save the credentials for the next run
-        with open(settings.GOOGLE_TOKEN_FILE, 'wb') as token:
-            pickle.dump(creds, token)
-    return creds
 
 
 def call_sheets_api(spreadsheet_ranges, creds):
@@ -144,9 +145,6 @@ def call_sheets_api(spreadsheet_ranges, creds):
         values = result.get('values', [])
         databases.append(values)
     return databases
-
-
-MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
 
 
 def populate_database(model_name, values_as_a_dict, photo_url_lookup):
@@ -220,9 +218,11 @@ class Command(BaseCommand):
     """
     Custom django-admin command used to sync the local db with data from project Google Sheet
     """
-    help = 'Syncs local db with data from project Google Sheet'
+    help = 'Syncs local db with data from project Google Sheet and Google Drive'
 
     def handle(self, *args, **options):
+        # pylint: disable=too-many-locals
+
         # Delete database
         if os.path.exists(settings.DB_PATH):
             print_header('Deleting existing db...')
@@ -252,14 +252,20 @@ class Command(BaseCommand):
         print_header(f'''Will import ranges {", ".join(spreadsheet_ranges)}. (If nothing
           is happening, please try again.)''')
 
-        creds = load_creds(SCOPES)
+        # Settings for pickle file
+
+        credentials = authorize_google_apps()
+
+        sheets_service = build('sheets', 'v4', credentials=credentials)
+        drive_service = build('drive', 'v3', credentials=credentials)
 
         print_header('Getting the URL for all photos (This might take a couple of minutes)...')
+
         # Create a lookup dictionary to get photo urls using Drive API
-        photo_url_lookup = create_lookup_dict(creds)
+        photo_url_lookup = create_lookup_dict(credentials)
 
         # Call the Sheets API
-        databases = call_sheets_api(spreadsheet_ranges, creds)
+        databases = call_sheets_api(spreadsheet_ranges, credentials)
 
         # Rebuild database
         print_header('Rebuilding db from migrations...')
@@ -279,5 +285,4 @@ class Command(BaseCommand):
 
             header = values[0]
             values_as_a_dict = [dict(zip(header, row)) for row in values[1:]]
-
             populate_database(model_name, values_as_a_dict, photo_url_lookup)
