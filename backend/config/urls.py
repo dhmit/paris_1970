@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import path
 
 from app.common import render_react_view
-from app.views import photo, all_photos, all_map_squares, get_photographer, get_map_square
+from app.views import photo, all_photos, all_map_squares, get_photographer, get_map_square,\
+    get_corpus_analysis_results
 
 
 def react_view_path(route, component_name):
@@ -40,6 +41,7 @@ urlpatterns = [
     path('api/photo/<int:photo_id>/', photo),
     path('api/photographer/<int:photographer_id>/', get_photographer),
     path('api/map_square/<int:map_square_id>/', get_map_square),
+    path('api/corpus_analysis/', get_corpus_analysis_results),
     path('api/all_photos/', all_photos),
     path('api/all_map_squares/', all_map_squares),
 
