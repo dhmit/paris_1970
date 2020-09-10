@@ -15,14 +15,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from app.common import print_header
-from app.models import (
-    MapSquare,
-    MapSquareAnalysisResult,
-    Photo,
-    PhotoAnalysisResult,
-    Photographer,
-    PhotographerAnalysisResult,
-)
+from app.models import PhotoAnalysisResult
 
 
 class Command(BaseCommand):

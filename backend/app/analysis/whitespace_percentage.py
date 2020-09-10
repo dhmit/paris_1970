@@ -71,7 +71,7 @@ def analyze(photo: Photo):
         pass
 
     except (HTTPError, RemoteDisconnected) as base_exception:
-        raise Exception(dedent(f'''
+        raise Exception(dedent('''
             *** Right now, the analysis breaks after too many http requests, so it may not
             calculate whitespace for all the photos, even the first time. If it stops
             working, you will have to wait a while before it is successfully able to make

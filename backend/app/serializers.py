@@ -25,6 +25,7 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_photographer_name(instance):
+        """ Photographer name for serialization """
         if instance.photographer:
             return instance.photographer.name
         else:
@@ -32,6 +33,7 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_photographer_number(instance):
+        """ Photographer number for serialization """
         if instance.photographer:
             return instance.photographer.number
         else:
@@ -149,4 +151,3 @@ class PhotoAnalysisResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = PhotoAnalysisResult
         fields = ['name', 'result']
-
