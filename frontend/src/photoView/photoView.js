@@ -8,10 +8,14 @@ const SIDES = {
     BINDER: 'binder',
 };
 
-const ATTRIBUTES_TO_DISPLAY_NAME = {
-    white_space_ratio_back: 'White Space Ratio of Back Side',
-    white_space_ratio_front: 'White Space Ratio of Front Side',
-    white_space_ratio_binder: 'White Space Ratio of Binder Side',
+const ANALYSIS_CONFIGS = {
+    whitespace_percentage: {
+        formatter: (value) => `${parseInt(value)}%`,
+        displayName: '% whitespace',
+    },
+    photographer_caption_length: {
+        displayName: 'Length of photographer caption',
+    },
 };
 
 export class PhotoView extends React.Component {
@@ -64,15 +68,19 @@ export class PhotoView extends React.Component {
             </h1>);
         }
         const {
-            title,
             alt,
+            map_square_number: mapSquareNumber,
+            photographer_name: photographerName,
+            photographer_number: photographerNumber,
+            analyses,
         } = this.state.photo_data;
+
+        console.log(analyses);
 
         return (<>
             <Navbar />
             <div className="page row">
                 <div className='image-view col-12 col-lg-6'>
-                    <h1>Photo Title: {title}</h1>
                     <img
                         className='image-photo'
                         src={this.state.photo_data[`${this.state.display_side}_src`]}
@@ -92,65 +100,28 @@ export class PhotoView extends React.Component {
 
                 </div>
                 <div className='image-info col-12 col-lg-6'>
-                    <h3>
-                        Photographer:
-                    </h3>
-                    <h5>
-                        None
-                    </h5>
-                    <h3>
-                        Categories
-                    </h3>
-                    <h5>
-                      None
-                    </h5>
-                    <h3>
-                        Whitespace
-                    </h3>
-                    <h5>
-                        None
-                    </h5>
-                    <h3>
-                        Sentiment analysis:
-                    </h3>
-                    <h5>
-                        None
-                    </h5>
-                    <h3>
-                        People detected:
-                    </h3>
-                    <h5>
-                        None
-                    </h5>
-                    <h3>
-                        Text detected:
-                    </h3>
-                    <h5>
-                        None
-                    </h5>
-                    <h3>
-                        Objects detected:
-                    </h3>
-                    <h5>
-                        None
-                    </h5>
-                    <h3>
-                        Map Square Information:
-                    </h3>
-                    <h5>
-                        None
-                    </h5>
-                    {Object.keys(ATTRIBUTES_TO_DISPLAY_NAME).map((attribute, k) => {
-                        const attributeValue = this.state.photo_data[attribute];
-                        if (attributeValue) {
-                            return (
-                                <div key={k}>
-                                    <h3>{ATTRIBUTES_TO_DISPLAY_NAME[attribute]}:</h3>
-                                    <h5>{attributeValue}</h5>
-                                </div>
-                            );
+                    <h5>Photographer name</h5>
+                    <p>{photographerName || 'Unknown'}</p>
+                    <h5>Photographer number</h5>
+                    <p>{photographerNumber || 'Unknown'}</p>
+                    <h5>Map Square</h5>
+                    <p>{mapSquareNumber}</p>
+                    {analyses.map((analysisResult, index) => {
+                        const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
+                        const analysisDisplayName = analysisConfig.displayName;
+                        let analysisResultStr;
+                        if (analysisConfig.formatter) {
+                            analysisResultStr = analysisConfig.formatter(analysisResult.result);
+                        } else {
+                            analysisResultStr = analysisConfig.result.toString();
                         }
-                        return '';
+
+                        return (
+                            <React.Fragment key={index}>
+                                <h5>{analysisDisplayName}</h5>
+                                <p>{analysisResultStr}</p>
+                            </React.Fragment>
+                        );
                     })}
                 </div>
             </div>
