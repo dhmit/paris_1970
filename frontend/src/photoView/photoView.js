@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from '../about/Navbar';
+import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
 const SIDES = {
@@ -36,14 +36,14 @@ export class PhotoView extends React.Component {
             if (!response.ok) {
                 this.setState({ loading: false });
             } else {
-                const photo_data = await response.json();
-                const available_sides = Object.values(SIDES)
-                    .filter((side) => photo_data[`${side}_src`] !== '');
-                const display_side = available_sides.length > 0 ? available_sides[0] : '';
+                const photoData = await response.json();
+                const availableSides = Object.values(SIDES)
+                    .filter((side) => photoData[`${side}_src`] !== '');
+                const displaySide = availableSides.length > 0 ? availableSides[0] : '';
                 this.setState({
-                    photo_data,
-                    available_sides,
-                    display_side,
+                    photo_data: photoData,
+                    available_sides: availableSides,
+                    display_side: displaySide,
                     loading: false,
                 });
             }
@@ -52,8 +52,8 @@ export class PhotoView extends React.Component {
         }
     }
 
-    changeSide = (display_side) => {
-        this.setState({ display_side });
+    changeSide = (displaySide) => {
+        this.setState({ display_side: displaySide });
     };
 
     render() {

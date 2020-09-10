@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from '../about/Navbar';
+import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
 export class MapSquareView extends React.Component {
@@ -7,7 +7,7 @@ export class MapSquareView extends React.Component {
         super(props);
         this.state = {
             loading: true,
-            map_square_data: null,
+            mapSquareData: null,
         };
     }
 
@@ -18,9 +18,9 @@ export class MapSquareView extends React.Component {
             if (!response.ok) {
                 this.setState({ loading: false });
             } else {
-                const map_square_data = await response.json();
+                const mapSquareData = await response.json();
                 this.setState({
-                    map_square_data,
+                    map_square_data: mapSquareData,
                     loading: false,
                 });
             }
