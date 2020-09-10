@@ -27,9 +27,8 @@ def analyze(photo: Photo):
     :returns A dictionary of photo ids with values of { model fields: updated values } to be
     assigned to photo instances
     """
-    # Calculate the whitespace for each source of the photo
+    # Calculate the whitespace % for each photo
     # If src is blank or not a url, then the ratio will not be calculated
-    # Values will be stored in new_attributes dictionary with key of 'white_space_ratio_' + side
     if photo.front_src:
         url = photo.front_src
     elif photo.binder_src:
@@ -61,12 +60,12 @@ def analyze(photo: Photo):
         # (uses numpy broadcasting and creates an array of boolean values (0 and 1))
         number_of_pixels = (normalized_gray_image > WHITESPACE_THRESHOLD).sum()
 
-        # Ratio of pixels above the threshold to the total number of pixels in the photo
+        # Percentage of pixels above the threshold to the total number of pixels in the photo
         # (Prevent larger images from being ranked as being composed mostly of whitespace,
         # just because they are larger)
-        white_space_ratio = number_of_pixels / gray_image.size
+        whitespace_percentage = number_of_pixels / gray_image.size * 100
 
-        return white_space_ratio
+        return whitespace_percentage
 
     except (ValueError, FileNotFoundError):
         pass

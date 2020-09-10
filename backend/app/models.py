@@ -32,11 +32,6 @@ class Photo(models.Model):
     librarian_caption = models.CharField(max_length=252)
     photographer_caption = models.CharField(max_length=252)
 
-    photographer_caption_length = models.IntegerField(null=True)
-    white_space_ratio_front = models.DecimalField(null=True, max_digits=5, decimal_places=4)
-    white_space_ratio_back = models.DecimalField(null=True, max_digits=5, decimal_places=4)
-    white_space_ratio_binder = models.DecimalField(null=True, max_digits=5, decimal_places=4)
-
     class Meta:
         unique_together = ['number', 'map_square']
 
@@ -72,7 +67,7 @@ class AnalysisResult(models.Model):
     be converted to regular JSON in the serializer.
     """
     name = models.CharField(max_length=252)
-    result = models.TextField()
+    result = models.TextField(null=True)
 
     class Meta:
         # Make this an abstract base class, which means that Django won't create a database
