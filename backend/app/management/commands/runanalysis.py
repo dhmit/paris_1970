@@ -29,6 +29,7 @@ class Command(BaseCommand):
         parser.add_argument('--rerun', action='store', type=str)
 
     def handle(self, *args, **options):
+        # pylint: disable=too-many-locals
         analysis_name = options.get('analysis_name')
         rerun = options.get('rerun') == 'rerun'
 
@@ -54,11 +55,7 @@ class Command(BaseCommand):
                 instance_identifier = f'{model.__name__}_{model_instance.id}'
 
                 if rerun or instance_identifier not in past_results:
-                    try:
-                        analysis_results = analysis_func(model_instance)
-                    except Exception as error:
-                        print(error)
-                        return
+                    analysis_results = analysis_func(model_instance)
                 else:
                     analysis_results = past_results[instance_identifier]
 

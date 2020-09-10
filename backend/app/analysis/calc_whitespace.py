@@ -46,7 +46,7 @@ def analysis(photo) -> dict:
             print(f'Successfully calculated whitespace ratio for photo {photo.id} {side}')
         except (ValueError, FileNotFoundError):
             pass
-        except (HTTPError, RemoteDisconnected):
+        except (HTTPError, RemoteDisconnected) as base_exception:
             raise Exception(dedent(f'''
                 *** Right now, the analysis breaks after too many http requests, so it may not
                 calculate whitespace for all the photos, even the first time. If it stops
@@ -54,7 +54,6 @@ def analysis(photo) -> dict:
                 requests again. ***
                 Successfully calculated whitespace ratio for {photo.id-1}/{number_of_photos}
                 photos.
-                '''))
-            return results
+                ''')) from base_exception
     print('Successfully calculated whitespace ratio for all photos.')
     return results
