@@ -259,11 +259,12 @@ class Command(BaseCommand):
             print_header(f'{model_name}: Importing these values from the spreadsheet')
 
             header = values[0]
-            values_as_dicts = []
-            for row in values[1:]:
-                inner_dict = {}
-                for header, entry in zip(header, row):
-                    inner_dict[header] = entry
 
-            for row in values_as_dicts:
+            # pylint: disable=unnecessary-comprehension
+            values_as_a_dict = [
+                {header_val: entry for header_val, entry in zip(header, row)}
+                for row in values[1:]
+            ]
+
+            for row in values_as_a_dict:
                 import_row(row, model_name, photo_url_lookup)
