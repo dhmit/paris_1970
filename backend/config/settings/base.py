@@ -9,24 +9,25 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from pathlib import Path
 
 CONFIG_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BACKEND_DIR = os.path.dirname(CONFIG_DIR)
 MIGRATIONS_DIR = os.path.join(os.path.dirname(CONFIG_DIR), 'app/migrations')
 SETTINGS_DIR = os.path.join(CONFIG_DIR, 'settings')
-BACKEND_DIR = os.path.dirname(CONFIG_DIR)
 DB_PATH = os.path.join(BACKEND_DIR, 'db.sqlite3')
 PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
 BACKEND_DATA_DIR = os.path.join(BACKEND_DIR, 'data')
 GOOGLE_API_CREDENTIALS_FILE = os.path.join(SETTINGS_DIR, 'google_api_credentials.json')
 GOOGLE_TOKEN_FILE = os.path.join(BACKEND_DIR, 'token.pickle')
-ANALYSIS_PICKLE_PATH = os.path.join(BACKEND_DIR, 'app/analysis/analysis_results')
+ANALYSIS_PICKLE_PATH = Path(BACKEND_DIR, 'app', 'analysis', 'analysis_results')
+LOCAL_PHOTOS_DIR = Path(PROJECT_ROOT, 'assets', 'local_photos')
 
 
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 
-ALLOWED_HOSTS = [
-]  # For production, add domains
+ALLOWED_HOSTS = []  # For production, add domains
 
 
 # Application definition
