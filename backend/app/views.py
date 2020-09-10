@@ -9,8 +9,9 @@ These view functions and classes implement API endpoints
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Photo, MapSquare, Photographer
-from .serializers import PhotoSerializer, MapSquareSerializer, PhotographerSerializer
+from .models import Photo, MapSquare, Photographer, CorpusAnalysisResult
+from .serializers import PhotoSerializer, MapSquareSerializer, PhotographerSerializer, \
+    CorpusAnalysisResultsSerializer
 
 
 @api_view(['GET'])
@@ -60,4 +61,14 @@ def get_photographer(request, photographer_id):
     """
     photographer_obj = Photographer.objects.get(pk=photographer_id)
     serializer = PhotographerSerializer(photographer_obj)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_corpus_analysis_results(request):
+    """
+    API endpoint to get corpus analysis results
+    """
+    corpus_analysis_obj = CorpusAnalysisResult.objects.all()
+    serializer = CorpusAnalysisResultsSerializer(corpus_analysis_obj, many=True)
     return Response(serializer.data)

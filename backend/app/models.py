@@ -51,3 +51,13 @@ class Photographer(models.Model):
     type = models.CharField(max_length=252)
     sentiment = models.CharField(max_length=252)
     map_square = models.ForeignKey('MapSquare', on_delete=models.SET_NULL, null=True)
+
+
+class CorpusAnalysisResult(models.Model):
+    """
+    This model is used to store analysis results on the entire corpus.
+    The analysis_result field is used to store a stringify-ed version of JSON which will
+    be converted to regular JSON in the serializer.
+    """
+    analysis_name = models.CharField(max_length=252)
+    analysis_result = models.TextField()
