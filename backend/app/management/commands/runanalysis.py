@@ -26,12 +26,12 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('analysis_name', action='store', type=str)
-        parser.add_argument('--rerun', action='store', type=str)
+        parser.add_argument('--rerun', action='store_true')
 
     def handle(self, *args, **options):
         # pylint: disable=too-many-locals
         analysis_name = options.get('analysis_name')
-        rerun = options.get('rerun') == 'rerun'
+        rerun = options.get('rerun')
 
         try:
             analysis_module = import_module(f'.{analysis_name}', package='app.analysis')

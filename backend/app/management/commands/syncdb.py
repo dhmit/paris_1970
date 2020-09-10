@@ -5,13 +5,16 @@ Syncs local db with data from project Google Sheet
 """
 
 # Python standard library
+import io
 import pickle
 import os
 from textwrap import dedent
+from pathlib import Path
 
 # 3rd party
 import tqdm
 from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseDownload
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
@@ -25,14 +28,23 @@ from django.core.management.base import BaseCommand
 from app.models import Photo, MapSquare, Photographer
 from app.common import print_header
 
-# The scope of our access to the Google Sheets Account
-# TODO: reduce this scope, if possible, to only access a single specified sheet
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly',
-          'https://www.googleapis.com/auth/drive.metadata.readonly']
+# The scope of our access to the Google API Account
+SCOPES = [
+    'https://www.googleapis.com/auth/spreadsheets.readonly',
+    'https://www.googleapis.com/auth/drive.photos.readonly'
+    'https://www.googleapis.com/auth/drive.metadata.readonly'
+]
+
 
 # Our metadata spreadsheet lives here:
 # https://docs.google.com/spreadsheets/d/1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I/edit#gid=0
 METADATA_SPREADSHEET_ID = '1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I'
+PHOTO_FOLDER_ID = '1aiY1nFJn6T7khu5dhIs3U2o8RdHBu6V7'
+
+# Sides of a photo
+SIDES = ['front', 'back', 'binder']
+
+MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
 
 
 def authorize_google_apps():
@@ -63,18 +75,17 @@ def authorize_google_apps():
     return credentials
 
 
-def create_lookup_dict(credentials):
+def create_lookup_dict(drive_service):
     """
     Creates a quick look up dictionary to get the image URL using map square number and source name
     :param credentials: Credentials object for drive service
     :return Look up dictionary to get the image URL using map square number and source name
     """
     # Resource object for interacting with the google API
-    drive_service = build('drive', 'v3', credentials=credentials)
 
     # Get list of files in google drive folder
     results = drive_service.files().list(
-        q="'1aiY1nFJn6T7khu5dhIs3U2o8RdHBu6V7' in parents",
+        q=f"'{PHOTO_FOLDER_ID}' in parents",
         fields="nextPageToken, files(id, name)"
     ).execute()
 
@@ -95,47 +106,60 @@ def create_lookup_dict(credentials):
         map_square_dict = {}
         for image in images:
             photo_number = image['name'].split('_')[0]
-            photo_srcs = map_square_dict.get(photo_number, {})
-            photo_srcs[image['name']] = \
-                f"https://drive.google.com/uc?id={image['id']}&export=download"
-            map_square_dict[photo_number] = photo_srcs
+            photo_drive_file_ids = map_square_dict.get(photo_number, {})
+            photo_drive_file_ids[image['name']] = image['id']
+            map_square_dict[photo_number] = photo_drive_file_ids
 
         lookup_dict[map_square['name']] = map_square_dict
     return lookup_dict
 
 
-# Sides of a photo
-SIDES = ['front', 'back', 'binder']
-
-MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
-
-
-def add_photo_srcs(model_kwargs, map_square_folder, photo_number):
+def add_photo_srcs(
+    model_kwargs,
+    map_square_number,
+    map_square_folder,
+    photo_number,
+    drive_service,
+    local_download
+):
     """
     Takes the map square folder and the photo number to dynamically adds the Google Drive urls
     into the model kwargs
     :param model_kwargs: Dictionary of keyword arguments to be used in creating the model
     :param map_square_folder: Dictionary of photo sources with keys of photo_number
     :param photo_number: The number of the desired photo in the map_square_folder
+    :param local_download: should we download the photos locally?
     """
-    photo_urls = map_square_folder.get(str(photo_number), '')
-    if photo_urls == '':
+    photo_drive_file_ids = map_square_folder.get(str(photo_number), '')
+    if photo_drive_file_ids == '':
         return
 
     for side in SIDES:
-        model_kwargs[f'{side}_src'] = photo_urls.get(f'{photo_number}_{side}.jpg', '')
+        drive_file_id = photo_drive_file_ids.get(f'{photo_number}_{side}.jpg', '')
+        model_kwargs[f'{side}_google_drive_file_id'] = drive_file_id
+
+        if local_download and drive_file_id:
+            request = drive_service.files().get_media(fileId=drive_file_id)
+            local_map_square_folder = Path(settings.LOCAL_PHOTOS_DIR, map_square_number)
+            local_map_square_folder.mkdir(exist_ok=True)
+            local_photo_path = Path(local_map_square_folder, f'{photo_number}.jpg')
+            out_file = io.FileIO(local_photo_path, mode='wb')
+            downloader = MediaIoBaseDownload(out_file, request)
+            done = False
+            while done is False:
+                status, done = downloader.next_chunk()
+
+            src_url = local_photo_path
+            model_kwargs[f'{side}_src'] = src_url
+        else:
+            src_url = f"https://drive.google.com/uc?id={drive_file_id}&export=download"
+            model_kwargs[f'{side}_src'] = src_url
 
 
-def call_sheets_api(spreadsheet_ranges, creds):
+def call_sheets_api(spreadsheet_ranges, sheets_service):
     """
     Creates list of list of spreadsheet rows
-    :param spreadsheet_ranges: Names of spreadsheets to import
-    :param creds: Credentials object for drive service
-    :return: List of list of spreadsheet rows (by model)
     """
-    # Resource object for interacting with the google API
-    sheets_service = build('sheets', 'v4', credentials=creds)
-
     databases = []
     sheet = sheets_service.spreadsheets()
     for spreadsheet_range in spreadsheet_ranges:
@@ -147,7 +171,13 @@ def call_sheets_api(spreadsheet_ranges, creds):
     return databases
 
 
-def populate_database(model_name, values_as_a_dict, photo_url_lookup):
+def populate_database(
+    model_name,
+    values_as_a_dict,
+    photo_url_lookup,
+    drive_service,
+    local_download,
+):
     """
     Adds model instances to the database based on the data imported from the google spreadsheet
     :param model_name: Name of the model to create an instance of
@@ -201,14 +231,21 @@ def populate_database(model_name, values_as_a_dict, photo_url_lookup):
             photo_number = row.get('number', '')
 
             if map_square_folder:
-                add_photo_srcs(model_kwargs, map_square_folder, str(photo_number))
+                add_photo_srcs(
+                    model_kwargs,
+                    map_square_number,
+                    map_square_folder,
+                    photo_number,
+                    drive_service,
+                    local_download,
+                )
 
             # Get the corresponding Photographer objects
             photographer_number = model_kwargs.get('photographer', None)
             model_kwargs['photographer'] = \
                 Photographer.objects.filter(number=photographer_number).first()
 
-        print_header("Final model_kwargs: " + str(model_kwargs))
+        print_header(f'Creating {model_name} with kwargs: ' + str(model_kwargs))
 
         model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
         model_instance.save()
@@ -220,8 +257,12 @@ class Command(BaseCommand):
     """
     help = 'Syncs local db with data from project Google Sheet and Google Drive'
 
+    def add_arguments(self, parser):
+        parser.add_argument('--local', action='store_true')
+
     def handle(self, *args, **options):
         # pylint: disable=too-many-locals
+        local_download = options.get('local')
 
         # Delete database
         if os.path.exists(settings.DB_PATH):
@@ -261,14 +302,17 @@ class Command(BaseCommand):
         print_header(f'''Will import ranges {", ".join(spreadsheet_ranges)}. (If nothing
           is happening, please try again.)''')
 
+        # Create resource objects for interacting with the google API
         credentials = authorize_google_apps()
-        print_header('Getting the URL for all photos (This might take a couple of minutes)...')
+        sheets_service = build('sheets', 'v4', credentials=credentials)
+        drive_service = build('drive', 'v3', credentials=credentials)
 
         # Call the Sheets API to get metadata values
-        databases = call_sheets_api(spreadsheet_ranges, credentials)
+        databases = call_sheets_api(spreadsheet_ranges, sheets_service)
 
         # Call Drive API to create a lookup dictionary for photo urls
-        photo_url_lookup = create_lookup_dict(credentials)
+        print_header('Getting the URL for all photos (This might take a couple of minutes)...')
+        photo_url_lookup = create_lookup_dict(drive_service)
 
         if not databases:
             print_header('No data found.')
@@ -279,4 +323,10 @@ class Command(BaseCommand):
 
             header = values[0]
             values_as_a_dict = [dict(zip(header, row)) for row in values[1:]]
-            populate_database(model_name, values_as_a_dict, photo_url_lookup)
+            populate_database(
+                model_name,
+                values_as_a_dict,
+                photo_url_lookup,
+                drive_service,
+                local_download,
+            )

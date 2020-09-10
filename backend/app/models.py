@@ -2,6 +2,11 @@
 Models for the paris_1970 app.
 
 """
+from urllib.error import HTTPError
+from http.client import RemoteDisconnected
+
+from skimage import io
+
 from django.db import models
 
 
@@ -24,6 +29,9 @@ class Photo(models.Model):
     front_src = models.CharField(max_length=252)
     back_src = models.CharField(max_length=252)
     binder_src = models.CharField(max_length=252)
+    front_google_drive_file_id = models.CharField(max_length=252)
+    back_google_drive_file_id = models.CharField(max_length=252)
+    binder_google_drive_file_id = models.CharField(max_length=252)
 
     # We transcribe this metadata in the Google Sheet
     shelfmark = models.CharField(max_length=252)
@@ -31,6 +39,25 @@ class Photo(models.Model):
     alt = models.CharField(max_length=252)
     librarian_caption = models.CharField(max_length=252)
     photographer_caption = models.CharField(max_length=252)
+
+    def get_image_data(self):
+        """
+        Get the image data via skimage's imread, for use in analyses
+        """
+        if self.front_src:
+            url = self.front_src
+        elif self.binder_src:
+            url = self.binder_src
+        else:
+            print(f'{self} has no front or binder src')
+            return None
+        try:
+            image = io.imread(url)
+        except (HTTPError, RemoteDisconnected) as base_exception:
+            raise Exception(
+                f'Failed to download image data for {self} due to Google API rate limiting.'
+            ) from base_exception
+        return image
 
     class Meta:
         unique_together = ['number', 'map_square']
