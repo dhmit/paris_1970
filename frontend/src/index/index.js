@@ -8,7 +8,7 @@
 
 import React from 'react';
 import * as PropTypes from 'prop-types';
-import Navbar from '../about/Navbar';
+import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
 export class IndexView extends React.Component {
@@ -21,9 +21,9 @@ export class IndexView extends React.Component {
 
     async componentDidMount() {
         try {
-            const map_response = await fetch('/api/all_map_squares/');
-            const map_data = await map_response.json();
-            this.setState({ map_data, loading: false });
+            const mapResponse = await fetch('/api/all_map_squares/');
+            const mapData = await mapResponse.json();
+            this.setState({ map_data: mapData, loading: false });
         } catch (e) {
             console.log(e);
         }

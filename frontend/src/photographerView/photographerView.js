@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from '../about/Navbar';
+import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
 
@@ -8,7 +8,7 @@ export class PhotographerView extends React.Component {
         super(props);
         this.state = {
             loading: true,
-            photographer_data: null,
+            photographerData: null,
         };
     }
 
@@ -19,9 +19,9 @@ export class PhotographerView extends React.Component {
             if (!response.ok) {
                 this.setState({ loading: false });
             } else {
-                const photographer_data = await response.json();
+                const photographerData = await response.json();
                 this.setState({
-                    photographer_data,
+                    photographerData,
                     loading: false,
                 });
             }
@@ -37,7 +37,7 @@ export class PhotographerView extends React.Component {
                 Loading!
             </>);
         }
-        if (!this.state.photographer_data) {
+        if (!this.state.photographerData) {
             return (<>
                 Photographer with primary
                 key {window.location.pathname.split('/')[2]} not in database.
@@ -45,19 +45,19 @@ export class PhotographerView extends React.Component {
         }
         const {
             name,
-            map_square,
+            map_square: mapSquare,  // n.b. here we rename while doing the object destructuring
             number,
             sentiment,
             type,
             photos,
-        } = this.state.photographer_data;
+        } = this.state.photographerData;
 
         return (<>
             <Navbar/>
             <div className='page'>
                 <h1>{name} (ID: {number})</h1>
                 <h3>Assigned to:</h3>
-                <h5>Map Square {map_square.number}</h5>
+                <h5>Map Square {mapSquare.number}</h5>
                 <h3 className='photographer-heading'>Sentiment on Paris:</h3>
                 <h5>{sentiment === '' ? 'N/A' : sentiment }</h5>
                 <h3>Type of Photographer:</h3>
