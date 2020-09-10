@@ -113,7 +113,7 @@ def create_lookup_dict(drive_service):
         lookup_dict[map_square['name']] = map_square_dict
     return lookup_dict
 
-
+# pylint: disable=too-many-arguments
 def add_photo_srcs(
     model_kwargs,
     map_square_number,
@@ -130,6 +130,7 @@ def add_photo_srcs(
     :param photo_number: The number of the desired photo in the map_square_folder
     :param local_download: should we download the photos locally?
     """
+    # pylint: disable=too-many-locals
     photo_drive_file_ids = map_square_folder.get(str(photo_number), '')
     if photo_drive_file_ids == '':
         return
@@ -151,7 +152,7 @@ def add_photo_srcs(
                 downloader = MediaIoBaseDownload(out_file, request)
                 done = False
                 while done is False:
-                    status, done = downloader.next_chunk()
+                    _, done = downloader.next_chunk()
 
                 model_kwargs[f'{side}_local_path'] = local_photo_path
 
@@ -189,6 +190,7 @@ def populate_database(
     { column names: cell values }
     :param photo_url_lookup: Dictionary of map square folders in the form of a dictionary
     """
+    # pylint: disable=too-many-locals
     for row in values_as_a_dict:
         # Filter column headers for model fields
         model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
