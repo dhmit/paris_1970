@@ -18,7 +18,7 @@ from app.models import Photo
 # from .tests import AnalysisTestBase
 
 MODEL = Photo
-
+WHITESPACE_THRESHOLD = .6
 
 def analysis(photo) -> dict:
     """
@@ -58,10 +58,10 @@ def analysis(photo) -> dict:
             # some photos, like a piece of paper, to appear dark.
             normalized_gray_image = gray_image / np.max(gray_image)
 
-
-            # Count number of pixels that have a value greater than .6 (arbitrarily chosen)
+            # Count number of pixels that have a value greater than the WHITESPACE_THRESHOLD
+            # n.b. this threshold was arbitrarily chosen
             # (uses numpy broadcasting and creates an array of boolean values (0 and 1))
-            number_of_pixels = (normalized_gray_image > .6).sum()
+            number_of_pixels = (normalized_gray_image > WHITESPACE_THRESHOLD).sum()
 
             # Ratio of pixels above the threshold to the total number of pixels in the photo
             # (Prevent larger images from being ranked as being composed mostly of whitespace,

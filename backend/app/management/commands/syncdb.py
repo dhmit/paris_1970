@@ -245,28 +245,6 @@ class Command(BaseCommand):
                 os.remove(file_path)
         print('Done!')
 
-        # The order of these ranges matter. The Photographer model needs to have foreign keys to
-        # the MapSquare database, so we add the Map Squares first
-        spreadsheet_ranges = ['MapSquare', 'Photographer', 'Photo']
-
-        print_header(f'''Will import ranges {", ".join(spreadsheet_ranges)}. (If nothing
-          is happening, please try again.)''')
-
-        # Settings for pickle file
-
-        credentials = authorize_google_apps()
-
-        sheets_service = build('sheets', 'v4', credentials=credentials)
-        drive_service = build('drive', 'v3', credentials=credentials)
-
-        print_header('Getting the URL for all photos (This might take a couple of minutes)...')
-
-        # Create a lookup dictionary to get photo urls using Drive API
-        photo_url_lookup = create_lookup_dict(credentials)
-
-        # Call the Sheets API
-        databases = call_sheets_api(spreadsheet_ranges, credentials)
-
         # Rebuild database
         print_header('Rebuilding db from migrations...')
         call_command('makemigrations')
@@ -275,6 +253,22 @@ class Command(BaseCommand):
 
         # THIS IS JUST FOR PROTOTYPING NEVER EVER EVER EVER IN PRODUCTION do this
         User.objects.create_superuser('admin', password='adminadmin')
+
+        # The order of these ranges matter. The Photographer model needs to have foreign keys to
+        # the MapSquare database, so we add the Map Squares first
+        spreadsheet_ranges = ['MapSquare', 'Photographer', 'Photo']
+
+        print_header(f'''Will import ranges {", ".join(spreadsheet_ranges)}. (If nothing
+          is happening, please try again.)''')
+
+        credentials = authorize_google_apps()
+        print_header('Getting the URL for all photos (This might take a couple of minutes)...')
+
+        # Call the Sheets API to get metadata values
+        databases = call_sheets_api(spreadsheet_ranges, credentials)
+
+        # Call Drive API to create a lookup dictionary for photo urls
+        photo_url_lookup = create_lookup_dict(credentials)
 
         if not databases:
             print_header('No data found.')
