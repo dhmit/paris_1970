@@ -13,11 +13,12 @@ class AnalysisTestBase(TestCase):
     """
     def setUp(self):
         super().setUp()
-        ms_0 = MapSquare()
-        p_0 = Photo(number=1, map_square=ms_0)
-        p_0.save()
-        p_1 = Photo(number=2, map_square=ms_0)
-        p_1.save()
+        map_square = MapSquare()
+        map_square.save()
+        photo_0 = Photo(number=1, map_square=map_square)
+        photo_0.save()
+        photo_1 = Photo(number=2, map_square=map_square)
+        photo_1.save()
 
     def test_sample(self):
         """
