@@ -21,7 +21,7 @@ from app.analysis import (
 
 class AnalysisTestBase(TestCase):
     """
-    Backend TestCase
+    TestCase for testing our analysis modules
     """
     def setUp(self):
         """
