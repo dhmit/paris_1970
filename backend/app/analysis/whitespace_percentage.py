@@ -17,13 +17,8 @@ WHITESPACE_THRESHOLD = .6
 
 def analyze(photo: Photo):
     """
-    Calculates the whitespace for all sides of the photos in the database
-
-    :returns A dictionary of photo ids with values of { model fields: updated values } to be
-    assigned to photo instances
+    Calculate the whitespace % for a given Photo
     """
-    # Calculate the whitespace % for each photo
-    # If src is blank or not a url, then the ratio will not be calculated
 
     # Get the image from the source url
     image = photo.get_image_data()
