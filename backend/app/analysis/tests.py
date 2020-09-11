@@ -47,5 +47,4 @@ class AnalysisTestBase(TestCase):
 
     def test_whitespace_percentage(self):
         result = whitespace_percentage.analyze(self.photo_0)
-        print(result)
         self.assertEqual(50, result)
