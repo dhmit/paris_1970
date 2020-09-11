@@ -1,6 +1,7 @@
 """
 
-count_photos.py - analysis to count all of the photos in the DB
+photographer_caption_length.py - analysis to count all of the photos in the DB
+n.b. This is just a sample! Not actually useful... probably.
 
 """
 from ..models import Photo

@@ -1,8 +1,8 @@
 """
 
-calc_whitespace.py - analysis to calculate ratio of pixels above a certain threshold value (0.6)
-to the size of the image
+calc_whitespace.py
 
+analysis to calculate ratio of pixels above a certain threshold value to the size of the image
 """
 
 import numpy as np
