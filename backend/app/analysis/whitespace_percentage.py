@@ -22,8 +22,6 @@ def analyze(photo: Photo):
 
     # Get the image from the source url
     image = photo.get_image_data()
-    if image is None:
-        return None
 
     # Convert image to grayscale
     # (Changes image array shape from (height, width, 3) to (height, width))

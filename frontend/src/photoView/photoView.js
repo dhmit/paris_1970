@@ -38,7 +38,7 @@ export class PhotoView extends React.Component {
             } else {
                 const photoData = await response.json();
                 const availableSides = Object.values(SIDES)
-                    .filter((side) => photoData[`${side}_src`] !== '');
+                    .filter((side) => photoData[`${side}_src`] !== null);
                 const displaySide = availableSides.length > 0 ? availableSides[0] : '';
                 this.setState({
                     photo_data: photoData,
