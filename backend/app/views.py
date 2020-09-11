@@ -1,17 +1,16 @@
 """
 These view functions and classes implement API endpoints
 """
-
-# from pathlib import Path
-# import json
-# import csv
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .models import Photo, MapSquare, Photographer, CorpusAnalysisResult
-from .serializers import PhotoSerializer, MapSquareSerializer, PhotographerSerializer, \
-    CorpusAnalysisResultsSerializer
+from .serializers import (
+    PhotoSerializer,
+    MapSquareSerializer,
+    PhotographerSerializer,
+    CorpusAnalysisResultsSerializer,
+)
 
 
 @api_view(['GET'])

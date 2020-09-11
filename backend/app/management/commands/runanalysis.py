@@ -28,12 +28,14 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('analysis_name', action='store', type=str)
         parser.add_argument('--use_pickled', action='store_true')
+        parser.add_argument('--run_one', action='store_true')
 
 
     def handle(self, *args, **options):
         # pylint: disable=too-many-locals
         analysis_name = options.get('analysis_name')
         use_pickled = options.get('use_pickled')
+        run_one = options.get('run_one')
 
         try:
             analysis_module = import_module(f'.{analysis_name}', package='app.analysis')
@@ -59,7 +61,13 @@ class Command(BaseCommand):
             # delete existing db instances
             analysis_result_model.objects.filter(name=analysis_name).delete()
 
-            for model_instance in model.objects.all():
+            if run_one:
+                # in a list because this has to be iterable for the loop below...
+                model_instances = [model.objects.first()]
+            else:
+                model_instances = model.objects.all()
+
+            for model_instance in model_instances:
                 print(f'Running {analysis_name} on {model} {model_instance.id}')
                 instance_identifier = f'photo_{model_instance.number}_{model_instance.map_square}'
 
