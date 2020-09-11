@@ -160,5 +160,5 @@ token.pickle
 backend/app/analysis/analysis_results/
 
 # Locally cached photos
-assets/local_photos/
+backend/data/local_photos/
 
