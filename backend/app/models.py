@@ -28,9 +28,9 @@ class Photo(models.Model):
     front_src = models.CharField(max_length=252, null=True)
     back_src = models.CharField(max_length=252, null=True)
     binder_src = models.CharField(max_length=252, null=True)
-    front_local_path = models.FilePathField(max_length=252, null=True)
-    back_local_path = models.FilePathField(max_length=252, null=True)
-    binder_local_path = models.FilePathField(max_length=252, null=True)
+    front_local_path = models.CharField(max_length=252, null=True)
+    back_local_path = models.CharField(max_length=252, null=True)
+    binder_local_path = models.CharField(max_length=252, null=True)
 
     # We transcribe this metadata in the Google Sheet
     shelfmark = models.CharField(max_length=252)
@@ -120,6 +120,9 @@ class PhotoAnalysisResult(AnalysisResult):
     This model is used to store an analysis result for a single Photo
     """
     photo = models.ForeignKey(Photo, on_delete=models.CASCADE, null=False)
+
+    def __str__(self):
+        return f'PhotoAnalysisResult {self.name} for photo with id {self.photo.id}'
 
 
 class PhotographerAnalysisResult(AnalysisResult):

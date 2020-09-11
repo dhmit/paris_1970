@@ -7,6 +7,7 @@ Syncs local db with data from project Google Sheet
 import sys
 import pickle
 import os
+import json
 
 from importlib import import_module
 from typing import Callable
@@ -26,12 +27,13 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('analysis_name', action='store', type=str)
-        parser.add_argument('--rerun', action='store_true')
+        parser.add_argument('--use_pickled', action='store_true')
+
 
     def handle(self, *args, **options):
         # pylint: disable=too-many-locals
         analysis_name = options.get('analysis_name')
-        rerun = options.get('rerun')
+        use_pickled = options.get('use_pickled')
 
         try:
             analysis_module = import_module(f'.{analysis_name}', package='app.analysis')
@@ -50,26 +52,33 @@ class Command(BaseCommand):
             analysis_func: Callable[[object], dict] = getattr(analysis_module, 'analyze')
             model = getattr(analysis_module, 'MODEL')
 
-            # TODO(ra): currently we _assume_ all analyses are on Photos
+            # TODO(ra): currently we assume all analyses are on Photos
             # Eventually we want to generalize to include analyses on MapSquares and Photographers
             analysis_result_model = PhotoAnalysisResult
+
+            # delete existing db instances
+            analysis_result_model.objects.filter(name=analysis_name).delete()
 
             for model_instance in model.objects.all():
                 print(f'Running {analysis_name} on {model} {model_instance.id}')
                 instance_identifier = f'photo_{model_instance.number}_{model_instance.map_square}'
 
-                if rerun or instance_identifier not in stored_results:
-                    result = analysis_func(model_instance)
-                else:
-                    print('Using a found stored result. Pass the --rerun flag to rerun.')
-                    result = stored_results[instance_identifier]
+                if use_pickled:
+                    if instance_identifier in stored_results:
+                        result = stored_results[instance_identifier]
+                    else:
+                        print('No stored result was found, so recomputing.')
+                        result = analysis_func(model_instance)
 
-                    analysis_result = analysis_result_model(
-                        name=analysis_name,
-                        result=result,
-                        photo=model_instance,
-                    )
-                    analysis_result.save()
+                else:
+                    result = analysis_func(model_instance)
+
+                analysis_result = analysis_result_model(
+                    name=analysis_name,
+                    result=json.dumps(result),
+                    photo=model_instance,
+                )
+                analysis_result.save()
 
                 # Store the result
                 stored_results[instance_identifier] = result

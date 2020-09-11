@@ -8,9 +8,14 @@ const SIDES = {
     BINDER: 'binder',
 };
 
+
+function formatPercentageValue(value) {
+    return `${parseInt(value)}%`;
+}
+
 const ANALYSIS_CONFIGS = {
     whitespace_percentage: {
-        formatter: (value) => `${parseInt(value)}%`,
+        formatter: formatPercentageValue,
         displayName: '% whitespace',
     },
     photographer_caption_length: {
@@ -111,15 +116,19 @@ export class PhotoView extends React.Component {
                     <h5>Photographer number</h5>
                     <p>{photographerNumber || 'Unknown'}</p>
                     <h5>Photographer caption</h5>
-                    <p>{photographerCaption}</p>
+                    <p>{photographerCaption || 'None'}</p>
                     {analyses.map((analysisResult, index) => {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
-                        const analysisDisplayName = analysisConfig.displayName;
-                        let analysisResultStr;
-                        if (analysisConfig.formatter) {
-                            analysisResultStr = analysisConfig.formatter(analysisResult.result);
+                        const parsedValue = JSON.parse(analysisResult.result);
+                        let analysisDisplayName;
+                        let analysisResultStr = parsedValue;
+                        if (!analysisConfig) {
+                            analysisDisplayName = analysisResult.name;
                         } else {
-                            analysisResultStr = analysisResult.result.toString();
+                            analysisDisplayName = analysisConfig.displayName;
+                            if (analysisConfig.formatter) {
+                                analysisResultStr = analysisConfig.formatter(parsedValue);
+                            }
                         }
 
                         return (
