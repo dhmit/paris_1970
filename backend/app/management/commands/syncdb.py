@@ -146,7 +146,7 @@ def add_photo_srcs(
                 request = drive_service.files().get_media(fileId=drive_file_id)
                 local_map_square_folder = Path(settings.LOCAL_PHOTOS_DIR, map_square_number)
                 local_map_square_folder.mkdir(exist_ok=True)
-                local_photo_path = Path(local_map_square_folder, f'{photo_number}.jpg')
+                local_photo_path = Path(local_map_square_folder, f'{photo_number}_{side}.jpg')
 
                 out_file = io.FileIO(local_photo_path, mode='wb')
                 downloader = MediaIoBaseDownload(out_file, request)

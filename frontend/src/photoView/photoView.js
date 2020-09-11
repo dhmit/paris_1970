@@ -69,9 +69,11 @@ export class PhotoView extends React.Component {
         }
         const {
             alt,
+            number: photoNumber,
             map_square_number: mapSquareNumber,
             photographer_name: photographerName,
             photographer_number: photographerNumber,
+            photographer_caption: photographerCaption,
             analyses,
         } = this.state.photo_data;
 
@@ -100,12 +102,16 @@ export class PhotoView extends React.Component {
 
                 </div>
                 <div className='image-info col-12 col-lg-6'>
+                    <h5>Map Square</h5>
+                    <p>{mapSquareNumber}</p>
+                    <h5>Photo number</h5>
+                    <p>{photoNumber}</p>
                     <h5>Photographer name</h5>
                     <p>{photographerName || 'Unknown'}</p>
                     <h5>Photographer number</h5>
                     <p>{photographerNumber || 'Unknown'}</p>
-                    <h5>Map Square</h5>
-                    <p>{mapSquareNumber}</p>
+                    <h5>Photographer caption</h5>
+                    <p>{photographerCaption}</p>
                     {analyses.map((analysisResult, index) => {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
                         const analysisDisplayName = analysisConfig.displayName;
@@ -113,7 +119,7 @@ export class PhotoView extends React.Component {
                         if (analysisConfig.formatter) {
                             analysisResultStr = analysisConfig.formatter(analysisResult.result);
                         } else {
-                            analysisResultStr = analysisConfig.result.toString();
+                            analysisResultStr = analysisResult.result.toString();
                         }
 
                         return (
