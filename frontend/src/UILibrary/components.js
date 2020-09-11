@@ -15,7 +15,7 @@ export class MapPath extends React.Component {
         this.state = {
             fill: this.props.fill,
         };
-        this.path_ref = React.createRef();
+        this.pathRef = React.createRef();
     }
 
     componentDidUpdate(prevProps) {
@@ -31,7 +31,7 @@ export class MapPath extends React.Component {
 
         if (prevProps.fill !== this.props.fill) {
             if (this.props.useColorTransition) {
-                d3.select(this.path_ref.current)
+                d3.select(this.pathRef.current)
                     .transition()
                     .duration(500)
                     .attr('fill', () => {
@@ -54,9 +54,9 @@ export class MapPath extends React.Component {
                 strokeWidth={this.props.strokeWidth}
                 fill={this.state.fill}
                 id={this.props.id}
-                onMouseOver={this.props.handle_country_mouseover}
-                onClick={this.props.handle_country_click}
-                ref={this.path_ref}
+                onMouseOver={this.props.handleCountryMouseover}
+                onClick={this.props.handleCountryClick}
+                ref={this.pathRef}
             />
         );
     }
@@ -65,8 +65,8 @@ MapPath.propTypes = {
     path: PropTypes.string,
     id: PropTypes.string,
     fill: PropTypes.string,
-    handle_country_mouseover: PropTypes.func,
-    handle_country_click: PropTypes.func,
+    handleCountryMouseover: PropTypes.func,
+    handleCountryClick: PropTypes.func,
     stroke: PropTypes.string,
     strokeWidth: PropTypes.string,
     useColorTransition: PropTypes.bool,

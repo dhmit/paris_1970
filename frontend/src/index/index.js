@@ -15,7 +15,7 @@ export class IndexView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            map_data: null,
+            mapData: null,
         };
     }
 
@@ -23,19 +23,22 @@ export class IndexView extends React.Component {
         try {
             const mapResponse = await fetch('/api/all_map_squares/');
             const mapData = await mapResponse.json();
-            this.setState({ map_data: mapData, loading: false });
+            this.setState({
+                mapData,
+                loading: false,
+            });
         } catch (e) {
             console.log(e);
         }
     }
 
     render() {
-        if (!this.state.map_data) {
+        if (!this.state.mapData) {
             return (<>
                 Loading...
             </>);
         }
-        const mapSquares = this.state.map_data.map((mapSquare, j) => {
+        const mapSquares = this.state.mapData.map((mapSquare, j) => {
             const pictureList = mapSquare.photos.map((photo, k) => (
                 <li key={k} className='col-lg-12 col-md-12'>
                     <a href={`/photos/${photo.id}`}>

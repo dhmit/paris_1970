@@ -20,7 +20,7 @@ export class MapSquareView extends React.Component {
             } else {
                 const mapSquareData = await response.json();
                 this.setState({
-                    map_square_data: mapSquareData,
+                    mapSquareData,
                     loading: false,
                 });
             }
@@ -36,7 +36,7 @@ export class MapSquareView extends React.Component {
                 Loading!
             </>);
         }
-        if (!this.state.map_square_data) {
+        if (!this.state.mapSquareData) {
             return (<>
                 Map Square with primary
                 key {window.location.pathname.split('/')[2]} not in database.
@@ -45,7 +45,7 @@ export class MapSquareView extends React.Component {
         const {
             number,
             photos,
-        } = this.state.map_square_data;
+        } = this.state.mapSquareData;
 
         return (<>
             <Navbar/>

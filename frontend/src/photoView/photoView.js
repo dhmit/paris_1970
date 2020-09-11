@@ -23,9 +23,9 @@ export class PhotoView extends React.Component {
         super(props);
         this.state = {
             loading: true,
-            photo_data: null,
-            display_side: '',
-            available_sides: [],
+            photoData: null,
+            displaySide: '',
+            availableSides: [],
         };
     }
 
@@ -41,9 +41,9 @@ export class PhotoView extends React.Component {
                     .filter((side) => photoData[`${side}_src`] !== null);
                 const displaySide = availableSides.length > 0 ? availableSides[0] : '';
                 this.setState({
-                    photo_data: photoData,
-                    available_sides: availableSides,
-                    display_side: displaySide,
+                    photoData,
+                    availableSides,
+                    displaySide,
                     loading: false,
                 });
             }
@@ -53,7 +53,7 @@ export class PhotoView extends React.Component {
     }
 
     changeSide = (displaySide) => {
-        this.setState({ display_side: displaySide });
+        this.setState({ displaySide: displaySide });
     };
 
     render() {
@@ -62,7 +62,7 @@ export class PhotoView extends React.Component {
                 Loading!
             </h1>);
         }
-        if (!this.state.photo_data) {
+        if (!this.state.photoData) {
             return (<h1>
                 Photo with id {window.location.pathname.split('/')[2]} is not in database.
             </h1>);
@@ -75,7 +75,7 @@ export class PhotoView extends React.Component {
             photographer_number: photographerNumber,
             photographer_caption: photographerCaption,
             analyses,
-        } = this.state.photo_data;
+        } = this.state.photoData;
 
         console.log(analyses);
 
@@ -85,12 +85,12 @@ export class PhotoView extends React.Component {
                 <div className='image-view col-12 col-lg-6'>
                     <img
                         className='image-photo'
-                        src={this.state.photo_data[`${this.state.display_side}_src`]}
+                        src={this.state.photoData[`${this.state.displaySide}_src`]}
                         alt={alt}
                     />
                     <br/>
-                    {this.state.available_sides.map((side, k) => {
-                        if (side !== this.state.display_side) {
+                    {this.state.availableSides.map((side, k) => {
+                        if (side !== this.state.displaySide) {
                             return (
                                 <button key={k} onClick={() => this.changeSide(side)}>
                                     {side[0].toUpperCase() + side.slice(1)} Side
