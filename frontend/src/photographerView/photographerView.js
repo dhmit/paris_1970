@@ -16,8 +16,7 @@ export class PhotographerView extends React.Component {
 
     async componentDidMount() {
         try {
-            const photographerId = window.location.pathname.split('/')[2];
-            const response = await fetch(`/api/photographer/${photographerId}/`);
+            const response = await fetch(`/api/photographer/${this.props.photographerNumber}/`);
             if (!response.ok) {
                 this.setState({ loading: false });
             } else {
@@ -41,8 +40,7 @@ export class PhotographerView extends React.Component {
         }
         if (!this.state.photographerData) {
             return (<>
-                Photographer with primary
-                key {window.location.pathname.split('/')[2]} not in database.
+                Photographer number ${this.props.photographerNumber} is not in the database.
             </>);
         }
         const {
