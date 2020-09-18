@@ -14,11 +14,11 @@ from .serializers import (
 
 
 @api_view(['GET'])
-def photo(request, photo_id):
+def photo(request, map_square_number, photo_number):
     """
     API endpoint to get a photo with a primary key of photo_id
     """
-    photo_obj = Photo.objects.get(pk=photo_id)
+    photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
     serializer = PhotoSerializer(photo_obj)
     return Response(serializer.data)
 
