@@ -120,7 +120,9 @@ def add_photo_srcs(
     map_square_folder,
     photo_number,
     drive_service,
-    local_download
+    local_download,
+    redownload,
+    verbose,
 ):
     """
     Takes the map square folder and the photo number to dynamically adds the Google Drive urls
@@ -149,11 +151,15 @@ def add_photo_srcs(
                 local_map_square_dir.mkdir(exist_ok=True)
                 local_photo_path = Path(local_map_square_dir, f'{photo_number}_{side}.jpg')
 
-                out_file = io.FileIO(local_photo_path, mode='wb')
-                downloader = MediaIoBaseDownload(out_file, request)
-                done = False
-                while done is False:
-                    _, done = downloader.next_chunk()
+                if (not local_photo_path.exists()) or redownload:
+                    if verbose:
+                        print(f'Downloading map square {map_square_number}, photo {photo_number}, '
+                              f'side {side}')
+                    out_file = io.FileIO(local_photo_path, mode='wb')
+                    downloader = MediaIoBaseDownload(out_file, request)
+                    done = False
+                    while done is False:
+                        _, done = downloader.next_chunk()
 
                 model_kwargs[f'{side}_local_path'] = local_photo_path
 
@@ -183,6 +189,8 @@ def populate_database(
     photo_url_lookup,
     drive_service,
     local_download,
+    redownload,
+    verbose,
 ):
     """
     Adds model instances to the database based on the data imported from the google spreadsheet
@@ -245,6 +253,8 @@ def populate_database(
                     photo_number,
                     drive_service,
                     local_download,
+                    redownload,
+                    verbose,
                 )
 
             # Get the corresponding Photographer objects
@@ -252,7 +262,8 @@ def populate_database(
             model_kwargs['photographer'] = \
                 Photographer.objects.filter(number=photographer_number).first()
 
-        print_header(f'Creating {model_name} with kwargs: ' + str(model_kwargs))
+        if verbose:
+            print(f'Creating {model_name} with kwargs: {model_kwargs}\n')
 
         model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
         model_instance.save()
@@ -266,10 +277,18 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--local', action='store_true')
+        parser.add_argument('--redownload', action='store_true')
+        parser.add_argument('--verbose', action='store_true')
 
     def handle(self, *args, **options):
         # pylint: disable=too-many-locals
         local_download = options.get('local')
+        redownload = options.get('redownload')
+        verbose = options.get('verbose')
+
+        # redownload always does local_download
+        if redownload and not local_download:
+            local_download = True
 
         # Delete database
         if os.path.exists(settings.DB_PATH):
@@ -336,4 +355,6 @@ class Command(BaseCommand):
                 photo_url_lookup,
                 drive_service,
                 local_download,
+                redownload,
+                verbose,
             )
