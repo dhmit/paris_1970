@@ -67,7 +67,7 @@ class MapSquareSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_photos(instance):
         photo_obj = Photo.objects.filter(map_square__number=instance.number)
-        return PhotosForMapSquareSerializer(photo_obj, many=True).data
+        return PhotoSerializer(photo_obj, many=True).data
 
     class Meta:
         model = MapSquare
@@ -120,15 +120,6 @@ class MapSquareForPhotosSerializer(serializers.ModelSerializer):
         model = MapSquare
         fields = ['id', 'name', 'number', 'boundaries']
 
-
-class PhotosForMapSquareSerializer(serializers.ModelSerializer):
-    """
-    Serializes a Photo for the Map Square model, but without a reference to the map square
-    """
-    class Meta:
-        model = Photo
-        fields = ['id', 'number', 'front_src', 'back_src', 'binder_src', 'alt',
-                  'shelfmark', 'librarian_caption', 'photographer_caption', 'contains_sticker']
 
 
 class CorpusAnalysisResultsSerializer(serializers.ModelSerializer):
