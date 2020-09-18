@@ -34,11 +34,11 @@ def all_photos(request):
 
 
 @api_view(['GET'])
-def get_map_square(request, map_square_id):
+def get_map_square(request, map_square_number):
     """
     API endpoint to get a map square from its map_square_id in the database
     """
-    map_square_obj = MapSquare.objects.get(pk=map_square_id)
+    map_square_obj = MapSquare.objects.get(number=map_square_number)
     serializer = MapSquareSerializer(map_square_obj)
     return Response(serializer.data)
 
