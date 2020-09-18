@@ -51,7 +51,7 @@ class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
         fields = [
-            'id', 'number', 'front_src', 'back_src', 'binder_src', 'alt',
+            'id', 'number', 'cleaned_src', 'front_src', 'back_src', 'binder_src', 'alt',
             'photographer_name', 'photographer_number',
             'map_square_number', 'shelfmark', 'librarian_caption', 'photographer_caption',
             'contains_sticker', 'analyses',

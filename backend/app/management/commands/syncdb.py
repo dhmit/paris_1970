@@ -42,7 +42,7 @@ METADATA_SPREADSHEET_ID = '1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I'
 PHOTO_FOLDER_ID = '1aiY1nFJn6T7khu5dhIs3U2o8RdHBu6V7'
 
 # Sides of a photo
-SIDES = ['front', 'back', 'binder']
+SIDES = ['cleaned', 'front', 'back', 'binder']
 
 MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
 

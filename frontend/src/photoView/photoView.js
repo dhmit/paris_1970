@@ -3,6 +3,7 @@ import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
 const SIDES = {
+    CLEANED: 'cleaned',
     FRONT: 'front',
     BACK: 'back',
     BINDER: 'binder',
@@ -82,8 +83,6 @@ export class PhotoView extends React.Component {
             analyses,
         } = this.state.photoData;
 
-        console.log(analyses);
-
         return (<>
             <Navbar />
             <div className="page row">
@@ -94,17 +93,11 @@ export class PhotoView extends React.Component {
                         alt={alt}
                     />
                     <br/>
-                    {this.state.availableSides.map((side, k) => {
-                        if (side !== this.state.displaySide) {
-                            return (
-                                <button key={k} onClick={() => this.changeSide(side)}>
-                                    {side[0].toUpperCase() + side.slice(1)} Side
-                                </button>
-                            );
-                        }
-                        return '';
-                    })}
-
+                    {this.state.availableSides.map((side, k) => (
+                        <button key={k} onClick={() => this.changeSide(side)}>
+                            {side[0].toUpperCase() + side.slice(1)} Side
+                        </button>
+                    ))}
                 </div>
                 <div className='image-info col-12 col-lg-6'>
                     <h5>Map Square</h5>
