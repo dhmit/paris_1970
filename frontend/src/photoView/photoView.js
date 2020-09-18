@@ -38,9 +38,8 @@ export class PhotoView extends React.Component {
 
     async componentDidMount() {
         try {
-            const response = await fetch(
-                `/api/photo/${this.props.mapSquareNumber}/${this.props.photoNumber}/`
-            );
+            const apiURL = `/api/photo/${this.props.mapSquareNumber}/${this.props.photoNumber}/`;
+            const response = await fetch(apiURL);
             if (!response.ok) {
                 this.setState({ loading: false });
             } else {
