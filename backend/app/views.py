@@ -54,11 +54,11 @@ def all_map_squares(request):
 
 
 @api_view(['GET'])
-def get_photographer(request, photographer_id):
+def get_photographer(request, photographer_number):
     """
     API endpoint to get a photographer based on the photographer_id
     """
-    photographer_obj = Photographer.objects.get(pk=photographer_id)
+    photographer_obj = Photographer.objects.get(number=photographer_number)
     serializer = PhotographerSerializer(photographer_obj)
     return Response(serializer.data)
 

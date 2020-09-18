@@ -48,7 +48,7 @@ urlpatterns = [
     # React views
     react_view_path('', 'IndexView'),
     react_view_path('photo/<int:mapSquareNumber>/<int:photoNumber>/', 'PhotoView'),
-    react_view_path('photographer/<int:object_id>/', 'PhotographerView'),
+    react_view_path('photographer/<int:photographerNumber>/', 'PhotographerView'),
     react_view_path('map_square/<int:mapSquareNumber>/', 'MapSquareView'),
     react_view_path('about/', 'About'),
 ]
