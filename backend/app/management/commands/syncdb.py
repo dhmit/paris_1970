@@ -31,8 +31,7 @@ from app.common import print_header
 # The scope of our access to the Google API Account
 SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets.readonly',
-    'https://www.googleapis.com/auth/drive.photos.readonly',
-    'https://www.googleapis.com/auth/drive.metadata.readonly'
+    'https://www.googleapis.com/auth/drive.readonly',
 ]
 
 
