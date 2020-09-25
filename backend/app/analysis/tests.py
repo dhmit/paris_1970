@@ -40,6 +40,9 @@ class AnalysisTestBase(TestCase):
         self.photo_1 = Photo(number=2, map_square=self.map_square)
         self.photo_1.save()
 
+        # Following photos for find_vanishing_point
+        # Team Tangled TODO: import in photo with vanishing point lines
+
     def test_photographer_caption_length(self):
         self.photo_0.photographer_caption = '123456'
         result = photographer_caption_length.analyze(self.photo_0)
@@ -48,3 +51,9 @@ class AnalysisTestBase(TestCase):
     def test_whitespace_percentage(self):
         result = whitespace_percentage.analyze(self.photo_0)
         self.assertEqual(50, result)
+
+    def test_find_vanishing_point(self):
+        # TODO: get a photo with lines that we can easily analyze/test against
+        # result = find_vanishing_point.analyze(self.PHOTONAME)
+        # assertEquals(expected,output)
+        pass
