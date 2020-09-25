@@ -2,7 +2,7 @@
 
 calc_variance.py
 
-analysis to calculate blurriness of pixels under a certain threshold value using Laplacian operator
+analysis to calculate blurriness of pixels using Laplacian operator from openCV
 """
 
 import numpy as np
@@ -12,12 +12,9 @@ from app.models import Photo
 
 MODEL = Photo
 
-BLURRINESS_THRESHOLD = 25
-
-
 def analyze(photo: Photo):
     """
-    Calculate the whitespace % for a given Photo
+    Calculate the blurriness for a given Photo
     """
     image = photo.get_image_data()
 
@@ -28,6 +25,8 @@ def analyze(photo: Photo):
 
     # Use Laplacian operator to give a "blurriness" metric
     # Returns this number of a photo in a single floating point number
-    local_variance = cv2.Laplacian(grayscale_image, cv2.CV_64F).var()
+    local_variance = cv2.Laplacian(grayscale_image, cv2.CV_16S).var()
+
+    # print(local_variance)
 
     return local_variance
