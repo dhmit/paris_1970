@@ -16,6 +16,7 @@ from app.models import Photo, MapSquare
 from app.analysis import (
     photographer_caption_length,
     whitespace_percentage,
+    portrait_detection,
 )
 
 
@@ -48,3 +49,8 @@ class AnalysisTestBase(TestCase):
     def test_whitespace_percentage(self):
         result = whitespace_percentage.analyze(self.photo_0)
         self.assertEqual(50, result)
+
+    def test_portrait_detection(self):
+        result = portrait_detection.analyze(self.photo_0)
+        print(result)
+        #self.assertEqual(50, result)
