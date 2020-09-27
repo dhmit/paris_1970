@@ -12,7 +12,6 @@ from app.models import Photo
 
 MODEL = Photo
 
-
 def analyze(photo: Photo):
     """
     Calculate the average of the standard deviation of pixels over local regions
@@ -20,35 +19,44 @@ def analyze(photo: Photo):
     """
 
     image = photo.get_image_data()
+    print("pixels:", image.size)
 
     # Convert image to grayscale
     # (Changes image array shape from (height, width, 3) to (height, width))
     # (Pixels (image[h][w]) will be a value from 0 to 255)
     grayscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    #flatten the grayscale image ndarray to help with calculations
-    flatList = grayscale_image.flatten()
+    # Flatten the grayscale image ndarray to help with calculations
 
-    #initalize a list that will comprise segments ot the flattened list
-    localRegions = []
+    flat_list = grayscale_image.flatten()
 
-    #declare and initialize boundary markers to split flatList into segments
+    # Initialize a list that will comprise segments ot the flattened list
+    local_regions = []
+
+    # Declare and initialize boundary markers to split flatList into segments
     i = 0
-    j = flatList.size//4
-    interval = flatList.size//4
+    j = flat_list.size // 16
+    interval = flat_list.size // 16
 
-    while j<=flatList.size:
-    #append segments of the flattened grayscale image array to localRegions
-        localRegions.append(flatList[i:j])
-        i, j = j, j+interval
+    while j <= flat_list.size:
+    # Append segments of the flattened grayscale image array to localRegions
+        local_regions.append(flat_list[i : j])
+        i, j = j, j + interval
 
-    #compute the standard deviation of pixels for each individual segment
-    for pxRegion in localRegions:
-        pxRegion = np.std(pxRegion)
+    # Compute the standard deviation of pixels for each individual segment
+    for i in range(len(local_regions)):
+        # Before the calculation and cast, each region is an ndarray
+        local_regions[i] = float(np.std(local_regions[i]))
+        # After the cast, each element in the list is a single float
 
-    #return the average of the standard deviations of all local regions
-    #if not, return 0
+
+    # Return the average of the standard deviations of all local regions
+    # If not, return 0
     try:
-        return sum(localRegions) / len(localRegions)
-    except ZeroDivisionError:
+        print(local_regions)
+        #print(type(local_regions[0]))
+        #print(local_regions[0])
+        return sum(local_regions) / len(local_regions)
+    except (ZeroDivisionError, TypeError):
+        print(0.0)
         return 0.0
