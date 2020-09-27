@@ -47,7 +47,7 @@ class AnalysisTestBase(TestCase):
         # Following photos for find_vanishing_point
         # Team Tangled TODO: import in photo with vanishing point lines
         self.photo_2 = Photo(number=3, map_square=self.map_square)
-        test_photo_path_2 = Path(settings.TEST_PHOTOS_DIR, '100px_100px-vanishing_point_X.jpg')
+        test_photo_path_2 = Path(settings.TEST_PHOTOS_DIR, '100px_100px_vanishing_point_X.jpg')
         self.photo_2.front_local_path = test_photo_path_2
         self.photo_2.save()
 
@@ -75,7 +75,7 @@ class AnalysisTestBase(TestCase):
         # plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
         # plt.show()
 
-        # path = os.path.abspath('100px_100px-vanishing_point_X.jpg')
+        # path = os.path.abspath('100px_100px_vanishing_point_X.jpg')
         # image = cv2.imread(path)
         # print(path)
 
