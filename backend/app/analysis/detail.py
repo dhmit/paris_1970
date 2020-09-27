@@ -1,18 +1,17 @@
 """
 
-standard_deviation.py
+detail.py
 
 analysis to calculate the standard deviation of pixels in the photo
 """
 
 import numpy as np
+from numpy.fft import fft2
 import cv2
 
 from app.models import Photo
 
 MODEL = Photo
-
-WHITESPACE_THRESHOLD = .6
 
 
 def analyze(photo: Photo):
@@ -26,6 +25,14 @@ def analyze(photo: Photo):
     # (Pixels (image[h][w]) will be a value from 0 to 255)
     grayscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    standard_deviation = np.std(grayscale_image)
+    # Take the 2-dimensional fourier transform of the image
+    image_fft2 = fft2(grayscale_image)
 
-    return standard_deviation
+    # Calculate frequency coefficients
+    row_coefficients = abs(image_fft2.sum(axis=1)) / image_fft2.shape[1]
+    column_coefficients = abs(image_fft2.sum(axis=0)) / image_fft2.shape[0]
+
+    highest_frequencies = [row_coefficients[-1], column_coefficients[-1]]
+    detail_score = (highest_frequencies[0] * highest_frequencies[1]) + min(highest_frequencies)
+
+    return detail_score
