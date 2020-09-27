@@ -68,7 +68,8 @@ class Command(BaseCommand):
                 model_instances = model.objects.all()
 
             for model_instance in model_instances:
-                print(f'Running {analysis_name} on {model} {model_instance.id}')
+                print(f'Running {analysis_name} on {model} {model_instance.id} '
+                      f'({model_instance.number}_{model_instance.map_square.number})')
                 instance_identifier = f'photo_{model_instance.number}_{model_instance.map_square}'
 
                 if use_pickled:
