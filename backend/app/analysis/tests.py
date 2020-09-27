@@ -16,6 +16,7 @@ from app.models import Photo, MapSquare
 from app.analysis import (
     photographer_caption_length,
     whitespace_percentage,
+    standard_deviation_calculation_3
 )
 
 
@@ -40,6 +41,7 @@ class AnalysisTestBase(TestCase):
         self.photo_1 = Photo(number=2, map_square=self.map_square)
         self.photo_1.save()
 
+
     def test_photographer_caption_length(self):
         self.photo_0.photographer_caption = '123456'
         result = photographer_caption_length.analyze(self.photo_0)
@@ -48,3 +50,11 @@ class AnalysisTestBase(TestCase):
     def test_whitespace_percentage(self):
         result = whitespace_percentage.analyze(self.photo_0)
         self.assertEqual(50, result)
+
+    def test_standard_deviation_calculation_3(self):
+        self.photo_2 = Photo(number=3, map_square=self.map_square)
+        test_photo2_path = Path(settings.TEST_PHOTOS_DIR, '128x128_black-square.jpg')
+        self.photo_2.front_local_path = test_photo2_path
+        result = standard_deviation_calculation_3.analyze(self.photo_2)
+        self.assertEqual(0, result)
+
