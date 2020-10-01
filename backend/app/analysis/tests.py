@@ -80,6 +80,7 @@ class AnalysisTestBase(TestCase):
         # print(path)
 
         blank_image = img_1 = np.zeros([100,100,3],dtype=np.uint8)
+        image = self.photo_2.get_image_data()
 
         for l in lines:
             rho, theta = l[0]
@@ -92,9 +93,9 @@ class AnalysisTestBase(TestCase):
             x2 = int(x0 - 1000 * (-b))
             y2 = int(y0 - 1000 * (a))
 
-            cv2.line(blank_image, (x1, y1), (x2, y2), (0, 0, 255), 2)
+            cv2.line(image, (x1, y1), (x2, y2), (0, 0, 255), 2)
         cv2.namedWindow('image', cv2.WINDOW_NORMAL)
-        cv2.imshow('image', blank_image)
+        cv2.imshow('image', image)
         cv2.waitKey()
         #cv2.imwrite('houghlines.jpg', image)
         #plt.subplot(122), plt.imshow(image, cmap='gray')
