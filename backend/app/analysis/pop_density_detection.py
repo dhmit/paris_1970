@@ -1,6 +1,6 @@
 """
 
-pop-density-detection.py - analysis to count the number of people in the photos in the DB
+pop_density_detection.py - analysis to count the number of people in the photos in the DB
 
 """
 from ..models import Photo
