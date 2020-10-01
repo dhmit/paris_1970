@@ -25,9 +25,11 @@ class Photo(models.Model):
     photographer = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
 
     # These are computed and set by syncdb: could be null if a photo is missing a side
+    cleaned_src = models.CharField(max_length=252, null=True)
     front_src = models.CharField(max_length=252, null=True)
     back_src = models.CharField(max_length=252, null=True)
     binder_src = models.CharField(max_length=252, null=True)
+    cleaned_local_path = models.CharField(max_length=252, null=True)
     front_local_path = models.CharField(max_length=252, null=True)
     back_local_path = models.CharField(max_length=252, null=True)
     binder_local_path = models.CharField(max_length=252, null=True)
@@ -45,10 +47,14 @@ class Photo(models.Model):
         We try for a local filepath first, as that's faster,
         and we fallback on Google Drive if there's nothing local.
         """
-        if self.front_local_path:
+        if self.cleaned_local_path:
+            source = self.cleaned_local_path
+        elif self.front_local_path:
             source = self.front_local_path
         elif self.binder_local_path:
             source = self.binder_local_path
+        elif self.cleaned_src:
+            source = self.cleaned_src
         elif self.front_src:
             source = self.front_src
         elif self.binder_src:
@@ -81,14 +87,11 @@ class MapSquare(models.Model):
 
 class Photographer(models.Model):
     """
-    This model contains data about a single Photographer, which includes the name, type, sentiment,
-    list of Photos taken by this Photographer, and the Map Square that this photographer was
-    assigned to
+    This model contains data about a single Photographer,
+    which includes their name and the Map Square that this photographer was assigned to
     """
     name = models.CharField(max_length=252)
     number = models.IntegerField(null=True)
-    type = models.CharField(max_length=252)
-    sentiment = models.CharField(max_length=252)
     map_square = models.ForeignKey(MapSquare, on_delete=models.SET_NULL, null=True)
 
 
