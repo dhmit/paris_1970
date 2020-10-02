@@ -33,12 +33,14 @@ def analyze(photo: Photo):
 
     for l in lines[1]:
         x1, y1, x2, y2 = l[0]
-        if x2 - x1 != 0 and abs(abs(np.arctan((y2 - y1) / (x2 - x1))) - np.pi / 2) > np.pi / 6:
+        if (y2-y1)*(x2 - x1) != 0 and abs(abs(np.arctan((y2 - y1) / (x2 - x1))) - np.pi /
+                                                  2) > \
+            np.pi / 6:
             cv2.line(image, (x1, y1), (x2, y2), (0, 0, 255), 3, 8)
     cv2.namedWindow('image', cv2.WINDOW_NORMAL)
     cv2.imshow('image', image)
-    cv2.waitKey()
-    return
+    # cv2.waitKey()
+    return None
 
 
 def auto_canny(image, sigma=0.00001):
