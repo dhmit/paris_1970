@@ -6,10 +6,12 @@ import cv2
 import pytesseract
 from ..models import Photo
 
+from django.conf import settings
+
 MODEL = Photo
 
-WIDTH = 20
-HEIGHT = 20
+WIDTH = 50
+HEIGHT = 50
 
 
 def analyze(photo: Photo):
@@ -30,20 +32,26 @@ def analyze(photo: Photo):
     contours, hierarchy = cv2.findContours(dilation, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     photo2 = photo.copy()
     # A text file is created and flushed
-    file = open("recognized.txt", "w+")
-    file.write("")
-    file.close()
+    # file = open("recognized.txt", "w+")
+    # file.write("")
+    # file.close()
 
     # Loop through contours to crop rectangles
     # that will be passed to pytesseract for text extraction
     text = ""
+    config = f"-l fra --oem 1 --psm 7 --tessdata-dir {settings.TESSDATA_DIR}"
     for contour in contours:
         x, y, width, height = cv2.boundingRect(contour)
         # draw rectangle
         rect = cv2.rectangle(photo2, (x, y), (x + width, y + height), (0, 255, 0), 2)
         # crop block
         block = photo2[y:y+height, x:x+width]
+        cv2.imshow("test", block)
+
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
         # Apply OCR
-        text += pytesseract.image_to_string(block) + "\n"
+        text += pytesseract.image_to_string(block, config=config) + "\n"
+        print("TEXT\n===========", text)
 
     return text

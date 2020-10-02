@@ -55,32 +55,33 @@ class AnalysisTestBase(TestCase):
         self.photo_4.front_local_path = test_photo_path_4
 
         self.photo_5 = Photo(number=6, map_square=self.map_square)
-        test_photo_path_5 = Path(settings.TEST_PHOTOS_DIR, '300x300_hello.jpg')
-        self.photo_4.front_local_path = test_photo_path_4
+        test_photo_path_5 = Path(settings.LOCAL_PHOTOS_DIR, '120', '12_cleaned.jpg')
+        self.photo_5.front_local_path = test_photo_path_5
 
-    def test_photographer_caption_length(self):
-        self.photo_0.photographer_caption = '123456'
-        result = photographer_caption_length.analyze(self.photo_0)
-        self.assertEqual(6, result)
-
-    def test_whitespace_percentage(self):
-        result = whitespace_percentage.analyze(self.photo_0)
-        self.assertEqual(50, result)
-
-    def test_text_ocr_francais(self):
-        # Tests words with the ç
-        result = text_ocr.analyze(self.photo_2)
-        self.assertEqual("Français", result)
-
-    def test_text_ocr_carre(self):
-        # Tests words with accent mark
-        result = text_ocr.analyze(self.photo_3)
-        self.assertEqual("carré", result)
-
-    def test_text_ocr_hello(self):
-        # Tests english word
-        result = text_ocr.analyze(self.photo_4)
-        self.assertEqual("Hello", result)
+    # def test_photographer_caption_length(self):
+    #     self.photo_0.photographer_caption = '123456'
+    #     result = photographer_caption_length.analyze(self.photo_0)
+    #     self.assertEqual(6, result)
+    #
+    # def test_whitespace_percentage(self):
+    #     result = whitespace_percentage.analyze(self.photo_0)
+    #     self.assertEqual(50, result)
+    #
+    # def test_text_ocr_francais(self):
+    #     # Tests words with the ç
+    #     result = text_ocr.analyze(self.photo_2)
+    #     self.assertEqual("Français", result)
+    #
+    # def test_text_ocr_carre(self):
+    #     # Tests words with accent mark
+    #     result = text_ocr.analyze(self.photo_3)
+    #     self.assertEqual("carré", result)
+    #
+    # def test_text_ocr_hello(self):
+    #     # Tests english word
+    #     result = text_ocr.analyze(self.photo_4)
+    #     self.assertEqual("Hello", result)
 
     def test_text_detection(self):
-        result = text_detection.analyze(self.photo_4)
+        result = text_detection.analyze(self.photo_5)
+        print(result)
