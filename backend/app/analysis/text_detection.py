@@ -39,19 +39,21 @@ def analyze(photo: Photo):
     # Loop through contours to crop rectangles
     # that will be passed to pytesseract for text extraction
     text = ""
-    config = f"-l fra --oem 1 --psm 7 --tessdata-dir {settings.TESSDATA_DIR}"
+    config = f"-l fra --oem 1 --psm 7 --tessdata-dir {settings.TESSDATA_DIR.as_posix()}"
+
     for contour in contours:
         x, y, width, height = cv2.boundingRect(contour)
         # draw rectangle
         rect = cv2.rectangle(photo2, (x, y), (x + width, y + height), (0, 255, 0), 2)
         # crop block
         block = photo2[y:y+height, x:x+width]
-        cv2.imshow("test", block)
-
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        # cv2.imshow("test", block)
+        #
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
         # Apply OCR
-        text += pytesseract.image_to_string(block, config=config) + "\n"
+        text += pytesseract.image_to_string(block, lang="fra", config=config) + "\n"
+
         print("TEXT\n===========", text)
 
     return text
