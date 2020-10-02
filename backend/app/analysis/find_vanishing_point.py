@@ -9,7 +9,9 @@ intersect, which should be the vanishing point
 import numpy as np
 import cv2
 
+from matplotlib import pyplot as plt
 from app.models import Photo
+
 
 MODEL = Photo
 
@@ -23,20 +25,30 @@ def analyze(photo: Photo):
     # (Changes image array shape from (height, width, 3) to (height, width))
     # (Pixels (image[h][w]) will be a value from 0 to 255)
     grayscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    edged = auto_canny(grayscale_image)
+    lines = auto_canny(grayscale_image)
 
-    return edged
+    plt.subplot(122), plt.imshow(lines[0], cmap='gray')
+    plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
+    plt.show()
+
+    for l in lines[1]:
+        x1, y1, x2, y2 = l[0]
+        if x2 - x1 != 0 and abs(abs(np.arctan((y2 - y1) / (x2 - x1))) - np.pi / 2) > np.pi / 6:
+            cv2.line(image, (x1, y1), (x2, y2), (0, 0, 255), 3, 8)
+    cv2.namedWindow('image', cv2.WINDOW_NORMAL)
+    cv2.imshow('image', image)
+    cv2.waitKey()
+    return
 
 
 def auto_canny(image, sigma=0.00001):
     # compute the median of the single channel pixel intensities
     v = np.median(image)
-    print("hi" + str(v))
     # apply automatic Canny edge detection using the computed median
     lower = int(max(0, (1.0 - sigma) * v))
     upper = int(min(255, (1.0 + sigma) * v))
     edged = cv2.Canny(image, 200, 250, 3)
     lines = cv2.HoughLinesP(edged, 1, np.pi / 180, 80, 30, maxLineGap=250)
-    print(lines)
+
     # return the edged image
     return [edged, lines]
