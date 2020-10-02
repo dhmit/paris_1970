@@ -30,7 +30,6 @@ class Command(BaseCommand):
         parser.add_argument('--use_pickled', action='store_true')
         parser.add_argument('--run_one', action='store_true')
 
-
     def handle(self, *args, **options):
         # pylint: disable=too-many-locals
         analysis_name = options.get('analysis_name')
@@ -68,7 +67,9 @@ class Command(BaseCommand):
                 model_instances = model.objects.all()
 
             for model_instance in model_instances:
-                print(f'Running {analysis_name} on {model} {model_instance.id}')
+                print(f'Running {analysis_name} on {model} {model_instance.id} '
+                      f'(Photo number: {model_instance.number}, '
+                      f'Map square: {model_instance.map_square.number})')
                 instance_identifier = f'photo_{model_instance.number}_{model_instance.map_square}'
 
                 if use_pickled:

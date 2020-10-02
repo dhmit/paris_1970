@@ -49,7 +49,6 @@ class Photo(models.Model):
         """
         if self.cleaned_local_path:
             source = self.cleaned_local_path
-            print("Here")
         elif self.front_local_path:
             source = self.front_local_path
         elif self.binder_local_path:
