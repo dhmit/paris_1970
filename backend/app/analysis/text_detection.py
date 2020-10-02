@@ -10,8 +10,8 @@ from django.conf import settings
 
 MODEL = Photo
 
-WIDTH = 50
-HEIGHT = 50
+WIDTH = 100
+HEIGHT = 100
 
 
 def analyze(photo: Photo):
@@ -47,10 +47,10 @@ def analyze(photo: Photo):
         rect = cv2.rectangle(photo2, (x, y), (x + width, y + height), (0, 255, 0), 2)
         # crop block
         block = photo2[y:y+height, x:x+width]
-        # cv2.imshow("test", block)
-        #
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
+        cv2.imshow("test", block)
+
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
         # Apply OCR
         text += pytesseract.image_to_string(block, lang="fra", config=config) + "\n"
 
