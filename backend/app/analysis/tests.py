@@ -54,6 +54,10 @@ class AnalysisTestBase(TestCase):
         test_photo_path_4 = Path(settings.TEST_PHOTOS_DIR, '300x300_hello.jpg')
         self.photo_4.front_local_path = test_photo_path_4
 
+        self.photo_5 = Photo(number=6, map_square=self.map_square)
+        test_photo_path_5 = Path(settings.TEST_PHOTOS_DIR, '300x300_hello.jpg')
+        self.photo_4.front_local_path = test_photo_path_4
+
     def test_photographer_caption_length(self):
         self.photo_0.photographer_caption = '123456'
         result = photographer_caption_length.analyze(self.photo_0)
