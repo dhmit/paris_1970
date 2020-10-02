@@ -32,11 +32,15 @@ def analyze(photo: Photo):
     plt.show()
 
     for l in lines[1]:
-        x1, y1, x2, y2 = l[0]
-        if (y2-y1)*(x2 - x1) != 0 and abs(abs(np.arctan((y2 - y1) / (x2 - x1))) - np.pi /
-                                                  2) > \
-            np.pi / 6:
-            cv2.line(image, (x1, y1), (x2, y2), (0, 0, 255), 3, 8)
+        try:
+            x1, y1, x2, y2 = l[0]
+            theta = abs(np.arctan((y2 - y1) / (x2 - x1)))
+            #NEED TO ALTER RANGE VALUES
+            epsi = np.pi / 16
+            if (x2 - x1) != 0 and abs(theta - np.pi /2) > 2 * epsi and theta > epsi:
+                cv2.line(image, (x1, y1), (x2, y2), (0, 0, 255), 3, 8)
+        except ZeroDivisionError:
+            pass
     cv2.namedWindow('image', cv2.WINDOW_NORMAL)
     cv2.imshow('image', image)
     # cv2.waitKey()
@@ -49,7 +53,7 @@ def auto_canny(image, sigma=0.00001):
     # apply automatic Canny edge detection using the computed median
     lower = int(max(0, (1.0 - sigma) * v))
     upper = int(min(255, (1.0 + sigma) * v))
-    edged = cv2.Canny(image, 200, 250, 3)
+    edged = cv2.Canny(image, 150, 255, 3)
     lines = cv2.HoughLinesP(edged, 1, np.pi / 180, 80, 30, maxLineGap=250)
 
     # return the edged image
