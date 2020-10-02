@@ -71,9 +71,9 @@ class AnalysisTestBase(TestCase):
 
         # plt.subplot(121), plt.imshow(self.photo_2, cmap='gray')
         # plt.title('Original Image'), plt.xticks([]), plt.yticks([])
-        # plt.subplot(122), plt.imshow(lines, cmap='gray')
-        # plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
-        # plt.show()
+        plt.subplot(122), plt.imshow(lines[0], cmap='gray')
+        plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
+        plt.show()
 
         # path = os.path.abspath('100px_100px_vanishing_point_X.jpg')
         # image = cv2.imread(path)
@@ -82,18 +82,20 @@ class AnalysisTestBase(TestCase):
         blank_image = img_1 = np.zeros([100,100,3],dtype=np.uint8)
         image = self.photo_2.get_image_data()
 
-        for l in lines:
-            rho, theta = l[0]
-            a = np.cos(theta)
-            b = np.sin(theta)
-            x0 = a * rho
-            y0 = b * rho
-            x1 = int(x0 + 1000 * (-b))
-            y1 = int(y0 + 1000 * (a))
-            x2 = int(x0 - 1000 * (-b))
-            y2 = int(y0 - 1000 * (a))
+        for l in lines[1]:
+            x1, y1, x2, y2 = l[0]
+            if x2-x1 != 0 and abs(abs(np.arctan((y2 - y1) / (x2 - x1))) - np.pi / 2) > np.pi/6:
+                # rho, theta = l[0]
+                # a = np.cos(theta)
+                # b = np.sin(theta)
+                # x0 = a * rho
+                # y0 = b * rho
+                # x1 = int(x0 + 1000 * (-b))
+                # y1 = int(y0 + 1000 * (a))
+                # x2 = int(x0 - 1000 * (-b))
+                # y2 = int(y0 - 1000 * (a))
 
-            cv2.line(image, (x1, y1), (x2, y2), (0, 0, 255), 2)
+                cv2.line(image, (x1, y1), (x2, y2), (0, 0, 255), 3, 8)
         cv2.namedWindow('image', cv2.WINDOW_NORMAL)
         cv2.imshow('image', image)
         cv2.waitKey()

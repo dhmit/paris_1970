@@ -28,14 +28,15 @@ def analyze(photo: Photo):
     return edged
 
 
-def auto_canny(image, sigma=0.33):
+def auto_canny(image, sigma=0.00001):
     # compute the median of the single channel pixel intensities
     v = np.median(image)
+    print("hi" + str(v))
     # apply automatic Canny edge detection using the computed median
     lower = int(max(0, (1.0 - sigma) * v))
     upper = int(min(255, (1.0 + sigma) * v))
-    edged = cv2.Canny(image, lower, upper)
-    lines = cv2.HoughLines(edged, 1, np.pi / 180, 50)
-    print(lines[0])
+    edged = cv2.Canny(image, 200, 250, 3)
+    lines = cv2.HoughLinesP(edged, 1, np.pi / 180, 80, 30, maxLineGap=250)
+    print(lines)
     # return the edged image
-    return lines
+    return [edged, lines]
