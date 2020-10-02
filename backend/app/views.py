@@ -71,3 +71,16 @@ def get_corpus_analysis_results(request):
     corpus_analysis_obj = CorpusAnalysisResult.objects.all()
     serializer = CorpusAnalysisResultsSerializer(corpus_analysis_obj, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def get_standard_deviation_calculation_3(request):
+    """
+    API endpoint to get standard deviation results
+    :param request: HTTP request
+    :return: HTTP response
+    """
+    standard_deviation_3_obj = Photo.objects.filter(
+        photoanalysisresult__name="standard_deviation_calculation_3").order_by(
+        "photoanalysisresult__result")
+    serializer = PhotoSerializer(standard_deviation_3_obj, many=True)
+    return Response(serializer.data)

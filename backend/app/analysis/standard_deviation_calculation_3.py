@@ -1,5 +1,5 @@
 """
-standard_deviation_calculation.py
+Standard_deviation_calculation.py
 
 Isolate local regions of an image and find the average of all standard deviations to determine level of detail in a
 photo
@@ -54,8 +54,8 @@ def analyze(photo: Photo):
     # If not, return 0
     try:
         print(local_regions)
-        #print(type(local_regions[0]))
-        #print(local_regions[0])
+        # Print(type(local_regions[0]))
+        # Print(local_regions[0])
         return sum(local_regions) / len(local_regions)
     except (ZeroDivisionError, TypeError):
         print(0.0)

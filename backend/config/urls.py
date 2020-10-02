@@ -19,7 +19,7 @@ from django.urls import path
 
 from app.common import render_react_view
 from app.views import photo, all_photos, all_map_squares, get_photographer, get_map_square,\
-    get_corpus_analysis_results
+    get_corpus_analysis_results, get_standard_deviation_calculation_3
 
 
 def react_view_path(route, component_name):
@@ -44,6 +44,7 @@ urlpatterns = [
     path('api/corpus_analysis/', get_corpus_analysis_results),
     path('api/all_photos/', all_photos),
     path('api/all_map_squares/', all_map_squares),
+    path('api/standard_deviation_calculation_3/', get_standard_deviation_calculation_3),
 
     # React views
     react_view_path('', 'IndexView'),

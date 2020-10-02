@@ -102,7 +102,7 @@ class AnalysisResult(models.Model):
     be converted to regular JSON in the serializer.
     """
     name = models.CharField(max_length=252)
-    result = models.TextField(null=True)
+    result = models.FloatField(null=True)
 
     class Meta:
         # Make this an abstract base class, which means that Django won't create a database
