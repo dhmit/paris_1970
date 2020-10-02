@@ -71,3 +71,13 @@ def get_corpus_analysis_results(request):
     corpus_analysis_obj = CorpusAnalysisResult.objects.all()
     serializer = CorpusAnalysisResultsSerializer(corpus_analysis_obj, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def local_variance(request):
+    """
+    API endpoint to get local variance results
+    """
+    variance_obj = Photo.objects.filter(photoanalysisresult__name="local_variance").order_by(
+        "photoanalysisresult__result")
+    serializer = PhotoSerializer(variance_obj, many=True)
+    return Response(serializer.data)
