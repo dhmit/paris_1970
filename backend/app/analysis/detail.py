@@ -35,4 +35,6 @@ def analyze(photo: Photo):
     highest_frequencies = [row_coefficients[-1], column_coefficients[-1]]
     detail_score = (highest_frequencies[0] * highest_frequencies[1]) + min(highest_frequencies)
 
+    detail_score = round(detail_score / 10**7, 10)
+
     return detail_score

@@ -71,3 +71,13 @@ def get_corpus_analysis_results(request):
     corpus_analysis_obj = CorpusAnalysisResult.objects.all()
     serializer = CorpusAnalysisResultsSerializer(corpus_analysis_obj, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def detail_view(request):
+    """
+    API endpoint to get corpus analysis results
+    """
+    corpus_analysis_obj = Photo.objects.filter(photoanalysisresult__name='detail').order_by(
+        'photoanalysisresult__result')
+    serializer = PhotoSerializer(corpus_analysis_obj, many=True)
+    return Response(serializer.data)
