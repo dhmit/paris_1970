@@ -53,10 +53,11 @@ def analyze(photo: Photo):
     # Return the average of the standard deviations of all local regions
     # If not, return 0
     try:
-        print(local_regions)
-        # Print(type(local_regions[0]))
-        # Print(local_regions[0])
-        return sum(local_regions) / len(local_regions)
+        print("Stds of local regions:", local_regions)
+        # print(type(local_regions[0]))
+        avg = sum(local_regions) / len(local_regions)
+        print("Average std:", avg)
+        return avg
     except (ZeroDivisionError, TypeError):
         print(0.0)
         return 0.0
