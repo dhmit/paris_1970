@@ -25,7 +25,8 @@ from app.views import (
     get_photographer,
     get_map_square,
     get_corpus_analysis_results,
-    get_photos_by_analysis
+    get_photos_by_analysis,
+    get_standard_deviation_calculation_3
 )
 
 
