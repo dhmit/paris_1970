@@ -81,3 +81,13 @@ def get_stdev_results(request):
         "photoanalysisresult__result")
     serializer = PhotoSerializer(std_analysis_obj, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def get_photos_by_analysis(request, analysis_name):
+    """
+    API endpoint to get photos sorted by analysis
+    """
+    photo_obj = Photo.objects.filter(photoanalysisresult__name=analysis_name).order_by(
+        "photoanalysisresult__result")
+    serializer = PhotoSerializer(photo_obj, many=True)
+    return Response(serializer.data)
