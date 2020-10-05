@@ -73,7 +73,7 @@ def get_corpus_analysis_results(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def get_std_results(request):
+def get_stdev_results(request):
     """
     API endpoint to get all of the results from the three standard deviation calculations
     """
