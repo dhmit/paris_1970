@@ -74,7 +74,7 @@ def analyze(photo: Photo):
     For Windows: https://github.com/tesseract-ocr/tesseract/wiki#windows
     """
     # path to input EAST text detector
-    east = "C:/Users/sthro/Downloads/frozen_east_text_detection.pb"
+    east = settings.TEXT_DETECTION_PATH.as_posix()
 
     # minimum probability required to inspect a region
     min_confidence = 0.5
@@ -84,7 +84,7 @@ def analyze(photo: Photo):
     height = 320
 
     # amount of padding to add to each border of ROI
-    padding = 0.0
+    padding = 0.15
 
     # load the input image and grab the image dimensions
     image = photo.get_image_data()
@@ -150,7 +150,7 @@ def analyze(photo: Photo):
     results = sorted(results, key=lambda r: r[0][1])
 
     # set to true if we want to draw a text box in the image
-    display = False
+    display = True
     # loop over the results
     for ((startX, startY, endX, endY), text) in results:
         # strip out non-ASCII text so we can draw the text on the image
@@ -170,3 +170,7 @@ def analyze(photo: Photo):
             # show the output image
             cv2.imshow("Text Detection", output)
             cv2.waitKey(0)
+
+    detected_text = {result[1].strip() for result in results}
+    print(detected_text)
+    return detected_text

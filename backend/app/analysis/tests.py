@@ -17,7 +17,6 @@ from app.analysis import (
     photographer_caption_length,
     whitespace_percentage,
     text_ocr,
-    text_detection
 )
 
 
@@ -51,12 +50,16 @@ class AnalysisTestBase(TestCase):
         self.photo_3.front_local_path = test_photo_path_3
 
         self.photo_4 = Photo(number=5, map_square=self.map_square)
-        test_photo_path_4 = Path(settings.TEST_PHOTOS_DIR, '300x300_francais.jpg')
+        test_photo_path_4 = Path(settings.TEST_PHOTOS_DIR, '300x300_hello.jpg')
         self.photo_4.front_local_path = test_photo_path_4
 
         self.photo_5 = Photo(number=6, map_square=self.map_square)
-        test_photo_path_5 = Path(settings.LOCAL_PHOTOS_DIR, '243', '20_cleaned.jpg')
+        test_photo_path_5 = Path(settings.LOCAL_PHOTOS_DIR, '120', '42_cleaned.jpg')
         self.photo_5.front_local_path = test_photo_path_5
+
+        self.photo_6 = Photo(number=7, map_square=self.map_square)
+        test_photo_path_6 = Path(settings.TEST_PHOTOS_DIR, 'test_text.jpg')
+        self.photo_6.front_local_path = test_photo_path_6
 
     def test_photographer_caption_length(self):
         self.photo_0.photographer_caption = '123456'
@@ -70,17 +73,19 @@ class AnalysisTestBase(TestCase):
     def test_text_ocr_francais(self):
         # Tests words with the ç
         result = text_ocr.analyze(self.photo_2)
-        self.assertEqual("Français", result)
+        self.assertEqual({"Français"}, result)
 
     def test_text_ocr_carre(self):
         # Tests words with accent mark
         result = text_ocr.analyze(self.photo_3)
-        self.assertEqual("carré", result)
+        self.assertEqual({"carré"}, result)
 
     def test_text_ocr_hello(self):
         # Tests english word
-        result = text_ocr.analyze(self.photo_5)
-        # self.assertEqual("Hello", result)
+        result = text_ocr.analyze(self.photo_4)
+        self.assertEqual({"Hello"}, result)
 
-    def test_text_detection(self):
-        result = text_detection.analyze(self.photo_5)
+    def test_text_ocr_real_image(self):
+        result = text_ocr.analyze(self.photo_6)
+        print(result)
+
