@@ -7,12 +7,14 @@ def analyze(photo: Photo):
     Calculate the whitespace % for a given Photo
     """
 
-    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     # eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
     img = photo.get_image_data()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+    print("FACES", faces)
+    print("GRAY", gray)
     return faces
     """
     for (x, y, w, h) in faces:
