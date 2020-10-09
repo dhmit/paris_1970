@@ -52,8 +52,7 @@ urlpatterns = [
     path('api/corpus_analysis/', get_corpus_analysis_results),
     path('api/all_photos/', all_photos),
     path('api/all_map_squares/', all_map_squares),
-    #path('api/analysis/<str:analysis_name>/', get_photos_by_analysis)
-    path('api/analysis/standard_deviation_calculation_3/', get_photos_by_analysis),
+    path('api/analysis/<str:analysis_name>/', get_photos_by_analysis),
 
     # React views
     react_view_path('', 'IndexView'),
