@@ -3,7 +3,6 @@ Tests for the main main.
 """
 
 from pathlib import Path
-
 from django.conf import settings
 from django.test import TestCase
 
@@ -17,7 +16,8 @@ from app.analysis import (
     photographer_caption_length,
     whitespace_percentage,
     courtyard_frame,
-    find_windows
+    find_windows,
+    detect_sky
 )
 
 
@@ -47,6 +47,15 @@ class AnalysisTestBase(TestCase):
         self.photo_square.front_local_path = test_photo_path
         self.photo_square.save()
 
+        self.photo_2 = Photo(number=3, map_square=self.map_square)
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, '29_binder copy.jpg')
+        self.photo_2.front_local_path = test_photo_path
+        self.photo_2.save()
+
+        self.photo_3 = Photo(number=4, map_square=self.map_square)
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, '94_binder copy.jpg')
+        self.photo_3.front_local_path = test_photo_path
+        self.photo_3.save()
 
     def test_photographer_caption_length(self):
         self.photo_0.photographer_caption = '123456'
@@ -66,3 +75,8 @@ class AnalysisTestBase(TestCase):
         result = find_windows.analyze(self.photo_square)
         print(result)
         self.assertEqual(True, result)
+
+    def test_gradient_analysis(self):
+        result = detect_sky.analyze(self.photo_3)
+        self.assertEqual(True, result)
+
