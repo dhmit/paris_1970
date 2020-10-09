@@ -53,7 +53,7 @@ def analyze(photo: Photo):
 
     cv2.namedWindow('image', cv2.WINDOW_NORMAL)
     cv2.imshow('image', image)
-    # cv2.waitKey()
+    cv2.waitKey()
     return van_point[0]
 
 

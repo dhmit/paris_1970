@@ -64,7 +64,14 @@ class AnalysisTestBase(TestCase):
         result = whitespace_percentage.analyze(self.photo_0)
         self.assertEqual(50, result)
 
-    def test_find_vanishing_point(self):
-        # TODO: get a photo with lines that we can easily analyze/test against
+    def test_find_vanishing_point_x(self):
+        # covers when image is x, intersecting lines in the middle
+        result = find_vanishing_point.analyze(self.photo_2)
+        self.assertEqual((50, 50), result)
+        pass
+
+    def test_find_vanishing_point_1_horizontal_line(self):
+        # covers when online line is horizontal (supposed to ignore)
         result = find_vanishing_point.analyze(self.photo_0)
+        self.assertEqual((0,0), result)
         pass
