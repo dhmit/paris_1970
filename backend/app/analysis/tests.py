@@ -35,7 +35,7 @@ class AnalysisTestBase(TestCase):
 
         self.photo_0 = Photo(number=1, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, '100x100_500px-white_500px-black.jpg')
-        self.photo_0.front_local_path = test_photo_path
+        self.photo_0.cleaned_local_path = test_photo_path
         self.photo_0.save()
 
         self.photo_1 = Photo(number=2, map_square=self.map_square)
@@ -57,9 +57,12 @@ class AnalysisTestBase(TestCase):
         photo_three_people.save()
 
         # this photo we know has 3 people
+        print("HERE 1")
         result = pop_density_detection.analyze(photo_three_people)
+        print("HERE 2")
         self.assertEqual(3, result)
-
+        print("HERE 3")
         # this is the half black half white square with no people
         result = pop_density_detection.analyze(self.photo_0)
+        print("HERE 4")
         self.assertEqual(0, result)
