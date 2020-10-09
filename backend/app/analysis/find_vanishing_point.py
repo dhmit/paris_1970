@@ -45,7 +45,7 @@ def analyze(photo: Photo):
     van_point = find_van_coord(filter_lines, image.shape[0], image.shape[1])
     print(van_point)
     scale = 10
-    print(van_point[1]/scale)
+    print(van_point[1]/scale, type(van_point), van_point)
     cv2.circle(image, van_point[0], 50, (255, 0, 0), 10, 8)
 
     cv2.namedWindow('image', cv2.WINDOW_NORMAL)
@@ -69,7 +69,7 @@ def auto_canny(image, sigma=0.00001):
 
 def find_van_coord(lines, x_pix=0, y_pix=0):
     step = 50
-    std = {}
+    coords_to_dists_from_lines = {}
     for i in range(0, x_pix, step):
         for j in range(0, y_pix, step):
             for l in lines:
@@ -79,17 +79,15 @@ def find_van_coord(lines, x_pix=0, y_pix=0):
                 b = 1
                 c = -y1 - a * x1
                 d = abs(a * i + b * j + c) / (a ** 2 + b ** 2) ** .5
-                if (i, j) in std:
-                    std[(i, j)] += d
+                if (i, j) in coords_to_dists_from_lines:
+                    coords_to_dists_from_lines[(i, j)] += d
                 else:
-                    std[(i, j)] = d
-    if len(std) != 0:
-        # mean = sum(std.values())/len(std)
-        # for i in std:
-        #     std[i] = ((std[i] - mean)**2/len(std))**.5
+                    coords_to_dists_from_lines[(i, j)] = d
+    if len(coords_to_dists_from_lines) != 0:
         min_coord = (0, 0)
-        for coord in std:
-            if std[coord] <= std[min_coord]:
+        for coord in coords_to_dists_from_lines: # find coord with minimum distance sum to lines
+            if coords_to_dists_from_lines[coord] <= coords_to_dists_from_lines[min_coord]: # will
+                # always include (0,0) so no keyerrors
                 min_coord = coord
-        return (min_coord, std[min_coord])
-    return (0, 0)
+        return (min_coord, coords_to_dists_from_lines[min_coord])
+    return (0, 0), 0
