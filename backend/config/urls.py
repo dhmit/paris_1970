@@ -38,17 +38,17 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # API endpoints
-    path('api/photo/<int:photo_id>/', photo),
+    path('api/photo/<int:map_square_number>/<int:photo_number>/', photo),
     path('api/photographer/<int:photographer_id>/', get_photographer),
-    path('api/map_square/<int:map_square_id>/', get_map_square),
+    path('api/map_square/<int:map_square_number>/', get_map_square),
     path('api/corpus_analysis/', get_corpus_analysis_results),
     path('api/all_photos/', all_photos),
     path('api/all_map_squares/', all_map_squares),
 
     # React views
     react_view_path('', 'IndexView'),
-    react_view_path('photos/<int:object_id>/', 'PhotoView'),
-    react_view_path('photographer/<int:object_id>/', 'PhotographerView'),
-    react_view_path('map_square/<int:object_id>/', 'MapSquareView'),
+    react_view_path('photo/<int:mapSquareNumber>/<int:photoNumber>/', 'PhotoView'),
+    react_view_path('photographer/<int:photographerNumber>/', 'PhotographerView'),
+    react_view_path('map_square/<int:mapSquareNumber>/', 'MapSquareView'),
     react_view_path('about/', 'About'),
 ]

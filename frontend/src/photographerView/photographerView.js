@@ -1,4 +1,6 @@
 import React from 'react';
+import * as PropTypes from 'prop-types';
+
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
@@ -14,8 +16,7 @@ export class PhotographerView extends React.Component {
 
     async componentDidMount() {
         try {
-            const photographerId = window.location.pathname.split('/')[2];
-            const response = await fetch(`/api/photographer/${photographerId}/`);
+            const response = await fetch(`/api/photographer/${this.props.photographerNumber}/`);
             if (!response.ok) {
                 this.setState({ loading: false });
             } else {
@@ -39,8 +40,7 @@ export class PhotographerView extends React.Component {
         }
         if (!this.state.photographerData) {
             return (<>
-                Photographer with primary
-                key {window.location.pathname.split('/')[2]} not in database.
+                Photographer number ${this.props.photographerNumber} is not in the database.
             </>);
         }
         const {
@@ -66,7 +66,7 @@ export class PhotographerView extends React.Component {
                 <ul className='photo-list'>
                     {photos.map((photo, k) => (
                         <li key={k}>
-                            <a href={`/photos/${photo.id}`}>
+                            <a href={`/photo/${mapSquare.number}/${photo.number}/`}>
                                 <h3>Photo {photo.id}</h3>
                             </a>
                         </li>
@@ -77,3 +77,6 @@ export class PhotographerView extends React.Component {
         </>);
     }
 }
+PhotographerView.propTypes = {
+    photographerNumber: PropTypes.number,
+};

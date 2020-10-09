@@ -1,4 +1,6 @@
 import React from 'react';
+import * as PropTypes from 'prop-types';
+
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
@@ -37,8 +39,8 @@ export class PhotoView extends React.Component {
 
     async componentDidMount() {
         try {
-            const photoId = window.location.pathname.split('/')[2];
-            const response = await fetch(`/api/photo/${photoId}/`);
+            const apiURL = `/api/photo/${this.props.mapSquareNumber}/${this.props.photoNumber}/`;
+            const response = await fetch(apiURL);
             if (!response.ok) {
                 this.setState({ loading: false });
             } else {
@@ -137,3 +139,7 @@ export class PhotoView extends React.Component {
         </>);
     }
 }
+PhotoView.propTypes = {
+    photoNumber: PropTypes.number,
+    mapSquareNumber: PropTypes.number,
+};
