@@ -6,6 +6,7 @@ from imutils.object_detection import non_max_suppression
 import numpy as np
 import pytesseract
 import cv2
+import enchant
 
 from django.conf import settings
 
@@ -132,6 +133,9 @@ def analyze(photo: Photo):
 
     # initialize the list of results
     results = []
+
+    # create dictionary for french words
+    checkword = enchant.Dict("fr")
     # loop over the bounding boxes
     for (startX, startY, endX, endY) in boxes:
         # scale the bounding box coordinates based on the respective ratios
@@ -155,6 +159,7 @@ def analyze(photo: Photo):
         # so we explicitly pass the posix-style path
         config = f"-l fra --oem 1 --psm 6 --tessdata-dir {settings.TESSDATA_DIR.as_posix()}"
         text = pytesseract.image_to_string(roi, config=config)
+        print(checkword.check(text))
         # add the bounding box coordinates and OCR'd text to the list of results
         results.append(((startX, startY, endX, endY), text))
 
