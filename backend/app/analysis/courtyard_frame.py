@@ -9,7 +9,7 @@ from app.models import Photo
 from pathlib import Path
 from django.conf import settings
 
-DARK_THRESHOLD = .6
+DARK_THRESHOLD = 0.2
 
 def analyze(photo: Photo):
     """
@@ -45,38 +45,31 @@ def analyze(photo: Photo):
     #         return False
     # return True
 
-    border_percentage = 0.01 #top and bottom 10% of photo
+    index = 0 # temp
+    percent_passed = 0.9
+    border_percentage = 0.005 #top and bottom 0.5% of photo
     length = len(normalized_grayscale_image[0])
     width = len(normalized_grayscale_image)
-    border_num = int(border_percentage * min(length, width))
+    border_num = int(border_percentage * min(length, width)) #number of pixels we want to check
     if border_num < 1:
         border_num = 1
-    for row in range(border_num):
-        for pixel_top in normalized_grayscale_image[row]:
-            if pixel_top > DARK_THRESHOLD:
-                return False
-        for pixel_bottom in normalized_grayscale_image[::-1][row]:
-            if pixel_bottom > DARK_THRESHOLD:
-                return False
-    for row in normalized_grayscale_image:
+    for pixel_top in normalized_grayscale_image[0]:
+        if pixel_top > DARK_THRESHOLD:
+            print("pixel_top:", pixel_top)
+            return False
+    for pixel_bottom in normalized_grayscale_image[-1]:
+        print(index/length)
+        if pixel_bottom > DARK_THRESHOLD:
+            print("pixel_bottom:", pixel_bottom)
+            return False
+        index += 1
+    for row in normalized_grayscale_image[1:len(normalized_grayscale_image)-2]:
         for pixel in range(border_num):
             if row[pixel] > DARK_THRESHOLD or row[::-1][pixel] > DARK_THRESHOLD:
+                print("front pixel __ in row __:", row[pixel], row)
+                print("back pixel __ in row __:", row[::-1][pixel], row)
                 return False
     return True
-
-    # Count number of pixels that have a value greater than the WHITESPACE_THRESHOLD
-    # n.b. this threshold was arbitrarily chosen
-    # (uses numpy broadcasting and creates an array of boolean values (0 and 1))
-    #number_of_pixels = (normalized_grayscale_image < DARK_THRESHOLD).sum()
-
-    # Percentage of pixels above the threshold to the total number of pixels in the photo
-    # (Prevent larger images from being ranked as being composed mostly of whitespace,
-    # just because they are larger)
-
-    #dark_percentage = number_of_pixels / grayscale_image.size * 100
-
-    #return dark_percentage
-
 
 # map_square = MapSquare()
 # map_square.save()

@@ -68,8 +68,9 @@ class AnalysisTestBase(TestCase):
 
     def test_courtyard_frame(self):
         result = courtyard_frame.analyze(self.photo_0)
-        #self.assertEqual(50, result)
         print(result)
+        #self.assertEqual(True, result)
+
 
     def test_find_windows(self):
         result = find_windows.analyze(self.photo_square)
