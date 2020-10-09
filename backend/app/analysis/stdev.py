@@ -37,7 +37,6 @@ def analyze(photo: Photo):
     local_regions = []
 
     # Declare and initialize boundary markers to split flatList into segments
-    # Note: Still experimenting with partitions
     i = 0
     j = flat_list.size // 64
     interval = flat_list.size // 64

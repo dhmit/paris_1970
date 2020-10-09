@@ -71,14 +71,3 @@ def get_corpus_analysis_results(request):
     corpus_analysis_obj = CorpusAnalysisResult.objects.all()
     serializer = CorpusAnalysisResultsSerializer(corpus_analysis_obj, many=True)
     return Response(serializer.data)
-
-
-@api_view(['GET'])
-def get_photos_by_analysis(request, analysis_name):
-    """
-    API endpoint to get photos sorted by analysis
-    """
-    photo_obj = Photo.objects.filter(photoanalysisresult__name=analysis_name)
-    sorted_photo_obj = photo_obj.order_by('photoanalysisresult__result')
-    serializer = PhotoSerializer(sorted_photo_obj, many=True)
-    return Response(serializer.data)
