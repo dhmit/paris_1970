@@ -14,11 +14,11 @@ from .serializers import (
 
 
 @api_view(['GET'])
-def photo(request, photo_id):
+def photo(request, map_square_number, photo_number):
     """
     API endpoint to get a photo with a primary key of photo_id
     """
-    photo_obj = Photo.objects.get(pk=photo_id)
+    photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
     serializer = PhotoSerializer(photo_obj)
     return Response(serializer.data)
 
@@ -34,11 +34,11 @@ def all_photos(request):
 
 
 @api_view(['GET'])
-def get_map_square(request, map_square_id):
+def get_map_square(request, map_square_number):
     """
     API endpoint to get a map square from its map_square_id in the database
     """
-    map_square_obj = MapSquare.objects.get(pk=map_square_id)
+    map_square_obj = MapSquare.objects.get(number=map_square_number)
     serializer = MapSquareSerializer(map_square_obj)
     return Response(serializer.data)
 
@@ -54,11 +54,11 @@ def all_map_squares(request):
 
 
 @api_view(['GET'])
-def get_photographer(request, photographer_id):
+def get_photographer(request, photographer_number):
     """
     API endpoint to get a photographer based on the photographer_id
     """
-    photographer_obj = Photographer.objects.get(pk=photographer_id)
+    photographer_obj = Photographer.objects.get(number=photographer_number)
     serializer = PhotographerSerializer(photographer_obj)
     return Response(serializer.data)
 

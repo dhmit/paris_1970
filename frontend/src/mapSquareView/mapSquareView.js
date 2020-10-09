@@ -1,4 +1,6 @@
 import React from 'react';
+import * as PropTypes from 'prop-types';
+
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
@@ -13,8 +15,7 @@ export class MapSquareView extends React.Component {
 
     async componentDidMount() {
         try {
-            const mapSquareId = window.location.pathname.split('/')[2];
-            const response = await fetch(`/api/map_square/${mapSquareId}/`);
+            const response = await fetch(`/api/map_square/${this.props.mapSquareNumber}/`);
             if (!response.ok) {
                 this.setState({ loading: false });
             } else {
@@ -23,12 +24,12 @@ export class MapSquareView extends React.Component {
                     mapSquareData,
                     loading: false,
                 });
+                console.log(mapSquareData);
             }
         } catch (e) {
             console.log(e);
         }
     }
-
 
     render() {
         if (this.state.loading) {
@@ -38,8 +39,7 @@ export class MapSquareView extends React.Component {
         }
         if (!this.state.mapSquareData) {
             return (<>
-                Map Square with primary
-                key {window.location.pathname.split('/')[2]} not in database.
+                Map Square {this.props.mapSquareNumber} is not in database.
             </>);
         }
         const {
@@ -47,23 +47,33 @@ export class MapSquareView extends React.Component {
             photos,
         } = this.state.mapSquareData;
 
+        const photoListItem = (photo, k) => {
+            return (
+                <li key={k}>
+                    <a href={`/photo/${this.props.mapSquareNumber}/${photo.number}/`}>
+                        <h3>Photo {photo.id}</h3>
+                    </a>
+                </li>
+            );
+        };
+
         return (<>
             <Navbar/>
             <div className="page">
                 <h1>Map Square {number}</h1>
-                <h3>Photos:</h3>
-                <ul className='photo-list'>
-                    {photos.map((photo, k) => (
-                        <li key={k}>
-                            <a href={`/photos/${photo.id}`}>
-                                <h3>Photo {photo.id}</h3>
-                            </a>
-                        </li>
-                    ))}
-                </ul>
+                { photos.length
+                    ? (
+                        <ul className='photo-list'>
+                            {photos.map((photo, k) => photoListItem(photo, k))}
+                        </ul>
+                    )
+                    : 'No metadata has been transcribed for these photos.'
+                }
             </div>
             <Footer/>
         </>);
     }
 }
-
+MapSquareView.propTypes = {
+    mapSquareNumber: PropTypes.number,
+};

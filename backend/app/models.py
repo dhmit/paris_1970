@@ -49,7 +49,7 @@ class Photo(models.Model):
         """
         if self.cleaned_local_path:
             source = self.cleaned_local_path
-        if self.front_local_path:
+        elif self.front_local_path:
             source = self.front_local_path
         elif self.binder_local_path:
             source = self.binder_local_path
@@ -87,14 +87,11 @@ class MapSquare(models.Model):
 
 class Photographer(models.Model):
     """
-    This model contains data about a single Photographer, which includes the name, type, sentiment,
-    list of Photos taken by this Photographer, and the Map Square that this photographer was
-    assigned to
+    This model contains data about a single Photographer,
+    which includes their name and the Map Square that this photographer was assigned to
     """
     name = models.CharField(max_length=252)
     number = models.IntegerField(null=True)
-    type = models.CharField(max_length=252)
-    sentiment = models.CharField(max_length=252)
     map_square = models.ForeignKey(MapSquare, on_delete=models.SET_NULL, null=True)
 
 
