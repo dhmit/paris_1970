@@ -32,7 +32,7 @@ def analyze(photo: Photo):
 
     # load the image and resize it to (1) reduce detection time
     # and (2) improve detection accuracy
-    image = cv2.imread(photo)
+    image = photo.get_image_data()
     image = imutils.resize(image, width=min(400, image.shape[1]))
     orig = image.copy()
     # detect people in the image
@@ -54,8 +54,10 @@ def analyze(photo: Photo):
     #print("[INFO] {}: {} original boxes, {} after suppression".format(
     #    filename, len(rects), len(pick)))
     # show the output images
-    #cv2.imshow("Before NMS", orig)
-    #cv2.imshow("After NMS", image)
+    # cv2.imshow("Before NMS", orig)
+    # cv2.imshow("After NMS", image)
+    cv2.imwrite(f'test_pop_density_detection_{photo.id}.jpg', image)
     #cv2.waitKey(0)
 
-    return image
+    num_people = len(pick)
+    return num_people

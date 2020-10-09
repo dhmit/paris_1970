@@ -16,6 +16,7 @@ from app.models import Photo, MapSquare
 from app.analysis import (
     photographer_caption_length,
     whitespace_percentage,
+    pop_density_detection,
 )
 
 
@@ -48,3 +49,17 @@ class AnalysisTestBase(TestCase):
     def test_whitespace_percentage(self):
         result = whitespace_percentage.analyze(self.photo_0)
         self.assertEqual(50, result)
+
+    def test_pop_density_detection(self):
+        photo_three_people = Photo(number=3, map_square=self.map_square)
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'pop_density_detection_test_3_people.jpg')
+        photo_three_people.cleaned_local_path = test_photo_path
+        photo_three_people.save()
+
+        # this photo we know has 3 people
+        result = pop_density_detection.analyze(photo_three_people)
+        self.assertEqual(3, result)
+
+        # this is the half black half white square with no people
+        result = pop_density_detection.analyze(self.photo_0)
+        self.assertEqual(0, result)
