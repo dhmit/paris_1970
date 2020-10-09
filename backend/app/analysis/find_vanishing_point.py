@@ -17,7 +17,9 @@ MODEL = Photo
 
 def analyze(photo: Photo):
     """
-    Calculate the whitespace % for a given Photo
+    Given a photo, returns the coordinate of the vanishing point,
+    where the vanishing point is the point that has the minimum sum of
+    distances to all detected lines in the photo
     """
     image = photo.get_image_data()
     # Convert image to grayscale
@@ -31,6 +33,7 @@ def analyze(photo: Photo):
     plt.show()
 
     filter_lines = []
+    # Filters out vertical and horizontal lines
     for l in lines[1]:
         try:
             x1, y1, x2, y2 = l[0]
@@ -51,10 +54,21 @@ def analyze(photo: Photo):
     cv2.namedWindow('image', cv2.WINDOW_NORMAL)
     cv2.imshow('image', image)
     # cv2.waitKey()
-    return None
+    return van_point[0]
 
 
 def auto_canny(image, sigma=0.00001):
+    """
+    Applies the Canny and HoughLinesP functions from OpenCV to the given
+    image and returns the result
+
+    :param image: an image
+    :param sigma: determines thresholds for Canny function
+    :return: a list containing the binary image from Canny and the set of
+             lines from HoughLinesP
+
+    TODO: Optimize parameters for Canny and HoughLinesP instead of hard-coding them
+    """
     # compute the median of the single channel pixel intensities
     v = np.median(image)
     # apply automatic Canny edge detection using the computed median
@@ -68,6 +82,18 @@ def auto_canny(image, sigma=0.00001):
 
 
 def find_van_coord(lines, x_pix=0, y_pix=0):
+    """
+    Given a filtered list of significant lines and the dimensions of the image,
+    finds the point that is closest to all lines on average.
+
+    :param lines: list of significant lines
+    :param x_pix: width of the image
+    :param y_pix: height of the image
+    :return: tuple with: index 0 = vanishing point coordinates
+                         index 1 = sum of distances from VP to all lines
+    TODO: If there is no vanishing point within the photo, return None or "offscreen"
+    TODO: Change method/metric used to find vanishing point to improve accuracy
+    """
     step = 50
     coords_to_dists_from_lines = {}
     for i in range(0, x_pix, step):
