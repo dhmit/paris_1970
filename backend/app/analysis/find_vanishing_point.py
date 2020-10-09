@@ -28,9 +28,9 @@ def analyze(photo: Photo):
     grayscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     lines = auto_canny(grayscale_image)
 
-    plt.subplot(122), plt.imshow(lines[0], cmap='gray')
+    plt.subplot(121), plt.imshow(lines[0], cmap='gray')
     plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
-    plt.show()
+
 
     filter_lines = []
     # Filters out vertical and horizontal lines
@@ -53,6 +53,7 @@ def analyze(photo: Photo):
 
     cv2.namedWindow('image', cv2.WINDOW_NORMAL)
     cv2.imshow('image', image)
+    plt.show()
     # cv2.waitKey()
     return van_point[0]
 
@@ -75,7 +76,9 @@ def auto_canny(image, sigma=0.00001):
     lower = int(max(0, (1.0 - sigma) * v))
     upper = int(min(255, (1.0 + sigma) * v))
     edged = cv2.Canny(image, 150, 255, 3)
-    lines = cv2.HoughLinesP(edged, 1, np.pi / 180, 80, 30, maxLineGap=250)
+    lines = cv2.HoughLinesP(edged, 1, np.pi / 180, 80, 30, maxLineGap=100)
+
+
 
     # return the edged image
     return [edged, lines]
@@ -94,7 +97,7 @@ def find_van_coord(lines, x_pix=0, y_pix=0):
     TODO: If there is no vanishing point within the photo, return None or "offscreen"
     TODO: Change method/metric used to find vanishing point to improve accuracy
     """
-    step = 50
+    step = 100
     coords_to_dists_from_lines = {}
     for i in range(0, x_pix, step):
         for j in range(0, y_pix, step):
