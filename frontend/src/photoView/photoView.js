@@ -24,7 +24,7 @@ const ANALYSIS_CONFIGS = {
     photographer_caption_length: {
         displayName: 'Length of photographer caption',
     },
-    foreground_detection: {
+    foreground_percentage: {
         formatter: formatPercentageValue,
         displayName: '% foreground',
     },
