@@ -36,9 +36,10 @@ def analyze(photo: Photo):
     local_regions = []
 
     # Declare and initialize boundary markers to split flatList into segments
+    # Note: Still experimenting with partitions
     i = 0
-    j = flat_list.size // 16
-    interval = flat_list.size // 16
+    j = flat_list.size // 64
+    interval = flat_list.size // 64
 
     while j <= flat_list.size:
     # Append segments of the flattened grayscale image array to localRegions
