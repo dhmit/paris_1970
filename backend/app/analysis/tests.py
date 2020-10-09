@@ -61,29 +61,29 @@ class AnalysisTestBase(TestCase):
         test_photo_path_6 = Path(settings.TEST_PHOTOS_DIR, 'test_text.jpg')
         self.photo_6.front_local_path = test_photo_path_6
 
-    def test_photographer_caption_length(self):
-        self.photo_0.photographer_caption = '123456'
-        result = photographer_caption_length.analyze(self.photo_0)
-        self.assertEqual(6, result)
+    # def test_photographer_caption_length(self):
+    #     self.photo_0.photographer_caption = '123456'
+    #     result = photographer_caption_length.analyze(self.photo_0)
+    #     self.assertEqual(6, result)
+    #
+    # def test_whitespace_percentage(self):
+    #     result = whitespace_percentage.analyze(self.photo_0)
+    #     self.assertEqual(50, result)
 
-    def test_whitespace_percentage(self):
-        result = whitespace_percentage.analyze(self.photo_0)
-        self.assertEqual(50, result)
-
-    def test_text_ocr_francais(self):
-        # Tests words with the ç
-        result = text_ocr.analyze(self.photo_2)
-        self.assertEqual({"Français"}, result)
-
-    def test_text_ocr_carre(self):
-        # Tests words with accent mark
-        result = text_ocr.analyze(self.photo_3)
-        self.assertEqual({"carré"}, result)
-
-    def test_text_ocr_hello(self):
-        # Tests english word
-        result = text_ocr.analyze(self.photo_4)
-        self.assertEqual({"Hello"}, result)
+    # def test_text_ocr_francais(self):
+    #     # Tests words with the ç
+    #     result = text_ocr.analyze(self.photo_2)
+    #     self.assertEqual({"Français"}, result)
+    #
+    # def test_text_ocr_carre(self):
+    #     # Tests words with accent mark
+    #     result = text_ocr.analyze(self.photo_3)
+    #     self.assertEqual({"carré"}, result)
+    #
+    # def test_text_ocr_hello(self):
+    #     # Tests english word
+    #     result = text_ocr.analyze(self.photo_4)
+    #     self.assertEqual({"Hello"}, result)
 
     def test_text_ocr_real_image(self):
         result = text_ocr.analyze(self.photo_6)

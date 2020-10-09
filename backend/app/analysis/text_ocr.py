@@ -1,6 +1,7 @@
 """
 text_ocr.py - analysis to get the words from an image.
 """
+from PIL import ImageEnhance
 from imutils.object_detection import non_max_suppression
 import numpy as np
 import pytesseract
@@ -11,6 +12,7 @@ from django.conf import settings
 from ..models import Photo
 
 MODEL = Photo
+
 
 # Code Source:
 # https://www.pyimagesearch.com/2018/09/17/opencv-ocr-and-text-recognition-with-tesseract/
@@ -65,6 +67,12 @@ def decode_predictions(scores, geometry, min_confidence):
     return rects, confidences
 
 
+def sharpening(image, factor):
+    enhancer = ImageEnhance.Sharpness(image)
+    sharpened = enhancer.enhance(factor)
+    return sharpened
+
+
 def analyze(photo: Photo):
     """
     Analysis function that returns the string that represents the words in the image
@@ -89,7 +97,8 @@ def analyze(photo: Photo):
 
     # load the input image and grab the image dimensions
     image = photo.get_image_data()
-    orig = image.copy()
+    sharpened = sharpening(image, 2)
+    orig = sharpened.copy()
     (origH, origW) = image.shape[:2]
 
     # set the new width and height and then determine the ratio in change
