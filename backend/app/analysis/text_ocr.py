@@ -4,7 +4,6 @@ text_ocr.py - analysis to get the words from an image.
 from imutils.object_detection import non_max_suppression
 import numpy as np
 import pytesseract
-import argparse
 import cv2
 
 from django.conf import settings
@@ -13,6 +12,8 @@ from ..models import Photo
 
 MODEL = Photo
 
+# Code Source:
+# https://www.pyimagesearch.com/2018/09/17/opencv-ocr-and-text-recognition-with-tesseract/
 
 def decode_predictions(scores, geometry, min_confidence):
     # grab the number of rows and columns from the scores volume, then
@@ -77,14 +78,14 @@ def analyze(photo: Photo):
     east = settings.TEXT_DETECTION_PATH.as_posix()
 
     # minimum probability required to inspect a region
-    min_confidence = 0.5
+    min_confidence = 0.01
 
     # nearest multiples of 32 for resized width and height
     width = 320
     height = 320
 
     # amount of padding to add to each border of ROI
-    padding = 0.15
+    padding = 0.12
 
     # load the input image and grab the image dimensions
     image = photo.get_image_data()
@@ -141,7 +142,9 @@ def analyze(photo: Photo):
         endY = min(origH, endY + (dY * 2))
         # extract the actual padded ROI
         roi = orig[startY:endY, startX:endX]
-        config = f"-l fra --oem 1 --psm 7 --tessdata-dir {settings.TESSDATA_DIR.as_posix()}"
+        # tesseract's CLI doesn't understand Windows-style paths with backslashes,
+        # so we explicitly pass the posix-style path
+        config = f"-l fra --oem 1 --psm 6 --tessdata-dir {settings.TESSDATA_DIR.as_posix()}"
         text = pytesseract.image_to_string(roi, config=config)
         # add the bounding box coordinates and OCR'd text to the list of results
         results.append(((startX, startY, endX, endY), text))
@@ -168,8 +171,8 @@ def analyze(photo: Photo):
             cv2.putText(output, text, (startX, startY - 20),
                         cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 3)
             # show the output image
-            cv2.imshow("Text Detection", output)
-            cv2.waitKey(0)
+            # cv2.imshow("Text Detection", output)
+            # cv2.waitKey(0)
 
     detected_text = {result[1].strip() for result in results}
     print(detected_text)
