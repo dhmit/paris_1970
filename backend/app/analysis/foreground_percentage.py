@@ -1,6 +1,6 @@
 """
 
-foreground_detection.py
+foreground_percentage.py
 
 analysis to extract the foreground of an image and perform analysis on that foreground
 """

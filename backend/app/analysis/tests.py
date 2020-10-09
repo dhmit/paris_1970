@@ -15,7 +15,7 @@ from django.test import TestCase
 from app.models import Photo, MapSquare
 from app.analysis import (
     photographer_caption_length,
-    whitespace_percentage,
+    whitespace_percentage, foreground_percentage,
 )
 
 
@@ -40,6 +40,11 @@ class AnalysisTestBase(TestCase):
         self.photo_1 = Photo(number=2, map_square=self.map_square)
         self.photo_1.save()
 
+        self.photo_2 = Photo(number=3, map_square=self.map_square)
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, '4%_black.jpg')
+        self.photo_2.front_local_path = test_photo_path
+        self.photo_2.save()
+
     def test_photographer_caption_length(self):
         self.photo_0.photographer_caption = '123456'
         result = photographer_caption_length.analyze(self.photo_0)
@@ -48,3 +53,9 @@ class AnalysisTestBase(TestCase):
     def test_whitespace_percentage(self):
         result = whitespace_percentage.analyze(self.photo_0)
         self.assertEqual(50, result)
+
+    def test_foreground_percentage(self):
+        result = foreground_percentage.analyze(self.photo_2)
+        # Result is not exact (range of values)
+        # Needs more testing
+        self.assertTrue(2 <= result <= 6)
