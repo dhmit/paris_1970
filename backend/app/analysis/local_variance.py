@@ -16,7 +16,7 @@ MODEL = Photo
 
 def analyze(photo: Photo):
     """
-    Calculate the blurriness for a given Photo
+    Calculate the blurriness for a given Photo using the Laplacian operator
     """
     image = photo.get_image_data()
 
@@ -28,7 +28,5 @@ def analyze(photo: Photo):
     # Use Laplacian operator to give a "blurriness" metric
     # Returns this number of a photo in a single floating point number
     local_variance = cv2.Laplacian(grayscale_image, cv2.CV_64F).var()
-
-    # print(local_variance)
 
     return local_variance

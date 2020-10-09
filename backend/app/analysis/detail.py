@@ -5,7 +5,6 @@ detail.py
 analysis to calculate the standard deviation of pixels in the photo
 """
 
-import numpy as np
 from numpy.fft import fft2
 import cv2
 
@@ -16,7 +15,7 @@ MODEL = Photo
 
 def analyze(photo: Photo):
     """
-    Calculate the standard deviation of pixels in the image
+    Calculate the standard deviation of pixels in the image using the fast fourier transform
     """
     image = photo.get_image_data()
 

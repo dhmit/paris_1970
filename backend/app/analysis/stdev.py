@@ -1,7 +1,8 @@
 """
-Standard_deviation_calculation.py
+stdev.py
 
-Isolate local regions of an image and find the average of all standard deviations to determine level of detail in a
+Isolate local regions of an image and find the average of all standard deviations to determine
+level of detail in a
 photo
 
 Josh
@@ -14,6 +15,7 @@ from app.models import Photo
 
 MODEL = Photo
 
+
 def analyze(photo: Photo):
     """
     Calculate the average of the standard deviation of pixels over local regions
@@ -21,7 +23,6 @@ def analyze(photo: Photo):
     """
 
     image = photo.get_image_data()
-    print("pixels:", image.size)
 
     # Convert image to grayscale
     # (Changes image array shape from (height, width, 3) to (height, width))
@@ -42,8 +43,8 @@ def analyze(photo: Photo):
     interval = flat_list.size // 64
 
     while j <= flat_list.size:
-    # Append segments of the flattened grayscale image array to localRegions
-        local_regions.append(flat_list[i : j])
+        # Append segments of the flattened grayscale image array to localRegions
+        local_regions.append(flat_list[i: j])
         i, j = j, j + interval
 
     # Compute the standard deviation of pixels for each individual segment
@@ -52,14 +53,9 @@ def analyze(photo: Photo):
         local_regions[i] = float(np.std(local_regions[i]))
         # After the cast, each element in the list is a single float
 
-
     # Return the average of the standard deviations of all local regions
     # If not, return 0
     try:
-        print(local_regions)
-        # Print(type(local_regions[0]))
-        # Print(local_regions[0])
         return sum(local_regions) / len(local_regions)
     except (ZeroDivisionError, TypeError):
-        print(0.0)
         return 0.0
