@@ -2,8 +2,7 @@
 stdev.py
 
 Isolate local regions of an image and find the average of all standard deviations to determine
-level of detail in a
-photo
+level of detail in a photo
 
 Josh
 """
