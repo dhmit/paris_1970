@@ -16,6 +16,7 @@ from app.models import Photo, MapSquare
 from app.analysis import (
     photographer_caption_length,
     whitespace_percentage,
+    courtyard_frame
 )
 
 
@@ -33,7 +34,7 @@ class AnalysisTestBase(TestCase):
         self.map_square.save()
 
         self.photo_0 = Photo(number=1, map_square=self.map_square)
-        test_photo_path = Path(settings.TEST_PHOTOS_DIR, '100x100_500px-white_500px-black.jpg')
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'test2.jpg')
         self.photo_0.front_local_path = test_photo_path
         self.photo_0.save()
 
@@ -48,3 +49,8 @@ class AnalysisTestBase(TestCase):
     def test_whitespace_percentage(self):
         result = whitespace_percentage.analyze(self.photo_0)
         self.assertEqual(50, result)
+
+    def test_courtyard_frame(self):
+        result = courtyard_frame.analyze(self.photo_0)
+        #self.assertEqual(50, result)
+        print(result)
