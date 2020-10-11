@@ -7,12 +7,12 @@ analysis to calculate blurriness of pixels using Laplacian operator from openCV
 Lydia + Jackie
 """
 
-import numpy as np
 import cv2
 
 from app.models import Photo
 
 MODEL = Photo
+
 
 def analyze(photo: Photo):
     """

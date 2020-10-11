@@ -1,8 +1,8 @@
 """
 
-detail.py
+detail_fft2.py
 
-analysis to calculate the standard deviation of pixels in the photo
+analysis to calculate the level of detail by examining frequency of change in photo color
 """
 
 from numpy.fft import fft2

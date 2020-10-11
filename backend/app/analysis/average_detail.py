@@ -7,12 +7,12 @@ analysis to average out results from three standard deviation functions
 """
 
 from app.models import Photo
-from .detail import analyze as detail_analyze
+from .detail_fft2 import analyze as detail_analyze
 from .stdev import analyze as square_analyze
 from .local_variance import analyze as lv_analyze
 
-
 MODEL = Photo
+
 
 def analyze(photo: Photo):
     """
