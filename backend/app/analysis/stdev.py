@@ -46,9 +46,9 @@ def analyze(photo: Photo):
         i, j = j, j + interval
 
     # Compute the standard deviation of pixels for each individual segment
-    for r, region in enumerate(local_regions):
+    for i, region in enumerate(local_regions):
         # Before the calculation and cast, each region is an ndarray
-        local_regions[r] = float(np.std(region))
+        local_regions[i] = float(np.std(region))
         # After the cast, each element in the list is a single float
 
     # Return the average of the standard deviations of all local regions
