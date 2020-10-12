@@ -47,15 +47,50 @@ class AnalysisTestBase(TestCase):
         self.photo_square.front_local_path = test_photo_path
         self.photo_square.save()
 
-        self.photo_2 = Photo(number=3, map_square=self.map_square)
+        self.photo_2 = Photo(number=4, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, '29_binder copy.jpg')
         self.photo_2.front_local_path = test_photo_path
         self.photo_2.save()
 
-        self.photo_3 = Photo(number=4, map_square=self.map_square)
+        self.photo_3 = Photo(number=5, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, '94_binder copy.jpg')
         self.photo_3.front_local_path = test_photo_path
         self.photo_3.save()
+
+        self.photo_black = Photo(number=6, map_square=self.map_square)
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'fully_black_image.jpg')
+        self.photo_black.front_local_path = test_photo_path
+        self.photo_black.save()
+
+        self.photo_white = Photo(number=7, map_square=self.map_square)
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'fully_white_image.jpg')
+        self.photo_white.front_local_path = test_photo_path
+        self.photo_white.save()
+
+        self.photo_windows = Photo(number=8, map_square=self.map_square)
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'gray_building_with_windows.jpg')
+        self.photo_windows.front_local_path = test_photo_path
+        self.photo_windows.save()
+
+        self.photo_240_10 = Photo(number=9, map_square=self.map_square)
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'ms_240_10_cleaned.jpg')
+        self.photo_240_10.front_local_path = test_photo_path
+        self.photo_240_10.save()
+
+        self.photo_front_desk = Photo(number=10, map_square=self.map_square)
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'indoor_front_desk.jpg')
+        self.photo_front_desk.front_local_path = test_photo_path
+        self.photo_front_desk.save()
+
+        self.photo_tall_crane = Photo(number=11, map_square=self.map_square)
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'tall_crane.jpg')
+        self.photo_tall_crane.front_local_path = test_photo_path
+        self.photo_tall_crane.save()
+
+        self.photo_far_building = Photo(number=12, map_square=self.map_square)
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'far_window_buildings.jpg')
+        self.photo_far_building.front_local_path = test_photo_path
+        self.photo_far_building.save()
 
     def test_photographer_caption_length(self):
         self.photo_0.photographer_caption = '123456'
@@ -73,11 +108,24 @@ class AnalysisTestBase(TestCase):
 
 
     def test_find_windows(self):
-        result = find_windows.analyze(self.photo_square)
-        print(result)
-        self.assertEqual(True, result)
+        square_result = find_windows.analyze(self.photo_square)
+        black_result = find_windows.analyze(self.photo_black)
+        white_result = find_windows.analyze(self.photo_white)
+        many_windows = find_windows.analyze(self.photo_windows)
+        building_perspective_view = find_windows.analyze(self.photo_240_10)
+        front_desk = find_windows.analyze(self.photo_front_desk)
+        tall_crane = find_windows.analyze(self.photo_tall_crane)
+        far_building = find_windows.analyze(self.photo_far_building)
+
+        self.assertEqual(True, square_result)
+        self.assertEqual(False, black_result)
+        self.assertEqual(False, white_result)
+        self.assertEqual(True, many_windows)
+        self.assertEqual(True, building_perspective_view)
+        self.assertEqual(False, front_desk)
+        self.assertEqual(False, tall_crane)
+        self.assertEqual(True, far_building)
 
     def test_gradient_analysis(self):
         result = detect_sky.analyze(self.photo_3)
         self.assertEqual(True, result)
-
