@@ -26,7 +26,6 @@ from app.views import (
     get_map_square,
     get_corpus_analysis_results,
     get_photos_by_analysis,
-    get_standard_deviation_calculation_3
 )
 
 
@@ -59,6 +58,6 @@ urlpatterns = [
     react_view_path('photo/<int:mapSquareNumber>/<int:photoNumber>/', 'PhotoView'),
     react_view_path('photographer/<int:photographerNumber>/', 'PhotographerView'),
     react_view_path('map_square/<int:mapSquareNumber>/', 'MapSquareView'),
-    react_view_path('analysis/standard_deviation_calculation_3/', 'AnalysisView'),
+    react_view_path('analysis/<str:analysisName>/', 'AnalysisView'),
     react_view_path('about/', 'About'),
 ]
