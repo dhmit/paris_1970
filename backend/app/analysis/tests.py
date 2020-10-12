@@ -35,11 +35,13 @@ class AnalysisTestBase(TestCase):
         self.map_square.save()
 
         self.photo_0 = Photo(number=1, map_square=self.map_square)
-        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'test2.jpg')
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, '100x100_500px-white_500px-black.jpg')
         self.photo_0.front_local_path = test_photo_path
         self.photo_0.save()
 
         self.photo_1 = Photo(number=2, map_square=self.map_square)
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'test2.jpg')
+        self.photo_1.front_local_path = test_photo_path
         self.photo_1.save()
 
         self.photo_square = Photo(number=3, map_square=self.map_square)
