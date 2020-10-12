@@ -3,11 +3,9 @@ import cv2
 
 from app.models import Photo
 
-# MODEL = Photo
+MODEL = Photo
 
-# from app.models import Photo, MapSquare
-from pathlib import Path
-from django.conf import settings
+from app.models import Photo
 
 def analyze(photo: Photo):
     """
@@ -63,7 +61,6 @@ def analyze(photo: Photo):
             if pixel > max_pixel:
                 max_pixel = pixel
     DARK_THRESHOLD = max_pixel * 0.5
-    print(DARK_THRESHOLD)
 
     ## Evaluating the top border ##
     for rows_top in range(border_num):
@@ -116,7 +113,6 @@ def analyze(photo: Photo):
         borders_passed.append(True)
 
     ## Determining how many borders passed the test ##
-    print(borders_passed)
     true_counter = 0
     for val in borders_passed:
         if val:

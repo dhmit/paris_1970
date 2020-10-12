@@ -23,8 +23,6 @@ def analyze(photo: Photo):
         section = normalized_grayscale_image[i * (h//10) : (i+1) * (h//10)]
         sectioned_pixels.append((section > WHITESPACE_THRESHOLD).sum())
 
-    print("row-by-row", sectioned_pixels)
-
     x_vals = [i * (h//10) for i in range(10)]
     xs = np.array(x_vals, dtype=np.float64)
     ys = np.array(sectioned_pixels, dtype=np.float64)
@@ -47,8 +45,6 @@ def analyze(photo: Photo):
     m, b = best_fit_line(xs, ys)
     regression_line = [(m * x) + b for x in xs]
     r_squared = find_r_squared(ys, regression_line)
-    print('slope:', m)
-    print('r-coefficient:', r_squared)
 
     return r_squared > 0.85
 
