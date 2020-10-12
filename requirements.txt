@@ -57,3 +57,5 @@ traitlets==4.3.3
 uritemplate==3.0.1
 urllib3==1.25.10
 wcwidth==0.2.5
+
+pyenchant~=3.1.1

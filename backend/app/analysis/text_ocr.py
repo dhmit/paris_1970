@@ -1,7 +1,7 @@
 """
 text_ocr.py - analysis to get the words from an image.
 """
-from PIL import ImageEnhance
+from PIL import ImageEnhance, Image
 from imutils.object_detection import non_max_suppression
 import numpy as np
 import pytesseract
@@ -69,6 +69,7 @@ def decode_predictions(scores, geometry, min_confidence):
 
 
 def sharpening(image, factor):
+    image = Image.fromarray(image)
     enhancer = ImageEnhance.Sharpness(image)
     sharpened = enhancer.enhance(factor)
     return sharpened
@@ -100,6 +101,7 @@ def analyze(photo: Photo):
     image = photo.get_image_data()
     sharpened = sharpening(image, 2)
     orig = sharpened.copy()
+    orig = np.array(orig)
     (origH, origW) = image.shape[:2]
 
     # set the new width and height and then determine the ratio in change
@@ -159,7 +161,7 @@ def analyze(photo: Photo):
         # so we explicitly pass the posix-style path
         config = f"-l fra --oem 1 --psm 6 --tessdata-dir {settings.TESSDATA_DIR.as_posix()}"
         text = pytesseract.image_to_string(roi, config=config)
-        print(checkword.check(text))
+        print("CHECKING", checkword.check(text))
         # add the bounding box coordinates and OCR'd text to the list of results
         results.append(((startX, startY, endX, endY), text))
 
