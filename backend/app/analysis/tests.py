@@ -17,7 +17,7 @@ from app.analysis import (
     whitespace_percentage,
     courtyard_frame,
     find_windows,
-    detect_sky
+    gradient_analysis
 )
 
 
@@ -49,15 +49,10 @@ class AnalysisTestBase(TestCase):
         self.photo_square.front_local_path = test_photo_path
         self.photo_square.save()
 
-        self.photo_2 = Photo(number=4, map_square=self.map_square)
-        test_photo_path = Path(settings.TEST_PHOTOS_DIR, '29_binder copy.jpg')
-        self.photo_2.front_local_path = test_photo_path
-        self.photo_2.save()
-
-        self.photo_3 = Photo(number=5, map_square=self.map_square)
-        test_photo_path = Path(settings.TEST_PHOTOS_DIR, '94_binder copy.jpg')
-        self.photo_3.front_local_path = test_photo_path
-        self.photo_3.save()
+        self.photo_4 = Photo(number=4, map_square=self.map_square)
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'square_503/108_binder copy.jpg')
+        self.photo_4.front_local_path = test_photo_path
+        self.photo_4.save()
 
         self.photo_black = Photo(number=6, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'fully_black_image.jpg')
@@ -129,5 +124,5 @@ class AnalysisTestBase(TestCase):
         self.assertEqual(True, far_building)
 
     def test_gradient_analysis(self):
-        result = detect_sky.analyze(self.photo_3)
+        result = gradient_analysis.analyze(self.photo_4)
         self.assertEqual(True, result)
