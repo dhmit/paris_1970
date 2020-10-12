@@ -2,8 +2,7 @@
 Tests for the main main.
 """
 
-# from pathlib import Path
-
+import os
 from django.conf import settings
 from django.test import TestCase
 
@@ -12,7 +11,6 @@ from django.test import TestCase
 # If you do, e.g.,
 #   from ..models import Photo
 # ... you'll crash the test runner. Please don't!
-import os
 from app.models import Photo, MapSquare
 from app.analysis import (
     photographer_caption_length,
@@ -73,10 +71,10 @@ class AnalysisTestBase(TestCase):
         """
         Test Standard Deviation analysis (stdev.py)
         """
-        expected_values = {"100x76-BlackRectangle": 0, "100x76-GreyRectangle": 0,
-                           "100x76-WhiteRectangle": 0, "100x100-BlackSquare": 0,
-                           "100x100-GreySquare": 0, "100x100-WhiteSquare": 0,
-                           "100x76-CheckeredRectangle_1": 0}
+        expected_values = {'100x76-BlackRectangle': 0, '100x76-GreyRectangle': 0,
+                           '100x76-WhiteRectangle': 0, '100x100-BlackSquare': 0,
+                           '100x100-GreySquare': 0, '100x100-WhiteSquare': 0,
+                           '100x76-CheckeredRectangle_1': 0, '100x76-CheckeredRectangle_2': 0}
 
         for image in expected_values:
             if image in self.photo_dict.keys():
@@ -88,10 +86,10 @@ class AnalysisTestBase(TestCase):
         """
         Test Local Variance analysis (local_variance.py)
         """
-        expected_values = {"100x76-BlackRectangle": 0, "100x76-GreyRectangle": 0,
-                           "100x76-WhiteRectangle": 0, "100x100-BlackSquare": 0,
-                           "100x100-GreySquare": 0, "100x100-WhiteSquare": 0,
-                           "100x76-CheckeredRectangle_1": 3087, "100x76-CheckeredRectangle_2": 3087}
+        expected_values = {'100x76-BlackRectangle': 0, '100x76-GreyRectangle': 0,
+                           '100x76-WhiteRectangle': 0, '100x100-BlackSquare': 0,
+                           '100x100-GreySquare': 0, '100x100-WhiteSquare': 0,
+                           '100x76-CheckeredRectangle_1': 3087, '100x76-CheckeredRectangle_2': 3087}
 
         for image in expected_values:
             if image in self.photo_dict.keys():
@@ -103,10 +101,10 @@ class AnalysisTestBase(TestCase):
         """
         Test Fast Fourier Transform analysis (detail_fft2.py)
         """
-        expected_values = {"100x76-BlackRectangle": 0, "100x76-GreyRectangle": 0,
-                           "100x76-WhiteRectangle": 0, "100x100-BlackSquare": 0,
-                           "100x100-GreySquare": 0, "100x100-WhiteSquare": 0,
-                           "100x76-CheckeredRectangle_1": 5, "100x76-CheckeredRectangle_2": 5}
+        expected_values = {'100x76-BlackRectangle': 0, '100x76-GreyRectangle': 0,
+                           '100x76-WhiteRectangle': 0, '100x100-BlackSquare': 0,
+                           '100x100-GreySquare': 0, '100x100-WhiteSquare': 0,
+                           '100x76-CheckeredRectangle_1': 5, '100x76-CheckeredRectangle_2': 5}
 
         for image in expected_values:
             if image in self.photo_dict.keys():
@@ -118,22 +116,33 @@ class AnalysisTestBase(TestCase):
         """
         Test Average Detail function (average_detail.py)
         """
+        expected_values = {'100x76-BlackRectangle': 0, '100x76-GreyRectangle': 0,
+                           '100x76-WhiteRectangle': 0, '100x100-BlackSquare': 0,
+                           '100x100-GreySquare': 0, '100x100-WhiteSquare': 0,
+                           '100x76-CheckeredRectangle_1': 1030, '100x76-CheckeredRectangle_2': 1030}
+
+        for image in expected_values:
+            if image in self.photo_dict.keys():
+                result = average_detail.analyze(self.photo_dict[image])
+                print(f'Average Detail performed on {image}. Result: {result}')
+                self.assertEqual(expected_values[image], int(result))
+
         # Tests on BGW squares (photos #7-9)
-        result = average_detail.analyze(self.black_square)
-        self.assertEqual(0, result)
-
-        result = average_detail.analyze(self.grey_square)
-        self.assertEqual(0, result)
-
-        result = average_detail.analyze(self.white_square)
-        self.assertEqual(0, result)
-
-        # Tests on BGW rectangles (photos #4-6)
-        result = average_detail.analyze(self.black_rect)
-        self.assertEqual(0, result)
-
-        result = average_detail.analyze(self.grey_rect)
-        self.assertEqual(0, result)
-
-        result = average_detail.analyze(self.white_rect)
-        self.assertEqual(0, result)
+        # result = average_detail.analyze(self.black_square)
+        # self.assertEqual(0, result)
+        #
+        # result = average_detail.analyze(self.grey_square)
+        # self.assertEqual(0, result)
+        #
+        # result = average_detail.analyze(self.white_square)
+        # self.assertEqual(0, result)
+        #
+        # # Tests on BGW rectangles (photos #4-6)
+        # result = average_detail.analyze(self.black_rect)
+        # self.assertEqual(0, result)
+        #
+        # result = average_detail.analyze(self.grey_rect)
+        # self.assertEqual(0, result)
+        #
+        # result = average_detail.analyze(self.white_rect)
+        # self.assertEqual(0, result)
