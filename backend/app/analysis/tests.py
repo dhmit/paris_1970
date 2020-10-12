@@ -51,6 +51,9 @@ class AnalysisTestBase(TestCase):
                 self.photo_dict[photo_name] = photo
 
     def test_photographer_caption_length(self):
+        """
+        Test Photographer Caption Length analysis (photographer_caption_length.py)
+        """
         expected_values = {'100x100_500px-white_500px-black': 6}
         for image in expected_values:
             if image in self.photo_dict.keys():
@@ -60,6 +63,9 @@ class AnalysisTestBase(TestCase):
                 self.assertEqual(expected_values[image], result)
 
     def test_whitespace_percentage(self):
+        """
+        Test Whitespace Percentage analysis (whitespace_percentage.py)
+        """
         expected_values = {'100x100_500px-white_500px-black': 50}
         for image in expected_values:
             if image in self.photo_dict.keys():
