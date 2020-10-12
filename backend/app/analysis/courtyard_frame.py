@@ -9,8 +9,6 @@ from app.models import Photo
 from pathlib import Path
 from django.conf import settings
 
-DARK_THRESHOLD = 0.2
-
 def analyze(photo: Photo):
     """
     Determine if an image is a courtyard photo by identifying a dark frame around outer boundary
@@ -19,19 +17,10 @@ def analyze(photo: Photo):
     image = photo.get_image_data()
 
     # Convert image to grayscale
-    # (Changes image array shape from (height, width, 3) to (height, width))
-    # (Pixels (image[h][w]) will be a value from 0 to 255)
     grayscale_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    print(grayscale_image)
-    #grayscale_image = [[0,0,0],[0,225,0],[0,0,0]] #tester image
 
     # Normalize image pixels to range from 0 to 1
-    # Normalized values are used instead of absolute pixel values to account for
-    # differences in brightness (across all photos) that may cause white areas in
-    # some photos, like a piece of paper, to appear dark.
     normalized_grayscale_image = grayscale_image / np.max(grayscale_image)
-    print("------------LALALALA------------")
-    print(normalized_grayscale_image)
 
     # Montse's code
     # for top_row_pixel in normalized_grayscale_image[0]:
@@ -45,42 +34,95 @@ def analyze(photo: Photo):
     #         return False
     # return True
 
-    index = 0 # temp
-    percent_passed = 0.9
-    border_percentage = 0.005 #top and bottom 0.5% of photo
+    #setting up variables
+    counter = 0
+    failed = []
+    borders_passed = []
+    percent_failed = 0.20
+    border_percentage = 0.05 #top and bottom 0.5% of photo
     length = len(normalized_grayscale_image[0])
     width = len(normalized_grayscale_image)
     border_num = int(border_percentage * min(length, width)) #number of pixels we want to check
     if border_num < 1:
         border_num = 1
-    for pixel_top in normalized_grayscale_image[0]:
-        if pixel_top > DARK_THRESHOLD:
-            print("pixel_top:", pixel_top)
-            return False
-    for pixel_bottom in normalized_grayscale_image[-1]:
-        print(index/length)
-        if pixel_bottom > DARK_THRESHOLD:
-            print("pixel_bottom:", pixel_bottom)
-            return False
-        index += 1
+
+    ## Using average pixel as threshold ##
+    # num_of_pixels = 0
+    # sum_of_pixel = 0
+    # for row in normalized_grayscale_image:
+    #     for pixel in row:
+    #         sum_of_pixel += pixel
+    #         num_of_pixels += 1
+    # DARK_THRESHOLD = sum_of_pixel / num_of_pixels
+    # print(DARK_THRESHOLD)
+
+    ## Using half of highest pixel as threshold ##
+    max_pixel = 0
+    for row in normalized_grayscale_image:
+        for pixel in row:
+            if pixel > max_pixel:
+                max_pixel = pixel
+    DARK_THRESHOLD = max_pixel * 0.5
+    print(DARK_THRESHOLD)
+
+    ## Evaluating the top border ##
+    for rows_top in range(border_num):
+        for pixel_top in normalized_grayscale_image[rows_top]:
+            if pixel_top > DARK_THRESHOLD:
+                failed.append(pixel_top)
+            counter += 1
+    if len(failed) > percent_failed * counter:
+        borders_passed.append(False)
+    else:
+        borders_passed.append(True)
+    counter = 0
+    del(failed[0:len(failed)])
+
+    ## Evaluating the bottom border ##
+    for rows_bottom in range(border_num):
+        for pixel_bottom in normalized_grayscale_image[::-1][rows_bottom]:
+            if pixel_bottom > DARK_THRESHOLD:
+                failed.append(pixel_bottom)
+            counter += 1
+    if len(failed) > percent_failed * counter:
+        borders_passed.append(False)
+    else:
+        borders_passed.append(True)
+    counter = 0
+    del(failed[0:len(failed)])
+
+    ## Evaluting the left border ##
     for row in normalized_grayscale_image[1:len(normalized_grayscale_image)-2]:
         for pixel in range(border_num):
-            if row[pixel] > DARK_THRESHOLD or row[::-1][pixel] > DARK_THRESHOLD:
-                print("front pixel __ in row __:", row[pixel], row)
-                print("back pixel __ in row __:", row[::-1][pixel], row)
-                return False
-    return True
+            if row[pixel] > DARK_THRESHOLD:
+                failed.append(row[pixel])
+            counter += 1
+    if len(failed) > percent_failed * counter:
+        borders_passed.append(False)
+    else:
+        borders_passed.append(True)
+    counter = 0
+    del(failed[0:len(failed)])
 
-# map_square = MapSquare()
-# map_square.save()
-#
-# photo_0 = Photo(number=1, map_square=map_square)
-# test_photo_path = Path(settings.TEST_PHOTOS_DIR, '100x100_500px-white_500px-black.jpg')
-# photo_0.front_local_path = test_photo_path
-# photo_0.save()
-#
-# photo_1 = Photo(number=2, map_square=map_square)
-# photo_1.save()
-#
-# print(analyze(photo_0))
+    ## Evaluating the right border ##
+    for row in normalized_grayscale_image[1:len(normalized_grayscale_image) - 2]:
+        for pixel in range(border_num):
+            if row[::-1][pixel] > DARK_THRESHOLD:
+                failed.append(row[pixel])
+            counter += 1
+    if len(failed) > percent_failed * counter:
+        borders_passed.append(False)
+    else:
+        borders_passed.append(True)
+
+    ## Determining how many borders passed the test ##
+    print(borders_passed)
+    true_counter = 0
+    for val in borders_passed:
+        if val:
+            true_counter += 1
+    if true_counter >= 3:
+        return True
+    else:
+        return False
 
