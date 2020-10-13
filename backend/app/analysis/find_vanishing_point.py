@@ -113,10 +113,9 @@ def find_van_coord(lines, x_pix=0, y_pix=0):
                 # standard form of the line: ax + by + c = 0
                 x_coeff = (line_y_coord_2 - line_y_coord_1) / (line_x_coord_2 - line_x_coord_1) *\
                     - 1
-                y_coeff = 1
                 standard_form_constant = -line_y_coord_1 - x_coeff * line_x_coord_1
-                distance_from_coord_to_line = abs(x_coeff * i + y_coeff * j +
-                                                  standard_form_constant) / (x_coeff ** 2 + y_coeff
+                distance_from_coord_to_line = abs(x_coeff * i + j +
+                                                  standard_form_constant) / (x_coeff ** 2 + 1
                                                                              ** 2) ** .5
 
                 # add or update distance from this point to line

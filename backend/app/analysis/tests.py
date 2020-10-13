@@ -62,10 +62,18 @@ class AnalysisTestBase(TestCase):
         self.assertEqual(50, result)
 
     def test_find_vanishing_point(self):
-        # covers when image is x, intersecting lines in the middle
+        """
+        Vanishing point returned should be the point that has the minimum
+        total distance to all lines detected in a photo
+
+        Partition on location of vanishing point: at intersection between lines, does not exist
+        Partition on number of lines: 0, 1, >1
+        """
+        # covers when image is x, intersecting lines in the middle, vanishing point exists
         result = find_vanishing_point.analyze(self.photo_2)
         self.assertEqual((50, 50), result)
 
-        # covers when online line is horizontal (supposed to ignore)
+        # covers when online line is horizontal (supposed to ignore),  1 line, van point does
+        # not exist
         result2 = find_vanishing_point.analyze(self.photo_0)
         self.assertEqual((0, 0), result2)
