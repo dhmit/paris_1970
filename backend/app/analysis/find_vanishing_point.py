@@ -109,15 +109,7 @@ def find_van_coord(lines, x_pix=0, y_pix=0):
     for i in range(0, x_pix, step):
         for j in range(0, y_pix, step):
             for line in lines:
-                line_x_coord_1, line_y_coord_1, line_x_coord_2, line_y_coord_2 = line[0]
-                # standard form of the line: ax + by + c = 0
-                x_coeff = (line_y_coord_2 - line_y_coord_1) / (line_x_coord_2 - line_x_coord_1) *\
-                    - 1
-                standard_form_constant = -line_y_coord_1 - x_coeff * line_x_coord_1
-                distance_from_coord_to_line = abs(x_coeff * i + j +
-                                                  standard_form_constant) / (x_coeff ** 2 + 1
-                                                                             ** 2) ** .5
-
+                distance_from_coord_to_line = find_dist_from_point_to_line(i, j, line)
                 # add or update distance from this point to line
                 if (i, j) in coords_to_dists_from_lines:
                     coords_to_dists_from_lines[(i, j)] += distance_from_coord_to_line
@@ -131,3 +123,19 @@ def find_van_coord(lines, x_pix=0, y_pix=0):
                 min_coord = coord
         return (min_coord, coords_to_dists_from_lines[min_coord])
     return (0, 0), 0
+
+
+def find_dist_from_point_to_line(xcoord, ycoord, line):
+    """
+    Find distance from point with (xcoord, ycoord) to a line
+    :param xcoord: x-coordinate of point
+    :param ycoord: y-coordinate of point
+    :param line: line defined by (x1,y1),(x2,y2)
+    :return: shortest distance from point with given coords to line
+    """
+    line_x_coord_1, line_y_coord_1, line_x_coord_2, line_y_coord_2 = line[0]
+    # standard form of the line: ax + by + c = 0
+    x_coeff = (line_y_coord_2 - line_y_coord_1) / (line_x_coord_2 - line_x_coord_1) * \
+              - 1
+    standard_form_constant = -line_y_coord_1 - x_coeff * line_x_coord_1
+    return abs(x_coeff * xcoord + ycoord + standard_form_constant) / (x_coeff ** 2 + 1 ** 2) ** .5
