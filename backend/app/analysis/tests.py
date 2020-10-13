@@ -6,9 +6,6 @@ from pathlib import Path
 
 from django.conf import settings
 from django.test import TestCase
-import numpy as np
-import cv2
-import os
 # NOTE(ra): we have to use absolute imports in this module because the Django test runner
 # will resolve imports relative to the backend working directory
 # If you do, e.g.,
@@ -64,14 +61,11 @@ class AnalysisTestBase(TestCase):
         result = whitespace_percentage.analyze(self.photo_0)
         self.assertEqual(50, result)
 
-    def test_find_vanishing_point_x(self):
+    def test_find_vanishing_point(self):
         # covers when image is x, intersecting lines in the middle
         result = find_vanishing_point.analyze(self.photo_2)
         self.assertEqual((50, 50), result)
-        pass
 
-    def test_find_vanishing_point_1_horizontal_line(self):
         # covers when online line is horizontal (supposed to ignore)
-        result = find_vanishing_point.analyze(self.photo_0)
-        self.assertEqual((0,0), result)
-        pass
+        result2 = find_vanishing_point.analyze(self.photo_0)
+        self.assertEqual((0, 0), result2)
