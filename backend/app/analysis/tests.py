@@ -42,9 +42,14 @@ class AnalysisTestBase(TestCase):
         self.photo_1.save()
 
         self.photo_2 = Photo(number=3, map_square=self.map_square)
-        test_photo_path_2 = Path(settings.TEST_PHOTOS_DIR, 'test_portrait_detection.jpg')
+        test_photo_path_2 = Path(settings.TEST_PHOTOS_DIR, 'test_portrait_detection_true.jpg')
         self.photo_2.front_local_path = test_photo_path_2
         self.photo_2.save()
+
+        self.photo_3 = Photo(number=4, map_square=self.map_square)
+        test_photo_path_3 = Path(settings.TEST_PHOTOS_DIR, 'test_portrait_detection_false.jpg')
+        self.photo_3.front_local_path = test_photo_path_3
+        self.photo_3.save()
 
     def test_photographer_caption_length(self):
         self.photo_0.photographer_caption = '123456'
@@ -55,6 +60,10 @@ class AnalysisTestBase(TestCase):
         result = whitespace_percentage.analyze(self.photo_0)
         self.assertEqual(50, result)
 
-    def test_portrait_detection(self):
-        result = portrait_detection.analyze(self.photo_2)
-        self.assertEqual(True, result)
+    def test_portrait_detection_true(self):
+        result_1 = portrait_detection.analyze(self.photo_2)
+        self.assertEqual(True, result_1)
+
+    def test_portrait_detection_false(self):
+        result_2 = portrait_detection.analyze(self.photo_3)
+        self.assertEqual(False, result_2)
