@@ -6,7 +6,7 @@ in image
 """
 
 import cv2 as cv
-import numpy as nps
+import numpy as np
 from statistics import mean
 
 from app.models import Photo
