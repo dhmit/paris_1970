@@ -7,6 +7,7 @@ import numpy as np
 import pytesseract
 import cv2
 import enchant
+import string
 
 from django.conf import settings
 
@@ -74,6 +75,18 @@ def sharpening(image, factor):
     sharpened = enhancer.enhance(factor)
     return sharpened
 
+def get_french_words(results):
+    # create dictionary for french words
+    french_dict = enchant.Dict("fr")
+    output = set()
+    for result in results:
+        words = result[1].strip().split()
+        for word in words:
+            # removes punctuation from the string
+            word = word.translate(str.maketrans('', '', string.punctuation)).lower()
+            if french_dict.check(word):
+                output.add(word)
+    return output
 
 def analyze(photo: Photo):
     """
@@ -95,13 +108,16 @@ def analyze(photo: Photo):
     height = 320
 
     # amount of padding to add to each border of ROI
-    padding = 0.12
+    padding = 0.15
 
     # load the input image and grab the image dimensions
     image = photo.get_image_data()
+    _, image = cv2.threshold(image, 160, 255, cv2.THRESH_TRUNC)
+
     sharpened = sharpening(image, 2)
     orig = sharpened.copy()
     orig = np.array(orig)
+
     (origH, origW) = image.shape[:2]
 
     # set the new width and height and then determine the ratio in change
@@ -136,8 +152,6 @@ def analyze(photo: Photo):
     # initialize the list of results
     results = []
 
-    # create dictionary for french words
-    checkword = enchant.Dict("fr")
     # loop over the bounding boxes
     for (startX, startY, endX, endY) in boxes:
         # scale the bounding box coordinates based on the respective ratios
@@ -161,7 +175,6 @@ def analyze(photo: Photo):
         # so we explicitly pass the posix-style path
         config = f"-l fra --oem 1 --psm 6 --tessdata-dir {settings.TESSDATA_DIR.as_posix()}"
         text = pytesseract.image_to_string(roi, config=config)
-        print("CHECKING", checkword.check(text))
         # add the bounding box coordinates and OCR'd text to the list of results
         results.append(((startX, startY, endX, endY), text))
 
@@ -187,9 +200,9 @@ def analyze(photo: Photo):
             cv2.putText(output, text, (startX, startY - 20),
                         cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 3)
             # show the output image
-            # cv2.imshow("Text Detection", output)
-            # cv2.waitKey(0)
+            cv2.imshow("Text Detection", output)
+            cv2.waitKey(0)
 
-    detected_text = {result[1].strip() for result in results}
-    print(detected_text)
+    detected_text = get_french_words(results)
+    print("DETECTED", detected_text)
     return detected_text
