@@ -139,3 +139,32 @@ def find_dist_from_point_to_line(xcoord, ycoord, line):
               - 1
     standard_form_constant = -line_y_coord_1 - x_coeff * line_x_coord_1
     return abs(x_coeff * xcoord + ycoord + standard_form_constant) / (x_coeff ** 2 + 1 ** 2) ** .5
+
+
+def find_intersection_between_two_lines(line1, line2):
+    """
+    Determines the coordinates of the intersection between two lines, or None if no intersection
+    :param line1: 4-elem list x1, y1, x2, y2 -> starting and ending coordinates of line 1
+    :param line2: 4-elem list x1, y1, x2, y2 -> starting and ending coordinates of line 2
+    :return: coordinates of intersection point on image or None if does not exist or lines parallel
+    """
+    line1_x_coord_1, line1_y_coord_1, line1_x_coord_2, line1_y_coord_2 = line1[0]
+    line2_x_coord_1, line2_y_coord_1, line2_x_coord_2, line2_y_coord_2 = line2[0]
+
+    # standard form of the line: ax + by + c = 0
+
+    x1_coeff = (line1_y_coord_2 - line1_y_coord_1) / (line1_x_coord_2 - line1_x_coord_1) * -1
+    x2_coeff = (line2_y_coord_2 - line2_y_coord_1) / (line2_x_coord_2 - line2_x_coord_1) * -1
+
+    if x1_coeff == x2_coeff:
+        return None
+
+    standard_form_constant1 = -line1_y_coord_1 - x1_coeff * line1_x_coord_1
+    standard_form_constant2 = -line2_y_coord_1 - x2_coeff * line2_x_coord_1
+
+    intersection_x = (standard_form_constant2-standard_form_constant1)/(x1_coeff-x2_coeff)
+    intersection_y = -x1_coeff*intersection_x - standard_form_constant1
+
+    return tuple(intersection_x, intersection_y)
+
+
