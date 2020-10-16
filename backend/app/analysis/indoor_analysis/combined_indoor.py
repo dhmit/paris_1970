@@ -1,4 +1,3 @@
-
 """
 combined_indoor.py - analysis to determine if an image was taken indoors
 or outdoors
@@ -22,8 +21,6 @@ def analyze(photo: Photo):
 
     # image is considered taken indoors if two out of the three functions
     # find the image to have indoor elements
-    return not windows_present and not sky_detected or \
-        not windows_present and has_courtyard_frame or not sky_detected and has_courtyard_frame
-
-
-
+    return (not windows_present and not sky_detected) \
+        or (not windows_present and has_courtyard_frame) \
+        or (not sky_detected and has_courtyard_frame)
