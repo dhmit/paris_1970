@@ -13,7 +13,7 @@ MODEL = Photo
 
 def analyze(photo: Photo):
     """
-    Determine if an image is a courtyard photo by identifying a dark frame around outer boundary
+    Determines if an image is a courtyard photo by identifying a dark frame around outer boundary
     of photo. Returns boolean.
     """
     image = photo.get_image_data()
@@ -46,30 +46,20 @@ def analyze(photo: Photo):
 
     # Evaluating the top border of photo by comparing each pixel to DARK_THRESHOLD
     # and seeing if at least 80% pass the threshold
-    for rows_top in range(border_num):
-        for pixel_top in normalized_grayscale_image[rows_top]:
-            if pixel_top > DARK_THRESHOLD:
-                failed.append(pixel_top)
-            counter += 1
-    if len(failed) > percent_failed * counter:
+    failed = top_bottom_single_border(normalized_grayscale_image[0:border_num-1], DARK_THRESHOLD)
+    if len(failed) > percent_failed * border_num * length:
         borders_passed.append(False)
     else:
         borders_passed.append(True)
-    counter = 0
     del(failed[0:len(failed)])
 
     # Evaluating the bottom border of photo by comparing each pixel to DARK_THRESHOLD
     # and seeing if at least 80% pass the threshold
-    for rows_bottom in range(border_num):
-        for pixel_bottom in normalized_grayscale_image[::-1][rows_bottom]:
-            if pixel_bottom > DARK_THRESHOLD:
-                failed.append(pixel_bottom)
-            counter += 1
-    if len(failed) > percent_failed * counter:
+    failed = top_bottom_single_border(normalized_grayscale_image[::-1][0:border_num - 1], DARK_THRESHOLD)
+    if len(failed) > percent_failed * border_num * length:
         borders_passed.append(False)
     else:
         borders_passed.append(True)
-    counter = 0
     del(failed[0:len(failed)])
 
     # Evaluating the left border of photo by comparing each pixel to DARK_THRESHOLD
@@ -79,11 +69,10 @@ def analyze(photo: Photo):
             if row[pixel] > DARK_THRESHOLD:
                 failed.append(row[pixel])
             counter += 1
-    if len(failed) > percent_failed * counter:
+    if len(failed) > percent_failed * border_num * (width-2):
         borders_passed.append(False)
     else:
         borders_passed.append(True)
-    counter = 0
     del(failed[0:len(failed)])
 
     # Evaluating the right border of photo by comparing each pixel to DARK_THRESHOLD
@@ -93,7 +82,7 @@ def analyze(photo: Photo):
             if row[::-1][pixel] > DARK_THRESHOLD:
                 failed.append(row[pixel])
             counter += 1
-    if len(failed) > percent_failed * counter:
+    if len(failed) > percent_failed * border_num * (width-2):
         borders_passed.append(False)
     else:
         borders_passed.append(True)
@@ -101,10 +90,21 @@ def analyze(photo: Photo):
     # Determining how many borders passed the test
     # Returns True if three or more borders pass
     true_counter = 0
-    for val in borders_passed:
-        if val:
+    for border_passed in borders_passed:
+        if border_passed:
             true_counter += 1
     if true_counter >= 3:
         return True
     else:
         return False
+
+def top_bottom_single_border(border, threshold):
+    '''
+    Compares each pixel of the given border to the threshold. Returns a list of failed pixels.
+    '''
+    failed = []
+    for row in border:
+        for pixel in row:
+            if pixel > threshold:
+                failed.append(pixel)
+    return failed
