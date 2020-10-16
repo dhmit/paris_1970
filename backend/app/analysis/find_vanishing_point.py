@@ -49,7 +49,8 @@ def analyze(photo: Photo):
                 filter_lines.append(line)
         except ZeroDivisionError:
             pass
-    van_point = find_van_coord(filter_lines, image.shape[0], image.shape[1])
+    # van_point = find_van_coord(filter_lines, image.shape[0], image.shape[1])
+    van_point = find_van_coord_intersections(filter_lines)
     # print(van_point)
     # scale = 10
     # print(van_point[1]/scale, type(van_point), van_point)
@@ -59,7 +60,7 @@ def analyze(photo: Photo):
     # cv2.imshow('image', image)
     # plt.show()
     # cv2.waitKey()
-    return van_point[0]
+    return van_point
 
 
 def auto_canny(image):
@@ -125,6 +126,58 @@ def find_van_coord(lines, x_pix=0, y_pix=0):
     return (0, 0), 0
 
 
+def find_van_coord_intersections(lines):
+    """
+    Find the approximate vanishing point of the image by choosing the most representative point
+    from the largest cluster of intersections between lines in 'lines'
+    :param lines: list of lists containing start and end points of all filtered lines
+    :return: the average coordinate of the largest cluster of intersections
+    """
+    intersections = {}
+    tolerance = 30
+
+    # return None if the image likely has many unnecessary lines (e.g. if there's a tree)
+    if len(lines) > 150 or len(lines) < 2:
+        return None
+
+    # For each pair of lines, finds the intersection and checks to see if it's within the tolerance
+    # from an existing intersection. If so, adds the intersection to the corresponding cluster,
+    # else creates a new cluster.
+    for i in range(len(lines)-1):
+        for j in range(i+1, len(lines)):
+            intersection = find_intersection_between_two_lines(lines[i], lines[j])
+            if intersection is not None:
+                (intX, intY) = intersection
+                found = False
+                for coord in intersections:
+                    distance = ((intX-coord[0]) ** 2 + (intY-coord[1]) ** 2) ** (1/2)
+                    if distance < tolerance:
+                        intersections[coord].append(intersection)
+                        found = True
+                if not found:
+                    intersections[intersection] = [intersection]
+    max_frequency = 0
+    van_point_list = []
+    # finds the largest cluster of intersections
+    for coord in intersections:
+        if len(intersections[coord]) > max_frequency:
+            max_frequency = len(intersections[coord])
+            van_point_list = intersections[coord]
+
+    if max_frequency == 0:
+        return None
+    sum_point = [0, 0]
+    # finds the average of all coordinates in the largest cluster
+    for point in van_point_list:
+        sum_point[0] += point[0]
+        sum_point[1] += point[1]
+
+    sum_point[0] = round(sum_point[0]/max_frequency)
+    sum_point[1] = round(sum_point[1]/max_frequency)
+    print(tuple(sum_point))
+    return tuple(sum_point)
+
+
 def find_dist_from_point_to_line(xcoord, ycoord, line):
     """
     Find distance from point with (xcoord, ycoord) to a line
@@ -165,6 +218,4 @@ def find_intersection_between_two_lines(line1, line2):
     intersection_x = (standard_form_constant2-standard_form_constant1)/(x1_coeff-x2_coeff)
     intersection_y = -x1_coeff*intersection_x - standard_form_constant1
 
-    return tuple(intersection_x, intersection_y)
-
-
+    return intersection_x, intersection_y
