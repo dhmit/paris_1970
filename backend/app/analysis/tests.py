@@ -35,44 +35,38 @@ class AnalysisTestBase(TestCase):
 
         self.map_square = MapSquare()
         self.map_square.save()
-
-        self.photo_dict = {}
+        self.photo_number_counter = 0
 
     def add_photo(self, photo_name):
         """
         Creates a photo object and adds it to self.photo_dict given the name of the photo
         """
-        if photo_name not in self.photo_dict.keys():
-            # Creates Photo object
-            photo = Photo(number=len(self.photo_dict.keys()), map_square=self.map_square)
-            photo.front_local_path = os.path.join(settings.TEST_PHOTOS_DIR, f'{photo_name}.jpg')
-            photo.save()
+        # Creates Photo object
+        photo = Photo(number=self.photo_number_counter, map_square=self.map_square)
+        photo.front_local_path = os.path.join(settings.TEST_PHOTOS_DIR, f'{photo_name}.jpg')
+        photo.save()
+        self.photo_number_counter += 1
 
-            # Splits path string to make Photo name
-            self.photo_dict[photo_name] = photo
+        return photo
 
     def test_photographer_caption_length(self):
         """
         Test Photographer Caption Length analysis (photographer_caption_length.py)
         """
-        expected_values = {'100x100_500px-white_500px-black': 6}
-        for image in expected_values:
-            self.add_photo(image)
-            self.photo_dict[image].photographer_caption = '123456'
-            result = photographer_caption_length.analyze(self.photo_dict[image])
-            print(f'Caption Length performed on {image}. Result: {result}')
-            self.assertEqual(expected_values[image], result)
+        photo = self.add_photo('100x100_500px-white_500px-black')
+        photo.photographer_caption = '123456'
+        result = photographer_caption_length.analyze(photo)
+        print(f'Caption Length performed on 100x100_500px-white_500px-black. Result: {result}')
+        self.assertEqual(6, result)
 
     def test_whitespace_percentage(self):
         """
         Test Whitespace Percentage analysis (whitespace_percentage.py)
         """
-        expected_values = {'100x100_500px-white_500px-black': 50}
-        for image in expected_values:
-            self.add_photo(image)
-            result = whitespace_percentage.analyze(self.photo_dict[image])
-            print(f'Whitespace Percentage performed on {image}. Result: {result}')
-            self.assertEqual(expected_values[image], result)
+        photo = self.add_photo('100x100_500px-white_500px-black')
+        result = whitespace_percentage.analyze(photo)
+        print(f'Whitespace Percentage performed on 100x100_500px-white_500px-black. Result: {result}')
+        self.assertEqual(50, result)
 
     def test_stdev(self):
         """
@@ -90,8 +84,7 @@ class AnalysisTestBase(TestCase):
                            '100x100-HalfSquare_4': 125}
 
         for image in expected_values:
-            self.add_photo(image)
-            result = stdev.analyze(self.photo_dict[image])
+            result = stdev.analyze(self.add_photo(image))
             print(f'StDev performed on {image}. Result: {result}')
             self.assertEqual(expected_values[image], int(result))
 
@@ -112,8 +105,7 @@ class AnalysisTestBase(TestCase):
                            '100x100-HalfSquare_4': 1305}
 
         for image in expected_values:
-            self.add_photo(image)
-            result = local_variance.analyze(self.photo_dict[image])
+            result = local_variance.analyze(self.add_photo(image))
             print(f'Local Variance performed on {image}. Result: {result}')
             self.assertEqual(expected_values[image], int(result))
 
@@ -133,8 +125,7 @@ class AnalysisTestBase(TestCase):
                            '100x100-HalfSquare_4': 0}
 
         for image in expected_values:
-            self.add_photo(image)
-            result = detail_fft2.analyze(self.photo_dict[image])
+            result = detail_fft2.analyze(self.add_photo(image))
             print(f'FFT performed on {image}. Result: {result}')
             self.assertEqual(expected_values[image], int(result))
 
@@ -148,7 +139,6 @@ class AnalysisTestBase(TestCase):
                            '100x76-CheckeredRectangle_1': 1030, '100x76-CheckeredRectangle_2': 1030}
 
         for image in expected_values:
-            self.add_photo(image)
-            result = mean_detail.analyze(self.photo_dict[image])
+            result = mean_detail.analyze(self.add_photo(image))
             print(f'Mean Detail performed on {image}. Result: {result}')
             self.assertEqual(expected_values[image], int(result))
