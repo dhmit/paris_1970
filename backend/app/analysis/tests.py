@@ -47,7 +47,7 @@ class AnalysisTestBase(TestCase):
                 photo.save()
 
                 # Splits path string to make Photo name
-                photo_name = image.path.split(str(settings.TEST_PHOTOS_DIR)+'/')[1].split('.jpg')[0]
+                photo_name, _ = os.path.splitext(image.name)
                 self.photo_dict[photo_name] = photo
 
     def test_photographer_caption_length(self):
