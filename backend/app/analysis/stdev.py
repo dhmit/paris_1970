@@ -43,7 +43,8 @@ def analyze(photo: Photo):
     while j <= flat_list.size:
         # Append segments of the flattened grayscale image array to localRegions
         local_regions.append(flat_list[i: j])
-        i, j = j, j + interval
+        i = j
+        j = j + interval
 
     # Compute the standard deviation of pixels for each individual segment
     for i, region in enumerate(local_regions):
