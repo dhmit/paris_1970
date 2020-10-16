@@ -28,9 +28,8 @@ def analyze(photo: Photo):
     borders_passed = []
     percent_failed = 0.20
     border_percentage = 0.05 #top and bottom 0.5% of photo
-    length = len(normalized_grayscale_image[0])
-    width = len(normalized_grayscale_image)
-    border_num = int(border_percentage * min(length, width)) #number of pixels we want to check
+    border_num = int(border_percentage * min(len(normalized_grayscale_image[0]), #length
+                                             len(normalized_grayscale_image))) #width
     if border_num < 1:
         border_num = 1
 
@@ -45,7 +44,7 @@ def analyze(photo: Photo):
     # Evaluating the top border of photo by comparing each pixel to dark_threshold
     # and seeing if at least 80% pass the threshold
     failed = top_bottom_single(normalized_grayscale_image[0:border_num-1], dark_threshold)
-    if len(failed) > percent_failed * border_num * length:
+    if len(failed) > percent_failed * border_num * len(normalized_grayscale_image[0]):
         borders_passed.append(False)
     else:
         borders_passed.append(True)
@@ -55,7 +54,7 @@ def analyze(photo: Photo):
     # and seeing if at least 80% pass the threshold
     failed = top_bottom_single(normalized_grayscale_image[::-1][0:border_num - 1],
                                       dark_threshold)
-    if len(failed) > percent_failed * border_num * length:
+    if len(failed) > percent_failed * border_num * len(normalized_grayscale_image[0]):
         borders_passed.append(False)
     else:
         borders_passed.append(True)
@@ -66,7 +65,7 @@ def analyze(photo: Photo):
     failed = left_right_single(normalized_grayscale_image[1:len(normalized_grayscale_image)-2],
                                border_num,
                                dark_threshold)
-    if len(failed) > percent_failed * border_num * (width-2):
+    if len(failed) > percent_failed * border_num * (len(normalized_grayscale_image)-2):
         borders_passed.append(False)
     else:
         borders_passed.append(True)
@@ -78,7 +77,7 @@ def analyze(photo: Photo):
                                border_num,
                                dark_threshold,
                                True)
-    if len(failed) > percent_failed * border_num * (width-2):
+    if len(failed) > percent_failed * border_num * (len(normalized_grayscale_image)-2):
         borders_passed.append(False)
     else:
         borders_passed.append(True)
