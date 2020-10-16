@@ -11,8 +11,6 @@ from app.models import Photo
 
 MODEL = Photo
 
-from app.models import Photo
-
 def analyze(photo: Photo):
     """
     Determine if an image is a courtyard photo by identifying a dark frame around outer boundary
@@ -110,4 +108,3 @@ def analyze(photo: Photo):
         return True
     else:
         return False
-
