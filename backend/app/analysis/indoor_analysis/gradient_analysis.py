@@ -24,7 +24,6 @@ def analyze(photo: Photo):
     image = photo.get_image_data()
     grayscale_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     height = len(grayscale_image)
-    width = len(grayscale_image[0])
 
     # Normalize pixel values in image
     normalized_grayscale_image = grayscale_image / np.max(grayscale_image)
@@ -50,6 +49,7 @@ def analyze(photo: Photo):
     # consistent gradient is present.
     return r_squared > 0.85
 
+
 def best_fit_line(xs, ys):
     """
     Parameters:
@@ -64,6 +64,7 @@ def best_fit_line(xs, ys):
          ((mean(xs) ** 2) - mean(xs ** 2)))
     b = mean(ys) - m * mean(xs)
     return m, b
+
 
 def find_r_squared(ys_orig, ys_line):
     """
