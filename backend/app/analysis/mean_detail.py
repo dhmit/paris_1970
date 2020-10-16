@@ -2,7 +2,8 @@
 
 mean_detail.py
 
-analysis to calculate arithmetic mean of results from three standard deviation functions
+Calculate arithmetic mean of results from stdev.py, local_variance.py, and detail_fft2.py to gauge
+how these measures of detail compare with each other
 
 """
 
@@ -16,7 +17,7 @@ MODEL = Photo
 
 def analyze(photo: Photo):
     """
-    Calculate the arithmetic mean detail for a given Photo
+    Calculate the mean detail for a given Photo arithmetically
     """
 
     detail = detail_analyze(photo)
