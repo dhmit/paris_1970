@@ -3,15 +3,15 @@
 pop_density_detection.py - analysis to count the number of people in the photos in the DB
 
 """
-from __future__ import print_function
-from ..models import Photo
-# import the necessary packages
-from imutils.object_detection import non_max_suppression
-from imutils import paths
+
 import numpy as np
-import argparse
 import imutils
+from imutils.object_detection import non_max_suppression
 import cv2
+from ..models import Photo
+
+
+
 
 MODEL = Photo
 
@@ -47,9 +47,8 @@ def analyze(photo: Photo):
     for (xA, yA, xB, yB) in pick:
         cv2.rectangle(image, (xA, yA), (xB, yB), (0, 255, 0), 2)
 
-    cv2.imwrite(f'test_pop_density_detection_{photo.id}.jpg', image) #test cases
+    #cv2.imwrite(f'test_pop_density_detection_{photo.id}.jpg', image)
 
     num_people = len(pick)
-    print(pick)
     return num_people
 
