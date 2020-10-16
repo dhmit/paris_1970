@@ -57,4 +57,4 @@ class AnalysisTestBase(TestCase):
 
     def test_portrait_detection(self):
         result = portrait_detection.analyze(self.photo_2)
-        self.assertEqual(True,result)
+        self.assertEqual(True, result)

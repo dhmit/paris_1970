@@ -7,37 +7,21 @@ MODEL = Photo
 
 def analyze(photo: Photo):
     """
-    Calculate the whitespace % for a given Photo
+    Face detection using Open CV's haar cascade.
+    Param: Photo model
+    Return: Boolean if there's at least one face with a minimum size of 200 by 200
     """
 
+    # Load classifier and image. Convert image to grayscale for detection
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-    # eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
     img = photo.get_image_data()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
+    # Use cascade classifier to detect if there exists face(s) with at least given min size
     faces = face_cascade.detectMultiScale(gray, 1.3, 5, minSize=(200, 200))
-    print("FACES", faces)
-    print("GRAY", gray)
 
+    # Calculate region and area of the face(s)
     for (x, y, w, h) in faces:
         img = cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
-        # roi_gray = gray[y:y + h, x:x + w]
-        # roi_color = img[y:y + h, x:x + w]
-        # eyes = eye_cascade.detectMultiScale(roi_gray)
-        # for (ex, ey, ew, eh) in eyes:
-        #     cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
-
-    '''if len(faces) > 0:
-        # area = faces[0][2] * faces[1][2] # will need to find max face size
-        # print("AREA", area)
-        # if area > :
-        cv2.imshow('img', img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()'''
 
     return len(faces) > 0
-
-#
-# if __name__ == '__main__':
-#     photo_0 = Photo(number=21, map_square=237)
-#     analyze(photo_0)
