@@ -1,7 +1,7 @@
 '''
 courtyard_frame.py
 analysis to determine whether there is a dark border around the photo, which would likely indicate
-that the photo was taken inside a courtyard or through an alleyway 
+that the photo was taken inside a courtyard or through an alleyway
 '''
 
 import numpy as np
@@ -46,7 +46,8 @@ def analyze(photo: Photo):
                 max_pixel = pixel
     DARK_THRESHOLD = max_pixel * 0.5
 
-    # Evaluating the top border
+    # Evaluating the top border of photo by comparing each pixel to DARK_THRESHOLD
+    # and seeing if at least 80% pass the threshold
     for rows_top in range(border_num):
         for pixel_top in normalized_grayscale_image[rows_top]:
             if pixel_top > DARK_THRESHOLD:
@@ -59,7 +60,8 @@ def analyze(photo: Photo):
     counter = 0
     del(failed[0:len(failed)])
 
-    # Evaluating the bottom border
+    # Evaluating the bottom border of photo by comparing each pixel to DARK_THRESHOLD
+    # and seeing if at least 80% pass the threshold
     for rows_bottom in range(border_num):
         for pixel_bottom in normalized_grayscale_image[::-1][rows_bottom]:
             if pixel_bottom > DARK_THRESHOLD:
@@ -72,7 +74,8 @@ def analyze(photo: Photo):
     counter = 0
     del(failed[0:len(failed)])
 
-    # Evaluating the left border
+    # Evaluating the left border of photo by comparing each pixel to DARK_THRESHOLD
+    # and seeing if at least 80% pass the threshold
     for row in normalized_grayscale_image[1:len(normalized_grayscale_image)-2]:
         for pixel in range(border_num):
             if row[pixel] > DARK_THRESHOLD:
@@ -85,7 +88,8 @@ def analyze(photo: Photo):
     counter = 0
     del(failed[0:len(failed)])
 
-    # Evaluating the right border
+    # Evaluating the right border of photo by comparing each pixel to DARK_THRESHOLD
+    # and seeing if at least 80% pass the threshold
     for row in normalized_grayscale_image[1:len(normalized_grayscale_image) - 2]:
         for pixel in range(border_num):
             if row[::-1][pixel] > DARK_THRESHOLD:
@@ -97,6 +101,7 @@ def analyze(photo: Photo):
         borders_passed.append(True)
 
     # Determining how many borders passed the test
+    # Returns True if three or more borders pass
     true_counter = 0
     for val in borders_passed:
         if val:
