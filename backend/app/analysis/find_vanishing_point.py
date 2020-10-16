@@ -45,7 +45,7 @@ def analyze(photo: Photo):
             epsilon = np.pi / 16
             if (point_2_x - point_1_x) != 0 and abs(theta - np.pi / 2) > 2 * epsilon and theta > \
                     epsilon:
-                cv2.line(image, (point_1_x, point_1_y), (point_2_x, point_2_y), (0, 0, 255), 3, 8)
+                # cv2.line(image, (point_1_x, point_1_y), (point_2_x, point_2_y), (0, 0, 255), 3, 8)
                 filter_lines.append(line)
         except ZeroDivisionError:
             pass
@@ -54,12 +54,10 @@ def analyze(photo: Photo):
     # print(van_point)
     # scale = 10
     # print(van_point[1]/scale, type(van_point), van_point)
-    # cv2.circle(image, van_point[0], 50, (255, 0, 0), 10, 8)
-
+    # cv2.circle(image, van_point, 50, (255, 0, 0), 10, 8)
     # cv2.namedWindow('image', cv2.WINDOW_NORMAL)
     # cv2.imshow('image', image)
     # plt.show()
-    # cv2.waitKey()
     return van_point
 
 
@@ -88,42 +86,42 @@ def auto_canny(image):
     return [edged, lines]
 
 
-def find_van_coord(lines, x_pix=0, y_pix=0):
-    """
-    Given a filtered list of significant lines and the dimensions of the image,
-    finds the point that is closest to all lines on average.
-
-    :param lines: list of significant lines
-    :param x_pix: width of the image
-    :param y_pix: height of the image
-    :return: tuple with: index 0 = vanishing point coordinates
-                         index 1 = sum of distances from VP to all lines
-    TODO: If there is no vanishing point within the photo, return None or "offscreen"
-    TODO: Change method/metric used to find vanishing point to improve accuracy
-    """
-    step = int(y_pix/10)
-    coords_to_dists_from_lines = {}
-
-    # Iterate through pixels in image by step amount,
-    # store total distance from each pixel to all lines detected in image
-    # in coords_to_dists_from_lines dict
-    for i in range(0, x_pix, step):
-        for j in range(0, y_pix, step):
-            for line in lines:
-                distance_from_coord_to_line = find_dist_from_point_to_line(i, j, line)
-                # add or update distance from this point to line
-                if (i, j) in coords_to_dists_from_lines:
-                    coords_to_dists_from_lines[(i, j)] += distance_from_coord_to_line
-                else:
-                    coords_to_dists_from_lines[(i, j)] = distance_from_coord_to_line
-    if len(coords_to_dists_from_lines) != 0:
-        min_coord = (0, 0)
-        for coord in coords_to_dists_from_lines: # find coord with minimum distance sum to lines
-            if coords_to_dists_from_lines[coord] <= coords_to_dists_from_lines[min_coord]:
-                # will always include (0,0) so no keyerrors
-                min_coord = coord
-        return (min_coord, coords_to_dists_from_lines[min_coord])
-    return (0, 0), 0
+# def find_van_coord(lines, x_pix=0, y_pix=0):
+#     """
+#     Given a filtered list of significant lines and the dimensions of the image,
+#     finds the point that is closest to all lines on average.
+#
+#     :param lines: list of significant lines
+#     :param x_pix: width of the image
+#     :param y_pix: height of the image
+#     :return: tuple with: index 0 = vanishing point coordinates
+#                          index 1 = sum of distances from VP to all lines
+#     TODO: If there is no vanishing point within the photo, return None or "offscreen"
+#     TODO: Change method/metric used to find vanishing point to improve accuracy
+#     """
+#     step = int(y_pix/10)
+#     coords_to_dists_from_lines = {}
+#
+#     # Iterate through pixels in image by step amount,
+#     # store total distance from each pixel to all lines detected in image
+#     # in coords_to_dists_from_lines dict
+#     for i in range(0, x_pix, step):
+#         for j in range(0, y_pix, step):
+#             for line in lines:
+#                 distance_from_coord_to_line = find_dist_from_point_to_line(i, j, line)
+#                 # add or update distance from this point to line
+#                 if (i, j) in coords_to_dists_from_lines:
+#                     coords_to_dists_from_lines[(i, j)] += distance_from_coord_to_line
+#                 else:
+#                     coords_to_dists_from_lines[(i, j)] = distance_from_coord_to_line
+#     if len(coords_to_dists_from_lines) != 0:
+#         min_coord = (0, 0)
+#         for coord in coords_to_dists_from_lines: # find coord with minimum distance sum to lines
+#             if coords_to_dists_from_lines[coord] <= coords_to_dists_from_lines[min_coord]:
+#                 # will always include (0,0) so no keyerrors
+#                 min_coord = coord
+#         return (min_coord, coords_to_dists_from_lines[min_coord])
+#     return (0, 0), 0
 
 
 def find_van_coord_intersections(lines):
@@ -135,9 +133,9 @@ def find_van_coord_intersections(lines):
     """
     intersections = {}
     tolerance = 30
-
+    print(len(lines))
     # return None if the image likely has many unnecessary lines (e.g. if there's a tree)
-    if len(lines) > 150 or len(lines) < 2:
+    if len(lines) > 300 or len(lines) < 2:
         return None
 
     # For each pair of lines, finds the intersection and checks to see if it's within the tolerance
@@ -174,7 +172,7 @@ def find_van_coord_intersections(lines):
 
     sum_point[0] = round(sum_point[0]/max_frequency)
     sum_point[1] = round(sum_point[1]/max_frequency)
-    print(tuple(sum_point))
+    # print(tuple(sum_point))
     return tuple(sum_point)
 
 
