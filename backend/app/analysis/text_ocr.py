@@ -16,6 +16,7 @@ MODEL = Photo
 # Code Source:
 # https://www.pyimagesearch.com/2018/09/17/opencv-ocr-and-text-recognition-with-tesseract/
 
+# pylint: disable-msg=too-many-locals
 def decode_predictions(scores, geometry, min_confidence):
     """
     Using scores (probabilities) and the geometrical data to derive
@@ -117,6 +118,7 @@ def get_boxes_from_image(photo, height, width):
     return non_max_suppression(np.array(rects), probs=confidences)
 
 
+# pylint: disable-msg=too-many-locals
 def analyze(photo: Photo):
     """
     Analysis function that returns the string that represents the words in the image
