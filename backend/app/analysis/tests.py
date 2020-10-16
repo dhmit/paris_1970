@@ -41,9 +41,14 @@ class AnalysisTestBase(TestCase):
         self.photo_1.save()
 
         self.photo_2 = Photo(number=3, map_square=self.map_square)
-        test_photo_path = Path(settings.TEST_PHOTOS_DIR, '4%_black.jpg')
-        self.photo_2.front_local_path = test_photo_path
+        test_photo_path_2 = Path(settings.TEST_PHOTOS_DIR, '4%_black.jpg')
+        self.photo_2.front_local_path = test_photo_path_2
         self.photo_2.save()
+
+        self.photo_3 = Photo(number=4, map_square=self.map_square)
+        test_photo_path_3 = Path(settings.TEST_PHOTOS_DIR, 'foreground_801_4.jpg')
+        self.photo_3.front_local_path = test_photo_path_3
+        self.photo_3.save()
 
     def test_photographer_caption_length(self):
         self.photo_0.photographer_caption = '123456'
@@ -59,3 +64,18 @@ class AnalysisTestBase(TestCase):
         # Result is not exact (range of values)
         # Needs more testing
         self.assertTrue(2 <= result <= 6)
+
+    def test_foreground_percentage_real_image(self):
+        result = foreground_percentage.analyze(self.photo_3)
+
+        # Result is not exact (range of values)
+        # Needs more testing
+        self.assertTrue(60 <= result <= 64)
+
+    def test_foreground_percentage_from_file(self):
+        file_path = Path(settings.TEST_PHOTOS_DIR, 'foreground_801_4.jpg')
+
+        result = foreground_percentage.analyze_from_file(file_path)
+        # Result is not exact (range of values)
+        # Needs more testing
+        self.assertTrue(60 <= result <= 64)
