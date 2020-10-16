@@ -18,7 +18,7 @@ from app.analysis import (
     stdev,
     detail_fft2,
     local_variance,
-    average_detail,
+    mean_detail,
 )
 
 
@@ -138,9 +138,9 @@ class AnalysisTestBase(TestCase):
             print(f'FFT performed on {image}. Result: {result}')
             self.assertEqual(expected_values[image], int(result))
 
-    def test_average_detail(self):
+    def test_mean_detail(self):
         """
-        Test Average Detail function (average_detail.py)
+        Test Mean Detail function (mean_detail.py)
         """
         expected_values = {'100x76-BlackRectangle': 0, '100x76-GreyRectangle': 0,
                            '100x76-WhiteRectangle': 0, '100x100-BlackSquare': 0,
@@ -150,5 +150,5 @@ class AnalysisTestBase(TestCase):
         for image in expected_values:
             self.add_photo(image)
             result = average_detail.analyze(self.photo_dict[image])
-            print(f'Average Detail performed on {image}. Result: {result}')
+            print(f'Mean Detail performed on {image}. Result: {result}')
             self.assertEqual(expected_values[image], int(result))

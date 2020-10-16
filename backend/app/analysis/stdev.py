@@ -1,7 +1,7 @@
 """
 stdev.py
 
-Isolate local regions of an image and find the average of all standard deviations to determine
+Isolate local regions of an image and find the mean standard deviation to determine
 level of detail in a photo
 
 Josh
@@ -17,7 +17,7 @@ MODEL = Photo
 
 def analyze(photo: Photo):
     """
-    Calculate the average of the standard deviation of pixels over local regions
+    Calculate the mean standard deviation of pixels over local regions
     Std computed locally and then averaged to account for, say, black-and-white images
     """
 
@@ -52,7 +52,7 @@ def analyze(photo: Photo):
         local_regions[i] = float(np.std(region))
         # After the cast, each element in the list is a single float
 
-    # Return the average of the standard deviations of all local regions
+    # Return the mean standard deviation of all local regions
     # If not, return 0
     try:
         return sum(local_regions) / len(local_regions)
