@@ -27,13 +27,13 @@ def analyze(photo: Photo):
         # for (ex, ey, ew, eh) in eyes:
         #     cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
 
-    if len(faces) > 0:
+    '''if len(faces) > 0:
         # area = faces[0][2] * faces[1][2] # will need to find max face size
         # print("AREA", area)
         # if area > :
         cv2.imshow('img', img)
         cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        cv2.destroyAllWindows()'''
 
     return len(faces) > 0
 
