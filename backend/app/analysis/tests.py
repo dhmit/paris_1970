@@ -86,6 +86,6 @@ class AnalysisTestBase(TestCase):
     #     self.assertEqual({"Hello"}, result)
 
     def test_text_ocr_real_image(self):
-        result = text_ocr.analyze(self.photo_6)
+        result = text_ocr.analyze(self.photo_5)
         print(result)
 

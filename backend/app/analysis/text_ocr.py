@@ -84,7 +84,7 @@ def get_french_words(results):
         for word in words:
             # removes punctuation from the string
             word = word.translate(str.maketrans('', '', string.punctuation)).lower()
-            if french_dict.check(word):
+            if word and french_dict.check(word):
                 output.add(word)
     return output
 
@@ -112,7 +112,6 @@ def analyze(photo: Photo):
 
     # load the input image and grab the image dimensions
     image = photo.get_image_data()
-    _, image = cv2.threshold(image, 160, 255, cv2.THRESH_TRUNC)
 
     sharpened = sharpening(image, 2)
     orig = sharpened.copy()
