@@ -16,8 +16,12 @@ from app.analysis import (
     photographer_caption_length,
     whitespace_percentage
 )
-from app.analysis.indoor_analysis import combined_indoor, courtyard_frame, find_windows, \
+from app.analysis.indoor_analysis import (
+    combined_indoor,
+    courtyard_frame,
+    find_windows,
     gradient_analysis
+)
 
 
 class AnalysisTestBase(TestCase):
