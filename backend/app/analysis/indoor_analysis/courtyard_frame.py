@@ -1,3 +1,9 @@
+'''
+courtyard_frame.py
+analysis to determine whether there is a dark border around the photo, which would likely indicate
+that the photo was taken inside a courtyard or through an alleyway 
+'''
+
 import numpy as np
 import cv2
 
@@ -20,19 +26,7 @@ def analyze(photo: Photo):
     # Normalize image pixels to range from 0 to 1
     normalized_grayscale_image = grayscale_image / np.max(grayscale_image)
 
-    # Montse's code
-    # for top_row_pixel in normalized_grayscale_image[0]:
-    #     if top_row_pixel > DARK_THRESHOLD:
-    #         return False
-    # for bottom_row_pixel in normalized_grayscale_image[-1]:
-    #     if bottom_row_pixel > DARK_THRESHOLD:
-    #         return False
-    # for row in normalized_grayscale_image:
-    #     if row[0] > DARK_THRESHOLD and row[-1] > DARK_THRESHOLD:
-    #         return False
-    # return True
-
-    #setting up variables
+    # Setting up variables
     counter = 0
     failed = []
     borders_passed = []
@@ -44,17 +38,7 @@ def analyze(photo: Photo):
     if border_num < 1:
         border_num = 1
 
-    ## Using average pixel as threshold ##
-    # num_of_pixels = 0
-    # sum_of_pixel = 0
-    # for row in normalized_grayscale_image:
-    #     for pixel in row:
-    #         sum_of_pixel += pixel
-    #         num_of_pixels += 1
-    # DARK_THRESHOLD = sum_of_pixel / num_of_pixels
-    # print(DARK_THRESHOLD)
-
-    ## Using half of highest pixel as threshold ##
+    # Using half of highest pixel as threshold
     max_pixel = 0
     for row in normalized_grayscale_image:
         for pixel in row:
@@ -62,7 +46,7 @@ def analyze(photo: Photo):
                 max_pixel = pixel
     DARK_THRESHOLD = max_pixel * 0.5
 
-    ## Evaluating the top border ##
+    # Evaluating the top border
     for rows_top in range(border_num):
         for pixel_top in normalized_grayscale_image[rows_top]:
             if pixel_top > DARK_THRESHOLD:
@@ -75,7 +59,7 @@ def analyze(photo: Photo):
     counter = 0
     del(failed[0:len(failed)])
 
-    ## Evaluating the bottom border ##
+    # Evaluating the bottom border
     for rows_bottom in range(border_num):
         for pixel_bottom in normalized_grayscale_image[::-1][rows_bottom]:
             if pixel_bottom > DARK_THRESHOLD:
@@ -88,7 +72,7 @@ def analyze(photo: Photo):
     counter = 0
     del(failed[0:len(failed)])
 
-    ## Evaluting the left border ##
+    # Evaluating the left border
     for row in normalized_grayscale_image[1:len(normalized_grayscale_image)-2]:
         for pixel in range(border_num):
             if row[pixel] > DARK_THRESHOLD:
@@ -101,7 +85,7 @@ def analyze(photo: Photo):
     counter = 0
     del(failed[0:len(failed)])
 
-    ## Evaluating the right border ##
+    # Evaluating the right border
     for row in normalized_grayscale_image[1:len(normalized_grayscale_image) - 2]:
         for pixel in range(border_num):
             if row[::-1][pixel] > DARK_THRESHOLD:
@@ -112,7 +96,7 @@ def analyze(photo: Photo):
     else:
         borders_passed.append(True)
 
-    ## Determining how many borders passed the test ##
+    # Determining how many borders passed the test
     true_counter = 0
     for val in borders_passed:
         if val:
