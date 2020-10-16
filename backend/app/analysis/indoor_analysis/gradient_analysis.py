@@ -6,15 +6,12 @@ in image
 
 :return: boolean, True if a gradient was found, False otherwise
 """
-
+from statistics import mean
 import cv2 as cv
 import numpy as np
-from statistics import mean
-
 from app.models import Photo
 
 MODEL = Photo
-
 WHITESPACE_THRESHOLD = .6
 
 def analyze(photo: Photo):
