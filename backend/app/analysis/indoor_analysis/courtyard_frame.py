@@ -25,8 +25,6 @@ def analyze(photo: Photo):
     normalized_grayscale_image = grayscale_image / np.max(grayscale_image)
 
     # Setting up variables
-    counter = 0
-    failed = []
     borders_passed = []
     percent_failed = 0.20
     border_percentage = 0.05 #top and bottom 0.5% of photo
@@ -42,46 +40,44 @@ def analyze(photo: Photo):
         for pixel in row:
             if pixel > max_pixel:
                 max_pixel = pixel
-    DARK_THRESHOLD = max_pixel * 0.5
+    dark_threshold = max_pixel * 0.5
 
-    # Evaluating the top border of photo by comparing each pixel to DARK_THRESHOLD
+    # Evaluating the top border of photo by comparing each pixel to dark_threshold
     # and seeing if at least 80% pass the threshold
-    failed = top_bottom_single_border(normalized_grayscale_image[0:border_num-1], DARK_THRESHOLD)
+    failed = top_bottom_single(normalized_grayscale_image[0:border_num-1], dark_threshold)
     if len(failed) > percent_failed * border_num * length:
         borders_passed.append(False)
     else:
         borders_passed.append(True)
     del(failed[0:len(failed)])
 
-    # Evaluating the bottom border of photo by comparing each pixel to DARK_THRESHOLD
+    # Evaluating the bottom border of photo by comparing each pixel to dark_threshold
     # and seeing if at least 80% pass the threshold
-    failed = top_bottom_single_border(normalized_grayscale_image[::-1][0:border_num - 1], DARK_THRESHOLD)
+    failed = top_bottom_single(normalized_grayscale_image[::-1][0:border_num - 1],
+                                      dark_threshold)
     if len(failed) > percent_failed * border_num * length:
         borders_passed.append(False)
     else:
         borders_passed.append(True)
     del(failed[0:len(failed)])
 
-    # Evaluating the left border of photo by comparing each pixel to DARK_THRESHOLD
+    # Evaluating the left border of photo by comparing each pixel to dark_threshold
     # and seeing if at least 80% pass the threshold
-    for row in normalized_grayscale_image[1:len(normalized_grayscale_image)-2]:
-        for pixel in range(border_num):
-            if row[pixel] > DARK_THRESHOLD:
-                failed.append(row[pixel])
-            counter += 1
+    failed = left_right_single(normalized_grayscale_image[1:len(normalized_grayscale_image)-2],
+                               border_num,
+                               dark_threshold)
     if len(failed) > percent_failed * border_num * (width-2):
         borders_passed.append(False)
     else:
         borders_passed.append(True)
     del(failed[0:len(failed)])
 
-    # Evaluating the right border of photo by comparing each pixel to DARK_THRESHOLD
+    # Evaluating the right border of photo by comparing each pixel to dark_threshold
     # and seeing if at least 80% pass the threshold
-    for row in normalized_grayscale_image[1:len(normalized_grayscale_image) - 2]:
-        for pixel in range(border_num):
-            if row[::-1][pixel] > DARK_THRESHOLD:
-                failed.append(row[pixel])
-            counter += 1
+    failed = left_right_single(normalized_grayscale_image[1:len(normalized_grayscale_image) - 2],
+                               border_num,
+                               dark_threshold,
+                               True)
     if len(failed) > percent_failed * border_num * (width-2):
         borders_passed.append(False)
     else:
@@ -93,18 +89,30 @@ def analyze(photo: Photo):
     for border_passed in borders_passed:
         if border_passed:
             true_counter += 1
-    if true_counter >= 3:
-        return True
-    else:
-        return False
+    return true_counter >= 3
 
-def top_bottom_single_border(border, threshold):
+def top_bottom_single(border, threshold):
     '''
-    Compares each pixel of the given border to the threshold. Returns a list of failed pixels.
+    Compares each pixel of the top or bottom border to the threshold. Returns a list of failed
+    pixels.
     '''
     failed = []
     for row in border:
         for pixel in row:
             if pixel > threshold:
                 failed.append(pixel)
+    return failed
+
+def left_right_single(photo_without_top_bottom, border_num, threshold, isRight=False):
+    '''
+    Compares each pixel of the left or right border to the threshold. Returns a list of failed
+    pixels.
+    '''
+    failed = []
+    for row in photo_without_top_bottom:
+        if isRight:
+            row = row[::-1]
+        for pixel in range(border_num):
+            if row[pixel] > threshold:
+                failed.append(row[pixel])
     return failed
