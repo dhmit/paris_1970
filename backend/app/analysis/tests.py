@@ -64,7 +64,8 @@ class AnalysisTestBase(TestCase):
         self.photo_04.save()
 
         self.photo_square = Photo(number=7, map_square=self.map_square)
-        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'window_photos/find_windows_test_photo.jpg')
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'window_photos/find_windows_test_photo.jpg'
+                               )
         self.photo_square.front_local_path = test_photo_path
         self.photo_square.save()
 
@@ -79,7 +80,8 @@ class AnalysisTestBase(TestCase):
         self.photo_white.save()
 
         self.photo_windows = Photo(number=11, map_square=self.map_square)
-        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'window_photos/gray_building_with_windows.jpg')
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR,
+                               'window_photos/gray_building_with_windows.jpg')
         self.photo_windows.front_local_path = test_photo_path
         self.photo_windows.save()
 
@@ -167,4 +169,3 @@ class AnalysisTestBase(TestCase):
         self.assertEqual(True, front_desk_result)
         far_building_result = combined_indoor.analyze(self.photo_far_building)
         self.assertEqual(False, far_building_result)
-
