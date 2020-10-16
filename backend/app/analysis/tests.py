@@ -105,7 +105,8 @@ class AnalysisTestBase(TestCase):
         self.photo_tall_crane.save()
 
         self.photo_far_building = Photo(number=15, map_square=self.map_square)
-        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'window_photos', 'far_window_buildings.jpg')
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'window_photos',
+                               'far_window_buildings.jpg')
         self.photo_far_building.front_local_path = test_photo_path
         self.photo_far_building.save()
 
@@ -134,6 +135,11 @@ class AnalysisTestBase(TestCase):
         self.assertEqual(50, result)
 
     def test_courtyard_frame(self):
+        """
+        Testing a variety of images to see if they are correctly
+        identified as having a dark frame, meaning they are likely
+        images of a courtyard
+        """
         result00 = courtyard_frame.analyze(self.photo_00)
         self.assertEqual(False, result00)
         result01 = courtyard_frame.analyze(self.photo_01)

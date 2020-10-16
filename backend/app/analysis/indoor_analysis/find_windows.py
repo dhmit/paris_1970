@@ -6,7 +6,6 @@ in a given image or not
 :return: boolean, True if a window was found, False otherwise
 """
 
-import numpy as np
 import cv2
 
 from app.models import Photo
@@ -35,7 +34,6 @@ def analyze(photo: Photo):
     if corners is None:
         return False
 
-    corners = np.int0(corners)
     x_set = set()
     y_set = set()
 
