@@ -101,7 +101,7 @@ class AnalysisTestBase(TestCase):
         self.photo_tall_crane.save()
 
         self.photo_far_building = Photo(number=15, map_square=self.map_square)
-        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'window_photos/far_window_buildings.jpg')
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'window_photos', 'far_window_buildings.jpg')
         self.photo_far_building.front_local_path = test_photo_path
         self.photo_far_building.save()
 
@@ -142,6 +142,10 @@ class AnalysisTestBase(TestCase):
         self.assertEqual(True, result04)
 
     def test_find_windows(self):
+        """
+        Testing a variety of images to see if they are correctly
+        identified as having windows or not
+        """
         square_result = find_windows.analyze(self.photo_square)
         black_result = find_windows.analyze(self.photo_black)
         white_result = find_windows.analyze(self.photo_white)
@@ -165,6 +169,10 @@ class AnalysisTestBase(TestCase):
         self.assertEqual(True, result)
 
     def test_combined_indoor_analysis(self):
+        """
+        Testing images to see if they are correctly identified as being having taken
+        indoors or outdoors
+        """
         front_desk_result = combined_indoor.analyze(self.photo_front_desk)
         self.assertEqual(True, front_desk_result)
         far_building_result = combined_indoor.analyze(self.photo_far_building)

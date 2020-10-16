@@ -41,11 +41,11 @@ def analyze(photo: Photo):
 
     # iterate through all corners until four corners that
     # create a perfect rectangular shape (a likely window) are found
-    for i in corners:
-        x, y = i.ravel()
-        if x in x_set and y in y_set:
+    for corner in corners:
+        x_coord, y_coord = corner.ravel()
+        if x_coord in x_set and y_coord in y_set:
             return True  # window found
-        x_set.add(x)
-        y_set.add(y)
+        x_set.add(x_coord)
+        y_set.add(y_coord)
 
     return False
