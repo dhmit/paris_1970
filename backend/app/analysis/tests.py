@@ -137,7 +137,7 @@ class AnalysisTestBase(TestCase):
         expected_values = {'100x76-BlackRectangle': 0, '100x76-GreyRectangle': 0,
                            '100x76-WhiteRectangle': 0, '100x100-BlackSquare': 0,
                            '100x100-GreySquare': 0, '100x100-WhiteSquare': 0,
-                           '100x76-CheckeredRectangle_1': 1030, '100x76-CheckeredRectangle_2': 1030}
+                           '100x76-CheckeredRectangle_1': 1073, '100x76-CheckeredRectangle_2': 1073}
 
         for image in expected_values:
             result = mean_detail.analyze(self.add_photo(image))
