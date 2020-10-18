@@ -65,7 +65,8 @@ class AnalysisTestBase(TestCase):
         """
         photo = self.add_photo('100x100_500px-white_500px-black')
         result = whitespace_percentage.analyze(photo)
-        print(f'Whitespace Percentage performed on 100x100_500px-white_500px-black. Result: {result}')
+        print(f'Whitespace Percentage performed on \
+            100x100_500px-white_500px-black. Result:'f' {result}')
         self.assertEqual(50, result)
 
     def test_stdev(self):
