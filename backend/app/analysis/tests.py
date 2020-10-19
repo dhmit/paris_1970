@@ -60,12 +60,19 @@ class AnalysisTestBase(TestCase):
         self.assertEqual(50, result)
 
     def test_foreground_percentage(self):
+        """
+        Test the foreground percentage function on an image with a black square in the center
+        surrounded by all white pixels
+        """
         result = foreground_percentage.analyze(self.photo_2)
         # Result is not exact (range of values)
         # Needs more testing
         self.assertTrue(2 <= result <= 6)
 
     def test_foreground_percentage_real_image(self):
+        """
+        Test the foreground percentage function on a real competition photo.
+        """
         result = foreground_percentage.analyze(self.photo_3)
 
         # Result is not exact (range of values)
@@ -73,6 +80,12 @@ class AnalysisTestBase(TestCase):
         self.assertTrue(60 <= result <= 64)
 
     def test_foreground_percentage_from_file(self):
+        """
+        Test the foreground percentage function on a real competition photo.
+        The photo is read from file so that we can test performance differences between
+        the django model and the real image.
+        :return:
+        """
         file_path = Path(settings.TEST_PHOTOS_DIR, 'foreground_801_4.jpg')
 
         result = foreground_percentage.analyze_from_file(file_path)
