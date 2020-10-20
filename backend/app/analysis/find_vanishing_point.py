@@ -143,7 +143,7 @@ def find_van_coord_intersections(lines):
     # else creates a new cluster.
     for i in range(len(lines)-1):
         for j in range(i+1, len(lines)):
-            intersection = find_intersection_between_two_lines(lines[i], lines[j])
+            intersection = find_intersection_between_two_lines((lines[i], lines[j]))
             if intersection is not None:
                 (intX, intY) = intersection
                 found = False
@@ -192,15 +192,16 @@ def find_van_coord_intersections(lines):
 #     return abs(x_coeff * xcoord + ycoord + standard_form_constant) / (x_coeff ** 2 + 1 ** 2) ** .5
 
 
-def find_intersection_between_two_lines(line1, line2):
+def find_intersection_between_two_lines(lines):
     """
     Determines the coordinates of the intersection between two lines, or None if no intersection
-    :param line1: 4-elem list x1, y1, x2, y2 -> starting and ending coordinates of line 1
-    :param line2: 4-elem list x1, y1, x2, y2 -> starting and ending coordinates of line 2
+    :param lines: contains a tuple of two lines where:
+        lines[0]: 4-elem list x1, y1, x2, y2 -> starting and ending coordinates of line 1
+        lines[1]: 4-elem list x1, y1, x2, y2 -> starting and ending coordinates of line 2
     :return: coordinates of intersection point on image or None if does not exist or lines parallel
     """
-    line1_x_coord_1, line1_y_coord_1, line1_x_coord_2, line1_y_coord_2 = line1[0]
-    line2_x_coord_1, line2_y_coord_1, line2_x_coord_2, line2_y_coord_2 = line2[0]
+    line1_x_coord_1, line1_y_coord_1, line1_x_coord_2, line1_y_coord_2 = lines[0][0]
+    line2_x_coord_1, line2_y_coord_1, line2_x_coord_2, line2_y_coord_2 = lines[1][0]
 
     # standard form of the line: ax + by + c = 0
 
