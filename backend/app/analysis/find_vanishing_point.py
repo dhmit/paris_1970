@@ -176,20 +176,20 @@ def find_van_coord_intersections(lines):
     return tuple(sum_point)
 
 
-def find_dist_from_point_to_line(xcoord, ycoord, line):
-    """
-    Find distance from point with (xcoord, ycoord) to a line
-    :param xcoord: x-coordinate of point
-    :param ycoord: y-coordinate of point
-    :param line: line defined by (x1,y1),(x2,y2)
-    :return: shortest distance from point with given coords to line
-    """
-    line_x_coord_1, line_y_coord_1, line_x_coord_2, line_y_coord_2 = line[0]
-    # standard form of the line: ax + by + c = 0
-    x_coeff = (line_y_coord_2 - line_y_coord_1) / (line_x_coord_2 - line_x_coord_1) * \
-              - 1
-    standard_form_constant = -line_y_coord_1 - x_coeff * line_x_coord_1
-    return abs(x_coeff * xcoord + ycoord + standard_form_constant) / (x_coeff ** 2 + 1 ** 2) ** .5
+# def find_dist_from_point_to_line(xcoord, ycoord, line):
+#     """
+#     Find distance from point with (xcoord, ycoord) to a line
+#     :param xcoord: x-coordinate of point
+#     :param ycoord: y-coordinate of point
+#     :param line: line defined by (x1,y1),(x2,y2)
+#     :return: shortest distance from point with given coords to line
+#     """
+#     line_x_coord_1, line_y_coord_1, line_x_coord_2, line_y_coord_2 = line[0]
+#     # standard form of the line: ax + by + c = 0
+#     x_coeff = (line_y_coord_2 - line_y_coord_1) / (line_x_coord_2 - line_x_coord_1) * \
+#               - 1
+#     standard_form_constant = -line_y_coord_1 - x_coeff * line_x_coord_1
+#     return abs(x_coeff * xcoord + ycoord + standard_form_constant) / (x_coeff ** 2 + 1 ** 2) ** .5
 
 
 def find_intersection_between_two_lines(line1, line2):
