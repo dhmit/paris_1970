@@ -43,6 +43,12 @@ class AnalysisTestBase(TestCase):
         self.map_square.save()
         self.photo_number_counter = 0
 
+        self.photo_front_desk = Photo(number=13, map_square=self.map_square)
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'window_photos', 'indoor_front_desk.jpg')
+        self.photo_front_desk.front_local_path = test_photo_path
+        self.photo_front_desk.save()
+        self.photo_number_counter += 1
+
     def add_photo(self, photo_name):
         """
         Creates a photo object and adds it to self.photo_dict given the name of the photo
@@ -81,40 +87,40 @@ class AnalysisTestBase(TestCase):
         identified as having a dark frame, meaning they are likely
         images of a courtyard
         """
-        self.photo_00 = Photo(number=1, map_square=self.map_square)
+        photo_00 = Photo(number=1, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'courtyard_frame', 'test1.jpg')
-        self.photo_00.front_local_path = test_photo_path
-        self.photo_00.save()
+        photo_00.front_local_path = test_photo_path
+        photo_00.save()
 
-        self.photo_01 = Photo(number=2, map_square=self.map_square)
+        photo_01 = Photo(number=2, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'courtyard_frame', 'test2.jpg')
-        self.photo_01.front_local_path = test_photo_path
-        self.photo_01.save()
+        photo_01.front_local_path = test_photo_path
+        photo_01.save()
 
-        self.photo_02 = Photo(number=3, map_square=self.map_square)
+        photo_02 = Photo(number=3, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'courtyard_frame', 'test3.jpg')
-        self.photo_02.front_local_path = test_photo_path
-        self.photo_02.save()
+        photo_02.front_local_path = test_photo_path
+        photo_02.save()
 
-        self.photo_03 = Photo(number=4, map_square=self.map_square)
+        photo_03 = Photo(number=4, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'courtyard_frame', 'test3_copy.jpg')
-        self.photo_03.front_local_path = test_photo_path
-        self.photo_03.save()
+        photo_03.front_local_path = test_photo_path
+        photo_03.save()
 
-        self.photo_04 = Photo(number=5, map_square=self.map_square)
+        photo_04 = Photo(number=5, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'courtyard_frame', 'test4.jpg')
-        self.photo_04.front_local_path = test_photo_path
-        self.photo_04.save()
+        photo_04.front_local_path = test_photo_path
+        photo_04.save()
 
-        result00 = courtyard_frame.analyze(self.photo_00)
+        result00 = courtyard_frame.analyze(photo_00)
         self.assertEqual(False, result00)
-        result01 = courtyard_frame.analyze(self.photo_01)
+        result01 = courtyard_frame.analyze(photo_01)
         self.assertEqual(True, result01)
-        result02 = courtyard_frame.analyze(self.photo_02)
+        result02 = courtyard_frame.analyze(photo_02)
         self.assertEqual(True, result02)
-        result03 = courtyard_frame.analyze(self.photo_03)
+        result03 = courtyard_frame.analyze(photo_03)
         self.assertEqual(True, result03)
-        result04 = courtyard_frame.analyze(self.photo_04)
+        result04 = courtyard_frame.analyze(photo_04)
         self.assertEqual(True, result04)
 
     def test_find_windows(self):
@@ -152,12 +158,6 @@ class AnalysisTestBase(TestCase):
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'window_photos', 'ms_240_10_cleaned.jpg')
         self.photo_perspective_building.front_local_path = test_photo_path
         self.photo_perspective_building.save()
-        self.photo_number_counter += 1
-
-        self.photo_front_desk = Photo(number=13, map_square=self.map_square)
-        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'window_photos', 'indoor_front_desk.jpg')
-        self.photo_front_desk.front_local_path = test_photo_path
-        self.photo_front_desk.save()
         self.photo_number_counter += 1
 
         self.photo_tall_crane = Photo(number=14, map_square=self.map_square)
@@ -206,6 +206,7 @@ class AnalysisTestBase(TestCase):
         Testing images to see if they are correctly identified as being having taken
         indoors or outdoors
         """
+
         front_desk_result = combined_indoor.analyze(self.photo_front_desk)
         self.assertEqual(True, front_desk_result)
         far_building_result = combined_indoor.analyze(self.photo_far_building)
