@@ -15,7 +15,7 @@ from django.test import TestCase
 from app.models import Photo, MapSquare
 from app.analysis import (
     photographer_caption_length,
-    whitespace_percentage
+    whitespace_percentage,
     stdev,
     detail_fft2,
     local_variance,
