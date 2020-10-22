@@ -39,47 +39,89 @@ class AnalysisTestBase(TestCase):
         Setup for all tests -- we initialize a bunch of objects we can use in our tests
         """
         super().setUp()
-
         self.map_square = MapSquare()
         self.map_square.save()
         self.photo_number_counter = 0
 
-        self.photo_0 = Photo(number=0, map_square=self.map_square)
-        test_photo_path = Path(settings.TEST_PHOTOS_DIR, '100x100_500px-white_500px-black.jpg')
-        self.photo_0.front_local_path = test_photo_path
-        self.photo_0.save()
+    def add_photo(self, photo_name):
+        """
+        Creates a photo object and adds it to self.photo_dict given the name of the photo
+        """
+        # Creates Photo object
+        photo = Photo(number=self.photo_number_counter, map_square=self.map_square)
+        photo.front_local_path = os.path.join(settings.TEST_PHOTOS_DIR, f'{photo_name}.jpg')
+        photo.save()
         self.photo_number_counter += 1
 
+        return photo
+
+    def test_photographer_caption_length(self):
+        """
+        Test Photographer Caption Length analysis (photographer_caption_length.py)
+        """
+        photo = self.add_photo('100x100_500px-white_500px-black')
+        photo.photographer_caption = '123456'
+        result = photographer_caption_length.analyze(photo)
+        print(f'Caption Length performed on 100x100_500px-white_500px-black. Result: {result}')
+        self.assertEqual(6, result)
+
+    def test_whitespace_percentage(self):
+        """
+        Test Whitespace Percentage analysis (whitespace_percentage.py)
+        """
+        photo = self.add_photo('100x100_500px-white_500px-black')
+        result = whitespace_percentage.analyze(photo)
+        print(f'Whitespace Percentage performed on \
+            100x100_500px-white_500px-black. Result:'f' {result}')
+        self.assertEqual(50, result)
+
+    def test_courtyard_frame(self):
+        """
+        Testing a variety of images to see if they are correctly
+        identified as having a dark frame, meaning they are likely
+        images of a courtyard
+        """
         self.photo_00 = Photo(number=1, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'courtyard_frame', 'test1.jpg')
         self.photo_00.front_local_path = test_photo_path
         self.photo_00.save()
-        self.photo_number_counter += 1
 
         self.photo_01 = Photo(number=2, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'courtyard_frame', 'test2.jpg')
         self.photo_01.front_local_path = test_photo_path
         self.photo_01.save()
-        self.photo_number_counter += 1
 
         self.photo_02 = Photo(number=3, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'courtyard_frame', 'test3.jpg')
         self.photo_02.front_local_path = test_photo_path
         self.photo_02.save()
-        self.photo_number_counter += 1
 
         self.photo_03 = Photo(number=4, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'courtyard_frame', 'test3_copy.jpg')
         self.photo_03.front_local_path = test_photo_path
         self.photo_03.save()
-        self.photo_number_counter += 1
 
         self.photo_04 = Photo(number=5, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'courtyard_frame', 'test4.jpg')
         self.photo_04.front_local_path = test_photo_path
         self.photo_04.save()
-        self.photo_number_counter += 1
 
+        result00 = courtyard_frame.analyze(self.photo_00)
+        self.assertEqual(False, result00)
+        result01 = courtyard_frame.analyze(self.photo_01)
+        self.assertEqual(True, result01)
+        result02 = courtyard_frame.analyze(self.photo_02)
+        self.assertEqual(True, result02)
+        result03 = courtyard_frame.analyze(self.photo_03)
+        self.assertEqual(True, result03)
+        result04 = courtyard_frame.analyze(self.photo_04)
+        self.assertEqual(True, result04)
+
+    def test_find_windows(self):
+        """
+        Testing a variety of images to see if they are correctly
+        identified as having windows or not
+        """
         self.photo_square = Photo(number=7, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'window_photos',
                                'find_windows_test_photo.jpg')
@@ -131,78 +173,6 @@ class AnalysisTestBase(TestCase):
         self.photo_far_building.save()
         self.photo_number_counter += 1
 
-        self.photo_2 = Photo(number=16, map_square=self.map_square)
-        test_photo_path = Path(settings.TEST_PHOTOS_DIR, '29_binder copy.jpg')
-        self.photo_2.front_local_path = test_photo_path
-        self.photo_2.save()
-        self.photo_number_counter += 1
-
-        self.photo_3 = Photo(number=17, map_square=self.map_square)
-        test_photo_path = Path(settings.TEST_PHOTOS_DIR, '94_binder copy.jpg')
-        self.photo_3.front_local_path = test_photo_path
-        self.photo_3.save()
-        self.photo_number_counter += 1
-
-        self.photo_4 = Photo(number=18, map_square=self.map_square)
-        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'square_503', '94_binder copy.jpg')
-        self.photo_4.front_local_path = test_photo_path
-        self.photo_4.save()
-        self.photo_number_counter += 1
-
-    def add_photo(self, photo_name):
-        """
-        Creates a photo object and adds it to self.photo_dict given the name of the photo
-        """
-        # Creates Photo object
-        photo = Photo(number=self.photo_number_counter, map_square=self.map_square)
-        photo.front_local_path = os.path.join(settings.TEST_PHOTOS_DIR, f'{photo_name}.jpg')
-        photo.save()
-        self.photo_number_counter += 1
-
-        return photo
-
-    def test_photographer_caption_length(self):
-        """
-        Test Photographer Caption Length analysis (photographer_caption_length.py)
-        """
-        photo = self.add_photo('100x100_500px-white_500px-black')
-        photo.photographer_caption = '123456'
-        result = photographer_caption_length.analyze(photo)
-        print(f'Caption Length performed on 100x100_500px-white_500px-black. Result: {result}')
-        self.assertEqual(6, result)
-
-    def test_whitespace_percentage(self):
-        """
-        Test Whitespace Percentage analysis (whitespace_percentage.py)
-        """
-        photo = self.add_photo('100x100_500px-white_500px-black')
-        result = whitespace_percentage.analyze(photo)
-        print(f'Whitespace Percentage performed on \
-            100x100_500px-white_500px-black. Result:'f' {result}')
-        self.assertEqual(50, result)
-
-    def test_courtyard_frame(self):
-        """
-        Testing a variety of images to see if they are correctly
-        identified as having a dark frame, meaning they are likely
-        images of a courtyard
-        """
-        result00 = courtyard_frame.analyze(self.photo_00)
-        self.assertEqual(False, result00)
-        result01 = courtyard_frame.analyze(self.photo_01)
-        self.assertEqual(True, result01)
-        result02 = courtyard_frame.analyze(self.photo_02)
-        self.assertEqual(True, result02)
-        result03 = courtyard_frame.analyze(self.photo_03)
-        self.assertEqual(True, result03)
-        result04 = courtyard_frame.analyze(self.photo_04)
-        self.assertEqual(True, result04)
-
-    def test_find_windows(self):
-        """
-        Testing a variety of images to see if they are correctly
-        identified as having windows or not
-        """
         square_result = find_windows.analyze(self.photo_square)
         black_result = find_windows.analyze(self.photo_black)
         white_result = find_windows.analyze(self.photo_white)
@@ -222,6 +192,12 @@ class AnalysisTestBase(TestCase):
         self.assertEqual(True, far_building)
 
     def test_gradient_analysis(self):
+        self.photo_4 = Photo(number=18, map_square=self.map_square)
+        test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'square_503', '94_binder copy.jpg')
+        self.photo_4.front_local_path = test_photo_path
+        self.photo_4.save()
+        self.photo_number_counter += 1
+
         result = gradient_analysis.analyze(self.photo_4)
         self.assertEqual(True, result)
 
