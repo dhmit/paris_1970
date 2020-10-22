@@ -120,23 +120,14 @@ class AnalysisTestBase(TestCase):
         photo_far_building = self.add_photo(Path('window_photos', 'far_window_buildings.jpg'))
         photo_front_desk = self.add_photo(Path('window_photos', 'indoor_front_desk.jpg'))
 
-        square_result = find_windows.analyze(photo_square)
-        black_result = find_windows.analyze(photo_black)
-        white_result = find_windows.analyze(photo_white)
-        many_windows = find_windows.analyze(photo_windows)
-        building_perspective_view = find_windows.analyze(photo_perspective_building)
-        front_desk = find_windows.analyze(photo_front_desk)
-        tall_crane = find_windows.analyze(photo_tall_crane)
-        far_building = find_windows.analyze(photo_far_building)
-
-        self.assertEqual(True, square_result)
-        self.assertEqual(False, black_result)
-        self.assertEqual(False, white_result)
-        self.assertEqual(True, many_windows)
-        self.assertEqual(True, building_perspective_view)
-        self.assertEqual(False, front_desk)
-        self.assertEqual(False, tall_crane)
-        self.assertEqual(True, far_building)
+        self.assertEqual(True, find_windows.analyze(photo_square))
+        self.assertEqual(False, find_windows.analyze(photo_black))
+        self.assertEqual(False, find_windows.analyze(photo_white))
+        self.assertEqual(True, find_windows.analyze(photo_windows))
+        self.assertEqual(True, find_windows.analyze(photo_perspective_building))
+        self.assertEqual(False, find_windows.analyze(photo_front_desk))
+        self.assertEqual(False, find_windows.analyze(photo_tall_crane))
+        self.assertEqual(True, find_windows.analyze(photo_far_building))
 
     def test_gradient_analysis(self):
         photo = self.add_photo(Path('square_503', '94_binder copy.jpg'))
@@ -230,4 +221,3 @@ class AnalysisTestBase(TestCase):
             result = mean_detail.analyze(self.add_photo(image))
             print(f'Mean Detail performed on {image}. Result: {result}')
             self.assertEqual(expected_values[image], int(result))
-
