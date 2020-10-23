@@ -18,8 +18,14 @@ from django.contrib import admin
 from django.urls import path
 
 from app.common import render_react_view
-from app.views import photo, all_photos, all_map_squares, get_photographer, get_map_square,\
-    get_corpus_analysis_results
+from app.views import (
+    photo,
+    all_photos,
+    all_map_squares,
+    get_photographer,
+    get_map_square,
+    get_corpus_analysis_results,
+)
 
 
 def react_view_path(route, component_name):
