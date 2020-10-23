@@ -26,6 +26,7 @@ jobs:
         pip install -r requirements.txt
     - name: Run Django tests
       run: |
+        sudo apt install tesseract-ocr
         cd backend
         python manage.py migrate
         python manage.py test
