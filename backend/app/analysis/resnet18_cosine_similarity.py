@@ -1,0 +1,49 @@
+"""
+resnet18_feature_vectors.py
+"""
+import sys
+from pathlib import Path
+
+import torch
+from torch import nn
+
+from django.conf import settings
+
+from app.models import Photo
+
+MODEL = Photo
+
+
+def deserialize_tensor(photo):
+    dir_path = Path(settings.ANALYSIS_PICKLE_PATH,
+                    'resnet18_features',
+                    str(photo.map_square.number))
+    serialized_feature_vector_path = Path(dir_path, f'{photo.number}.pt')
+    if not serialized_feature_vector_path.exists():
+        print(
+            f'A feature vector for photo {photo.number} in map square {photo.map_square.number} '
+            'was never serialized.'
+            '\n\nPlease run resnet18_feature_vectors first.'
+        )
+        sys.exit(1)
+
+    tensor = torch.load(serialized_feature_vector_path)
+    return tensor
+
+
+def analyze(photo: Photo):
+    """
+    """
+    photo_features = deserialize_tensor(photo)
+
+    similarities = []
+    for other_photo in Photo.objects.all():
+        other_photo_features = deserialize_tensor(other_photo)
+        cosine_similarity_func = nn.CosineSimilarity(dim=1, eps=1e-6)
+        cosine_similarity = cosine_similarity_func(photo_features, other_photo_features)
+        similarities.append(
+            (photo.map_square.number, photo.number, cosine_similarity)
+        )
+
+    print(similarities)
+    return similarities
