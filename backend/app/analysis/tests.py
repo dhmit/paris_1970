@@ -17,7 +17,7 @@ from app.analysis import (
     photographer_caption_length,
     foreground_percentage,
     whitespace_percentage,
-    text_ocr
+    text_ocr,
     portrait_detection,
     stdev,
     detail_fft2,
@@ -44,6 +44,22 @@ class AnalysisTestBase(TestCase):
         self.map_square = MapSquare()
         self.map_square.save()
 
+        self.photo_2 = Photo(number=3, map_square=self.map_square)
+        test_photo_path_2 = Path(settings.TEST_PHOTOS_DIR, '300x300_francais.jpg')
+        self.photo_2.front_local_path = test_photo_path_2
+
+        self.photo_3 = Photo(number=4, map_square=self.map_square)
+        test_photo_path_3 = Path(settings.TEST_PHOTOS_DIR, '300x300_carre.jpg')
+        self.photo_3.front_local_path = test_photo_path_3
+
+        self.photo_4 = Photo(number=5, map_square=self.map_square)
+        test_photo_path_4 = Path(settings.TEST_PHOTOS_DIR, '300x300_hello.jpg')
+        self.photo_4.front_local_path = test_photo_path_4
+
+        self.photo_5 = Photo(number=6, map_square=self.map_square)
+        test_photo_path_5 = Path(settings.TEST_PHOTOS_DIR, 'test_text.jpg')
+        self.photo_5.front_local_path = test_photo_path_5
+
     def add_photo(self, photo_name_or_path):
         """
         Creates a Photo object and adds it to self.photo_dict given
@@ -65,22 +81,6 @@ class AnalysisTestBase(TestCase):
         photo.save()
 
         return photo
-
-        self.photo_2 = Photo(number=3, map_square=self.map_square)
-        test_photo_path_2 = Path(settings.TEST_PHOTOS_DIR, '300x300_francais.jpg')
-        self.photo_2.front_local_path = test_photo_path_2
-
-        self.photo_3 = Photo(number=4, map_square=self.map_square)
-        test_photo_path_3 = Path(settings.TEST_PHOTOS_DIR, '300x300_carre.jpg')
-        self.photo_3.front_local_path = test_photo_path_3
-
-        self.photo_4 = Photo(number=5, map_square=self.map_square)
-        test_photo_path_4 = Path(settings.TEST_PHOTOS_DIR, '300x300_hello.jpg')
-        self.photo_4.front_local_path = test_photo_path_4
-
-        self.photo_5 = Photo(number=6, map_square=self.map_square)
-        test_photo_path_5 = Path(settings.TEST_PHOTOS_DIR, 'test_text.jpg')
-        self.photo_5.front_local_path = test_photo_path_5
 
     def test_photographer_caption_length(self):
         """
@@ -116,7 +116,7 @@ class AnalysisTestBase(TestCase):
         # Tests english word
         result = text_ocr.analyze(self.photo_4)
         self.assertEqual("Hello", result)
-        
+
     def test_portrait_detection_true(self):
         photo = self.add_photo('test_portrait_detection_true')
         result = portrait_detection.analyze(photo)
