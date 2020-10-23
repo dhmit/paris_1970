@@ -25,7 +25,7 @@ def deserialize_tensor(photo):
             'was never serialized.'
             '\n\nPlease run resnet18_feature_vectors first.'
         )
-        sys.exit(1)
+        return None
 
     tensor = torch.load(serialized_feature_vector_path)
     return tensor
@@ -33,17 +33,23 @@ def deserialize_tensor(photo):
 
 def analyze(photo: Photo):
     """
+    Produce a list of all other photos by cosine similarity to this photo's feature vector
     """
     photo_features = deserialize_tensor(photo)
 
     similarities = []
     for other_photo in Photo.objects.all():
         other_photo_features = deserialize_tensor(other_photo)
+        if other_photo_features is None:
+            continue
+
         cosine_similarity_func = nn.CosineSimilarity(dim=1, eps=1e-6)
         cosine_similarity = cosine_similarity_func(photo_features, other_photo_features)
+        print(cosine_similarity)
         similarities.append(
             (photo.map_square.number, photo.number, cosine_similarity)
         )
 
+    similarities.sort(key=lambda x: x[2])  # sort by cosine_similarity,
     print(similarities)
     return similarities
