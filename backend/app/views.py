@@ -4,7 +4,7 @@ These view functions and classes implement API endpoints
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Photo, MapSquare, Photographer, CorpusAnalysisResult
+from .models import Photo, MapSquare, Photographer, CorpusAnalysisResult, PhotoAnalysisResult
 from .serializers import (
     PhotoSerializer,
     MapSquareSerializer,
@@ -70,4 +70,16 @@ def get_corpus_analysis_results(request):
     """
     corpus_analysis_obj = CorpusAnalysisResult.objects.all()
     serializer = CorpusAnalysisResultsSerializer(corpus_analysis_obj, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_photos_by_analysis(request, analysis_name):
+    """
+    API endpoint to get photos sorted by analysis
+    """
+    analysis_obj = PhotoAnalysisResult.objects.filter(name=analysis_name)
+    sorted_analysis_obj = sorted(analysis_obj, key=lambda instance: instance.parsed_result())
+    sorted_photo_obj = [instance.photo for instance in sorted_analysis_obj]
+    serializer = PhotoSerializer(sorted_photo_obj, many=True)
     return Response(serializer.data)
