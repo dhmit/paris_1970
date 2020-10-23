@@ -72,13 +72,22 @@ def get_corpus_analysis_results(request):
     serializer = CorpusAnalysisResultsSerializer(corpus_analysis_obj, many=True)
     return Response(serializer.data)
 
+    serializer = PhotoSerializer(sorted_photo_obj, many=True)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def get_photos_by_analysis(request, analysis_name):
     """
     API endpoint to get photos sorted by analysis
     """
-    photo_obj = Photo.objects.filter(photoanalysisresult__name=analysis_name)
-    sorted_photo_obj = photo_obj.order_by('photoanalysisresult__result')
+    analysis_obj = PhotoAnalysisResult.objects.filter(name=analysis_name)
+    sorted_analysis_obj = sorted(analysis_obj, key=lambda instance: instance.parsed_result())
+    # analysis_results = [
+    #     [instance, instance.parsed_result()] for instance in analysis_obj
+    #     if type(instance.parsed_result()) is float
+    # ]
+    # sorted_analysis_results = sorted(analysis_results, key=itemgetter(1))
+    # sorted_photo_obj = [analysis_result[0].photo for analysis_result in sorted_analysis_results]
+    sorted_photo_obj = [instance.photo for instance in sorted_analysis_obj]
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
     return Response(serializer.data)
