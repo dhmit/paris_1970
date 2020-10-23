@@ -188,7 +188,7 @@ def analyze(photo: Photo):
     results = sorted(results, key=lambda r: r[0][1])
 
     # set to true if we want to draw a text box in the image
-    display = True
+    display = False
     # loop over the results
     for ((startX, startY, endX, endY), text) in results:
         # strip out non-ASCII text so we can draw the text on the image
