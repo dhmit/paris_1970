@@ -15,6 +15,7 @@ from django.test import TestCase
 from app.models import Photo, MapSquare
 from app.analysis import (
     photographer_caption_length,
+    foreground_percentage,
     whitespace_percentage,
     stdev,
     detail_fft2,
@@ -41,6 +42,16 @@ class AnalysisTestBase(TestCase):
         super().setUp()
         self.map_square = MapSquare()
         self.map_square.save()
+
+        self.photo_2 = Photo(number=3, map_square=self.map_square)
+        test_photo_path_2 = Path(settings.TEST_PHOTOS_DIR, '4%_black.jpg')
+        self.photo_2.front_local_path = test_photo_path_2
+        self.photo_2.save()
+
+        self.photo_3 = Photo(number=4, map_square=self.map_square)
+        test_photo_path_3 = Path(settings.TEST_PHOTOS_DIR, 'foreground_801_4.jpg')
+        self.photo_3.front_local_path = test_photo_path_3
+        self.photo_3.save()
 
     def add_photo(self, photo_name_or_path):
         """
@@ -82,6 +93,40 @@ class AnalysisTestBase(TestCase):
         print(f'Whitespace Percentage performed on \
             100x100_500px-white_500px-black. Result:'f' {result}')
         self.assertEqual(50, result)
+
+    def test_foreground_percentage(self):
+        """
+        Test the foreground percentage function on an image with a black square in the center
+        surrounded by all white pixels
+        """
+        result = foreground_percentage.analyze(self.photo_2)
+        # Result is not exact (range of values)
+        # Needs more testing
+        self.assertTrue(2 <= result <= 6)
+
+    def test_foreground_percentage_real_image(self):
+        """
+        Test the foreground percentage function on a real competition photo.
+        """
+        result = foreground_percentage.analyze(self.photo_3)
+
+        # Result is not exact (range of values)
+        # Needs more testing
+        self.assertTrue(60 <= result <= 64)
+
+    def test_foreground_percentage_from_file(self):
+        """
+        Test the foreground percentage function on a real competition photo.
+        The photo is read from file so that we can test performance differences between
+        the django model and the real image.
+        :return:
+        """
+        file_path = Path(settings.TEST_PHOTOS_DIR, 'foreground_801_4.jpg')
+
+        result = foreground_percentage.analyze_from_file(file_path)
+        # Result is not exact (range of values)
+        # Needs more testing
+        self.assertTrue(60 <= result <= 64)
 
     def test_courtyard_frame(self):
         """
