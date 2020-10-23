@@ -106,7 +106,9 @@ def create_lookup_dict(drive_service):
         for image in images:
             photo_number = image['name'].split('_')[0]
             photo_drive_file_ids = map_square_dict.get(photo_number, {})
-            photo_drive_file_ids[image['name']] = image['id']
+            filename = image['name']
+            filename = filename.replace('JPG', 'jpg').replace('jpeg', 'jpg')
+            photo_drive_file_ids[filename] = image['id']
             map_square_dict[photo_number] = photo_drive_file_ids
 
         lookup_dict[map_square['name']] = map_square_dict
