@@ -266,4 +266,3 @@ class AnalysisTestBase(TestCase):
             result = mean_detail.analyze(self.add_photo(image))
             print(f'Mean Detail performed on {image}. Result: {result}')
             self.assertEqual(expected_values[image], int(result))
-
