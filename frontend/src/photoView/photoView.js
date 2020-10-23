@@ -24,6 +24,10 @@ const ANALYSIS_CONFIGS = {
     photographer_caption_length: {
         displayName: 'Length of photographer caption',
     },
+    foreground_percentage: {
+        formatter: formatPercentageValue,
+        displayName: '% foreground',
+    },
 };
 
 export class PhotoView extends React.Component {
