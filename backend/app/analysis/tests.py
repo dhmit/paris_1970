@@ -17,6 +17,7 @@ from app.analysis import (
     photographer_caption_length,
     foreground_percentage,
     whitespace_percentage,
+    portrait_detection,
     stdev,
     detail_fft2,
     local_variance,
@@ -34,7 +35,6 @@ class AnalysisTestBase(TestCase):
     """
     TestCase for testing our analysis modules
     """
-
     def setUp(self):
         """
         Setup for all tests -- we initialize a bunch of objects we can use in our tests
@@ -43,19 +43,10 @@ class AnalysisTestBase(TestCase):
         self.map_square = MapSquare()
         self.map_square.save()
 
-        self.photo_2 = Photo(number=3, map_square=self.map_square)
-        test_photo_path_2 = Path(settings.TEST_PHOTOS_DIR, '4%_black.jpg')
-        self.photo_2.front_local_path = test_photo_path_2
-        self.photo_2.save()
-
-        self.photo_3 = Photo(number=4, map_square=self.map_square)
-        test_photo_path_3 = Path(settings.TEST_PHOTOS_DIR, 'foreground_801_4.jpg')
-        self.photo_3.front_local_path = test_photo_path_3
-        self.photo_3.save()
-
     def add_photo(self, photo_name_or_path):
         """
-        Creates a photo object and adds it to self.photo_dict given the name of the photo
+        Creates a Photo object and adds it to self.photo_dict given
+        the name of the photo or path relative to settings.TEST_PHOTOS_DIR
         """
         if Photo.objects.exists():
             photo_number = Photo.objects.last().number + 1
@@ -94,12 +85,23 @@ class AnalysisTestBase(TestCase):
             100x100_500px-white_500px-black. Result:'f' {result}')
         self.assertEqual(50, result)
 
+    def test_portrait_detection_true(self):
+        photo = self.add_photo('test_portrait_detection_true')
+        result = portrait_detection.analyze(photo)
+        self.assertEqual(True, result)
+
+    def test_portrait_detection_false(self):
+        photo = self.add_photo('test_portrait_detection_false')
+        result = portrait_detection.analyze(photo)
+        self.assertEqual(False, result)
+
     def test_foreground_percentage(self):
         """
         Test the foreground percentage function on an image with a black square in the center
         surrounded by all white pixels
         """
-        result = foreground_percentage.analyze(self.photo_2)
+        photo = self.add_photo('4%_black')
+        result = foreground_percentage.analyze(photo)
         # Result is not exact (range of values)
         # Needs more testing
         self.assertTrue(2 <= result <= 6)
@@ -108,7 +110,8 @@ class AnalysisTestBase(TestCase):
         """
         Test the foreground percentage function on a real competition photo.
         """
-        result = foreground_percentage.analyze(self.photo_3)
+        photo = self.add_photo('foreground_801_4')
+        result = foreground_percentage.analyze(photo)
 
         # Result is not exact (range of values)
         # Needs more testing
