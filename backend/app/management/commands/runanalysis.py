@@ -82,15 +82,16 @@ class Command(BaseCommand):
                 else:
                     result = analysis_func(model_instance)
 
-                analysis_result = analysis_result_model(
-                    name=analysis_name,
-                    result=json.dumps(result),
-                    photo=model_instance,
-                )
-                analysis_result.save()
+                if result is not None:
+                    analysis_result = analysis_result_model(
+                        name=analysis_name,
+                        result=json.dumps(result),
+                        photo=model_instance,
+                    )
+                    analysis_result.save()
 
-                # Store the result
-                stored_results[instance_identifier] = result
+                    # Store the result
+                    stored_results[instance_identifier] = result
 
             # Save the analysis stored_results
             # TODO: handle case where analysis fails (this won't pickle if something fails)

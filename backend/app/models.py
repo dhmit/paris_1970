@@ -6,6 +6,7 @@ from urllib.error import HTTPError
 from http.client import RemoteDisconnected
 
 from skimage import io
+from PIL import Image
 
 from django.db import models
 
@@ -41,7 +42,7 @@ class Photo(models.Model):
     librarian_caption = models.CharField(max_length=252)
     photographer_caption = models.CharField(max_length=252)
 
-    def get_image_data(self):
+    def get_image_data(self, use_pillow=False):
         """
         Get the image data via skimage's imread, for use in analyses
         We try for a local filepath first, as that's faster,
@@ -63,7 +64,11 @@ class Photo(models.Model):
             print(f'{self} has no front or binder src')
             return None
         try:
-            image = io.imread(source)
+            if use_pillow:
+                image = Image.open(source)
+            else:
+                image = io.imread(source)
+
         except (HTTPError, RemoteDisconnected) as base_exception:
             raise Exception(
                 f'Failed to download image data for {self} due to Google API rate limiting.'
