@@ -23,7 +23,7 @@ def deserialize_tensor(photo):
         print(
             f'A feature vector for photo {photo.number} in map square {photo.map_square.number} '
             'was never serialized.'
-            '\n\nPlease run resnet18_feature_vectors first.'
+            '\nPlease run resnet18_feature_vectors first.\n'
         )
         return None
 
@@ -43,13 +43,13 @@ def analyze(photo: Photo):
         if other_photo_features is None:
             continue
 
-        cosine_similarity_func = nn.CosineSimilarity(dim=1, eps=1e-6)
+        cosine_similarity_func = nn.CosineSimilarity(dim=1)
         cosine_similarity = cosine_similarity_func(photo_features, other_photo_features)
-        print(cosine_similarity)
+        cosine_similarity_mean = torch.mean(cosine_similarity).item()
+
         similarities.append(
-            (photo.map_square.number, photo.number, cosine_similarity)
+            (photo.map_square.number, photo.number, cosine_similarity_mean)
         )
 
     similarities.sort(key=lambda x: x[2])  # sort by cosine_similarity,
-    print(similarities)
     return similarities
