@@ -109,17 +109,17 @@ class PhotoForPhotographerSerializer(serializers.ModelSerializer):
         model = Photo
         fields = ['id', 'front_src', 'back_src', 'binder_src', 'alt', 'map_square', 'number',
                   'shelfmark', 'librarian_caption', 'photographer_caption', 'contains_sticker',
-        ]
+                  ]
 
 
 class MapSquareForPhotosSerializer(serializers.ModelSerializer):
     """
     Serializes a Map Square for the Photo model, but without a reference to the list of photos
     """
+
     class Meta:
         model = MapSquare
         fields = ['id', 'name', 'number', 'boundaries']
-
 
 
 class CorpusAnalysisResultsSerializer(serializers.ModelSerializer):
