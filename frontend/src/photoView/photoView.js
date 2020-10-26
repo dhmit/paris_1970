@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types';
 
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
+import { AnalysisWidget } from './analysisWidget';
 
 const SIDES = {
     CLEANED: 'cleaned',
@@ -116,6 +117,7 @@ export class PhotoView extends React.Component {
                     <p>{photographerNumber || 'Unknown'}</p>
                     <h5>Photographer caption</h5>
                     <p>{photographerCaption || 'None'}</p>
+                    <AnalysisWidget />
                     {analyses.map((analysisResult, index) => {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
                         const parsedValue = JSON.parse(analysisResult.result);
