@@ -8,7 +8,7 @@ export class AnalysisWidget extends React.Component {
             view: 0,
         };
     }
-    
+
     toggleStatus = (event) => {
          this.setState({
              view: parseInt(event.target.value)

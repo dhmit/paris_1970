@@ -39,7 +39,10 @@ export class PhotoView extends React.Component {
             photoData: null,
             displaySide: '',
             availableSides: [],
+            view: 0,
+            ratio: 0,
         };
+        this.onImgLoad = this.onImgLoad.bind(this);
     }
 
     async componentDidMount() {
@@ -68,6 +71,20 @@ export class PhotoView extends React.Component {
     changeSide = (displaySide) => {
         this.setState({ displaySide: displaySide });
     };
+
+    toggleStatus = (event) => {
+        this.setState({
+            view: parseInt(event.target.value),
+        });
+    }
+
+    onImgLoad({ target: img }) {
+        console.log('IMAGE LOADED');
+        const hwratio = img.clientHeight / img.clientWidth;
+        this.setState({
+            ratio: hwratio,
+        });
+    }
 
     render() {
         if (this.state.loading) {
@@ -98,6 +115,7 @@ export class PhotoView extends React.Component {
                         className='image-photo'
                         src={this.state.photoData[`${this.state.displaySide}_src`]}
                         alt={alt}
+                        onLoad={this.onImgLoad}
                     />
                     <br/>
                     {this.state.availableSides.map((side, k) => (
@@ -117,7 +135,28 @@ export class PhotoView extends React.Component {
                     <p>{photographerNumber || 'Unknown'}</p>
                     <h5>Photographer caption</h5>
                     <p>{photographerCaption || 'None'}</p>
-                    <AnalysisWidget />
+                    <div className="row">
+                        <div className="col-6">
+                            <select id="toggleSelect" className="custom-select" onChange={this.toggleStatus} value={this.state.value}>
+                                <option value="0">Select...</option>
+                                <option value="1">Perspective Lines</option>
+                                <option value="2">Foreground Mask</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p>
+                        {(() => {
+                            switch (this.state.view) {
+                            case 0: return 'Nothing selected';
+                            case 1: return 'Perspective selected';
+                            case 2: return 'Foreground selected';
+                            default: return 'Nothing selected';
+                            }
+                        })()}
+                        <br>
+                        RATIO: {this.state.ratio}
+                    </p>
+
                     {analyses.map((analysisResult, index) => {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
                         const parsedValue = JSON.parse(analysisResult.result);
