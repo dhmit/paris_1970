@@ -48,7 +48,7 @@ def analyze(photo: Photo):
         cosine_similarity_mean = torch.mean(cosine_similarity).item()
 
         similarities.append(
-            (photo.map_square.number, photo.number, cosine_similarity_mean)
+            (other_photo.map_square.number, other_photo.number, cosine_similarity_mean)
         )
 
     similarities.sort(key=lambda x: x[2])  # sort by cosine_similarity,
