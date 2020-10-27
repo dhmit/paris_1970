@@ -113,7 +113,15 @@ export class PhotoView extends React.Component {
                     <h5>Photographer name</h5>
                     <p>{photographerName || 'Unknown'}</p>
                     <h5>Photographer number</h5>
-                    <p>{photographerNumber || 'Unknown'}</p>
+                    <p>
+                        {
+                            photographerNumber
+                                ? <a href={`/photographer/${photographerNumber}/`}>
+                                    {photographerNumber}
+                                </a>
+                                : 'Unknown'
+                        }
+                    </p>
                     <h5>Photographer caption</h5>
                     <p>{photographerCaption || 'None'}</p>
                     {analyses.map((analysisResult, index) => {
