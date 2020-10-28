@@ -26,6 +26,7 @@ from app.views import (
     get_map_square,
     get_corpus_analysis_results,
     get_photos_by_analysis,
+    get_photos_by_object
 )
 
 
@@ -52,6 +53,7 @@ urlpatterns = [
     path('api/all_photos/', all_photos),
     path('api/all_map_squares/', all_map_squares),
     path('api/analysis/<str:analysis_name>/', get_photos_by_analysis),
+    path('api/common_obj_aggregation/<str:object_name>/', get_photos_by_object),
 
     # React views
     react_view_path('', 'IndexView'),
