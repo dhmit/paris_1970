@@ -282,12 +282,12 @@ class AnalysisTestBase(TestCase):
         photo = self.add_photo('100px_100px_vanishing_point_X')
         photo2 = self.add_photo('100x100_500px-white_500px-black')
         # covers when image is x, intersecting lines in the middle, vanishing point exists
-        result = find_vanishing_point.analyze(photo)
+        result = find_vanishing_point.analyze(photo)[0]
         expected = (50, 50)
         distance = ((result[0] - expected[0]) ** 2 + (result[1] - expected[1]) ** 2) ** (1/2)
         self.assertTrue(distance < 2)
 
         # covers when online line is horizontal (supposed to ignore),  1 line, van point does
         # not exist
-        result2 = find_vanishing_point.analyze(photo2)
+        result2 = find_vanishing_point.analyze(photo2)[0]
         self.assertEqual(None, result2)
