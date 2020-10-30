@@ -2,6 +2,8 @@
 Models for the paris_1970 app.
 
 """
+import json
+
 from urllib.error import HTTPError
 from http.client import RemoteDisconnected
 
@@ -108,6 +110,9 @@ class AnalysisResult(models.Model):
     """
     name = models.CharField(max_length=252)
     result = models.TextField(null=True)
+
+    def parsed_result(self):
+        return json.loads(self.result)
 
     class Meta:
         # Make this an abstract base class, which means that Django won't create a database
