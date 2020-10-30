@@ -28,6 +28,7 @@ def analyze(photo: Photo):
     lines = auto_canny(grayscale_image)
 
     filter_lines = []
+    return_lines = ""
     # Filters out vertical and horizontal lines
     for line in lines[1]:
         try:
@@ -42,12 +43,12 @@ def analyze(photo: Photo):
             if (point_2_x - point_1_x) != 0 and abs(theta - np.pi / 2) > 2 * epsilon and theta > \
                 epsilon:
                 filter_lines.append(line)
+                return_lines += '{},{},{},{} '.format(point_1_x, point_1_y, point_2_x, point_2_y)
         except ZeroDivisionError:
             pass
     van_point = find_van_coord_intersections(filter_lines)
 
-    return van_point
-
+    return van_point, return_lines
 
 def auto_canny(image):
     """
@@ -77,7 +78,7 @@ def find_van_coord_intersections(lines):
     """
     intersections = {}
     tolerance = 30
-    print(len(lines))
+    # print(len(lines))
     # return None if the image likely has many unnecessary lines (e.g. if there's a tree)
     if len(lines) > 300 or len(lines) < 2:
         return None
