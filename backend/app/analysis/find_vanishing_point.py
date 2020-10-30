@@ -58,13 +58,9 @@ def analyze(photo: Photo):
             pass
 
     van_point = find_van_coord_intersections(filter_lines)
-    van_point_dict = {
-        'x': int(van_point[0]),
-        'y': int(van_point[1]),
-    }
 
     return {
-        'vanishing_point_coord': van_point_dict,
+        'vanishing_point_coord': van_point,
         'line_coords': return_lines,
     }
 
@@ -136,7 +132,10 @@ def find_van_coord_intersections(lines):
     sum_point[0] = round(sum_point[0] / max_frequency)
     sum_point[1] = round(sum_point[1] / max_frequency)
     # print(tuple(sum_point))
-    return tuple(sum_point)
+    return {
+        'x': sum_point[0],
+        'y': sum_point[1],
+    }
 
 
 def find_intersection_between_two_lines(lines):

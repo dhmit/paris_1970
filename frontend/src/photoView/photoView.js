@@ -3,24 +3,23 @@ import * as PropTypes from 'prop-types';
 
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
-import { AnalysisWidget } from './analysisWidget';
 
 export class CoordDisplayWidget extends React.Component {
     render() {
         return (
             <div className="row">
                 <div className="col-6">
-                    VP x: {this.props.vanishingPointCoords.x}
+                    VP x: {this.props.vanishingPointCoord.x}
                 </div>
                 <div>
-                    VP y: {this.props.vanishingPointCoords.y}
+                    VP y: {this.props.vanishingPointCoord.y}
                 </div>
             </div>
         );
     }
 }
 CoordDisplayWidget.propTypes = {
-    vanishingPointCoords: PropTypes.object,
+    vanishingPointCoord: PropTypes.object,
 };
 
 
@@ -197,11 +196,11 @@ export class PhotoView extends React.Component {
                             console.log(parsedValue);
                             const {
                                 line_coords: lineCoords,
-                                vanishing_point_coord: vanishingPointCoords,
+                                vanishing_point_coord: vanishingPointCoord,
                             } = parsedValue;
                             return (
                                 <CoordDisplayWidget
-                                    vanishingPointCoords={vanishingPointCoords}
+                                    vanishingPointCoord={vanishingPointCoord}
                                 />
                             );
                         }
