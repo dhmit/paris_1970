@@ -17,6 +17,10 @@ function formatPercentageValue(value) {
     return `${parseInt(value)}%`;
 }
 
+function formatCoordinate(value) {
+    return `(${parseInt(value[0][0])}, ${parseInt(value[0][1])})`;
+}
+
 const ANALYSIS_CONFIGS = {
     whitespace_percentage: {
         formatter: formatPercentageValue,
@@ -29,6 +33,10 @@ const ANALYSIS_CONFIGS = {
         formatter: formatPercentageValue,
         displayName: '% foreground',
     },
+    find_vanishing_point: {
+        formatter: formatCoordinate,
+        displayName: 'Vanishing Point Coordinate',
+    }
 };
 
 export class PhotoView extends React.Component {
@@ -153,7 +161,7 @@ export class PhotoView extends React.Component {
                             default: return 'Nothing selected';
                             }
                         })()}
-                        <br>
+                        <br/>
                         RATIO: {this.state.ratio}
                     </p>
 
