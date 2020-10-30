@@ -28,7 +28,7 @@ def analyze(photo: Photo):
     lines = auto_canny(grayscale_image)
 
     filter_lines = []
-    return_lines = ""
+    return_lines = []
     # Filters out vertical and horizontal lines
     for line in lines[1]:
         try:
@@ -40,15 +40,33 @@ def analyze(photo: Photo):
             # only put line in filter_lines if the angle is NOT within epsilon of
             # horizontal/vertical
             epsilon = np.pi / 16
-            if (point_2_x - point_1_x) != 0 and abs(theta - np.pi / 2) > 2 * epsilon and theta > \
-                epsilon:
+            if (
+                (point_2_x - point_1_x) != 0
+                and abs(theta - np.pi / 2) > 2 * epsilon
+                and theta > epsilon
+            ):
                 filter_lines.append(line)
-                return_lines += '{},{},{},{} '.format(point_1_x, point_1_y, point_2_x, point_2_y)
+                line_dict = {
+                    '1_x': int(point_1_x),
+                    '1_y': int(point_1_y),
+                    '2_x': int(point_2_x),
+                    '2_y': int(point_2_y),
+                }
+                return_lines.append(line_dict)
+
         except ZeroDivisionError:
             pass
-    van_point = find_van_coord_intersections(filter_lines)
 
-    return van_point, return_lines
+    van_point = find_van_coord_intersections(filter_lines)
+    van_point_dict = {
+        'x': int(van_point[0]),
+        'y': int(van_point[1]),
+    }
+
+    return {
+        'vanishing_point_coord': van_point_dict,
+        'line_coords': return_lines,
+    }
 
 def auto_canny(image):
     """

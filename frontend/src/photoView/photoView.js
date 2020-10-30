@@ -5,6 +5,25 @@ import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 import { AnalysisWidget } from './analysisWidget';
 
+export class CoordDisplayWidget extends React.Component {
+    render() {
+        return (
+            <div className="row">
+                <div className="col-6">
+                    VP x: {this.props.vanishingPointCoords.x}
+                </div>
+                <div>
+                    VP y: {this.props.vanishingPointCoords.y}
+                </div>
+            </div>
+        );
+    }
+}
+CoordDisplayWidget.propTypes = {
+    vanishingPointCoords: PropTypes.object,
+};
+
+
 const SIDES = {
     CLEANED: 'cleaned',
     FRONT: 'front',
@@ -36,7 +55,7 @@ const ANALYSIS_CONFIGS = {
     find_vanishing_point: {
         formatter: formatCoordinate,
         displayName: 'Vanishing Point Coordinate',
-    }
+    },
 };
 
 export class PhotoView extends React.Component {
@@ -145,7 +164,12 @@ export class PhotoView extends React.Component {
                     <p>{photographerCaption || 'None'}</p>
                     <div className="row">
                         <div className="col-6">
-                            <select id="toggleSelect" className="custom-select" onChange={this.toggleStatus} value={this.state.value}>
+                            <select
+                                id="toggleSelect"
+                                className="custom-select"
+                                onChange={this.toggleStatus}
+                                value={this.state.value}
+                            >
                                 <option value="0">Select...</option>
                                 <option value="1">Perspective Lines</option>
                                 <option value="2">Foreground Mask</option>
@@ -168,6 +192,20 @@ export class PhotoView extends React.Component {
                     {analyses.map((analysisResult, index) => {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
                         const parsedValue = JSON.parse(analysisResult.result);
+
+                        if (analysisResult.name === 'find_vanishing_point') {
+                            console.log(parsedValue);
+                            const {
+                                line_coords: lineCoords,
+                                vanishing_point_coord: vanishingPointCoords,
+                            } = parsedValue;
+                            return (
+                                <CoordDisplayWidget
+                                    vanishingPointCoords={vanishingPointCoords}
+                                />
+                            );
+                        }
+
                         let analysisDisplayName;
                         let analysisResultStr = parsedValue;
                         if (!analysisConfig) {
@@ -178,7 +216,6 @@ export class PhotoView extends React.Component {
                                 analysisResultStr = analysisConfig.formatter(parsedValue);
                             }
                         }
-
                         return (
                             <React.Fragment key={index}>
                                 <h5>{analysisDisplayName}</h5>
