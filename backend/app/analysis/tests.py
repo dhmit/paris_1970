@@ -6,7 +6,6 @@ from pathlib import Path
 import os
 from django.conf import settings
 from django.test import TestCase
-
 # NOTE(ra): we have to use absolute imports in this module because the Django test runner
 # will resolve imports relative to the backend working directory
 # If you do, e.g.,
@@ -17,6 +16,7 @@ from app.analysis import (
     photographer_caption_length,
     foreground_percentage,
     whitespace_percentage,
+    find_vanishing_point,
     portrait_detection,
     stdev,
     detail_fft2,
@@ -269,3 +269,25 @@ class AnalysisTestBase(TestCase):
             result = mean_detail.analyze(self.add_photo(image))
             print(f'Mean Detail performed on {image}. Result: {result}')
             self.assertEqual(expected_values[image], int(result))
+
+    def test_find_vanishing_point(self):
+        """
+        Vanishing point returned should be the point that has the most intersections
+        with the lines detected in a photo
+
+        Partition on location of vanishing point: at intersection between lines, does not exist
+        Partition on number of lines: 0, 1, >1
+        """
+        #add photo
+        photo = self.add_photo('100px_100px_vanishing_point_X')
+        photo2 = self.add_photo('100x100_500px-white_500px-black')
+        # covers when image is x, intersecting lines in the middle, vanishing point exists
+        result = find_vanishing_point.analyze(photo)
+        expected = (50, 50)
+        distance = ((result[0] - expected[0]) ** 2 + (result[1] - expected[1]) ** 2) ** (1/2)
+        self.assertTrue(distance < 2)
+
+        # covers when online line is horizontal (supposed to ignore),  1 line, van point does
+        # not exist
+        result2 = find_vanishing_point.analyze(photo2)
+        self.assertEqual(None, result2)
