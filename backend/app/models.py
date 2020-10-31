@@ -23,7 +23,7 @@ class Photo(models.Model):
     # Use number and map_square to uniquely identify a photo
     # DO NOT use the database pk, as that may change as we rebuild the database
     number = models.IntegerField(null=True)  # NOT the database PK, but rather based on shelfmark
-    map_square = models.ForeignKey('MapSquare', on_delete=models.CASCADE)
+    map_square = models.ForeignKey('MapSquare', on_delete=models.CASCADE, null=True)
     photographer = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
 
     # These are computed and set by syncdb: could be null if a photo is missing a side

@@ -31,6 +31,10 @@ export class PhotographerView extends React.Component {
         }
     }
 
+    getAggregatePhotoAnalysis = (photos) => {
+        console.log(photos);
+    };
+
 
     render() {
         if (this.state.loading) {
@@ -51,6 +55,8 @@ export class PhotographerView extends React.Component {
             type,
             photos,
         } = this.state.photographerData;
+
+        const photographerAnalysis = this.getAggregatePhotoAnalysis(photos);
 
         return (<>
             <Navbar/>
