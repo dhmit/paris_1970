@@ -30,6 +30,28 @@ const SIDES = {
     BINDER: 'binder',
 };
 
+function configAnalysisFV(parsedValue) {
+    const {
+        line_coords: lineCoords,
+        vanishing_point_coord: vanishingPointCoord,
+    } = parsedValue;
+    console.log(parsedValue);
+    return (
+        <CoordDisplayWidget
+            vanishingPointCoord={vanishingPointCoord}
+        />
+    );
+}
+
+function configAnalysisFP(parsedValue) {
+    return (5);
+}
+
+const VISUALANALYSISDICT = {
+    'find_vanishing_point': configAnalysisFV,
+    'foreground_percentage': configAnalysisFP,
+};
+
 
 function formatPercentageValue(value) {
     return `${parseInt(value)}%`;
@@ -66,8 +88,10 @@ export class PhotoView extends React.Component {
             displaySide: '',
             availableSides: [],
             view: 0,
-            ratio: 0,
+            width: 0,
+            height: 0,
         };
+        console.log('first call');
         this.onImgLoad = this.onImgLoad.bind(this);
     }
 
@@ -92,6 +116,7 @@ export class PhotoView extends React.Component {
         } catch (e) {
             console.log(e);
         }
+        // window.addEventListener('resize', this.onImgLoad(i));
     }
 
     changeSide = (displaySide) => {
@@ -106,10 +131,12 @@ export class PhotoView extends React.Component {
 
     onImgLoad({ target: img }) {
         console.log('IMAGE LOADED');
-        const hwratio = img.clientHeight / img.clientWidth;
         this.setState({
-            ratio: hwratio,
+            width: img.clientHeight,
+            height: img.clientWidth,
         });
+        console.log('height: ' + img.clientHeight);
+        console.log('width: ' + img.clientWidth);
     }
 
     render() {
@@ -137,12 +164,21 @@ export class PhotoView extends React.Component {
             <Navbar />
             <div className="page row">
                 <div className='image-view col-12 col-lg-6'>
-                    <img
-                        className='image-photo'
-                        src={this.state.photoData[`${this.state.displaySide}_src`]}
-                        alt={alt}
-                        onLoad={this.onImgLoad}
-                    />
+                    <div>
+                        <img
+                            className='image-photo'
+                            src={this.state.photoData[`${this.state.displaySide}_src`]}
+                            alt={alt}
+                            onLoad={this.onImgLoad}
+                        />
+                        <svg
+                            className='analysis-overlay'
+                            height={this.state.height}
+                            width={this.state.width}
+                        >
+
+                        </svg>
+                    </div>
                     <br/>
                     {this.state.availableSides.map((side, k) => (
                         <button key={k} onClick={() => this.changeSide(side)}>
@@ -185,24 +221,14 @@ export class PhotoView extends React.Component {
                             }
                         })()}
                         <br/>
-                        RATIO: {this.state.ratio}
                     </p>
 
                     {analyses.map((analysisResult, index) => {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
                         const parsedValue = JSON.parse(analysisResult.result);
 
-                        if (analysisResult.name === 'find_vanishing_point') {
-                            console.log(parsedValue);
-                            const {
-                                line_coords: lineCoords,
-                                vanishing_point_coord: vanishingPointCoord,
-                            } = parsedValue;
-                            return (
-                                <CoordDisplayWidget
-                                    vanishingPointCoord={vanishingPointCoord}
-                                />
-                            );
+                        if (analysisResult.name in VISUALANALYSISDICT) {
+                            return VISUALANALYSISDICT[analysisResult.name](parsedValue);
                         }
 
                         let analysisDisplayName;
