@@ -7,25 +7,26 @@
  */
 
 import React from 'react';
-import * as PropTypes from 'prop-types';
-import { render } from 'react-dom';
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
-import Map from './Map'
+import Map from './Map';
 
 export class IndexView extends React.Component {
     state = {
         incidents: [],
     }
+
     async componentDidMount() {
-        const incidents = [48.891655, 2.378910];
-        this.setState({incidents: incidents });
-}
+        // const incidents = [48.891655, 2.378910];
+        // this.setState({ incidents: incidents });
+    }
 
     render() {
-        return (
-            <Map incidents={this.state.incidents}/>
-        );
+        return (<React.Fragment>
+            <Navbar />
+            <Map />
+            <Footer />
+        </React.Fragment>);
     }
 /*    constructor(props) {
         super(props);
@@ -112,8 +113,3 @@ class IndexCard extends React.Component {
 */
 }
 export default IndexView;
-IndexCard.propTypes = {
-    title: PropTypes.string,
-    description: PropTypes.string,
-    url: PropTypes.string,
-};
