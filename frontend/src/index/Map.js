@@ -7,8 +7,8 @@ import {
 
 export default class Map extends React.Component {
     state = {
-        lat: 37.7749,
-        lng: -122.4194,
+        lat: 48.858859,
+        lng: 2.3470599,
         zoom: 13,
     }
 
