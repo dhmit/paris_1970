@@ -7,9 +7,49 @@
  */
 
 import React from 'react';
+import * as PropTypes from 'prop-types';
+import {
+    Map as LeafletMap,
+    Marker,
+    TileLayer,
+} from 'react-leaflet';
+
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
-import Map from './Map';
+
+class Map extends React.Component {
+    state = {
+        lat: 48.858859,
+        lng: 2.3470599,
+        zoom: 13,
+    }
+
+    render() {
+        return (
+            <LeafletMap
+                center={[this.state.lat, this.state.lng]}
+                zoom={this.state.zoom}
+                style={{ width: '100%', height: '900px' }}
+            >
+                <TileLayer
+                    attribution='&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                {this.props.mapData.map((mapSquareData, index) => {
+                    const coords = mapSquareData.topLeftCoords;
+                    const position = [coords.lat, coords.lng];
+                    return (
+                        <Marker key={index} position={position}/>
+                    );
+                })}
+            </LeafletMap>
+        );
+    }
+}
+Map.propTypes = {
+    mapData: PropTypes.array,
+};
+
 
 export class IndexView extends React.Component {
     state = {
@@ -17,28 +57,24 @@ export class IndexView extends React.Component {
     }
 
     async componentDidMount() {
-        // const incidents = [48.891655, 2.378910];
-        // this.setState({ incidents: incidents });
-    }
-
-    render() {
-        return (<React.Fragment>
-            <Navbar />
-            <Map />
-            <Footer />
-        </React.Fragment>);
-    }
-/*    constructor(props) {
-        super(props);
-        this.state = {
-            mapData: null,
-        };
-    }
-
-    async componentDidMount() {
         try {
             const mapResponse = await fetch('/api/all_map_squares/');
             const mapData = await mapResponse.json();
+
+            // @TODO: THIS IS ALL FAKE FOR PROTOTYPING
+            // REMOVE ME BEFORE PR!
+            // REMOVE ME BEFORE PR!
+            // REMOVE ME BEFORE PR!
+            // REMOVE ME BEFORE PR!
+            // Add fake coordinates to all of the map squares
+            let lat = 48.858859;
+            let lng = 2.3470599;
+            for (const mapSquare of mapData) {
+                mapSquare.topLeftCoords = { lat, lng };
+                lat += 0.005;
+                lng += 0.005;
+            }
+
             this.setState({
                 mapData,
                 loading: false,
@@ -55,61 +91,11 @@ export class IndexView extends React.Component {
             </>);
         }
 
-        const mapSquares = this.state.mapData.map((mapSquare, j) => {
-            const photoList = mapSquare.photos.map((photo, k) => {
-                console.log(photo);
-                return (
-                    <li key={k} className='col-lg-12 col-md-12'>
-                        <a href={`/photo/${photo.map_square_number}/${photo.number}/`}>
-                            <h3>Photo {photo.number}</h3>
-                        </a>
-                    </li>
-                );
-            });
-            return (<div key={j}>
-                <a
-                    href={`/map_square/${mapSquare.number}/`}
-                    className='map-square'
-                >
-                    {mapSquare.name}
-                </a>
-
-                <ul>{photoList}</ul>
-            </div>);
-        });
-
-        return (<>
-            <div className='page'>
-                <Navbar/>
-                <div className="row" >
-                    <div className='col-lg-12 col-md-12'>
-                        {mapSquares}
-                    </div>
-                </div>
-            </div>
+        return (<React.Fragment>
+            <Navbar />
+            <Map mapData={this.state.mapData} />
             <Footer />
-        </>);
+        </React.Fragment>);
     }
-}
-
-class IndexCard extends React.Component {
-    render() {
-        const createMarkup = () => {
-            return { __html: this.props.description };
-        };
-
-        return (
-            <div className='card mb-4 w-100'>
-                <a className="text-dark" href={this.props.url}>
-                    <div className='card-header'>{this.props.title} </div>
-                </a>
-                <div
-                    className='card-body'
-                    dangerouslySetInnerHTML={createMarkup()}
-                />
-            </div>
-        );
-    }
-*/
 }
 export default IndexView;
