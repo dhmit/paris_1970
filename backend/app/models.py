@@ -31,6 +31,7 @@ class Photo(models.Model):
     front_src = models.CharField(max_length=252, null=True)
     back_src = models.CharField(max_length=252, null=True)
     binder_src = models.CharField(max_length=252, null=True)
+    thumbnail_src = models.CharField(max_length=252, null=True)
     cleaned_local_path = models.CharField(max_length=252, null=True)
     front_local_path = models.CharField(max_length=252, null=True)
     back_local_path = models.CharField(max_length=252, null=True)

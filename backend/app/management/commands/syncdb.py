@@ -42,7 +42,7 @@ METADATA_SPREADSHEET_ID = '1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I'
 PHOTO_FOLDER_ID = '1aiY1nFJn6T7khu5dhIs3U2o8RdHBu6V7'
 
 # Sides of a photo
-SIDES = ['cleaned', 'front', 'back', 'binder']
+SIDES = ['cleaned', 'front', 'back', 'binder', 'thumbnail']
 
 MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
 
@@ -78,7 +78,7 @@ def authorize_google_apps():
 def create_lookup_dict(drive_service):
     """
     Creates a quick look up dictionary to get the image URL using map square number and source name
-    :param credentials: Credentials object for drive service
+    :param drive_service: the Google drive service
     :return Look up dictionary to get the image URL using map square number and source name
     """
     # Resource object for interacting with the google API
@@ -155,6 +155,9 @@ def add_photo_srcs(
             src_url = f"https://drive.google.com/uc?id={drive_file_id}&export=download"
             model_kwargs[f'{side}_src'] = src_url
 
+            if side == 'thumbnail':
+                continue  # we do not want to download thumbnails
+
             if local_download:
                 request = drive_service.files().get_media(fileId=drive_file_id)
                 Path(settings.LOCAL_PHOTOS_DIR).mkdir(exist_ok=True)
@@ -174,9 +177,21 @@ def add_photo_srcs(
 
                 model_kwargs[f'{side}_local_path'] = local_photo_path
 
+                # Create thumbnails only on the cleaned image
                 if create_thumbnails and side == 'cleaned':
+                    thumbnail_id = photo_drive_file_ids.get(f'{photo_number}_thumbnail.jpg', '')
+                    if thumbnail_id != '':
+                        return  # We already have that thumbnail in drive
+
+                    # Create thumbnail from existing local file
+                    img = cv2.imread(str(local_photo_path))
+                    thumbnail_dims = (500, 500) # Is this a good thumbnail size?
+                    thumbnail_img = cv2.resize(img, thumbnail_dims)
+                    thumbnail_path = Path(local_map_square_dir, f'{photo_number}_thumbnail.jpg')
+                    cv2.imwrite(str(thumbnail_path), thumbnail_img)
+
                     file_metadata = {'name': f'{photo_number}_thumbnail.jpg'}
-                    media = MediaFileUpload(local_photo_path, mimetype='image/jpeg')
+                    media = MediaFileUpload(thumbnail_path, mimetype='image/jpeg')
                     # Uploads the thumbnail to your personal Drive
                     file = drive_service.files().create(body=file_metadata,
                                                         media_body=media,
@@ -186,9 +201,13 @@ def add_photo_srcs(
                     drive_service.files().update(fileId=file.get('id'),
                                                  addParents=folder_id,
                                                  fields='id, parents').execute()
+
+                    # Remove the temporary thumbnail image in local storage
+                    os.remove(thumbnail_path)
         else:
             model_kwargs[f'{side}_src'] = None
-            model_kwargs[f'{side}_local_path'] = None
+            if side != 'thumbnail':
+                model_kwargs[f'{side}_local_path'] = None
 
 
 def call_sheets_api(spreadsheet_ranges, sheets_service):
@@ -222,6 +241,11 @@ def populate_database(
     :param values_as_a_dict: List of dictionaries representing spreadsheet rows in the form of
     { column names: cell values }
     :param photo_url_lookup: Dictionary of map square folders in the form of a dictionary
+    :param drive_service: the Google Drive service
+    :param local_download: should we download the photos locally if we do not have them already?
+    :param redownload: should we redownload all photos locally?
+    :param verbose: should we print verbose messages
+    :param create_thumbnails: should we create thumbnails and upload it to Google Drive?
     """
     # pylint: disable=too-many-locals
     for row in values_as_a_dict:
@@ -231,7 +255,6 @@ def populate_database(
 
         model_kwargs = {}
         for header in row.keys():
-            print(header)
             if header in model_field_names or header == 'map_square_number':
                 # Check if value in column is a number
                 value = row[header]
@@ -294,8 +317,6 @@ def populate_database(
         model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
         model_instance.save()
 
-        break
-
 
 class Command(BaseCommand):
     """
@@ -316,8 +337,8 @@ class Command(BaseCommand):
         redownload = options.get('redownload')
         verbose = options.get('verbose')
 
-        if create_thumbnails and not redownload:
-            redownload = True
+        if create_thumbnails and not local_download:
+            local_download = True
 
         # redownload always does local_download
         if redownload and not local_download:
