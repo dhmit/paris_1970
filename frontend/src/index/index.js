@@ -25,20 +25,27 @@ class Map extends React.Component {
     }
 
     render() {
+        const style = {
+            marginTop: '60px',
+            marginBottom: '60px',
+        };
         return (
+            <div style={style}>
             <LeafletMap
                 center={[this.state.lat, this.state.lng]}
                 zoom={this.state.zoom}
                 style={{ width: '100%', height: '900px' }}
 
                 // Sets Map Boundaries
-                maxBoundsViscosity={1.0}
+                // maxBoundsViscosity={1.0}
                 // maxBounds={[[48.082142, 0.854779], [49.464403, 3.761125]]}
                 // maxZoom={20}
             >
                 <TileLayer
-                    bounds={[[48.082142, 0.854779], [49.464403, 3.761125]]}
-                    maxZoom={20}
+                    // Sets Map Boundaries
+                    // bounds={[[48.082142, 0.854779], [49.464403, 3.761125]]}
+                    // maxZoom={20}
+                    // maxBoundsViscosity={1.0}
                     attribution='&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
@@ -50,6 +57,7 @@ class Map extends React.Component {
                     );
                 })}
             </LeafletMap>
+            </div>
         );
     }
 }
