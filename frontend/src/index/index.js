@@ -86,8 +86,25 @@ export class IndexView extends React.Component {
             // REMOVE ME BEFORE PR!
             // REMOVE ME BEFORE PR!
             // Add fake coordinates to all of the map squares
-            let lat = 48.858859;
-            let lng = 2.3470599;
+            const mapSquareCoords = {
+                7: [48.889563, 2.298052],
+                120: [48.894622, 2.385649],
+            };
+            let lat = 48.889563;
+            let lng = 2.298052;
+            // for (const mapSquare of mapData) {
+            //     console.log(mapSquare);
+            //     if (mapSquare.number === 7 || mapSquare.number === 120) {
+            //         console.log(mapSquare, 'HIIII');
+            //         lat = mapSquareCoords.mapSquare.number[0];
+            //         lng = mapSquareCoords.mapSquare.number[1];
+            //         mapSquare.topLeftCoords = {
+            //             lat,
+            //             lng
+            //     };
+            //     }
+            // }
+
             for (const mapSquare of mapData) {
                 mapSquare.topLeftCoords = { lat, lng };
                 lat += 0.005;
