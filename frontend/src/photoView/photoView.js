@@ -9,11 +9,26 @@ export class CoordDisplayWidget extends React.Component {
         const items = [];
         let line;
         for (line of this.props.lineCoords) {
-            items.push(<line x1={line['1_x']} y1={line['1_y']} x2={line['2_x']} y2={line['2_y']} />);
+            line['1_y'] = (line['1_y'] * this.props.height) / this.props.naturalHeight;
+            line['2_y'] = (line['2_y'] * this.props.height) / this.props.naturalHeight;
+            line['1_x'] = (line['1_x'] * this.props.width) / this.props.naturalWidth;
+            line['2_x'] = (line['2_x'] * this.props.width) / this.props.naturalWidth;
+            items.push(<line
+                x1={line['1_x']}
+                y1={line['1_y']}
+                x2={line['2_x']}
+                y2={line['2_y']}
+            />);
         }
         return (
             <div>
-                {items}
+                <svg
+                    className='analysis-overlay floatTL'
+                    height={this.props.height}
+                    width={this.props.width}
+                >
+                    {items}
+                </svg>
             </div>
         );
     }
@@ -21,6 +36,10 @@ export class CoordDisplayWidget extends React.Component {
 CoordDisplayWidget.propTypes = {
     vanishingPointCoord: PropTypes.object,
     lineCoords: PropTypes.object,
+    height: PropTypes.number,
+    width: PropTypes.number,
+    naturalHeight: PropTypes.number,
+    naturalWidth: PropTypes.number,
 };
 
 
@@ -31,22 +50,28 @@ const SIDES = {
     BINDER: 'binder',
 };
 
-function configAnalysisFV(parsedValue) {
+function configAnalysisFV(parsedValue, height, width, naturalHeight, naturalWidth) {
     const {
         line_coords: lineCoords,
         vanishing_point_coord: vanishingPointCoord,
     } = parsedValue;
-    console.log(parsedValue);
     return (
         <CoordDisplayWidget
             vanishingPointCoord={vanishingPointCoord}
             lineCoords={lineCoords}
+            height={height}
+            width={width}
+            naturalHeight={naturalHeight}
+            naturalWidth={naturalWidth}
         />
     );
 }
 
-function configAnalysisFP(parsedValue) {
-    return (5);
+function configAnalysisFP(parsedValue, height, width) {
+    console.log(parsedValue);
+    console.log(height);
+    console.log(width);
+    return null;
 }
 
 const VISUALANALYSISDICT = {
@@ -90,11 +115,11 @@ export class PhotoView extends React.Component {
             displaySide: '',
             availableSides: [],
             view: 0,
-            width: 5,
-            height: 5,
-            imWidth: 0,
+            width: 1,
+            height: 1,
+            naturalWidth: 1,
+            naturalHeight: 1,
         };
-        console.log('first call');
         this.onImgLoad = this.onImgLoad.bind(this);
     }
 
@@ -119,7 +144,6 @@ export class PhotoView extends React.Component {
         } catch (e) {
             console.log(e);
         }
-        // window.addEventListener('resize', this.onImgLoad(i));
     }
 
     changeSide = (displaySide) => {
@@ -137,6 +161,8 @@ export class PhotoView extends React.Component {
         this.setState({
             width: img.clientWidth,
             height: img.clientHeight,
+            naturalWidth: img.naturalWidth,
+            naturalHeight: img.naturalHeight,
         });
     }
 
@@ -165,20 +191,13 @@ export class PhotoView extends React.Component {
             <Navbar />
             <div className="page row">
                 <div className='image-view col-12 col-lg-6'>
-                    <div>
+                    <div className='floatTL'>
                         <img
                             className='image-photo'
                             src={this.state.photoData[`${this.state.displaySide}_src`]}
                             alt={alt}
                             onLoad={this.onImgLoad}
                         />
-                        <svg
-                            className='analysis-overlay'
-                            height={this.state.height}
-                            width={this.state.width}
-                        >
-                             <line x1="0" y1="0" x2="200" y2="200"/>
-                        </svg>
                     </div>
                     <br/>
                     {this.state.availableSides.map((side, k) => (
@@ -186,6 +205,24 @@ export class PhotoView extends React.Component {
                             {side[0].toUpperCase() + side.slice(1)} Side
                         </button>
                     ))}
+
+                    {analyses.map((analysisResult) => {
+                        const parsedValue = JSON.parse(analysisResult.result);
+
+                        if (analysisResult.name in VISUALANALYSISDICT) {
+                            return VISUALANALYSISDICT[analysisResult.name](
+                                parsedValue,
+                                this.state.height,
+                                this.state.width,
+                                this.state.naturalHeight,
+                                this.state.naturalWidth,
+                            );
+                        }
+
+                        // handled in a different div
+                        return null;
+                    })}
+
                 </div>
                 <div className='image-info col-12 col-lg-6'>
                     <h5>Map Square</h5>
@@ -228,8 +265,9 @@ export class PhotoView extends React.Component {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
                         const parsedValue = JSON.parse(analysisResult.result);
 
+                        // handled in a different div
                         if (analysisResult.name in VISUALANALYSISDICT) {
-                            return VISUALANALYSISDICT[analysisResult.name](parsedValue);
+                            return null;
                         }
 
                         let analysisDisplayName;
