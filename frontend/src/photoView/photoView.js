@@ -75,8 +75,8 @@ function configAnalysisFP(parsedValue, height, width) {
 }
 
 const VISUALANALYSISDICT = {
-    'find_vanishing_point': configAnalysisFV,
-    'foreground_percentage': configAnalysisFP,
+    'find_vanishing_point': [configAnalysisFV, 1],
+    'foreground_percentage': [configAnalysisFP, 2],
 };
 
 
@@ -191,13 +191,32 @@ export class PhotoView extends React.Component {
             <Navbar />
             <div className="page row">
                 <div className='image-view col-12 col-lg-6'>
-                    <div className='floatTL'>
+                    <div>
                         <img
-                            className='image-photo'
+                            className='image-photo floatTL'
                             src={this.state.photoData[`${this.state.displaySide}_src`]}
                             alt={alt}
                             onLoad={this.onImgLoad}
                         />
+
+                        {analyses.map((analysisResult) => {
+                        const parsedValue = JSON.parse(analysisResult.result);
+
+                        if (analysisResult.name in VISUALANALYSISDICT) {
+                            if (VISUALANALYSISDICT[analysisResult.name][1] === this.state.view) {
+                                return VISUALANALYSISDICT[analysisResult.name][0](
+                                parsedValue,
+                                this.state.height,
+                                this.state.width,
+                                this.state.naturalHeight,
+                                this.state.naturalWidth,
+                                );
+                            }
+                            return null;
+                        }
+                        // handled in a different div
+                        return null;
+                        })}
                     </div>
                     <br/>
                     {this.state.availableSides.map((side, k) => (
@@ -205,24 +224,6 @@ export class PhotoView extends React.Component {
                             {side[0].toUpperCase() + side.slice(1)} Side
                         </button>
                     ))}
-
-                    {analyses.map((analysisResult) => {
-                        const parsedValue = JSON.parse(analysisResult.result);
-
-                        if (analysisResult.name in VISUALANALYSISDICT) {
-                            return VISUALANALYSISDICT[analysisResult.name](
-                                parsedValue,
-                                this.state.height,
-                                this.state.width,
-                                this.state.naturalHeight,
-                                this.state.naturalWidth,
-                            );
-                        }
-
-                        // handled in a different div
-                        return null;
-                    })}
-
                 </div>
                 <div className='image-info col-12 col-lg-6'>
                     <h5>Map Square</h5>
@@ -241,7 +242,7 @@ export class PhotoView extends React.Component {
                                 id="toggleSelect"
                                 className="custom-select"
                                 onChange={this.toggleStatus}
-                                value={this.state.value}
+                                value={this.state.view}
                             >
                                 <option value="0">Select...</option>
                                 <option value="1">Perspective Lines</option>
