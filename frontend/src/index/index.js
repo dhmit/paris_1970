@@ -42,10 +42,10 @@ class Map extends React.Component {
                 >
                     <TileLayer
                     // Sets Map Boundaries - Keeps user from leaving Paris
-                    maxBoundsViscosity={1.0}
-                    bounds={this.state.bounds}
-                    minZoom={this.state.minZoom}
-                    // Retrieves Map image
+                        maxBoundsViscosity={1.0}
+                        bounds={this.state.bounds}
+                        minZoom={this.state.minZoom}
+                        // Retrieves Map image
                         attribution='&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
