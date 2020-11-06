@@ -6,20 +6,21 @@ import { Footer } from '../UILibrary/components';
 
 export class CoordDisplayWidget extends React.Component {
     render() {
+        const items = [];
+        let line;
+        for (line of this.props.lineCoords) {
+            items.push(<line x1={line['1_x']} y1={line['1_y']} x2={line['2_x']} y2={line['2_y']} />);
+        }
         return (
-            <div className="row">
-                <div className="col-6">
-                    VP x: {this.props.vanishingPointCoord.x}
-                </div>
-                <div>
-                    VP y: {this.props.vanishingPointCoord.y}
-                </div>
+            <div>
+                {items}
             </div>
         );
     }
 }
 CoordDisplayWidget.propTypes = {
     vanishingPointCoord: PropTypes.object,
+    lineCoords: PropTypes.object,
 };
 
 
@@ -39,6 +40,7 @@ function configAnalysisFV(parsedValue) {
     return (
         <CoordDisplayWidget
             vanishingPointCoord={vanishingPointCoord}
+            lineCoords={lineCoords}
         />
     );
 }
@@ -88,8 +90,9 @@ export class PhotoView extends React.Component {
             displaySide: '',
             availableSides: [],
             view: 0,
-            width: 0,
-            height: 0,
+            width: 5,
+            height: 5,
+            imWidth: 0,
         };
         console.log('first call');
         this.onImgLoad = this.onImgLoad.bind(this);
@@ -132,11 +135,9 @@ export class PhotoView extends React.Component {
     onImgLoad({ target: img }) {
         console.log('IMAGE LOADED');
         this.setState({
-            width: img.clientHeight,
-            height: img.clientWidth,
+            width: img.clientWidth,
+            height: img.clientHeight,
         });
-        console.log('height: ' + img.clientHeight);
-        console.log('width: ' + img.clientWidth);
     }
 
     render() {
@@ -176,7 +177,7 @@ export class PhotoView extends React.Component {
                             height={this.state.height}
                             width={this.state.width}
                         >
-
+                             <line x1="0" y1="0" x2="200" y2="200"/>
                         </svg>
                     </div>
                     <br/>
