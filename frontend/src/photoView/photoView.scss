@@ -1,13 +1,19 @@
 .image-photo {
     width: 100%;
 }
-line{
+line {
     stroke:rgb(255,0,0);
     stroke-width:1;
 }
 
-.floatTL{
+.floatTL {
  position:absolute;
     top:0px;
     left:0px;
+}
+
+circle {
+    stroke:cyan;
+    stroke-width:2;
+    fill:none;
 }

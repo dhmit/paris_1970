@@ -20,6 +20,13 @@ export class CoordDisplayWidget extends React.Component {
                 y2={line['2_y']}
             />);
         }
+        if (this.props.vanishingPointCoord !== null) {
+            items.push(<circle
+                cx={(this.props.vanishingPointCoord.x * this.props.width) / this.props.naturalWidth}
+                cy={(this.props.vanishingPointCoord.y * this.props.height) / this.props.naturalHeight}
+                r='10'
+            />);
+        }
         return (
             <div>
                 <svg
@@ -200,22 +207,22 @@ export class PhotoView extends React.Component {
                         />
 
                         {analyses.map((analysisResult) => {
-                        const parsedValue = JSON.parse(analysisResult.result);
+                            const parsedValue = JSON.parse(analysisResult.result);
 
-                        if (analysisResult.name in VISUALANALYSISDICT) {
-                            if (VISUALANALYSISDICT[analysisResult.name][1] === this.state.view) {
-                                return VISUALANALYSISDICT[analysisResult.name][0](
-                                parsedValue,
-                                this.state.height,
-                                this.state.width,
-                                this.state.naturalHeight,
-                                this.state.naturalWidth,
-                                );
+                            if (analysisResult.name in VISUALANALYSISDICT) {
+                                if (VISUALANALYSISDICT[analysisResult.name][1] === this.state.view) {
+                                    return VISUALANALYSISDICT[analysisResult.name][0](
+                                        parsedValue,
+                                        this.state.height,
+                                        this.state.width,
+                                        this.state.naturalHeight,
+                                        this.state.naturalWidth,
+                                    );
+                                }
+                                return null;
                             }
+                            // handled in a different div
                             return null;
-                        }
-                        // handled in a different div
-                        return null;
                         })}
                     </div>
                     <br/>
