@@ -4,7 +4,6 @@ import * as PropTypes from 'prop-types';
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
-
 export class PhotographerView extends React.Component {
     constructor(props) {
         super(props);
@@ -35,7 +34,6 @@ export class PhotographerView extends React.Component {
         console.log(photos);
     };
 
-
     render() {
         if (this.state.loading) {
             return (<>
@@ -56,7 +54,7 @@ export class PhotographerView extends React.Component {
             photos,
         } = this.state.photographerData;
 
-        const photographerAnalysis = this.getAggregatePhotoAnalysis(photos);
+        // const photographerAnalysis = this.getAggregatePhotoAnalysis(photos);
 
         return (<>
             <Navbar/>
@@ -69,15 +67,23 @@ export class PhotographerView extends React.Component {
                 <h3>Type of Photographer:</h3>
                 <h5>{type === '' ? 'N/A' : type }</h5>
                 <h3>Photos:</h3>
-                <ul className='photo-list'>
+                <div className='photo_gallery'>
                     {photos.map((photo, k) => (
-                        <li key={k}>
-                            <a href={`/photo/${mapSquare.number}/${photo.number}/`}>
-                                <h3>Photo {photo.id}</h3>
+                        <div className="photo" key={k}>
+                            <a
+                                key={k}
+                                href={`/photo/${photo['map_square_number']}/${photo['number']}/`}
+                            >
+                                <img
+                                    alt={photo.alt}
+                                    height={200}
+                                    width={200}
+                                    src={photo['thumbnail_src']}
+                                />
                             </a>
-                        </li>
+                        </div>
                     ))}
-                </ul>
+                </div>
             </div>
             <Footer/>
         </>);
