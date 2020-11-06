@@ -280,12 +280,14 @@ class Command(BaseCommand):
         parser.add_argument('--local', action='store_true')
         parser.add_argument('--redownload', action='store_true')
         parser.add_argument('--verbose', action='store_true')
+        parser.add_argument('--quick', action='store_true')
 
     def handle(self, *args, **options):
         # pylint: disable=too-many-locals
         local_download = options.get('local')
         redownload = options.get('redownload')
         verbose = options.get('verbose')
+        quick = options.get('quick')
 
         # redownload always does local_download
         if redownload and not local_download:
@@ -321,6 +323,9 @@ class Command(BaseCommand):
 
         # THIS IS JUST FOR PROTOTYPING NEVER EVER EVER EVER IN PRODUCTION do this
         User.objects.create_superuser('admin', password='adminadmin')
+
+        if quick:
+            return
 
         # The order of these ranges matter. The Photographer model needs to have foreign keys to
         # the MapSquare database, so we add the Map Squares first

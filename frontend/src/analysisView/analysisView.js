@@ -1,4 +1,4 @@
-import React from 'react';
+ import React from 'react';
 import * as PropTypes from 'prop-types';
 
 import Navbar from '../about/navbar';
@@ -60,7 +60,9 @@ export class AnalysisView extends React.Component {
         );
         const displaySide = availableSides.length > 0 ? availableSides[0] : '';
         const source = photoData[`${displaySide}_src`];
-        return source;
+        const fileId = source.split('=')[1];
+        const thumbnail = `https://drive.google.com/thumbnail?authuser=0&sz=w100&id=${fileId}`;
+        return thumbnail;
     }
 
     render() {

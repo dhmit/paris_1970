@@ -22,6 +22,7 @@ from app.analysis import (
     detail_fft2,
     local_variance,
     mean_detail,
+    rcnn_model,
 )
 from app.analysis.indoor_analysis import (
     combined_indoor,
@@ -269,3 +270,7 @@ class AnalysisTestBase(TestCase):
             result = mean_detail.analyze(self.add_photo(image))
             print(f'Mean Detail performed on {image}. Result: {result}')
             self.assertEqual(expected_values[image], int(result))
+
+    def test_rcnn_model(self):
+        result = rcnn_model.analyze()
+        pass
