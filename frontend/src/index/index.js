@@ -22,9 +22,12 @@ class Map extends React.Component {
         lat: 48.858859,
         lng: 2.3470599,
         zoom: 13,
+        bounds: [[48.082142, 0.854779], [49.464403, 3.761125]],
+        minZoom: 10,
     }
 
     render() {
+        // Constrains map on page (WIP)
         const style = {
             marginTop: '60px',
             marginBottom: '60px',
@@ -32,20 +35,21 @@ class Map extends React.Component {
         return (
             <div style={style}>
             <LeafletMap
+                // Initial state of Map
                 center={[this.state.lat, this.state.lng]}
                 zoom={this.state.zoom}
                 style={{ width: '100%', height: '900px' }}
-
-                // Sets Map Boundaries
-                // maxBoundsViscosity={1.0}
-                // maxBounds={[[48.082142, 0.854779], [49.464403, 3.761125]]}
-                // maxZoom={20}
+                // Sets Map Boundaries - Keeps user from leaving Paris
+                maxBoundsViscosity={1.0}
+                maxBounds={this.state.bounds}
+                minZoom={this.state.minZoom}
             >
                 <TileLayer
-                    // Sets Map Boundaries
-                    // bounds={[[48.082142, 0.854779], [49.464403, 3.761125]]}
-                    // maxZoom={20}
-                    // maxBoundsViscosity={1.0}
+                    // Sets Map Boundaries - Keeps user from leaving Paris
+                    maxBoundsViscosity={1.0}
+                    bounds={this.state.bounds}
+                    minZoom={this.state.minZoom}
+                    // Retrieves Map image
                     attribution='&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
