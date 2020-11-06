@@ -55,7 +55,6 @@ export class PhotographerView extends React.Component {
         } = this.state.photographerData;
 
         // const photographerAnalysis = this.getAggregatePhotoAnalysis(photos);
-
         return (<>
             <Navbar/>
             <div className='page'>

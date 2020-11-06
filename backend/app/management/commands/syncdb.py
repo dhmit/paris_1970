@@ -5,12 +5,12 @@ Syncs local db with data from project Google Sheet
 """
 
 # Python standard library
+from textwrap import dedent
+from pathlib import Path
 import io
 import pickle
 import os
 import cv2
-from textwrap import dedent
-from pathlib import Path
 
 # 3rd party
 import tqdm
@@ -147,6 +147,8 @@ def add_photo_srcs(
     if photo_drive_file_ids == '':
         return
 
+    already_made_thumbnail = False
+
     for side in SIDES:
 
         drive_file_id = photo_drive_file_ids.get(f'{photo_number}_{side}.jpg', '')
@@ -178,9 +180,10 @@ def add_photo_srcs(
                 model_kwargs[f'{side}_local_path'] = local_photo_path
 
                 # Create thumbnails only on the cleaned image
-                if create_thumbnails and side == 'cleaned':
+                if create_thumbnails and side in ['cleaned', 'front']:
                     thumbnail_id = photo_drive_file_ids.get(f'{photo_number}_thumbnail.jpg', '')
-                    if thumbnail_id != '':
+                    if thumbnail_id != '' or already_made_thumbnail:
+                        already_made_thumbnail = True
                         return  # We already have that thumbnail in drive
 
                     # Create thumbnail from existing local file
@@ -204,6 +207,8 @@ def add_photo_srcs(
 
                     # Remove the temporary thumbnail image in local storage
                     os.remove(thumbnail_path)
+
+                    already_made_thumbnail = True
         else:
             model_kwargs[f'{side}_src'] = None
             if side != 'thumbnail':
