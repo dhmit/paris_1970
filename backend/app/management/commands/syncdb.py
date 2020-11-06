@@ -126,7 +126,8 @@ def add_photo_srcs(
     local_download,
     redownload,
     verbose,
-    create_thumbnails
+    create_thumbnails,
+    recreate_thumbnails
 ):
     """
     Takes the map square folder and the photo number to dynamically adds the Google Drive urls
@@ -140,7 +141,9 @@ def add_photo_srcs(
     :param local_download: should we download the photos locally if we do not have them already?
     :param redownload: should we redownload all photos locally?
     :param verbose: should we print verbose messages
-    :param create_thumbnails: should we create thumbnails and upload it to Google Drive?
+    :param create_thumbnails: should we create only the thumbnails that currently do not exist
+                              in Google Drive and upload it to Google Drive?
+    :param create_thumbnails: should we recreate all thumbnails regardless of existence?
     """
     # pylint: disable=too-many-locals
     photo_drive_file_ids = map_square_folder.get(str(photo_number), '')
@@ -181,7 +184,12 @@ def add_photo_srcs(
                 if create_thumbnails and side == 'cleaned':
                     thumbnail_id = photo_drive_file_ids.get(f'{photo_number}_thumbnail.jpg', '')
                     if thumbnail_id != '':
-                        return  # We already have that thumbnail in drive
+                        if recreate_thumbnails:
+                            # Delete already existing thumbnail to create new one
+                            drive_service.files().delete(fileId=thumbnail_id).execute()
+                        else:
+                            # We already have that thumbnail in drive and don't want to add another
+                            return
 
                     # Create thumbnail from existing local file
                     img = cv2.imread(str(local_photo_path))
@@ -233,7 +241,8 @@ def populate_database(
     local_download,
     redownload,
     verbose,
-    create_thumbnails
+    create_thumbnails,
+    recreate_thumbnails
 ):
     """
     Adds model instances to the database based on the data imported from the google spreadsheet
@@ -245,7 +254,9 @@ def populate_database(
     :param local_download: should we download the photos locally if we do not have them already?
     :param redownload: should we redownload all photos locally?
     :param verbose: should we print verbose messages
-    :param create_thumbnails: should we create thumbnails and upload it to Google Drive?
+    :param create_thumbnails: should we create only the thumbnails that currently do not exist
+                              in Google Drive and upload it to Google Drive?
+    :param create_thumbnails: should we recreate all thumbnails regardless of existence?
     """
     # pylint: disable=too-many-locals
     for row in values_as_a_dict:
@@ -303,7 +314,8 @@ def populate_database(
                     local_download,
                     redownload,
                     verbose,
-                    create_thumbnails
+                    create_thumbnails,
+                    recreate_thumbnails
                 )
 
             # Get the corresponding Photographer objects
@@ -327,6 +339,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--local', action='store_true')
         parser.add_argument('--create_thumbnails', action='store_true')
+        parser.add_argument('--recreate_thumbnails', action='store_true')
         parser.add_argument('--redownload', action='store_true')
         parser.add_argument('--verbose', action='store_true')
 
@@ -334,8 +347,12 @@ class Command(BaseCommand):
         # pylint: disable=too-many-locals
         local_download = options.get('local')
         create_thumbnails = options.get('create_thumbnails')
+        recreate_thumbnails = options.get('recreate_thumbnails')
         redownload = options.get('redownload')
         verbose = options.get('verbose')
+
+        if recreate_thumbnails and not create_thumbnails:
+            create_thumbnails = True
 
         if create_thumbnails and not local_download:
             local_download = True
@@ -343,8 +360,6 @@ class Command(BaseCommand):
         # redownload always does local_download
         if redownload and not local_download:
             local_download = True
-
-
 
         # Delete database
         if os.path.exists(settings.DB_PATH):
@@ -413,5 +428,6 @@ class Command(BaseCommand):
                 local_download,
                 redownload,
                 verbose,
-                create_thumbnails
+                create_thumbnails,
+                recreate_thumbnails
             )
