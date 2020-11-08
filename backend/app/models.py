@@ -85,6 +85,7 @@ class MapSquare(models.Model):
     name = models.CharField(max_length=252)
     number = models.IntegerField(null=True)
     boundaries = models.CharField(max_length=252)
+    rough_coords = models.CharField(max_length=252)
 
 
 class Photographer(models.Model):
