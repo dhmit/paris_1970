@@ -38,8 +38,7 @@ class Command(BaseCommand):
 
         try:
             analysis_module = import_module(f'.{analysis_name}', package='app.analysis')
-        except ModuleNotFoundError as e:
-            print(e)
+        except ModuleNotFoundError:
             print_header('There is no analysis with that name.')
             sys.exit(1)
 

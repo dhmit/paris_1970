@@ -118,15 +118,15 @@ export class PhotoView extends React.Component {
                     <p>{photographerCaption || 'None'}</p>
                     {analyses.map((analysisResult, index) => {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
-                        const parsedValue = JSON.parse(analysisResult.result);
+                        // const parsedValue = JSON.parse(analysisResult.result);
                         let analysisDisplayName;
-                        let analysisResultStr = parsedValue;
+                        let analysisResultStr = analysisResult.result;
                         if (!analysisConfig) {
                             analysisDisplayName = analysisResult.name;
                         } else {
                             analysisDisplayName = analysisConfig.displayName;
                             if (analysisConfig.formatter) {
-                                analysisResultStr = analysisConfig.formatter(parsedValue);
+                                analysisResultStr = analysisConfig.formatter(analysisResult.result);
                             }
                         }
 

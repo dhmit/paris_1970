@@ -74,7 +74,7 @@ def get_corpus_analysis_results(request):
 
 
 @api_view(['GET'])
-def get_photos_by_analysis(request, analysis_name):
+def get_photos_by_analysis(request, analysis_name, object_name=None):
     """
     API endpoint to get photos sorted by analysis
     """
@@ -82,7 +82,16 @@ def get_photos_by_analysis(request, analysis_name):
     if len(analysis_obj) > 0:
         test_obj = analysis_obj[0].parsed_result()
         if type(test_obj) in [int, float, bool]:
-            sorted_analysis_obj = sorted(analysis_obj, key=lambda instance: instance.parsed_result())
+            sorted_analysis_obj = sorted(
+                analysis_obj, key=lambda instance: instance.parsed_result()
+            )
+        elif type(test_obj) is dict and object_name:
+            relevant_objects = [
+                instance for instance in analysis_obj if object_name in instance.parsed_result()
+            ]
+            sorted_analysis_obj = sorted(
+                relevant_objects, key=lambda instance: instance.parsed_result()[object_name]
+            )
         elif type(test_obj) in [str, list, tuple, dict]:
             sorted_analysis_obj = sorted(
                 analysis_obj, key=lambda instance: len(instance.parsed_result())
@@ -91,24 +100,4 @@ def get_photos_by_analysis(request, analysis_name):
         sorted_analysis_obj = analysis_obj
     sorted_photo_obj = [instance.photo for instance in sorted_analysis_obj]
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
-def get_photos_by_object(request, object_name):
-    """
-    API endpoint to get photos sorted by number of objects found
-    """
-    analysis_obj = PhotoAnalysisResult.objects.filter(name="common_obj_aggregation")
-    analysis_dicts = [(instance, instance.parsed_result()) for instance in analysis_obj]
-    relevant_objects = []
-    for analysis in analysis_dicts:
-        analysis_instance, analysis_dict = analysis
-        if object_name in analysis_dict:
-            relevant_objects.append(analysis_instance)
-    sorted_relevant_objects = sorted(
-        relevant_objects, key=lambda instance: instance.parsed_result()[object_name]
-    )[::-1]
-    sorted_photos = [instance.photo for instance in sorted_relevant_objects]
-    serializer = PhotoSerializer(sorted_photos, many=True)
     return Response(serializer.data)

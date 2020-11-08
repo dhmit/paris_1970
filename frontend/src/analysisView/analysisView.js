@@ -24,7 +24,8 @@ export class AnalysisView extends React.Component {
 
     async componentDidMount() {
         try {
-            const apiURL = `/api/analysis/${this.props.analysisName}/`;
+            const dictKey = this.props.objectName ? this.props.objectName : '';
+            const apiURL = `/api/analysis/${this.props.analysisName}/${dictKey}`;
             const response = await fetch(apiURL);
             if (!response.ok) {
                 this.setState({ loading: false });
@@ -102,12 +103,15 @@ export class AnalysisView extends React.Component {
                 Reverse photo order
             </button></div>);
 
+        const objectName = this.props.objectName ? `key: ${this.props.objectName}` : '';
+
         return (<>
             <Navbar />
             <div className='display-box page'>
                 <h3 className='text-capitalize'>{
                     this.props.analysisName.split('_').join(' ')
                 }</h3>
+                <h5>{objectName}</h5>
                 {options}
                 <br/>
                 {photos}
@@ -118,4 +122,5 @@ export class AnalysisView extends React.Component {
 }
 AnalysisView.propTypes = {
     analysisName: PropTypes.string,
+    objectName: PropTypes.string,
 };
