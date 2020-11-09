@@ -41,7 +41,7 @@ class Map extends React.Component {
                     minZoom={this.state.minZoom}
                 >
                     <TileLayer
-                    // Sets Map Boundaries - Keeps user from leaving Paris
+                        // Sets Map Boundaries - Keeps user from leaving Paris
                         maxBoundsViscosity={1.0}
                         bounds={this.state.bounds}
                         minZoom={this.state.minZoom}
@@ -82,12 +82,12 @@ export class IndexView extends React.Component {
             // REMOVE ME BEFORE PR!
             // REMOVE ME BEFORE PR!
             // Add fake coordinates to all of the map squares
-            const mapSquareCoords = {
-                7: [48.889563, 2.298052],
-                120: [48.894622, 2.385649],
-            };
-            let lat = 48.889563;
-            let lng = 2.298052;
+            // const mapSquareCoords = {
+            //     7: [48.889563, 2.298052],
+            //     120: [48.894622, 2.385649],
+            // };
+            // let lat = 48.889563;
+            // let lng = 2.298052;
             // for (const mapSquare of mapData) {
             //     console.log(mapSquare);
             //     if (mapSquare.number === 7 || mapSquare.number === 120) {
@@ -100,11 +100,28 @@ export class IndexView extends React.Component {
             //     };
             //     }
             // }
-
             for (const mapSquare of mapData) {
-                mapSquare.topLeftCoords = { lat, lng };
-                lat += 0.005;
-                lng += 0.005;
+                // This code right here might cause problems if said user hasn't run syncdb
+                const roughCoords = mapSquare.rough_coords;
+
+                // If the map square has coordinates in the spreadsheet, it pulls those coordinates
+                // and makes those the coordinates of the marker (NOTE: This is entirely reliant
+                // on things being in the form of "lat, lng")
+
+                // If the map square does not have the coordinates in the spread sheet, it sets
+                // them to (0, 0)
+                if (!(roughCoords === '')) {
+                    const roughCoordsList = roughCoords.split(', ');
+                    const lat = parseFloat(roughCoordsList[0]);
+                    const lng = parseFloat(roughCoordsList[1]);
+                    console.log(lat);
+                    console.log(lng);
+                    mapSquare.topLeftCoords = {lat, lng};
+                } else {
+                    const lat = 0.0;
+                    const lng = 0.0;
+                    mapSquare.topLeftCoords = {lat, lng};
+                }
             }
 
             this.setState({
