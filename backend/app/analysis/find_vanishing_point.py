@@ -28,7 +28,6 @@ def analyze(photo: Photo):
     lines = auto_canny(grayscale_image)
 
     filter_lines = []
-    return_lines = []
     # Filters out vertical and horizontal lines
     for line in lines[1]:
         try:
@@ -45,14 +44,12 @@ def analyze(photo: Photo):
                 and abs(theta - np.pi / 2) > 2 * epsilon
                 and theta > epsilon
             ):
-                filter_lines.append(line)
-                line_dict = {
+                filter_lines.append({
                     '1_x': int(point_1_x),
                     '1_y': int(point_1_y),
                     '2_x': int(point_2_x),
                     '2_y': int(point_2_y),
-                }
-                return_lines.append(line_dict)
+                })
 
         except ZeroDivisionError:
             pass
@@ -61,7 +58,7 @@ def analyze(photo: Photo):
 
     return {
         'vanishing_point_coord': van_point,
-        'line_coords': return_lines,
+        'line_coords': filter_lines,
     }
 
 def auto_canny(image):
@@ -146,8 +143,17 @@ def find_intersection_between_two_lines(lines):
         lines[1]: 4-elem list x1, y1, x2, y2 -> starting and ending coordinates of line 2
     :return: coordinates of intersection point on image or None if does not exist or lines parallel
     """
-    line1_x_coord_1, line1_y_coord_1, line1_x_coord_2, line1_y_coord_2 = lines[0][0]
-    line2_x_coord_1, line2_y_coord_1, line2_x_coord_2, line2_y_coord_2 = lines[1][0]
+    # coords for line 1
+    line1_x_coord_1 = lines[0]["1_x"]
+    line1_y_coord_1 = lines[0]["1_y"]
+    line1_x_coord_2 = lines[0]["2_x"]
+    line1_y_coord_2 = lines[0]["2_y"]
+
+    # coords for line 2
+    line2_x_coord_1 = lines[1]["1_x"]
+    line2_y_coord_1 = lines[1]["1_y"]
+    line2_x_coord_2 = lines[1]["2_x"]
+    line2_y_coord_2 = lines[1]["2_y"]
 
     # standard form of the line: ax + by + c = 0
 
