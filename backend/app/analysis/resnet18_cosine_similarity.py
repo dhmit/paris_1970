@@ -52,4 +52,5 @@ def analyze(photo: Photo):
         )
 
     similarities.sort(key=lambda x: x[2])  # sort by cosine_similarity,
+    similarities.reverse()
     return similarities
