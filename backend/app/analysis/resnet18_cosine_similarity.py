@@ -5,7 +5,7 @@ import torch
 from torch import nn
 
 from app.models import Photo
-from backend.app.analysis.photo_similarity import analyze_similarity
+from app.analysis.photo_similarity import analyze_similarity
 
 MODEL = Photo
 
