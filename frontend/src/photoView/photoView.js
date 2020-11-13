@@ -52,15 +52,16 @@ CoordDisplayWidget.propTypes = {
 export class FPDisplayWidget extends React.Component {
     render() {
         const items = [];
-        let pixel;
-        const ratio = this.props.width / this.props.naturalWidth;
-        for (pixel = 0; pixel < 500; pixel += 10) {
+        const wratio = (20 * this.props.width) / this.props.naturalWidth;
+        const hratio = (20 * this.props.height) / this.props.naturalHeight;
+        for (let i = 0; i < this.props.blackPixels.length; i++) {
+            const pixel = this.props.blackPixels[i];
             items.push(<rect
-                x={(this.props.blackPixels[pixel][0] * this.props.width) / this.props.naturalWidth}
-                y={(this.props.blackPixels[pixel][1] * this.props.height) / this.props.naturalHeight}
-                width='5'
-                height='5'
-            />);
+                    x={(pixel[0] * this.props.width) / this.props.naturalWidth}
+                    y={(pixel[1] * this.props.height) / this.props.naturalHeight}
+                    width={wratio}
+                    height={hratio}
+                />);
         }
         return (
             <div>
@@ -76,8 +77,8 @@ export class FPDisplayWidget extends React.Component {
     }
 }
 FPDisplayWidget.propTypes = {
-    percent: PropTypes.object,
-    blackPixels: PropTypes.object,
+    percent: PropTypes.number,
+    blackPixels: PropTypes.array,
     height: PropTypes.number,
     width: PropTypes.number,
     naturalHeight: PropTypes.number,
