@@ -26,6 +26,7 @@ from app.views import (
     get_map_square,
     get_corpus_analysis_results,
     get_photos_by_analysis,
+    get_photos_by_object_rcnn
 )
 
 
@@ -53,7 +54,9 @@ urlpatterns = [
     path('api/all_map_squares/', all_map_squares),
     path('api/analysis/<str:analysis_name>/', get_photos_by_analysis),
     path('api/analysis/<str:analysis_name>/<str:object_name>/', get_photos_by_analysis),
+    path('api/faster_rcnn_object_detection/<str:object_name>/', get_photos_by_object_rcnn),
     # path('api/model/<str:model_name>/<str:object_name>/', get_photos_by_object),
+
 
     # React views
     react_view_path('', 'IndexView'),

@@ -48,3 +48,5 @@ opencv-python~=4.4.0.40
 matplotlib~=3.3.2
 gluoncv~=0.8.0
 mxnet==1.6.0
+
+torch
