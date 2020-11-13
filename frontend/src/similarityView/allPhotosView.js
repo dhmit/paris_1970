@@ -1,5 +1,4 @@
 import React from 'react';
-import * as PropTypes from 'prop-types';
 
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
@@ -78,7 +77,7 @@ export class AllPhotosView extends React.Component {
                 <a
                     key={k}
                     title={currentAnalysis.result}
-                    href={`/photo/${photo['map_square_number']}/${photo['number']}/`}
+                    href={`/similar_photos/${photo['map_square_number']}/${photo['number']}/`}
                 >
                     <img
                         alt={photo.alt}

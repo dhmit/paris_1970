@@ -47,6 +47,7 @@ urlpatterns = [
 
     # API endpoints
     path('api/photo/<int:map_square_number>/<int:photo_number>/', photo),
+    path('api/similar_photos/<int:map_square_number>/<int:photo_number>/', photo),
     path('api/photographer/<int:photographer_id>/', get_photographer),
     path('api/map_square/<int:map_square_number>/', get_map_square),
     path('api/corpus_analysis/', get_corpus_analysis_results),
@@ -58,6 +59,8 @@ urlpatterns = [
     # React views
     react_view_path('', 'IndexView'),
     react_view_path('photo/<int:mapSquareNumber>/<int:photoNumber>/', 'PhotoView'),
+    react_view_path('similar_photos/<int:mapSquareNumber>/<int:photoNumber>/',
+                    'SimilarityView'),
     react_view_path('photographer/<int:photographerNumber>/', 'PhotographerView'),
     react_view_path('map_square/<int:mapSquareNumber>/', 'MapSquareView'),
     react_view_path('about/', 'About'),
