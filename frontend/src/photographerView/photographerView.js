@@ -4,9 +4,15 @@ import * as PropTypes from 'prop-types';
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
+
 const ANALYSIS = {
     whitespace_percentage: {
         displayName: 'Average Whitespace Percentage',
+        accumulateFn: (old, value) => old + parseFloat(value),
+    },
+    portrait_detection: {
+        displayName: 'Percentage of Portraits',
+        accumulateFn: (old, value) => old + (value === 'true' ? 1 : 0),
     },
 };
 
@@ -37,24 +43,28 @@ export class PhotographerView extends React.Component {
     }
 
     getAggregatePhotoAnalysis = (photos) => {
-        const analysisAccumulation = {};
+        const analysisAcc = {};
         Object.keys(ANALYSIS).forEach((analysisName) => {
-            analysisAccumulation[analysisName] = 0;
+            analysisAcc[analysisName] = 0;
         });
-
         photos.forEach((photo) => {
             photo['analyses'].forEach((analysis) => {
                 const analysisName = analysis.name;
                 const result = analysis.result;
-                analysisAccumulation[analysisName] += parseFloat(result);
+                console.log(result);
+                analysisAcc[analysisName] = ANALYSIS[analysisName].accumulateFn(
+                    analysisAcc[analysisName],
+                    result,
+                );
+                console.log(analysisAcc);
             });
         });
 
-        const analysisResults = {};
-        Object.keys(analysisAccumulation).forEach((analysisName) => {
-            analysisResults[analysisName] = analysisAccumulation[analysisName] / photos.length;
+        const results = {};
+        Object.keys(analysisAcc).forEach((analysisName) => {
+            results[analysisName] = analysisAcc[analysisName] / photos.length;
         });
-        return analysisResults;
+        return results;
     };
 
     render() {
@@ -84,17 +94,13 @@ export class PhotographerView extends React.Component {
                 <h1>{name} (ID: {number})</h1>
                 <h2 className="h3">Assigned to:</h2>
                 <h3 className="h5">Map Square {mapSquare.number}</h3>
-                <h2 className='h3 photographer-heading'>Sentiment on Paris:</h2>
-                <h3 className="h5">{sentiment === '' ? 'N/A' : sentiment }</h3>
-                <h2 className="h3">Type of Photographer:</h2>
-                <h3 className="h5">{type === '' ? 'N/A' : type }</h3>
                 <h2 className="h3">Analysis Results</h2>
                 {Object.keys(photographerAnalysis).map((analysis) => {
                     return (
-                        <>
+                        <div key={analysis}>
                             <h3 className="h5">{ANALYSIS[analysis].displayName}:</h3>
                             {photographerAnalysis[analysis]}
-                        </>
+                        </div>
                     );
                 })}
                 <h2 className="h3">Photos:</h2>

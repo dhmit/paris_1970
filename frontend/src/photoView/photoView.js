@@ -16,6 +16,10 @@ function formatPercentageValue(value) {
     return `${parseInt(value)}%`;
 }
 
+const formatBoolean = (value) => {
+    return value ? 'Yes' : 'No';
+};
+
 const ANALYSIS_CONFIGS = {
     whitespace_percentage: {
         formatter: formatPercentageValue,
@@ -27,6 +31,10 @@ const ANALYSIS_CONFIGS = {
     foreground_percentage: {
         formatter: formatPercentageValue,
         displayName: '% foreground',
+    },
+    portrait_detection: {
+        formatter: formatBoolean,
+        displayName: 'Is It a Portrait',
     },
 };
 
@@ -137,7 +145,7 @@ export class PhotoView extends React.Component {
                                 analysisResultStr = analysisConfig.formatter(parsedValue);
                             }
                         }
-
+                        console.log(parsedValue, analysisDisplayName);
                         return (
                             <React.Fragment key={index}>
                                 <h5>{analysisDisplayName}</h5>
