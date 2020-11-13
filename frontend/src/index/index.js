@@ -12,6 +12,7 @@ import {
     Map as LeafletMap,
     Marker,
     TileLayer,
+    Popup,
 } from 'react-leaflet';
 
 import Navbar from '../about/navbar';
@@ -51,9 +52,14 @@ class Map extends React.Component {
                     />
                     {this.props.mapData.map((mapSquareData, index) => {
                         const coords = mapSquareData.topLeftCoords;
+                        const numberOfPhotos = mapSquareData.photos.length;
                         const position = [coords.lat, coords.lng];
                         return (
-                            <Marker key={index} position={position}/>
+                            <Marker key={index} position={position}>
+                            <Popup> Map square {index} <br />
+                            <a href="/map_square/ + `index`"> {numberOfPhotos} photos to show </a>
+                            </Popup>
+                            </Marker>
                         );
                     })}
                 </LeafletMap>
