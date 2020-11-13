@@ -50,6 +50,4 @@ def analyze_similarity(photo: Photo, similarity_function):
         similarities.append(
             (other_photo.map_square.number, other_photo.number, similarity_value)
         )
-
-    similarities.sort(key=lambda x: x[2])  # sort by similarity,
     return similarities

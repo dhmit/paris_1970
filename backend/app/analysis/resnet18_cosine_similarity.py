@@ -14,7 +14,9 @@ def analyze(photo: Photo):
     """
     Produce a list of all other photos by cosine similarity to this photo's feature vector
     """
-    return analyze_similarity(photo, cosine_similarity)
+    similarities = analyze_similarity(photo, cosine_similarity)
+    similarities.sort(key=lambda x: x[2])
+    return similarities
 
 
 def cosine_similarity(photo_features, other_photo_features):
