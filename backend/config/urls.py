@@ -26,6 +26,7 @@ from app.views import (
     get_map_square,
     get_corpus_analysis_results,
     get_photos_by_analysis,
+    get_photos_by_similarity,
 )
 
 
@@ -51,7 +52,7 @@ urlpatterns = [
     path('api/corpus_analysis/', get_corpus_analysis_results),
     path('api/all_photos/', all_photos),
     path('api/all_map_squares/', all_map_squares),
-    path('api/similarity/<str:analysis_name>/', get_photos_by_analysis),
+    path('api/similarity/', get_photos_by_similarity),
     path('api/analysis/<str:analysis_name>/', get_photos_by_analysis),
 
     # React views
@@ -60,7 +61,7 @@ urlpatterns = [
     react_view_path('photographer/<int:photographerNumber>/', 'PhotographerView'),
     react_view_path('map_square/<int:mapSquareNumber>/', 'MapSquareView'),
     react_view_path('about/', 'About'),
-    react_view_path('similarity/<str:analysisName>/', 'AllPhotosView'),
+    react_view_path('similarity/', 'AllPhotosView'),
     react_view_path('analysis/<str:analysisName>/', 'AnalysisView'),
 
 ]
