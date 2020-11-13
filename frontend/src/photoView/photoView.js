@@ -52,15 +52,15 @@ CoordDisplayWidget.propTypes = {
 export class FPDisplayWidget extends React.Component {
     render() {
         const items = [];
-        const wratio = (20 * this.props.width) / this.props.naturalWidth;
-        const hratio = (20 * this.props.height) / this.props.naturalHeight;
+        const ratio = this.props.width / this.props.naturalWidth;
         for (let i = 0; i < this.props.blackPixels.length; i++) {
             const pixel = this.props.blackPixels[i];
+            console.log('HELLO' + (pixel[1] * this.props.height) / this.props.naturalHeight);
             items.push(<rect
-                    x={(pixel[0] * this.props.width) / this.props.naturalWidth}
-                    y={(pixel[1] * this.props.height) / this.props.naturalHeight}
-                    width={wratio}
-                    height={hratio}
+                    y={pixel[0] * ratio}
+                    x={pixel[1] * ratio}
+                    width={20 * ratio}
+                    height={20 * ratio}
                 />);
         }
         return (
