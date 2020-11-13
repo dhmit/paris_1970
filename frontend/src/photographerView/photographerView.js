@@ -4,6 +4,12 @@ import * as PropTypes from 'prop-types';
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
+const ANALYSIS = {
+    whitespace_percentage: {
+        displayName: 'Average Whitespace Percentage',
+    },
+};
+
 export class PhotographerView extends React.Component {
     constructor(props) {
         super(props);
@@ -31,7 +37,24 @@ export class PhotographerView extends React.Component {
     }
 
     getAggregatePhotoAnalysis = (photos) => {
-        console.log(photos);
+        const analysisAccumulation = {};
+        Object.keys(ANALYSIS).forEach((analysisName) => {
+            analysisAccumulation[analysisName] = 0;
+        });
+
+        photos.forEach((photo) => {
+            photo['analyses'].forEach((analysis) => {
+                const analysisName = analysis.name;
+                const result = analysis.result;
+                analysisAccumulation[analysisName] += parseFloat(result);
+            });
+        });
+
+        const analysisResults = {};
+        Object.keys(analysisAccumulation).forEach((analysisName) => {
+            analysisResults[analysisName] = analysisAccumulation[analysisName] / photos.length;
+        });
+        return analysisResults;
     };
 
     render() {
@@ -54,18 +77,27 @@ export class PhotographerView extends React.Component {
             photos,
         } = this.state.photographerData;
 
-        // const photographerAnalysis = this.getAggregatePhotoAnalysis(photos);
+        const photographerAnalysis = this.getAggregatePhotoAnalysis(photos);
         return (<>
             <Navbar/>
             <div className='page'>
                 <h1>{name} (ID: {number})</h1>
-                <h3>Assigned to:</h3>
-                <h5>Map Square {mapSquare.number}</h5>
-                <h3 className='photographer-heading'>Sentiment on Paris:</h3>
-                <h5>{sentiment === '' ? 'N/A' : sentiment }</h5>
-                <h3>Type of Photographer:</h3>
-                <h5>{type === '' ? 'N/A' : type }</h5>
-                <h3>Photos:</h3>
+                <h2 className="h3">Assigned to:</h2>
+                <h3 className="h5">Map Square {mapSquare.number}</h3>
+                <h2 className='h3 photographer-heading'>Sentiment on Paris:</h2>
+                <h3 className="h5">{sentiment === '' ? 'N/A' : sentiment }</h3>
+                <h2 className="h3">Type of Photographer:</h2>
+                <h3 className="h5">{type === '' ? 'N/A' : type }</h3>
+                <h2 className="h3">Analysis Results</h2>
+                {Object.keys(photographerAnalysis).map((analysis) => {
+                    return (
+                        <>
+                            <h3 className="h5">{ANALYSIS[analysis].displayName}:</h3>
+                            {photographerAnalysis[analysis]}
+                        </>
+                    );
+                })}
+                <h2 className="h3">Photos:</h2>
                 <div className='photo_gallery'>
                     {photos.map((photo, k) => (
                         <div className="photo" key={k}>

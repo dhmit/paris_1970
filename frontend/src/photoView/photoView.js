@@ -88,7 +88,7 @@ export class PhotoView extends React.Component {
             photographer_caption: photographerCaption,
             analyses,
         } = this.state.photoData;
-        console.log(this.state.photoData);
+
         return (<>
             <Navbar />
             <div className="page row">
