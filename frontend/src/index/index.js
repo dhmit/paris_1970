@@ -110,7 +110,7 @@ export class IndexView extends React.Component {
 
                 // If the map square does not have the coordinates in the spread sheet, it sets
                 // them to (0, 0)
-                if (!(roughCoords === '')) {
+                if (roughCoords) {
                     const roughCoordsList = roughCoords.split(', ');
                     const lat = parseFloat(roughCoordsList[0]);
                     const lng = parseFloat(roughCoordsList[1]);
