@@ -84,13 +84,22 @@ def get_photos_by_analysis(request, analysis_name):
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
     return Response(serializer.data)
 
+
 @api_view(['GET'])
-def get_photos_by_similarity(request):
+def get_photos_by_similarity(request, map_square_number, photo_number):
     """
     API endpoint to get photos sorted by analysis
     """
-    analysis_obj = PhotoAnalysisResult.objects.filter(name="resnet18_cosine_similarity")
+    photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
+    analysis_obj = PhotoAnalysisResult.objects.filter(
+        name="resnet18_cosine_similarity",
+        photo=photo_obj,
+    )
+
     sorted_analysis_obj = sorted(analysis_obj, key=lambda instance: instance.parsed_result())
     sorted_photo_obj = [instance.photo for instance in sorted_analysis_obj]
+
+    # TODO: construct a list of photos that are similar,
+    #  and pass that list into the serializer below
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
     return Response(serializer.data)
