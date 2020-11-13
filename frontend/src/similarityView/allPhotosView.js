@@ -24,7 +24,7 @@ export class AllPhotosView extends React.Component {
 
     async componentDidMount() {
         try {
-            const apiURL = `/api/similarity/${this.props.analysisName}/`;
+            const apiURL = '/api/similarity';
             const response = await fetch(apiURL);
             if (!response.ok) {
                 this.setState({ loading: false });
@@ -72,7 +72,7 @@ export class AllPhotosView extends React.Component {
 
         const photos = this.state.photoData.map((photo, k) => {
             const currentAnalysis = photo['analyses'].filter(
-                (analysisObject) => analysisObject.name === this.props.analysisName,
+                (analysisObject) => analysisObject.name === 'resnet18_cosine_similarity',
             )[0];
             return (
                 <a
@@ -92,7 +92,7 @@ export class AllPhotosView extends React.Component {
 
         const options = this.state.photoData.length === 0 ? (
             <p>
-                {`There are no photos that have an analysis result for ${this.props.analysisName}`
+                {'There are no photos that have an analysis result for resnet18_cosine_similarity'
                 + ' or the analysis does not exist.'}
             </p>) : (<div className='options'>
             <p>Click on a photo to see the 10 most similar matches!</p></div>);
@@ -101,7 +101,7 @@ export class AllPhotosView extends React.Component {
             <Navbar />
             <div className='display-box page'>
                 <h3 className='text-capitalize'>{
-                    this.props.analysisName.split('_').join(' ')
+                    'resnet18_cosine_similarity'
                 }</h3>
                 {options}
                 <br/>
@@ -111,6 +111,3 @@ export class AllPhotosView extends React.Component {
         </>);
     }
 }
-AllPhotosView.propTypes = {
-    analysisName: PropTypes.string,
-};
