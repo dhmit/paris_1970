@@ -49,6 +49,41 @@ CoordDisplayWidget.propTypes = {
     naturalWidth: PropTypes.number,
 };
 
+export class FPDisplayWidget extends React.Component {
+    render() {
+        const items = [];
+        let pixel;
+        const ratio = this.props.width / this.props.naturalWidth;
+        for (pixel = 0; pixel < 500; pixel += 10) {
+            items.push(<rect
+                x={(this.props.blackPixels[pixel][0] * this.props.width) / this.props.naturalWidth}
+                y={(this.props.blackPixels[pixel][1] * this.props.height) / this.props.naturalHeight}
+                width='5'
+                height='5'
+            />);
+        }
+        return (
+            <div>
+                <svg
+                    className='analysis-overlay floatTL'
+                    height={this.props.height}
+                    width={this.props.width}
+                >
+                    {items}
+                </svg>
+            </div>
+        );
+    }
+}
+FPDisplayWidget.propTypes = {
+    percent: PropTypes.object,
+    blackPixels: PropTypes.object,
+    height: PropTypes.number,
+    width: PropTypes.number,
+    naturalHeight: PropTypes.number,
+    naturalWidth: PropTypes.number,
+};
+
 
 const SIDES = {
     CLEANED: 'cleaned',
@@ -74,11 +109,23 @@ function configAnalysisFV(parsedValue, height, width, naturalHeight, naturalWidt
     );
 }
 
-function configAnalysisFP(parsedValue, height, width) {
-    console.log(parsedValue);
+function configAnalysisFP(parsedValue, height, width, naturalHeight, naturalWidth) {
+    const {
+        percent,
+        mask: blackPixels,
+    } = parsedValue;
     console.log(height);
     console.log(width);
-    return null;
+    return (
+        <FPDisplayWidget
+            percent={percent}
+            blackPixels={blackPixels}
+            height={height}
+            width={width}
+            naturalHeight={naturalHeight}
+            naturalWidth={naturalWidth}
+        />
+    );
 }
 
 const VISUALANALYSISDICT = {
