@@ -240,7 +240,7 @@ def populate_database(
                 # coordinates of the map square will automatically update when syncdb is called
                 # and the popup will appear on the map
                 elif header == 'rough_coords':
-                    if not header.value():
+                    if not row.get(header):
                         value = '0.0, 0.0'
                 model_kwargs[header] = value
         # If no model fields found, do not create model instance
