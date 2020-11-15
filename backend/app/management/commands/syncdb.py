@@ -243,7 +243,6 @@ def populate_database(
                     if not header.value():
                         value = '0.0, 0.0'
                 model_kwargs[header] = value
-        # breakpoint()
         # If no model fields found, do not create model instance
         if len(model_kwargs) == 0:
             continue
@@ -282,15 +281,14 @@ def populate_database(
         if model_name == "MapSquare":
             while map_square_count != model_kwargs['number']:
                 temp_model_kwargs = \
-                    {'number': map_square_count, 'name': f'map square {map_square_count}'}
+                    {'number': map_square_count, 'name': f'map square {map_square_count}',
+                     'rough_coords': '0.0, 0.0'}
                 if verbose:
                     print(f'Creating {model_name} with kwargs: {temp_model_kwargs}\n')
                 model_instance = MODEL_NAME_TO_MODEL[model_name](**temp_model_kwargs)
                 model_instance.save()
                 map_square_count += 1
             map_square_count += 1
-
-        # breakpoint()
 
         if verbose:
             print(f'Creating {model_name} with kwargs: {model_kwargs}\n')
