@@ -289,8 +289,6 @@ def populate_database(
                 map_square_count += 1
             map_square_count += 1
 
-        # breakpoint()
-
         if verbose:
             print(f'Creating {model_name} with kwargs: {model_kwargs}\n')
 
