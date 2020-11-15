@@ -235,11 +235,12 @@ def populate_database(
                         continue
                 # If the map square is in the spreadsheet but does not have assigned coordinates,
                 # set default coordinates to 0.0,0.0 (outside of the map boundaries)
+
                 # If a user returns and adds rough coordinates to the spreadsheet, the rough
                 # coordinates of the map square will automatically update when syncdb is called
                 # and the popup will appear on the map
                 elif header == 'rough_coords':
-                    if not header:
+                    if not header.value():
                         value = '0.0, 0.0'
                 model_kwargs[header] = value
         # breakpoint()
