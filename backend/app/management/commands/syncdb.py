@@ -34,7 +34,6 @@ SCOPES = [
     'https://www.googleapis.com/auth/drive.readonly',
 ]
 
-
 # Our metadata spreadsheet lives here:
 # https://docs.google.com/spreadsheets/d/1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I/edit#gid=0
 METADATA_SPREADSHEET_ID = '1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I'
@@ -113,6 +112,7 @@ def create_lookup_dict(drive_service):
 
         lookup_dict[map_square['name']] = map_square_dict
     return lookup_dict
+
 
 # pylint: disable=too-many-arguments
 def add_photo_srcs(
@@ -201,6 +201,11 @@ def populate_database(
     :param photo_url_lookup: Dictionary of map square folders in the form of a dictionary
     """
     # pylint: disable=too-many-locals
+    # TODO: Find a way to make sure the spreadsheet is sorted beforehand, as the method used to
+    #  create the absent models is reliant on the spreadsheet being sorted.
+    if model_name == "MapSquare":
+        map_square_count = 1
+
     for row in values_as_a_dict:
         # Filter column headers for model fields
         model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
@@ -208,38 +213,6 @@ def populate_database(
 
         model_kwargs = {}
         for header in row.keys():
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-
             if header in model_field_names or header == 'map_square_number':
                 # Check if value in column is a number
                 value = row[header]
@@ -295,11 +268,39 @@ def populate_database(
             model_kwargs['photographer'] = \
                 Photographer.objects.filter(number=photographer_number).first()
 
+        # Creates models for all of the MapSquares not listed in the spreadsheet between the
+        # previous row and the current one
+        if model_name == "MapSquare":
+            while map_square_count != model_kwargs['number']:
+                temp_model_kwargs = \
+                    {'number': map_square_count, 'name': f'map square {map_square_count}'}
+                if verbose:
+                    print(f'Creating {model_name} with kwargs: {temp_model_kwargs}\n')
+                model_instance = MODEL_NAME_TO_MODEL[model_name](**temp_model_kwargs)
+                model_instance.save()
+                map_square_count += 1
+            map_square_count += 1
+
+        # breakpoint()
+
         if verbose:
             print(f'Creating {model_name} with kwargs: {model_kwargs}\n')
 
         model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
         model_instance.save()
+
+        # When the last row in the spreadsheet is reached, creates MapSquare models for all
+        # remaining, absent MapSquares (total: 1,755)
+        if model_name == 'MapSquare' and model_kwargs['number'] == int(values_as_a_dict[-1][
+                                                                           'number']):
+            while map_square_count <= 1755:
+                temp_model_kwargs = \
+                    {'number': map_square_count, 'name': f'map square {map_square_count}'}
+                if verbose:
+                    print(f'Creating {model_name} with kwargs: {temp_model_kwargs}\n')
+                model_instance = MODEL_NAME_TO_MODEL[model_name](**temp_model_kwargs)
+                model_instance.save()
+                map_square_count += 1
 
 
 class Command(BaseCommand):
