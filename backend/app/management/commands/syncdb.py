@@ -243,6 +243,13 @@ def populate_database(
                     if not row.get(header):
                         value = '0.0, 0.0'
                 model_kwargs[header] = value
+
+        # If rough_coords doesn't show up as a field for a MapSquare, adds the field and '0.0,
+        # 0.0' as the default
+        if len(model_kwargs) != 0 and model_name == 'MapSquare' and 'rough_coords' not in \
+            row.keys():
+            model_kwargs['rough_coords'] = '0.0, 0.0'
+
         # If no model fields found, do not create model instance
         if len(model_kwargs) == 0:
             continue
