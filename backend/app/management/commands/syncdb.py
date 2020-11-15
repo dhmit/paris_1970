@@ -209,36 +209,7 @@ def populate_database(
         model_kwargs = {}
         for header in row.keys():
             # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
-            # BREAKPOINTS HERE ---------------------------------------------------------------------
+            breakpoint()
 
             if header in model_field_names or header == 'map_square_number':
                 # Check if value in column is a number
@@ -260,8 +231,16 @@ def populate_database(
                         value = bool(value)
                     else:
                         continue
+                # If the map square is in the spreadsheet but does not have assigned coordinates,
+                # set default coordinates to 0.0,0.0 (outside of the map boundaries)
+                # If a user returns and adds rough coordinates to the spreadsheet, the rough
+                # coordinates of the map square will automatically update when syncdb is called
+                # and the popup will appear on the map
+                elif header == 'rough_coords':
+                    if not header:
+                        value = '0.0, 0.0'
                 model_kwargs[header] = value
-
+        # breakpoint()
         # If no model fields found, do not create model instance
         if len(model_kwargs) == 0:
             continue

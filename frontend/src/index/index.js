@@ -54,11 +54,14 @@ class Map extends React.Component {
                         const coords = mapSquareData.topLeftCoords;
                         const numberOfPhotos = mapSquareData.photos.length;
                         const position = [coords.lat, coords.lng];
+                        // @TODO: Find out how index is defined and how we can properly
+                        // @TODO: redefine it to match up with the map square number
+                        const link = '/map_square/' + index;
                         return (
                             <Marker key={index} position={position}>
-                            <Popup> Map square {index} <br />
-                            <a href="/map_square/ + `index`"> {numberOfPhotos} photos to show </a>
-                            </Popup>
+                                <Popup> Map square {index} <br />
+                                    <a href={link}>{numberOfPhotos} photos to show</a>
+                                </Popup>
                             </Marker>
                         );
                     })}
@@ -122,11 +125,11 @@ export class IndexView extends React.Component {
                     const lng = parseFloat(roughCoordsList[1]);
                     console.log(lat);
                     console.log(lng);
-                    mapSquare.topLeftCoords = {lat, lng};
+                    mapSquare.topLeftCoords = { lat, lng };
                 } else {
                     const lat = 0.0;
                     const lng = 0.0;
-                    mapSquare.topLeftCoords = {lat, lng};
+                    mapSquare.topLeftCoords = { lat, lng };
                 }
             }
 
