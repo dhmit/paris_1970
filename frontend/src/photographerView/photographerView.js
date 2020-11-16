@@ -51,12 +51,10 @@ export class PhotographerView extends React.Component {
             photo['analyses'].forEach((analysis) => {
                 const analysisName = analysis.name;
                 const result = analysis.result;
-                console.log(result);
                 analysisAcc[analysisName] = ANALYSIS[analysisName].accumulateFn(
                     analysisAcc[analysisName],
                     result,
                 );
-                console.log(analysisAcc);
             });
         });
 
@@ -82,8 +80,6 @@ export class PhotographerView extends React.Component {
             name,
             map_square: mapSquare,  // n.b. here we rename while doing the object destructuring
             number,
-            sentiment,
-            type,
             photos,
         } = this.state.photographerData;
 
