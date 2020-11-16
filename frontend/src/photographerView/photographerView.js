@@ -8,11 +8,15 @@ import { Footer } from '../UILibrary/components';
 const ANALYSIS = {
     whitespace_percentage: {
         displayName: 'Average Whitespace Percentage',
-        accumulateFn: (old, value) => old + parseFloat(value),
+        analysisType: 'average',
     },
     portrait_detection: {
         displayName: 'Percentage of Portraits',
-        accumulateFn: (old, value) => old + (value === 'true' ? 1 : 0),
+        analysisType: 'count',
+    },
+    mean_detail: {
+        displayName: 'Average Mean Detail',
+        analysisType: 'average',
     },
 };
 
@@ -51,16 +55,23 @@ export class PhotographerView extends React.Component {
             photo['analyses'].forEach((analysis) => {
                 const analysisName = analysis.name;
                 const result = analysis.result;
-                analysisAcc[analysisName] = ANALYSIS[analysisName].accumulateFn(
-                    analysisAcc[analysisName],
-                    result,
-                );
+                const analysisType = ANALYSIS[analysisName].analysisType;
+                if (analysisType === 'average') {
+                    analysisAcc[analysisName] += parseFloat(result);
+                } else if (analysisType === 'count') {
+                    analysisAcc[analysisName] += 1;
+                }
             });
         });
 
         const results = {};
         Object.keys(analysisAcc).forEach((analysisName) => {
-            results[analysisName] = analysisAcc[analysisName] / photos.length;
+            const analysisType = ANALYSIS[analysisName].analysisType;
+            if (analysisType === 'average') {
+                results[analysisName] = analysisAcc[analysisName] / photos.length;
+            } else if (analysisType === 'count') {
+                results[analysisName] = analysisAcc[analysisName];
+            }
         });
         return results;
     };
