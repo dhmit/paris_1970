@@ -281,6 +281,11 @@ export class PhotoView extends React.Component {
                             // handled in a different div
                             return null;
                         })}
+                        <svg
+                            height={this.state.height}
+                            width={this.state.width}
+                        >
+                        </svg>
                     </div>
                     <br/>
                     {this.state.availableSides.map((side, k) => (
