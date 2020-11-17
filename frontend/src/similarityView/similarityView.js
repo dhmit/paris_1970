@@ -46,12 +46,6 @@ export class SimilarityView extends React.Component {
         }
 
         const {
-            alt,
-            number: photoNumber,
-            map_square_number: mapSquareNumber,
-            photographer_name: photographerName,
-            photographer_number: photographerNumber,
-            photographer_caption: photographerCaption,
             analyses,
         } = this.state.photoData;
 

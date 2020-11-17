@@ -26,7 +26,8 @@ from app.views import (
     get_map_square,
     get_corpus_analysis_results,
     get_photos_by_analysis,
-    get_photos_by_similarity,
+    get_all_photos_in_order,
+    get_photo_by_similarity
 )
 
 
@@ -47,13 +48,13 @@ urlpatterns = [
 
     # API endpoints
     path('api/photo/<int:map_square_number>/<int:photo_number>/', photo),
-    path('api/similar_photos/<int:map_square_number>/<int:photo_number>/', photo),
+    path('api/similar_photos/<int:map_square_number>/<int:photo_number>/', get_photo_by_similarity),
     path('api/photographer/<int:photographer_id>/', get_photographer),
     path('api/map_square/<int:map_square_number>/', get_map_square),
     path('api/corpus_analysis/', get_corpus_analysis_results),
     path('api/all_photos/', all_photos),
     path('api/all_map_squares/', all_map_squares),
-    path('api/similarity/', get_photos_by_similarity),
+    path('api/similarity/', get_all_photos_in_order),
     path('api/analysis/<str:analysis_name>/', get_photos_by_analysis),
 
     # React views
