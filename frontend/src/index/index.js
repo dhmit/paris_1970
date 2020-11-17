@@ -56,8 +56,6 @@ class Map extends React.Component {
                         const coords = mapSquareData.topLeftCoords;
                         const numberOfPhotos = mapSquareData.photos.length;
                         const position = [coords.lat, coords.lng];
-                        // @TODO: Find out how index is defined and how we can properly
-                        // @TODO: redefine it to match up with the map square number
                         const link = '/map_square/' + index;
                         return (
                             <Marker key={index} position={position}>
