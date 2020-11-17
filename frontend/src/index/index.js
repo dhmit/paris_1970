@@ -50,7 +50,9 @@ class Map extends React.Component {
                         attribution='&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    {this.props.mapData.map((mapSquareData, index) => {
+                    {this.props.mapData.map((mapSquareData) => {
+                        // console.log(mapSquareData.number);
+                        const index = mapSquareData.number;
                         const coords = mapSquareData.topLeftCoords;
                         const numberOfPhotos = mapSquareData.photos.length;
                         const position = [coords.lat, coords.lng];
@@ -123,8 +125,8 @@ export class IndexView extends React.Component {
                     const roughCoordsList = roughCoords.split(', ');
                     const lat = parseFloat(roughCoordsList[0]);
                     const lng = parseFloat(roughCoordsList[1]);
-                    console.log(lat);
-                    console.log(lng);
+                    // console.log(lat);
+                    // console.log(lng);
                     mapSquare.topLeftCoords = { lat, lng };
                 } else {
                     const lat = 0.0;
