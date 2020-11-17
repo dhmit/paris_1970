@@ -57,11 +57,11 @@ export class FPDisplayWidget extends React.Component {
             const pixel = this.props.blackPixels[i];
             console.log('HELLO' + (pixel[1] * this.props.height) / this.props.naturalHeight);
             items.push(<rect
-                    y={pixel[0] * ratio}
-                    x={pixel[1] * ratio}
-                    width={20 * ratio}
-                    height={20 * ratio}
-                />);
+                y={pixel[0] * ratio}
+                x={pixel[1] * ratio}
+                width={20 * ratio}
+                height={20 * ratio}
+            />);
         }
         return (
             <div>
@@ -176,6 +176,7 @@ export class PhotoView extends React.Component {
             naturalHeight: 1,
         };
         this.onImgLoad = this.onImgLoad.bind(this);
+        this.photoRef = React.createRef();
     }
 
     async componentDidMount() {
@@ -212,13 +213,18 @@ export class PhotoView extends React.Component {
     }
 
     onImgLoad({ target: img }) {
-        console.log('IMAGE LOADED');
         this.setState({
             width: img.clientWidth,
             height: img.clientHeight,
             naturalWidth: img.naturalWidth,
             naturalHeight: img.naturalHeight,
         });
+    }
+
+    handleResize() {
+        console.log(this.photoRef.current);
+        const img = this.photoRef.current;
+        console.log(img.getBoundingClientRect());
     }
 
     render() {
@@ -242,6 +248,8 @@ export class PhotoView extends React.Component {
             analyses,
         } = this.state.photoData;
 
+        window.addEventListener('resize', () => this.handleResize());
+
         return (<>
             <Navbar />
             <div className="page row">
@@ -252,6 +260,7 @@ export class PhotoView extends React.Component {
                             src={this.state.photoData[`${this.state.displaySide}_src`]}
                             alt={alt}
                             onLoad={this.onImgLoad}
+                            ref={this.photoRef}
                         />
 
                         {analyses.map((analysisResult) => {
