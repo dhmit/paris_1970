@@ -101,7 +101,7 @@ class AnalysisTestBase(TestCase):
         surrounded by all white pixels
         """
         photo = self.add_photo('4%_black')
-        result = foreground_percentage.analyze(photo)
+        result = (foreground_percentage.analyze(photo))["percent"]
         # Result is not exact (range of values)
         # Needs more testing
         self.assertTrue(2 <= result <= 6)
@@ -111,7 +111,7 @@ class AnalysisTestBase(TestCase):
         Test the foreground percentage function on a real competition photo.
         """
         photo = self.add_photo('foreground_801_4')
-        result = foreground_percentage.analyze(photo)
+        result = (foreground_percentage.analyze(photo))["percent"]
 
         # Result is not exact (range of values)
         # Needs more testing
@@ -126,7 +126,7 @@ class AnalysisTestBase(TestCase):
         """
         file_path = Path(settings.TEST_PHOTOS_DIR, 'foreground_801_4.jpg')
 
-        result = foreground_percentage.analyze_from_file(file_path)
+        result = (foreground_percentage.analyze_from_file(file_path))["percent"]
         # Result is not exact (range of values)
         # Needs more testing
         self.assertTrue(60 <= result <= 64)
