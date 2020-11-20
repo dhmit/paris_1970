@@ -4,6 +4,13 @@ import * as PropTypes from 'prop-types';
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
+const SIDES = {
+    CLEANED: 'cleaned',
+    FRONT: 'front',
+    BACK: 'back',
+    BINDER: 'binder',
+};
+
 export class SimilarityView extends React.Component {
     constructor(props) {
         super(props);
@@ -15,7 +22,9 @@ export class SimilarityView extends React.Component {
 
     async componentDidMount() {
         try {
-            const apiURL = `/api/photo/${this.props.mapSquareNumber}/${this.props.photoNumber}/`;
+            // eslint-disable-next-line
+            // eslint-disable-next-line max-len
+            const apiURL = `/api/similar_photos/${this.props.mapSquareNumber}/${this.props.photoNumber}/`;
             const response = await fetch(apiURL);
             if (!response.ok) {
                 this.setState({ loading: false });
@@ -28,10 +37,20 @@ export class SimilarityView extends React.Component {
         }
     }
 
-    changeSide = (displaySide) => {
+    /* changeSide = (displaySide) => {
         this.setState({ displaySide: displaySide });
-    };
+    }; */
 
+    getSource(photoData) {
+        const availableSides = Object.values(SIDES).filter(
+            (side) => photoData[`${side}_src`] !== null,
+        );
+        const displaySide = availableSides.length > 0 ? availableSides[0] : '';
+        const source = photoData[`${displaySide}_src`];
+        return source;
+    }
+
+    // eslint-disable-next-line consistent-return
     render() {
         if (this.state.loading) {
             return (<h1>
@@ -44,39 +63,40 @@ export class SimilarityView extends React.Component {
                 Photo with id {window.location.pathname.split('/')[2]} is not in database.
             </h1>);
         }
-
-        const {
-            alt,
-            number: photoNumber,
-            map_square_number: mapSquareNumber,
-            photographer_name: photographerName,
-            photographer_number: photographerNumber,
-            photographer_caption: photographerCaption,
-            analyses,
-        } = this.state.photoData;
-
-        const similarPhotosResultObj = analyses.filter(
-            (analysisObject) => analysisObject.name === 'resnet18_cosine_similarity',
-        )[0];
-        const similarPhotos = JSON.parse(similarPhotosResultObj.result);
-
+        const photos = this.state.photoData.map((photo, k) => {
+            return (
+                <a
+                    key={k}
+                    // title={currentAnalysis.result}
+                    href={`/photo/${photo['map_square_number']}/${photo['number']}/`}
+                >
+                    <img
+                        alt={photo.alt}
+                        height={200}
+                        width={200}
+                        src={this.getSource(photo)}
+                    />
+                </a>
+            );
+        });
         return (<>
             <Navbar />
             <div className="page row">
-                <div className='image-info col-12 col-lg-6'>
-                    {similarPhotos.map((photo, k) => (
-                        <a
-                            key={k}
-                            href={`/photo/${photo['map_square_number']}/${photo['number']}/`}
-                        >
-                            <img
-                                alt={photo.alt}
-                                height={100}
-                                width={100}
-                                src={this.getSource(photo)}
-                            />
-                        </a>
-                    ))}
+                <div className='image-info col-12 col-lg-8'>
+                    {/* {similarPhotos.map((photo, k) => ( */}
+                    {/*    <a */}
+                    {/*        key={k} */}
+                    {/*        href={`/photo/${photo['map_square_number']}/${photo['number']}/`} */}
+                    {/*    > */}
+                    {/*        <img */}
+                    {/*            alt={photo.alt} */}
+                    {/*            height={100} */}
+                    {/*            width={100} */}
+                    {/*            src={this.getSource(photo)} */}
+                    {/*        /> */}
+                    {/*    </a> */}
+                    {/* ))}  */}
+                    {photos}
                 </div>
             </div>
             <Footer />
