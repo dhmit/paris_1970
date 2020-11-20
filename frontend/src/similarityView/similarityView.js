@@ -79,6 +79,9 @@ export class SimilarityView extends React.Component {
                 </a>
             );
         });
+
+
+
         return (<>
             <Navbar />
             <div className="page row">

@@ -86,7 +86,18 @@ def get_photos_by_analysis(request, analysis_name):
 
 
 @api_view(['GET'])
-def get_photos_by_similarity(request, map_square_number, photo_number):
+def get_all_photos_in_order(request):
+    """
+    API endpoint to get photos sorted by analysis
+    """
+    analysis_obj = PhotoAnalysisResult.objects.filter(name="resnet18_cosine_similarity")
+    sorted_analysis_obj = sorted(analysis_obj, key=lambda instance: instance.parsed_result())
+    sorted_photo_obj = [instance.photo for instance in sorted_analysis_obj]
+    serializer = PhotoSerializer(sorted_photo_obj, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def get_photo_by_similarity(request, map_square_number, photo_number):
     """
     API endpoint to get photos sorted by analysis
     """
@@ -105,7 +116,5 @@ def get_photos_by_similarity(request, map_square_number, photo_number):
         photo_obj.append(Photo.objects.get(number=id_number, map_square__number=map_square))
 
     serializer = PhotoSerializer(photo_obj, many=True)
+
     return Response(serializer.data)
-    """photo_obj = Photo.objects.all()
-    serializer = PhotoSerializer(photo_obj, many=True)
-    return Response(serializer.data)"""
