@@ -309,7 +309,8 @@ def populate_database(
                                                                            'number']):
             while map_square_count <= 1755:
                 temp_model_kwargs = \
-                    {'number': map_square_count, 'name': f'map square {map_square_count}'}
+                    {'number': map_square_count, 'name': f'map square {map_square_count}',
+                     'rough_coords': '0.0, 0.0'}
                 if verbose:
                     print(f'Creating {model_name} with kwargs: {temp_model_kwargs}\n')
                 model_instance = MODEL_NAME_TO_MODEL[model_name](**temp_model_kwargs)
@@ -394,7 +395,9 @@ class Command(BaseCommand):
 
         for model_name, values in zip(spreadsheet_ranges, databases):
             print_header(f'{model_name}: Importing these values from the spreadsheet')
-
+            # Sorts the rows in the spreadsheet by the map square number [MapSquare ONLY]
+            if model_name == 'MapSquare':
+                values = [values[0]] + sorted(values[1:], key=lambda x: int(x[0]))
             header = values[0]
             values_as_a_dict = [dict(zip(header, row)) for row in values[1:]]
             populate_database(
