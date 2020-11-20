@@ -16,13 +16,13 @@ CLASS_NAMES = os.path.join(settings.YOLO_DIR, 'coco_resnet_50_map_0_335_state_di
 
 
 def analyze(photo: Photo):
-    with open(CLASS_NAMES, "r") as f:
-        labels = [line.strip() for line in f.readlines()]
-
-    model = torchvision.models.detection.retinanet_resnet50_fpn(pretrained=True)
-    retina_net = model.resnet50(num_classes=Photo.num_classes(), )
-    retina_net.load_state_dict(torch.load(CLASS_NAMES))
-    evaluate_coco(Photo, model, THRESHOLD)
+    # with open(CLASS_NAMES, "r") as f:
+    #     labels = [line.strip() for line in f.readlines()]
+    #
+    # model = torchvision.models.detection.retinanet_resnet50_fpn(pretrained=True)
+    # retina_net = model.resnet50(num_classes=Photo.num_classes(), )
+    # retina_net.load_state_dict(torch.load(CLASS_NAMES))
+    # evaluate_coco(Photo, model, THRESHOLD)
 
 
 def evaluate_coco(dataset, model, threshold=0.05):
