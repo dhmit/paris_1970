@@ -265,7 +265,8 @@ export class PhotoView extends React.Component {
                         {analyses.map((analysisResult) => {
                             const parsedValue = JSON.parse(analysisResult.result);
 
-                            if (analysisResult.name in VISUALANALYSES) {
+                            if (analysisResult.name in VISUALANALYSES
+                                && this.state.displaySide === 'cleaned') {
                                 if (VISUALANALYSES[analysisResult.name][1] === this.state.view) {
                                     return VISUALANALYSES[analysisResult.name][0](
                                         parsedValue,
