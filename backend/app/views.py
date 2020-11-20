@@ -74,29 +74,6 @@ def get_corpus_analysis_results(request):
 
 
 @api_view(['GET'])
-def get_photos_by_object_rcnn(request, object_name):
-    """
-    API endpoint to get photos sorted by number of objects found
-    faster rcnn version
-    """
-    analysis_obj = PhotoAnalysisResult.objects.filter(name="faster_rcnn_analysis")
-    return analysis_obj
-    # need to study and write out this part
-    '''analysis_dicts = [(instance, instance.parsed_result()) for instance in analysis_obj]
-    relevant_objects = []
-    for analysis in analysis_dicts:
-        analysis_instance, analysis_dict = analysis
-        if object_name in analysis_dict:
-            relevant_objects.append(analysis_instance)
-    sorted_relevant_objects = sorted(
-        relevant_objects, key=lambda instance: instance.parsed_result()[object_name]
-    )[::-1]
-    sorted_photos = [instance.photo for instance in sorted_relevant_objects]
-    serializer = PhotoSerializer(sorted_photos, many=True)
-    return Response(serializer.data)'''
-
-
-@api_view(['GET'])
 def get_photos_by_analysis(request, analysis_name, object_name=None):
     """
     API endpoint to get photos sorted by analysis

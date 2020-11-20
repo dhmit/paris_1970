@@ -1,0 +1,5 @@
+#!C:\Users\12073\Documents\GitHub\paris_1970\venv2\Scripts\python.exe
+from django.core import management
+
+if __name__ == "__main__":
+    management.execute_from_command_line()
