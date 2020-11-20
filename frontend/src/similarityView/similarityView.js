@@ -11,6 +11,9 @@ const SIDES = {
     BINDER: 'binder',
 };
 
+/*
+Creates a view to show the top 10 similar photos for a photo given url
+ */
 export class SimilarityView extends React.Component {
     constructor(props) {
         super(props);
@@ -22,9 +25,8 @@ export class SimilarityView extends React.Component {
 
     async componentDidMount() {
         try {
-            // eslint-disable-next-line
-            // eslint-disable-next-line max-len
-            const apiURL = `/api/similar_photos/${this.props.mapSquareNumber}/${this.props.photoNumber}/`;
+            const apiURL = `/api/similar_photos/${this.props.mapSquareNumber}/
+            ${this.props.photoNumber}/`;
             const response = await fetch(apiURL);
             if (!response.ok) {
                 this.setState({ loading: false });
@@ -37,10 +39,6 @@ export class SimilarityView extends React.Component {
         }
     }
 
-    /* changeSide = (displaySide) => {
-        this.setState({ displaySide: displaySide });
-    }; */
-
     getSource(photoData) {
         const availableSides = Object.values(SIDES).filter(
             (side) => photoData[`${side}_src`] !== null,
@@ -50,7 +48,6 @@ export class SimilarityView extends React.Component {
         return source;
     }
 
-    // eslint-disable-next-line consistent-return
     render() {
         if (this.state.loading) {
             return (<h1>
@@ -63,11 +60,14 @@ export class SimilarityView extends React.Component {
                 Photo with id {window.location.pathname.split('/')[2]} is not in database.
             </h1>);
         }
+
+        /*
+        For each photo from get_photo_by_similarity, creates a thumbnail
+         */
         const photos = this.state.photoData.map((photo, k) => {
             return (
                 <a
                     key={k}
-                    // title={currentAnalysis.result}
                     href={`/photo/${photo['map_square_number']}/${photo['number']}/`}
                 >
                     <img
@@ -86,19 +86,6 @@ export class SimilarityView extends React.Component {
             <Navbar />
             <div className="page row">
                 <div className='image-info col-12 col-lg-8'>
-                    {/* {similarPhotos.map((photo, k) => ( */}
-                    {/*    <a */}
-                    {/*        key={k} */}
-                    {/*        href={`/photo/${photo['map_square_number']}/${photo['number']}/`} */}
-                    {/*    > */}
-                    {/*        <img */}
-                    {/*            alt={photo.alt} */}
-                    {/*            height={100} */}
-                    {/*            width={100} */}
-                    {/*            src={this.getSource(photo)} */}
-                    {/*        /> */}
-                    {/*    </a> */}
-                    {/* ))}  */}
                     {photos}
                 </div>
             </div>

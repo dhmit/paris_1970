@@ -88,7 +88,7 @@ def get_photos_by_analysis(request, analysis_name):
 @api_view(['GET'])
 def get_all_photos_in_order(request):
     """
-    API endpoint to get photos sorted by analysis
+    API endpoint to get photos sorted by map square
     """
     analysis_obj = PhotoAnalysisResult.objects.filter(name="resnet18_cosine_similarity")
     sorted_analysis_obj = sorted(analysis_obj, key=lambda instance: instance.parsed_result())
@@ -99,7 +99,7 @@ def get_all_photos_in_order(request):
 @api_view(['GET'])
 def get_photo_by_similarity(request, map_square_number, photo_number):
     """
-    API endpoint to get photos sorted by analysis
+    API endpoint to get top 10 similar photos of a specific photo
     """
 
     photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
@@ -107,8 +107,10 @@ def get_photo_by_similarity(request, map_square_number, photo_number):
         name="resnet18_cosine_similarity",
         photo=photo_obj,
     )[0]
+
+    # splices the list of similar photos to get top 10 photos
     similarity_list = ast.literal_eval(analysis_obj.result)[:10]
-    print(type(similarity_list))
+
     photo_obj = []
     for simPhoto in similarity_list:
         map_square = simPhoto[0]
