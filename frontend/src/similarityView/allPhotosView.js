@@ -77,7 +77,7 @@ export class AllPhotosView extends React.Component {
             return (
                 <a
                     key={k}
-                    title={photo['map_square_number']}
+                    title={`Map Square: ${photo['map_square_number']},\nPhoto: ${photo['number']}`}
                     href={`/similar_photos/${photo['map_square_number']}/${photo['number']}/`}
                 >
                     <img
