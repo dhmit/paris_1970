@@ -97,20 +97,24 @@ export class PhotographerView extends React.Component {
         const photographerAnalysis = this.getAggregatePhotoAnalysis(photos);
         return (<>
             <Navbar/>
-            <div className='page'>
-                <h1>{name} (ID: {number})</h1>
-                <h2 className="h3">Assigned to:</h2>
-                <h3 className="h5">Map Square {mapSquare.number}</h3>
-                <h2 className="h3">Analysis Results</h2>
-                {Object.keys(photographerAnalysis).map((analysis) => {
-                    return (
-                        <div key={analysis}>
-                            <h3 className="h5">{ANALYSIS[analysis].displayName}:</h3>
-                            {photographerAnalysis[analysis]}
-                        </div>
-                    );
-                })}
-                <h2 className="h3">Photos:</h2>
+            <div className='page row'>
+                <div className='col-6'>
+                    <h1>{name} (ID: {number})</h1>
+                    <h2 className="h3">Assigned to:</h2>
+                    <h3 className="h5">Map Square {mapSquare.number}</h3>
+                </div>
+                <div className='col-6'>
+                    <h2 className="h3">Analysis Results</h2>
+                    {Object.keys(photographerAnalysis).map((analysis) => {
+                        return (
+                            <div key={analysis}>
+                                <h3 className="h5">{ANALYSIS[analysis].displayName}:</h3>
+                                {photographerAnalysis[analysis]}
+                            </div>
+                        );
+                    })}
+                </div>
+                <h2 className="h3">Photos Gallery:</h2>
                 <div className='photo_gallery'>
                     {photos.map((photo, k) => (
                         <div className="photo" key={k}>
