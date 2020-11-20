@@ -308,16 +308,19 @@ export class PhotoView extends React.Component {
                     <h5>Visual Analysis</h5>
                     <div className="row">
                         <div className="col-6">
-                            <select
-                                id="toggleSelect"
-                                className="custom-select"
-                                onChange={this.toggleStatus}
-                                value={this.state.view}
-                            >
-                                <option value="0">None selected</option>
-                                <option value="1">Perspective Lines</option>
-                                <option value="2">Foreground Mask</option>
-                            </select>
+                            {(this.state.displaySide === 'cleaned')
+                                ? <select
+                                    id="toggleSelect"
+                                    className="custom-select"
+                                    onChange={this.toggleStatus}
+                                    value={this.state.view}
+                                >
+                                    <option value="0">None selected</option>
+                                    <option value="1">Perspective Lines</option>
+                                    <option value="2">Foreground Mask</option>
+                                </select>
+                                : <p>Not available</p>
+                            }
                             <br /><br />
                         </div>
                     </div>
