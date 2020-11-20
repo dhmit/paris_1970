@@ -4,15 +4,22 @@ import * as PropTypes from 'prop-types';
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
-export class CoordDisplayWidget extends React.Component {
+const SIDES = {
+    CLEANED: 'cleaned',
+    FRONT: 'front',
+    BACK: 'back',
+    BINDER: 'binder',
+};
+
+export class FVDisplayWidget extends React.Component {
     render() {
         const items = [];
         let line;
         for (line of this.props.lineCoords) {
-            line['1_y'] = (line['1_y'] * this.props.height) / this.props.naturalHeight;
-            line['2_y'] = (line['2_y'] * this.props.height) / this.props.naturalHeight;
-            line['1_x'] = (line['1_x'] * this.props.width) / this.props.naturalWidth;
-            line['2_x'] = (line['2_x'] * this.props.width) / this.props.naturalWidth;
+            line['1_y'] = (line['1_y'] * this.props.height) / this.props.natHeight;
+            line['2_y'] = (line['2_y'] * this.props.height) / this.props.natHeight;
+            line['1_x'] = (line['1_x'] * this.props.width) / this.props.natWidth;
+            line['2_x'] = (line['2_x'] * this.props.width) / this.props.natWidth;
             items.push(<line
                 x1={line['1_x']}
                 y1={line['1_y']}
@@ -22,8 +29,8 @@ export class CoordDisplayWidget extends React.Component {
         }
         if (this.props.vanishingPointCoord !== null) {
             items.push(<circle
-                cx={(this.props.vanishingPointCoord.x * this.props.width) / this.props.naturalWidth}
-                cy={(this.props.vanishingPointCoord.y * this.props.height) / this.props.naturalHeight}
+                cx={(this.props.vanishingPointCoord.x * this.props.width) / this.props.natWidth}
+                cy={(this.props.vanishingPointCoord.y * this.props.height) / this.props.natHeight}
                 r='10'
             />);
         }
@@ -40,22 +47,39 @@ export class CoordDisplayWidget extends React.Component {
         );
     }
 }
-CoordDisplayWidget.propTypes = {
+
+function configAnalysisFV(parsedValue, height, width, natHeight, natWidth) {
+    const {
+        line_coords: lineCoords,
+        vanishing_point_coord: vanishingPointCoord,
+    } = parsedValue;
+    return (
+        <FVDisplayWidget
+            vanishingPointCoord={vanishingPointCoord}
+            lineCoords={lineCoords}
+            height={height}
+            width={width}
+            natHeight={natHeight}
+            natWidth={natWidth}
+        />
+    );
+}
+
+FVDisplayWidget.propTypes = {
     vanishingPointCoord: PropTypes.object,
     lineCoords: PropTypes.object,
     height: PropTypes.number,
     width: PropTypes.number,
-    naturalHeight: PropTypes.number,
-    naturalWidth: PropTypes.number,
+    natHeight: PropTypes.number,
+    natWidth: PropTypes.number,
 };
 
 export class FPDisplayWidget extends React.Component {
     render() {
         const items = [];
-        const ratio = this.props.width / this.props.naturalWidth;
+        const ratio = this.props.width / this.props.natWidth;
         for (let i = 0; i < this.props.blackPixels.length; i++) {
             const pixel = this.props.blackPixels[i];
-            console.log('HELLO' + (pixel[1] * this.props.height) / this.props.naturalHeight);
             items.push(<rect
                 y={pixel[0] * ratio}
                 x={pixel[1] * ratio}
@@ -76,64 +100,37 @@ export class FPDisplayWidget extends React.Component {
         );
     }
 }
-FPDisplayWidget.propTypes = {
-    percent: PropTypes.number,
-    blackPixels: PropTypes.array,
-    height: PropTypes.number,
-    width: PropTypes.number,
-    naturalHeight: PropTypes.number,
-    naturalWidth: PropTypes.number,
-};
 
-
-const SIDES = {
-    CLEANED: 'cleaned',
-    FRONT: 'front',
-    BACK: 'back',
-    BINDER: 'binder',
-};
-
-function configAnalysisFV(parsedValue, height, width, naturalHeight, naturalWidth) {
-    const {
-        line_coords: lineCoords,
-        vanishing_point_coord: vanishingPointCoord,
-    } = parsedValue;
-    return (
-        <CoordDisplayWidget
-            vanishingPointCoord={vanishingPointCoord}
-            lineCoords={lineCoords}
-            height={height}
-            width={width}
-            naturalHeight={naturalHeight}
-            naturalWidth={naturalWidth}
-        />
-    );
-}
-
-function configAnalysisFP(parsedValue, height, width, naturalHeight, naturalWidth) {
+function configAnalysisFP(parsedValue, height, width, natHeight, natWidth) {
     const {
         percent,
         mask: blackPixels,
     } = parsedValue;
-    console.log(height);
-    console.log(width);
     return (
         <FPDisplayWidget
             percent={percent}
             blackPixels={blackPixels}
             height={height}
             width={width}
-            naturalHeight={naturalHeight}
-            naturalWidth={naturalWidth}
+            natHeight={natHeight}
+            natWidth={natWidth}
         />
     );
 }
 
-const VISUALANALYSISDICT = {
+FPDisplayWidget.propTypes = {
+    percent: PropTypes.number,
+    blackPixels: PropTypes.array,
+    height: PropTypes.number,
+    width: PropTypes.number,
+    natHeight: PropTypes.number,
+    natWidth: PropTypes.number,
+};
+
+const VISUALANALYSES = {
     'find_vanishing_point': [configAnalysisFV, 1],
     'foreground_percentage': [configAnalysisFP, 2],
 };
-
 
 function formatPercentageValue(value) {
     return `${parseInt(value)}%`;
@@ -172,8 +169,8 @@ export class PhotoView extends React.Component {
             view: 0,
             width: 1,
             height: 1,
-            naturalWidth: 1,
-            naturalHeight: 1,
+            natWidth: 1,
+            natHeight: 1,
         };
         this.onImgLoad = this.onImgLoad.bind(this);
         this.photoRef = React.createRef();
@@ -216,15 +213,17 @@ export class PhotoView extends React.Component {
         this.setState({
             width: img.clientWidth,
             height: img.clientHeight,
-            naturalWidth: img.naturalWidth,
-            naturalHeight: img.naturalHeight,
+            natWidth: img.naturalWidth,
+            natHeight: img.naturalHeight,
         });
     }
 
     handleResize() {
-        console.log(this.photoRef.current);
         const img = this.photoRef.current;
-        console.log(img.getBoundingClientRect());
+        this.setState({
+            height: img.getBoundingClientRect()['height'],
+            width: img.getBoundingClientRect()['width'],
+        });
     }
 
     render() {
@@ -266,14 +265,14 @@ export class PhotoView extends React.Component {
                         {analyses.map((analysisResult) => {
                             const parsedValue = JSON.parse(analysisResult.result);
 
-                            if (analysisResult.name in VISUALANALYSISDICT) {
-                                if (VISUALANALYSISDICT[analysisResult.name][1] === this.state.view) {
-                                    return VISUALANALYSISDICT[analysisResult.name][0](
+                            if (analysisResult.name in VISUALANALYSES) {
+                                if (VISUALANALYSES[analysisResult.name][1] === this.state.view) {
+                                    return VISUALANALYSES[analysisResult.name][0](
                                         parsedValue,
                                         this.state.height,
                                         this.state.width,
-                                        this.state.naturalHeight,
-                                        this.state.naturalWidth,
+                                        this.state.natHeight,
+                                        this.state.natWidth,
                                     );
                                 }
                                 return null;
@@ -297,14 +296,15 @@ export class PhotoView extends React.Component {
                 <div className='image-info col-12 col-lg-6'>
                     <h5>Map Square</h5>
                     <p>{mapSquareNumber}</p>
-                    <h5>Photo number</h5>
+                    <h5>Photo Number</h5>
                     <p>{photoNumber}</p>
-                    <h5>Photographer name</h5>
+                    <h5>Photographer Name</h5>
                     <p>{photographerName || 'Unknown'}</p>
-                    <h5>Photographer number</h5>
+                    <h5>Photographer Number</h5>
                     <p>{photographerNumber || 'Unknown'}</p>
-                    <h5>Photographer caption</h5>
+                    <h5>Photographer Caption</h5>
                     <p>{photographerCaption || 'None'}</p>
+                    <h5>Visual Analysis</h5>
                     <div className="row">
                         <div className="col-6">
                             <select
@@ -313,30 +313,20 @@ export class PhotoView extends React.Component {
                                 onChange={this.toggleStatus}
                                 value={this.state.view}
                             >
-                                <option value="0">Select...</option>
+                                <option value="0">None selected</option>
                                 <option value="1">Perspective Lines</option>
                                 <option value="2">Foreground Mask</option>
                             </select>
+                            <br /><br />
                         </div>
                     </div>
-                    <p>
-                        {(() => {
-                            switch (this.state.view) {
-                            case 0: return 'Nothing selected';
-                            case 1: return 'Perspective selected';
-                            case 2: return 'Foreground selected';
-                            default: return 'Nothing selected';
-                            }
-                        })()}
-                        <br/>
-                    </p>
 
                     {analyses.map((analysisResult, index) => {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
                         const parsedValue = JSON.parse(analysisResult.result);
 
                         // handled in a different div
-                        if (analysisResult.name in VISUALANALYSISDICT) {
+                        if (analysisResult.name in VISUALANALYSES) {
                             return null;
                         }
 
