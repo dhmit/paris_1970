@@ -10,10 +10,8 @@ import React from 'react';
 import * as PropTypes from 'prop-types';
 import {
     Map as LeafletMap,
-    Marker,
     TileLayer,
     Popup,
-    Pane,
     Rectangle,
 } from 'react-leaflet';
 
@@ -30,7 +28,6 @@ class Map extends React.Component {
     }
 
     render() {
-        // Constrains map on page (WIP)
         return (
             <div id="mapContainer">
                 <LeafletMap
@@ -52,23 +49,21 @@ class Map extends React.Component {
                         attribution='&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    {/* Creates a rectangle. As of right now it just sits there */}
-                    <Pane name="cyan-rectangle" style={{ zIndex: 500 }}>
-                        <Rectangle bounds={[[48.5, 1], [48.7, 1.3]]} pathOptions={{ color: 'cyan' }} />
-                    </Pane>
+
                     {this.props.mapData.map((mapSquareData) => {
-                        // console.log(mapSquareData.number);
                         const index = mapSquareData.number;
                         const coords = mapSquareData.topLeftCoords;
                         const numberOfPhotos = mapSquareData.photos.length;
-                        const position = [coords.lat, coords.lng];
+                        const msbounds = [[(coords.lat - 0.001), (coords.lng - 0.001)],
+                                    [(coords.lat + 0.001), (coords.lng + 0.001)]];
                         const link = '/map_square/' + index;
                         return (
-                            <Marker key={index} position={position}>
-                                <Popup> Map square {index} <br />
+                            <Rectangle key={index} bounds={msbounds} pathOptions={{ color: 'cyan' }}>
+                                <Popup>
+                                    Map Square {index} <br />
                                     <a href={link}>{numberOfPhotos} photos to show</a>
                                 </Popup>
-                            </Marker>
+                            </Rectangle>
                         );
                     })}
                 </LeafletMap>
