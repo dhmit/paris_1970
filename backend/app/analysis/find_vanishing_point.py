@@ -103,10 +103,12 @@ def find_van_coord_intersections(lines):
         for j in range(i + 1, len(lines)):
             intersection = find_intersection_between_two_lines((lines[i], lines[j]))
             if intersection is not None:
-                (intX, intY) = intersection
                 found = False
                 for coord in intersections:
-                    distance = ((intX - coord[0]) ** 2 + (intY - coord[1]) ** 2) ** (1 / 2)
+                    # finds distance between current intersection and past intersections
+                    distance = ((intersection[0] - coord[0]) ** 2 + (intersection[1] - coord[1]) **
+                                2) ** (1
+                                                                                                / 2)
                     if distance < distance_tolerance:
                         intersections[coord].append(intersection)
                         found = True
