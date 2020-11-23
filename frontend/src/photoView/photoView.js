@@ -67,7 +67,7 @@ function configAnalysisFindVanishingPoint(parsedValue, height, width, natHeight,
 
 FindVanishingPointDisplayWidget.propTypes = {
     vanishingPointCoord: PropTypes.object,
-    lineCoords: PropTypes.object,
+    lineCoords: PropTypes.array,
     height: PropTypes.number,
     width: PropTypes.number,
     natHeight: PropTypes.number,
