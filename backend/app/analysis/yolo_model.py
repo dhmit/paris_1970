@@ -15,8 +15,8 @@ import os
 import numpy as np
 import cv2
 
-from ..models import Photo
 from django.conf import settings
+from ..models import Photo
 
 MODEL = Photo
 CONFIDENCE = 0.5
@@ -33,8 +33,8 @@ def load_yolo():
         Loads yolo model to analyze photo.
     """
     net = cv2.dnn.readNet(WEIGHTS, CONFIG)
-    with open(CLASS_NAMES, "r") as f:
-        classes = [line.strip() for line in f.readlines()]
+    with open(CLASS_NAMES, "r") as file:
+        classes = [line.strip() for line in file.readlines()]
     layers_names = net.getLayerNames()
     output_layers = [layers_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
     colors = np.random.uniform(0, 255, size=(len(classes), 3))
@@ -50,10 +50,10 @@ def create_box(detection, image_dimensions):
     center_x, center_y, box_width, box_height = box.astype("int")
 
     # Reformat box coordinates to top-left based from center based
-    x = int(center_x - (box_width / 2))
-    y = int(center_y - (box_height / 2))
+    x_coordinate = int(center_x - (box_width / 2))
+    y_coordinate = int(center_y - (box_height / 2))
 
-    return [x, y, int(box_width), int(box_height)]
+    return [x_coordinate, y_coordinate, int(box_width), int(box_height)]
 
 def analyze(photo: Photo):
     """
@@ -61,7 +61,7 @@ def analyze(photo: Photo):
         Returns a dictionary consisting of each object
         and its frequency in the photo
     """
-    net, labels, colors, output_layers = load_yolo()
+    net, labels = load_yolo()
 
     # Get image and image dimensions
     image = photo.get_image_data()
