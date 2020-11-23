@@ -11,7 +11,7 @@ const SIDES = {
     BINDER: 'binder',
 };
 
-export class FVDisplayWidget extends React.Component {
+export class FindVanishingPointDisplayWidget extends React.Component {
     render() {
         const items = [];
         let line;
@@ -48,13 +48,13 @@ export class FVDisplayWidget extends React.Component {
     }
 }
 
-function configAnalysisFV(parsedValue, height, width, natHeight, natWidth) {
+function configAnalysisFindVanishingPoint(parsedValue, height, width, natHeight, natWidth) {
     const {
         line_coords: lineCoords,
         vanishing_point_coord: vanishingPointCoord,
     } = parsedValue;
     return (
-        <FVDisplayWidget
+        <FindVanishingPointDisplayWidget
             vanishingPointCoord={vanishingPointCoord}
             lineCoords={lineCoords}
             height={height}
@@ -65,7 +65,7 @@ function configAnalysisFV(parsedValue, height, width, natHeight, natWidth) {
     );
 }
 
-FVDisplayWidget.propTypes = {
+FindVanishingPointDisplayWidget.propTypes = {
     vanishingPointCoord: PropTypes.object,
     lineCoords: PropTypes.object,
     height: PropTypes.number,
@@ -74,12 +74,11 @@ FVDisplayWidget.propTypes = {
     natWidth: PropTypes.number,
 };
 
-export class FPDisplayWidget extends React.Component {
+export class ForegroundPercentageDisplayWidget extends React.Component {
     render() {
         const items = [];
         const ratio = this.props.width / this.props.natWidth;
-        for (let i = 0; i < this.props.blackPixels.length; i++) {
-            const pixel = this.props.blackPixels[i];
+        for (const pixel of this.props.blackPixels) {
             items.push(<rect
                 y={pixel[0] * ratio}
                 x={pixel[1] * ratio}
@@ -101,13 +100,13 @@ export class FPDisplayWidget extends React.Component {
     }
 }
 
-function configAnalysisFP(parsedValue, height, width, natHeight, natWidth) {
+function configAnalysisForegroundPercentage(parsedValue, height, width, natHeight, natWidth) {
     const {
         percent,
         mask: blackPixels,
     } = parsedValue;
     return (
-        <FPDisplayWidget
+        <ForegroundPercentageDisplayWidget
             percent={percent}
             blackPixels={blackPixels}
             height={height}
@@ -118,7 +117,7 @@ function configAnalysisFP(parsedValue, height, width, natHeight, natWidth) {
     );
 }
 
-FPDisplayWidget.propTypes = {
+ForegroundPercentageDisplayWidget.propTypes = {
     percent: PropTypes.number,
     blackPixels: PropTypes.array,
     height: PropTypes.number,
@@ -127,9 +126,9 @@ FPDisplayWidget.propTypes = {
     natWidth: PropTypes.number,
 };
 
-const VISUALANALYSES = {
-    'find_vanishing_point': [configAnalysisFV, 1],
-    'foreground_percentage': [configAnalysisFP, 2],
+const VISUAL_ANALYSES = {
+    'find_vanishing_point': [configAnalysisFindVanishingPoint, 1],
+    'foreground_percentage': [configAnalysisForegroundPercentage, 2],
 };
 
 function formatPercentageValue(value) {
@@ -167,10 +166,10 @@ export class PhotoView extends React.Component {
             displaySide: '',
             availableSides: [],
             view: 0,
-            width: 1,
-            height: 1,
-            natWidth: 1,
-            natHeight: 1,
+            width: null,
+            height: null,
+            natWidth: null,
+            natHeight: null,
         };
         this.onImgLoad = this.onImgLoad.bind(this);
         this.photoRef = React.createRef();
@@ -265,10 +264,10 @@ export class PhotoView extends React.Component {
                         {analyses.map((analysisResult) => {
                             const parsedValue = JSON.parse(analysisResult.result);
 
-                            if (analysisResult.name in VISUALANALYSES
+                            if (analysisResult.name in VISUAL_ANALYSES
                                 && this.state.displaySide === 'cleaned') {
-                                if (VISUALANALYSES[analysisResult.name][1] === this.state.view) {
-                                    return VISUALANALYSES[analysisResult.name][0](
+                                if (VISUAL_ANALYSES[analysisResult.name][1] === this.state.view) {
+                                    return VISUAL_ANALYSES[analysisResult.name][0](
                                         parsedValue,
                                         this.state.height,
                                         this.state.width,
@@ -330,7 +329,7 @@ export class PhotoView extends React.Component {
                         const parsedValue = JSON.parse(analysisResult.result);
 
                         // handled in a different div
-                        if (analysisResult.name in VISUALANALYSES) {
+                        if (analysisResult.name in VISUAL_ANALYSES) {
                             return null;
                         }
 
