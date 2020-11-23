@@ -30,18 +30,18 @@ def analyze(photo: Photo):
     filter_lines = []
     # Filters out vertical and horizontal lines
     for line in lines[1]:
-        try:
-            point_1_x, point_1_y, point_2_x, point_2_y = line[0]
+        point_1_x, point_1_y, point_2_x, point_2_y = line[0]
 
+        # if line is not horizontal
+        if point_2_x != point_1_x:
             # find angle of line from horizontal
             theta = abs(np.arctan((point_2_y - point_1_y) / (point_2_x - point_1_x)))
 
-            # only put line in filter_lines if the angle is NOT within epsilon of
+            # only add line into filter_lines if the angle is NOT within epsilon of
             # horizontal/vertical
             epsilon = np.pi / 16
             if (
-                (point_2_x - point_1_x) != 0
-                and abs(theta - np.pi / 2) > 2 * epsilon
+                abs(theta - np.pi / 2) > 2 * epsilon
                 and theta > epsilon
             ):
                 filter_lines.append({
@@ -51,7 +51,7 @@ def analyze(photo: Photo):
                     '2_y': int(point_2_y),
                 })
 
-        except ZeroDivisionError:
+        else:
             pass
 
     van_point = find_van_coord_intersections(filter_lines)
@@ -60,6 +60,7 @@ def analyze(photo: Photo):
         'vanishing_point_coord': van_point,
         'line_coords': filter_lines,
     }
+
 
 def auto_canny(image):
     """
@@ -88,10 +89,11 @@ def find_van_coord_intersections(lines):
     :return: the average coordinate of the largest cluster of intersections
     """
     intersections = {}
-    tolerance = 30
-    # print(len(lines))
+    max_line_amount = 300
+    distance_tolerance = 30
     # return None if the image likely has many unnecessary lines (e.g. if there's a tree)
-    if len(lines) > 300 or len(lines) < 2:
+    # or if the image has less than 2 lines
+    if len(lines) > max_line_amount or len(lines) < 2:
         return None
 
     # For each pair of lines, finds the intersection and checks to see if it's within the tolerance
@@ -105,13 +107,14 @@ def find_van_coord_intersections(lines):
                 found = False
                 for coord in intersections:
                     distance = ((intX - coord[0]) ** 2 + (intY - coord[1]) ** 2) ** (1 / 2)
-                    if distance < tolerance:
+                    if distance < distance_tolerance:
                         intersections[coord].append(intersection)
                         found = True
                 if not found:
                     intersections[intersection] = [intersection]
     max_frequency = 0
     van_point_list = []
+
     # finds the largest cluster of intersections
     for coord in intersections:
         if len(intersections[coord]) > max_frequency:
@@ -121,6 +124,7 @@ def find_van_coord_intersections(lines):
     if max_frequency == 0:
         return None
     sum_point = [0, 0]
+
     # finds the average of all coordinates in the largest cluster
     for point in van_point_list:
         sum_point[0] += point[0]
@@ -128,7 +132,7 @@ def find_van_coord_intersections(lines):
 
     sum_point[0] = round(sum_point[0] / max_frequency)
     sum_point[1] = round(sum_point[1] / max_frequency)
-    # print(tuple(sum_point))
+
     return {
         'x': sum_point[0],
         'y': sum_point[1],
@@ -157,20 +161,20 @@ def find_intersection_between_two_lines(lines):
 
     # standard form of the line: ax + by + c = 0
 
-    x1_coeff = (line1_y_coord_2 - line1_y_coord_1) / (line1_x_coord_2 - line1_x_coord_1) * -1
-    x2_coeff = (line2_y_coord_2 - line2_y_coord_1) / (line2_x_coord_2 - line2_x_coord_1) * -1
+    x1_coefficient = (line1_y_coord_2 - line1_y_coord_1) / (line1_x_coord_2 - line1_x_coord_1) * -1
+    x2_coefficient = (line2_y_coord_2 - line2_y_coord_1) / (line2_x_coord_2 - line2_x_coord_1) * -1
 
-    if x1_coeff == x2_coeff:
+    if x1_coefficient == x2_coefficient:
         return None
 
-    standard_form_constant1 = -line1_y_coord_1 - x1_coeff * line1_x_coord_1
-    standard_form_constant2 = -line2_y_coord_1 - x2_coeff * line2_x_coord_1
+    standard_form_constant1 = -line1_y_coord_1 - x1_coefficient * line1_x_coord_1
+    standard_form_constant2 = -line2_y_coord_1 - x2_coefficient * line2_x_coord_1
 
-    intersection_x = (standard_form_constant2 - standard_form_constant1) / (x1_coeff - x2_coeff)
-    intersection_y = -x1_coeff * intersection_x - standard_form_constant1
+    intersection_x = (standard_form_constant2 - standard_form_constant1) \
+        / (x1_coefficient - x2_coefficient)
+    intersection_y = -x1_coefficient * intersection_x - standard_form_constant1
 
     return intersection_x, intersection_y
-
 
 # THESE ARE UNUSED FUNCTIONS THAT MIGHT BE HELPFUL FOR FUTURE PROJECTS #
 
@@ -206,7 +210,7 @@ def find_intersection_between_two_lines(lines):
 #         min_coord = (0, 0)
 #         for coord in coords_to_dists_from_lines: # find coord with minimum distance sum to lines
 #             if coords_to_dists_from_lines[coord] <= coords_to_dists_from_lines[min_coord]:
-#                 # will always include (0,0) so no keyerrors
+#                 # will always include (0,0) so no key errors
 #                 min_coord = coord
 #         return (min_coord, coords_to_dists_from_lines[min_coord])
 #     return (0, 0), 0
