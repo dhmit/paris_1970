@@ -61,7 +61,7 @@ def analyze(photo: Photo):
         Returns a dictionary consisting of each object
         and its frequency in the photo
     """
-    net, labels = load_yolo()
+    net, labels, colors, output_layers = load_yolo()
 
     # Get image and image dimensions
     image = photo.get_image_data()
