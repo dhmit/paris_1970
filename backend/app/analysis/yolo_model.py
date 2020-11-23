@@ -29,6 +29,9 @@ CLASS_NAMES = os.path.join(settings.YOLO_DIR, 'coco.names')
 
 
 def load_yolo():
+    """
+        Loads yolo model to analyze photo.
+    """
     net = cv2.dnn.readNet(WEIGHTS, CONFIG)
     with open(CLASS_NAMES, "r") as f:
         classes = [line.strip() for line in f.readlines()]
@@ -39,6 +42,9 @@ def load_yolo():
 
 
 def create_box(detection, image_dimensions):
+    """
+       Creates box around detected objects.
+    """
     image_height, image_width = image_dimensions
     box = detection[0:4] * np.array([image_width, image_height, image_width, image_height])
     center_x, center_y, box_width, box_height = box.astype("int")
@@ -50,6 +56,11 @@ def create_box(detection, image_dimensions):
     return [x, y, int(box_width), int(box_height)]
 
 def analyze(photo: Photo):
+    """
+        Uses yolo model to detect objects within photos
+        Returns a dictionary consisting of each object
+        and its frequency in the photo
+    """
     net, labels, colors, output_layers = load_yolo()
 
     # Get image and image dimensions
