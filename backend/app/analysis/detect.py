@@ -3,7 +3,7 @@ import numpy
 import torch
 import argparse
 import cv2
-from detect_utils import detect_utils
+from .detect_utils import *
 from PIL import Image
 
 
