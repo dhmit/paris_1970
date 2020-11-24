@@ -64,7 +64,6 @@ def analyze(photo: Photo):
     yolo_model = load_yolo()
     net = yolo_model[0]
     labels = yolo_model[1]
-    
     # Get image and image dimensions
     image = photo.get_image_data()
     image_dimensions = image.shape[:2]

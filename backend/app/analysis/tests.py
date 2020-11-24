@@ -271,6 +271,4 @@ class AnalysisTestBase(TestCase):
             print(f'Mean Detail performed on {image}. Result: {result}')
             self.assertEqual(expected_values[image], int(result))
 
-    def test_rcnn_model(self):
-        result = rcnn_model.analyze()
-        pass
+    
