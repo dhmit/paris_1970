@@ -85,7 +85,7 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
             sorted_analysis_obj = sorted(
                 analysis_obj, key=lambda instance: instance.parsed_result()
             )
-        elif type(test_obj) is dict and object_name:
+        elif isinstance(test_obj,dict) and object_name:
             relevant_objects = [
                 instance for instance in analysis_obj if object_name in instance.parsed_result()
             ]
