@@ -13,11 +13,11 @@ from PIL import Image
 
 
 # construct the argument parser
-parser = argparse.ArgumentParser()
+'''parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--input', help='path to input image/video')
 parser.add_argument('-m', '--min-size', dest='min_size', default=800,
                     help='minimum input size for the FasterRCNN network')
-args = vars(parser.parse_args())
+args = vars(parser.parse_args())'''
 
 #this is from coco_names.py, should delete it after fixing the issue for it's bad practice
 coco_names = [
@@ -74,7 +74,7 @@ def predict(photo:Photo,model,device,detection_threshold=0):
 def analyze(photo:Photo):
     try:
         model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True,
-                                                                 min_size=args['min_size'])
+                                                                 min_size=1080)
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         return predict(photo, model, device, detection_threshold = 0)
     except Exception as err:
@@ -82,29 +82,7 @@ def analyze(photo:Photo):
 
 
 # for reference (past wrong implementation of analyze with multi args
-'''def analyze_fake(photo: Photo, model, device, detection_threshold=0):
-    image = photo.get_image_data()
-    image_dimensions = image.shape[:2]
-    input_image = image
-    # transform the image to tensor
-    image = transform(image).to(device)
-    image = image.unsqueeze(0) # add a batch dimension
-    outputs = model(image) # get the predictions on the image
-    # print the results individually
-    # print(f"BOXES: {outputs[0]['boxes']}")
-    print(f"LABELS: {outputs[0]['labels']}")
-    # print(f"SCORES: {outputs[0]['scores']}")
-    # get all the predicted class names
-    pred_classes = [coco_names[i] for i in outputs[0]['labels'].cpu().numpy()]
-    print('predicted classes: ', pred_classes)
-    # get score for all the predicted objects
-    pred_scores = outputs[0]['scores'].detach().cpu().numpy()
-    # get all the predicted bounding boxes
-    pred_bboxes = outputs[0]['boxes'].detach().cpu().numpy()
-    # get boxes above the threshold score
-    boxes = pred_bboxes[pred_scores >= detection_threshold].astype(np.int32)
-    # return boxes, pred_classes, outputs[0]['labels']
-    return pred_classes'''
+
 
 
 # might not need it for this project but just in case
