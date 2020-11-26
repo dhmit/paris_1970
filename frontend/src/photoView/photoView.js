@@ -11,6 +11,7 @@ const SIDES = {
     BINDER: 'binder',
 };
 
+const photoArray = [];
 
 function formatPercentageValue(value) {
     return `${parseInt(value)}%`;
@@ -39,6 +40,8 @@ export class PhotoView extends React.Component {
             displaySide: '',
             availableSides: [],
             mapData: null,
+            prevLink: null,
+            nextLink: null,
         };
     }
 
@@ -79,8 +82,15 @@ export class PhotoView extends React.Component {
         this.setState({ displaySide: displaySide });
     };
 
+    setLinks = (prevLink, nextLink) => {
+        this.setState({
+            prevLink: prevLink,
+            nextLink: nextLink,
+        });
+    }
+
     render() {
-        if (this.state.loading && !this.state.mapData) {
+        if (this.state.loading || !this.state.mapData) {
             return (<h1>
                 Loading!
             </h1>);
@@ -100,8 +110,19 @@ export class PhotoView extends React.Component {
             analyses,
         } = this.state.photoData;
 
-        console.log(this.state.mapData);
-
+        if (photoArray.length === 0) {
+            for (const mapSquare of this.state.mapData) {
+                for (const photoData of mapSquare.photos) {
+                    let url = window.location.origin;
+                    url += `/photo/${photoData.map_square_number}/${photoData.number}/`;
+                    photoArray.push(url);
+                }
+            }
+            const idx = photoArray.indexOf(window.location.href);
+            const prevLink = photoArray[(idx - 1) % photoArray.length];
+            const nextLink = photoArray[(idx + 1) % photoArray.length];
+            this.setLinks(prevLink, nextLink);
+        }
         return (<>
             <Navbar />
             <div className="page row">
@@ -129,6 +150,8 @@ export class PhotoView extends React.Component {
                     <p>{photographerNumber || 'Unknown'}</p>
                     <h5>Photographer caption</h5>
                     <p>{photographerCaption || 'None'}</p>
+                    <a href={this.state.prevLink}>{this.state.prevLink}</a><br/>
+                    <a href={this.state.nextLink}>{this.state.nextLink}</a>
                     {analyses.map((analysisResult, index) => {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
                         const parsedValue = JSON.parse(analysisResult.result);
