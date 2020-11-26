@@ -38,6 +38,7 @@ export class PhotoView extends React.Component {
             photoData: null,
             displaySide: '',
             availableSides: [],
+            mapData: null,
         };
     }
 
@@ -62,6 +63,16 @@ export class PhotoView extends React.Component {
         } catch (e) {
             console.log(e);
         }
+        try {
+            const mapResponse = await fetch('/api/all_map_squares/');
+            const mapData = await mapResponse.json();
+            this.setState({
+                mapData,
+                loading: false,
+            });
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     changeSide = (displaySide) => {
@@ -69,7 +80,7 @@ export class PhotoView extends React.Component {
     };
 
     render() {
-        if (this.state.loading) {
+        if (this.state.loading && !this.state.mapData) {
             return (<h1>
                 Loading!
             </h1>);
@@ -88,6 +99,8 @@ export class PhotoView extends React.Component {
             photographer_caption: photographerCaption,
             analyses,
         } = this.state.photoData;
+
+        console.log(this.state.mapData);
 
         return (<>
             <Navbar />
