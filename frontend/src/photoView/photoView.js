@@ -125,6 +125,12 @@ export class PhotoView extends React.Component {
         }
         return (<>
             <Navbar />
+            <div className= 'top-button row'>
+                    <div className='center'>
+                            <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
+                            <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
+                    </div>
+            </div>
             <div className="page row">
                 <div className='image-view col-12 col-lg-6'>
                     <img
@@ -172,7 +178,7 @@ export class PhotoView extends React.Component {
                         );
                     })}
                 </div>
-                <div className="center">
+                <div className='center'>
                     <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
                     <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
                 </div>
