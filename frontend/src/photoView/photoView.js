@@ -150,8 +150,6 @@ export class PhotoView extends React.Component {
                     <p>{photographerNumber || 'Unknown'}</p>
                     <h5>Photographer caption</h5>
                     <p>{photographerCaption || 'None'}</p>
-                    <a href={this.state.prevLink}>{this.state.prevLink}</a><br/>
-                    <a href={this.state.nextLink}>{this.state.nextLink}</a>
                     {analyses.map((analysisResult, index) => {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
                         const parsedValue = JSON.parse(analysisResult.result);
@@ -173,6 +171,10 @@ export class PhotoView extends React.Component {
                             </React.Fragment>
                         );
                     })}
+                </div>
+                <div className="center">
+                    <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
+                    <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
                 </div>
             </div>
             <Footer />
