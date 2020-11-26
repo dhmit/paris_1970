@@ -37,7 +37,7 @@ export class FindVanishingPointDisplayWidget extends React.Component {
         return (
             <div>
                 <svg
-                    className='analysis-overlay floatTL'
+                    className='analysis-overlay positionTopLeft'
                     height={this.props.height}
                     width={this.props.width}
                 >
@@ -89,7 +89,7 @@ export class ForegroundPercentageDisplayWidget extends React.Component {
         return (
             <div>
                 <svg
-                    className='analysis-overlay floatTL'
+                    className='analysis-overlay positionTopLeft'
                     height={this.props.height}
                     width={this.props.width}
                 >
@@ -254,7 +254,7 @@ export class PhotoView extends React.Component {
                 <div className='image-view col-12 col-lg-6'>
                     <div>
                         <img
-                            className='image-photo floatTL'
+                            className='image-photo positionTopLeft'
                             src={this.state.photoData[`${this.state.displaySide}_src`]}
                             alt={alt}
                             onLoad={this.onImgLoad}

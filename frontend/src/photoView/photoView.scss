@@ -2,22 +2,22 @@
     width: 100%;
 }
 line {
-    stroke:rgb(255,0,0);
-    stroke-width:1;
+    stroke: red;
+    stroke-width: 1;
 }
 
-.floatTL {
- position:absolute;
-    top:0px;
-    left:0px;
+.positionTopLeft {
+    position: absolute;
+    top: 0px;
+    left: 0px;
 }
 
 circle {
-    stroke:cyan;
-    stroke-width:2;
-    fill:none;
+    stroke: cyan;
+    stroke-width: 2;
+    fill: none;
 }
 
 rect {
-    fill:black;
+    fill: black;
 }
