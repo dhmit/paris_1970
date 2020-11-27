@@ -196,6 +196,18 @@ class AnalysisTestBase(TestCase):
         far_building_result = combined_indoor.analyze(photo_far_building)
         self.assertEqual(False, far_building_result)
 
+    def test_yolo_model_object_detection(self):
+        """
+        Testing images for object detection tasks using the Yolo model
+        :return: boolean statements from assertions
+        """
+        photo_with_people = self.add_photo('test_portrait_detection_true')
+        photo_of_nothing = self.add_photo('100x100-GreySquare')
+        result_with_people = yolo_model.analyze(photo_with_people)
+        result_with_nothing = yolo_model.analyze(photo_of_nothing)
+        self.assertIsNotNone(result_with_people,msg="this is a portrait, should detect people")
+        self.assertIsNone(result_with_nothing,msg="this is an empty photo, shouldn't have anything")
+
     def test_stdev(self):
         """
         Test Standard Deviation analysis (stdev.py)
