@@ -70,8 +70,8 @@ def analyze(photo: Photo):
     input_image = image # cv2.resize(image, (416, 416))
 
     # Determine only the *output* layer names that we need from YOLO
-    layer_names = net.getLayerNames()
-    layer_names = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
+    # layer_names = net.getLayerNames()
+    layer_names = [net.getLayerNames()[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
     # Construct a blob from the input image
     blob = cv2.dnn.blobFromImage(input_image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
@@ -111,8 +111,5 @@ def analyze(photo: Photo):
     # Loop over the indexes we are keeping
     for i in indexes.flatten():
         object_class = labels[class_ids[i]]
-        if object_class in result:
-            result[object_class] += 1
-        else:
-            result[object_class] = 1
+        result[object_class] = result.get(object_class,0) + 1
     return result
