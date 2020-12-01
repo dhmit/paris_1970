@@ -113,17 +113,16 @@ def analyze(photo: Photo):
     # Loop over the indexes we are keeping
     for i in indexes.flatten():
         object_class = labels[class_ids[i]]
-        # rect_coord = create_box(i, image_dimensions)
+        rect_coord = boxes[i]
         if object_class not in result:
             result[object_class] = []
-        # result[object_class].append(
-        #     {
-        #         "x_coord": rect_coord[0],
-        #         "y_coord": rect_coord[1],
-        #         "width": rect_coord[2],
-        #         "height": rect_coord[3],
-        #
-        #     }
-        # )
-        print(i)
+        result[object_class].append(
+            {
+                "x_coord": rect_coord[0],
+                "y_coord": rect_coord[1],
+                "width": rect_coord[2],
+                "height": rect_coord[3],
+
+            }
+        )
     return result
