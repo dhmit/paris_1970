@@ -53,12 +53,8 @@ def create_box(detection, image_dimensions):
     x_coordinate = int(center_x - (box_width / 2))
     y_coordinate = int(center_y - (box_height / 2))
 
-    return {
-        "x_coord": x_coordinate,
-        "y_coord": y_coordinate,
-        "width": int(box_width),
-        "height": int(box_height),
-        }
+    return [x_coordinate, y_coordinate, int(box_width), int(box_height)]
+
 
 
 def analyze(photo: Photo):
@@ -108,8 +104,7 @@ def analyze(photo: Photo):
 
     # Apply non-maxima suppression to suppress weak, overlapping bounding boxes
     indexes = cv2.dnn.NMSBoxes(boxes, confidences, CONFIDENCE, THRESHOLD)
-
-    if len(indexes) == 0:
+    if indexes is None or len(indexes) == 0:
         return {}
 
     # Get quantity of detected objects in the image based on indexes
@@ -118,9 +113,17 @@ def analyze(photo: Photo):
     # Loop over the indexes we are keeping
     for i in indexes.flatten():
         object_class = labels[class_ids[i]]
-        rect_coord = create_box(i, image_dimensions)
+        # rect_coord = create_box(i, image_dimensions)
         if object_class not in result:
             result[object_class] = []
-        result[object_class].append(rect_coord)
-
+        # result[object_class].append(
+        #     {
+        #         "x_coord": rect_coord[0],
+        #         "y_coord": rect_coord[1],
+        #         "width": rect_coord[2],
+        #         "height": rect_coord[3],
+        #
+        #     }
+        # )
+        print(i)
     return result
