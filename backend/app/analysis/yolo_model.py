@@ -53,7 +53,13 @@ def create_box(detection, image_dimensions):
     x_coordinate = int(center_x - (box_width / 2))
     y_coordinate = int(center_y - (box_height / 2))
 
-    return [x_coordinate, y_coordinate, int(box_width), int(box_height)]
+    return {
+        "x_coord": x_coordinate,
+        "y_coord": y_coordinate,
+        "width": int(box_width),
+        "height": int(box_height),
+        }
+
 
 def analyze(photo: Photo):
     """
@@ -108,8 +114,13 @@ def analyze(photo: Photo):
 
     # Get quantity of detected objects in the image based on indexes
     result = {}
+
     # Loop over the indexes we are keeping
     for i in indexes.flatten():
         object_class = labels[class_ids[i]]
-        result[object_class] = result.get(object_class,0) + 1
+        rect_coord = create_box(i, image_dimensions)
+        if object_class not in result:
+            result[object_class] = []
+        result[object_class].append(rect_coord)
+
     return result
