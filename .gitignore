@@ -162,3 +162,5 @@ backend/app/analysis/analysis_results/
 # Locally cached photos
 backend/data/local_photos/
 
+backend/app/analysis/yolo_files/yolov3.weights
+backend/app/analysis/yolo_files/yolov3.weights

@@ -122,7 +122,6 @@ def analyze(photo: Photo):
                 "y_coord": rect_coord[1],
                 "width": rect_coord[2],
                 "height": rect_coord[3],
-
             }
         )
     return result

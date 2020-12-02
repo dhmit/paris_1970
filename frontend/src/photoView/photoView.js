@@ -126,9 +126,47 @@ ForegroundPercentageDisplayWidget.propTypes = {
     natWidth: PropTypes.number,
 };
 
+export class YoloModelDisplayWidget extends React.Component {
+    render() {
+        const items = [];
+        console.log('do something to items here');
+        return (
+            <div>
+                <svg
+                    className='analysis-overlay positionTopLeft'
+                    height={this.props.height}
+                    width={this.props.width}
+                >
+                    {items}
+                </svg>
+            </div>
+        );
+    }
+}
+
+function configAnalysisYoloModel(parsedValue, height, width, natHeight, natWidth) {
+    console.log(parsedValue);
+    return (
+        <YoloModelDisplayWidget
+            height={height}
+            width={width}
+            natHeight={natHeight}
+            natWidth={natWidth}
+        />
+    );
+}
+
+YoloModelDisplayWidget.propTypes = {
+    height: PropTypes.number,
+    width: PropTypes.number,
+    natHeight: PropTypes.number,
+    natWidth: PropTypes.number,
+};
+
 const VISUAL_ANALYSES = {
     'find_vanishing_point': [configAnalysisFindVanishingPoint, 1],
     'foreground_percentage': [configAnalysisForegroundPercentage, 2],
+    'yolo_model': [configAnalysisYoloModel, 3],
 };
 
 function formatPercentageValue(value) {
@@ -317,6 +355,7 @@ export class PhotoView extends React.Component {
                                     <option value="0">None selected</option>
                                     <option value="1">Perspective Lines</option>
                                     <option value="2">Foreground Mask</option>
+                                    <option value="3">YOLO Model</option>
                                 </select>
                                 : <p>Not available</p>
                             }
