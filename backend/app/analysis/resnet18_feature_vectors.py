@@ -30,9 +30,9 @@ def analyze(photo: Photo):
     dir_path.mkdir(parents=True, exist_ok=True)
     out_path = Path(dir_path, f'{photo.number}.pt')
 
-    if out_path.exists():
-        # don't recompute -- if you need to, delete the serialized version
-        return None
+    # if out_path.exists():
+    #     # don't recompute -- if you need to, delete the serialized version
+    #     return None
 
     # Load the image using Pillow
     image = photo.get_image_data(use_pillow=True)
@@ -43,7 +43,8 @@ def analyze(photo: Photo):
     # Load the pretrained model, set to evaluation mode, and select the desired layer
     model = models.resnet18(pretrained=True)
     model.eval()
-    layer = model._modules.get('avgpool')
+    layer_name = 'avgpool'
+    layer = model._modules.get(layer_name)
 
     # Transform the image and save it to a PyTorch Variable
     scale = transforms.Resize((224, 224))
@@ -55,10 +56,22 @@ def analyze(photo: Photo):
     # Create a vector of zeros that will hold our feature vector
     # NOTE(ra): this is a hack until I figure out what's going on: should be torch.zeros(512)
     # not (1, 512, 1, 512), but the vector I'm copying in is the wrong size...
-    feature_vector = torch.zeros(1, 512, 1, 512)
+    get_feature_vector = {'conv1': torch.zeros(1, 64, 112, 112),
+                          'bn1': torch.zeros(1, 64, 112, 112),
+                          'relu': torch.zeros(1, 64, 112, 112),
+                          'maxpool': torch.zeros(1, 64, 56, 56),
+                          'layer1': torch.zeros(1, 64, 56, 56),
+                          'layer2': torch.zeros(1, 128, 28, 28),
+                          'layer3': torch.zeros(1, 256, 14, 14),
+                          'layer4': torch.zeros(1, 512, 7, 7),
+                          'avgpool': torch.zeros(1, 512, 1, 512),
+                          'fc': torch.zeros(1, 1000, 1, 1000)}
+    feature_vector = get_feature_vector[layer_name]
 
     # Define a function that will copy the output of a layer
     def copy_data(m, i, o):
+        # print(len(o[0]))
+        # print(o[0])
         feature_vector.copy_(o.data)
 
     # Attach that function to our selected layer
