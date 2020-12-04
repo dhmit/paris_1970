@@ -1,5 +1,5 @@
 """
-photo_similarity.py
+similarity_utils.py
 
 Utility functions for each of the photo similarity analyses
 """

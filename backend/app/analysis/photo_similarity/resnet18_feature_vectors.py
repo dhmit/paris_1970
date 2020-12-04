@@ -66,12 +66,11 @@ def analyze(photo: Photo):
                           'layer4': torch.zeros(1, 512, 7, 7),
                           'avgpool': torch.zeros(1, 512, 1, 512),
                           'fc': torch.zeros(1, 1000, 1, 1000)}
+
     feature_vector = get_feature_vector[layer_name]
 
     # Define a function that will copy the output of a layer
     def copy_data(m, i, o):
-        # print(len(o[0]))
-        # print(o[0])
         feature_vector.copy_(o.data)
 
     # Attach that function to our selected layer
