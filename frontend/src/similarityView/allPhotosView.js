@@ -10,6 +10,7 @@ const SIDES = {
     BINDER: 'binder',
 };
 
+// TODO: fix similarityView, photos don't show
 
 export class AllPhotosView extends React.Component {
     constructor(props) {
@@ -23,7 +24,7 @@ export class AllPhotosView extends React.Component {
 
     async componentDidMount() {
         try {
-            const apiURL = '/api/similarity';
+            const apiURL = '/api/all_photos';
             const response = await fetch(apiURL);
             if (!response.ok) {
                 this.setState({ loading: false });
@@ -70,13 +71,13 @@ export class AllPhotosView extends React.Component {
         }
 
         const photos = this.state.photoData.map((photo, k) => {
-            const currentAnalysis = photo['analyses'].filter(
+            /* const currentAnalysis = photo['analyses'].filter(
                 (analysisObject) => analysisObject.name === 'resnet18_cosine_similarity',
-            )[0];
+            )[0]; */
             return (
                 <a
                     key={k}
-                    title={currentAnalysis.result}
+                    title={`Map Square: ${photo['map_square_number']},\nPhoto: ${photo['number']}`}
                     href={`/similar_photos/${photo['map_square_number']}/${photo['number']}/`}
                 >
                     <img
