@@ -6,8 +6,6 @@ from torch import nn
 
 from app.models import Photo
 from app.analysis.photo_similarity import similarity_utils
-from similarity_utils import analyze_similarity
-
 
 MODEL = Photo
 
@@ -16,7 +14,7 @@ def analyze(photo: Photo):
     """
     Produce a list of all other photos by cosine similarity to this photo's feature vector
     """
-    similarities = analyze_similarity(photo, mean_squares)
+    similarities = similarity_utils.analyze_similarity(photo, mean_squares)
     similarities.sort(key=lambda x: x[2], reverse=True)
     return similarities
 
