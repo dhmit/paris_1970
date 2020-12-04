@@ -129,7 +129,27 @@ ForegroundPercentageDisplayWidget.propTypes = {
 export class YoloModelDisplayWidget extends React.Component {
     render() {
         const items = [];
-        console.log('do something to items here');
+        let box;
+        const ratio = this.props.height / this.props.natHeight;
+        for (box of this.props.boxes) {
+            items.push(
+                <text
+                    className='label'
+                    x = {box['x_coord'] * ratio}
+                    y = {box['y_coord'] * ratio - 5}
+                >
+                    {box['label']}
+                </text>,
+                <rect
+                    className = 'boundingBox'
+                    x = {box['x_coord'] * ratio}
+                    y = {box['y_coord'] * ratio}
+                    height = {box['height'] * ratio}
+                    width = {box['width'] * ratio}
+                />,
+            );
+        }
+
         return (
             <div>
                 <svg
@@ -145,9 +165,10 @@ export class YoloModelDisplayWidget extends React.Component {
 }
 
 function configAnalysisYoloModel(parsedValue, height, width, natHeight, natWidth) {
-    console.log(parsedValue);
+    const {boxes, labels} = parsedValue;
     return (
         <YoloModelDisplayWidget
+            boxes={boxes}
             height={height}
             width={width}
             natHeight={natHeight}
@@ -157,6 +178,7 @@ function configAnalysisYoloModel(parsedValue, height, width, natHeight, natWidth
 }
 
 YoloModelDisplayWidget.propTypes = {
+    boxes: PropTypes.array,
     height: PropTypes.number,
     width: PropTypes.number,
     natHeight: PropTypes.number,
@@ -208,6 +230,7 @@ export class PhotoView extends React.Component {
             height: null,
             natWidth: null,
             natHeight: null,
+            labels: null,
         };
         this.onImgLoad = this.onImgLoad.bind(this);
         this.photoRef = React.createRef();

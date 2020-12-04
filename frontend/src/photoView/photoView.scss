@@ -21,3 +21,14 @@ circle {
 rect {
     fill: black;
 }
+
+.boundingBox {
+    fill: none !important;
+    stroke: cyan;
+    stroke-width: 2;
+}
+
+.label {
+    fill: white;
+    font-size: 17px;
+}
