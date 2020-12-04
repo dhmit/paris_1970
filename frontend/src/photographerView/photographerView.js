@@ -4,19 +4,24 @@ import * as PropTypes from 'prop-types';
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
+const percentFormat = (x) => Math.floor(x) + '%';
+const numberFormat = (x) => Math.floor(x);
 
 const ANALYSIS = {
     whitespace_percentage: {
         displayName: 'Average Whitespace Percentage',
         analysisType: 'average',
+        displayFormat: percentFormat,
     },
     portrait_detection: {
         displayName: 'Percentage of Portraits',
         analysisType: 'count',
+        displayFormat: percentFormat,
     },
     mean_detail: {
         displayName: 'Average Mean Detail',
         analysisType: 'average',
+        displayFormat: numberFormat,
     },
 };
 
@@ -67,11 +72,13 @@ export class PhotographerView extends React.Component {
         const results = {};
         Object.keys(analysisAcc).forEach((analysisName) => {
             const analysisType = ANALYSIS[analysisName].analysisType;
+            let result;
             if (analysisType === 'average') {
-                results[analysisName] = analysisAcc[analysisName] / photos.length;
+                result = analysisAcc[analysisName] / photos.length;
             } else if (analysisType === 'count') {
-                results[analysisName] = analysisAcc[analysisName];
+                result = analysisAcc[analysisName];
             }
+            results[analysisName] = ANALYSIS[analysisName].displayFormat(result);
         });
         return results;
     };
