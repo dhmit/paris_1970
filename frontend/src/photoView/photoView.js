@@ -165,7 +165,10 @@ export class YoloModelDisplayWidget extends React.Component {
 }
 
 function configAnalysisYoloModel(parsedValue, height, width, natHeight, natWidth) {
-    const {boxes, labels} = parsedValue;
+    let boxes = [];
+    if ('boxes' in parsedValue) {
+        boxes = parsedValue['boxes'];
+    }
     return (
         <YoloModelDisplayWidget
             boxes={boxes}
@@ -391,6 +394,29 @@ export class PhotoView extends React.Component {
                         const parsedValue = JSON.parse(analysisResult.result);
 
                         // handled in a different div
+                        if (analysisResult.name === 'yolo_model') {
+                            let labels = [];
+                            if ('labels' in parsedValue) {
+                                labels = parsedValue['labels'];
+                            } else {
+                                return (
+                                    <React.Fragment>
+                                        <h5>Objects Detected</h5>
+                                        <p>None</p>
+                                    </React.Fragment>
+                                );
+                            }
+                            return (
+                                <React.Fragment>
+                                    <h5>Objects Detected</h5>
+                                    <ul>
+                                        {Object.keys(labels).map((key, i) => (
+                                            <li key={i}>{key}: {labels[key]}</li>
+                                        ))}
+                                    </ul>
+                                </React.Fragment>
+                            );
+                        }
                         if (analysisResult.name in VISUAL_ANALYSES) {
                             return null;
                         }
