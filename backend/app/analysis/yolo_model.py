@@ -109,17 +109,17 @@ def analyze(photo: Photo):
 
     # Get quantity of detected objects in the image based on indexes
     result = []
-    labels = {}
+    classes = {}
 
     # Loop over the indexes we are keeping
     for i in indexes.flatten():
         object_class = labels[class_ids[i]]
         rect_coord = boxes[i]
 
-        if object_class in labels:
-            labels[object_class] += 1
+        if object_class in classes:
+            classes[object_class] += 1
         else:
-            labels[object_class] = 1
+            classes[object_class] = 1
 
         result.append(
             {
@@ -132,5 +132,5 @@ def analyze(photo: Photo):
         )
     return {
         "boxes": result,
-        "labels": labels,
+        "labels": classes,
     }
