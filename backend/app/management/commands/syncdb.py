@@ -8,6 +8,7 @@ Syncs local db with data from project Google Sheet
 import io
 import pickle
 import os
+import csv
 from textwrap import dedent
 from pathlib import Path
 

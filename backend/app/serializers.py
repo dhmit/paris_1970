@@ -71,7 +71,7 @@ class MapSquareSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MapSquare
-        fields = ['id', 'photos', 'boundaries', 'name', 'number', 'rough_coords']
+        fields = ['id', 'photos', 'boundaries', 'name', 'number', 'coordinates']
 
 
 class PhotographerSerializer(serializers.ModelSerializer):
