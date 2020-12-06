@@ -34,6 +34,10 @@ with open('Map_Page_Input.csv') as input:
             current_ms = int(row[1]) # Defines the current map square
             # Splits the map page into a 5 x 4 grid and assigns coordinates of map square by
             # referring to the changes in latitude and longitude within the grid
+
+
+            # TODO: FIND A WAY TO POPULATE MAP PAGES CORRECTLY
+            # Currently, each map page is inverted vertically and horizontally
             for y in range(0, 5, -1):
                 current_ms_lat = top_right_lat + (y * ms_delta_lat)
                 for x in range(0, 4, -1):
