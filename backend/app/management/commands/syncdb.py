@@ -202,10 +202,20 @@ def populate_database(
     :param photo_url_lookup: Dictionary of map square folders in the form of a dictionary
     """
     # pylint: disable=too-many-locals
-    # TODO: Find a way to make sure the spreadsheet is sorted beforehand, as the method used to
-    #  create the absent models is reliant on the spreadsheet being sorted.
     if model_name == "MapSquare":
         map_square_count = 1
+
+        # Opens Map_Page_Output.csv and creates a dictionary with the map square
+        # number as the key and the coordinates as the value
+        mp_coords_csv = open('data/Map_Page_Output.csv')
+        mp_coords_reader = csv.reader(mp_coords_csv, delimiter=' ')
+        mp_coords_dict = {}
+        for line in mp_coords_reader:
+            line = line[0].split(',')
+            try:
+                mp_coords_dict[int(line[0])] = line[1] + ", " + line[2]
+            except:
+                continue
 
     for row in values_as_a_dict:
         # Filter column headers for model fields
@@ -234,22 +244,17 @@ def populate_database(
                         value = bool(value)
                     else:
                         continue
-                # If the map square is in the spreadsheet but does not have assigned coordinates,
-                # set default coordinates to 0.0,0.0 (outside of the map boundaries)
 
-                # If a user returns and adds rough coordinates to the spreadsheet, the rough
-                # coordinates of the map square will automatically update when syncdb is called
-                # and the popup will appear on the map
-                elif header == 'rough_coords':
-                    if not row.get(header):
-                        value = '0.0, 0.0'
                 model_kwargs[header] = value
 
-        # If rough_coords doesn't show up as a field for a MapSquare, adds the field and '0.0,
-        # 0.0' as the default
-        if len(model_kwargs) != 0 and model_name == 'MapSquare' and 'rough_coords' not in \
-            row.keys():
-            model_kwargs['rough_coords'] = '0.0, 0.0'
+        # Loads the appropriate coordinates from the CSV into the map Square
+        # model. If they aren't there, it sets the coordinates into the default
+        # values: '0.0, 0.0'
+        if len(model_kwargs) != 0 and model_name == 'MapSquare':
+            if model_kwargs['number'] in mp_coords_dict.keys():
+                model_kwargs['coordinates'] = mp_coords_dict[model_kwargs['number']]
+            else:
+                model_kwargs['coordinates'] = '0.0, 0.0'
 
         # If no model fields found, do not create model instance
         if len(model_kwargs) == 0:
@@ -288,9 +293,13 @@ def populate_database(
         # previous row and the current one
         if model_name == "MapSquare":
             while map_square_count != model_kwargs['number']:
+                if map_square_count in mp_coords_dict.keys():
+                    temp_model_coordinates = mp_coords_dict[map_square_count]
+                else:
+                    temp_model_coordinates = '0.0, 0.0'
                 temp_model_kwargs = \
                     {'number': map_square_count, 'name': f'map square {map_square_count}',
-                     'rough_coords': '0.0, 0.0'}
+                     'coordinates': temp_model_coordinates}
                 if verbose:
                     print(f'Creating {model_name} with kwargs: {temp_model_kwargs}\n')
                 model_instance = MODEL_NAME_TO_MODEL[model_name](**temp_model_kwargs)
@@ -309,14 +318,21 @@ def populate_database(
         if model_name == 'MapSquare' and model_kwargs['number'] == int(values_as_a_dict[-1][
                                                                            'number']):
             while map_square_count <= 1755:
+                if map_square_count in mp_coords_dict.keys():
+                    temp_model_coordinates = mp_coords_dict[map_square_count]
+                else:
+                    temp_model_coordinates = '0.0, 0.0'
                 temp_model_kwargs = \
                     {'number': map_square_count, 'name': f'map square {map_square_count}',
-                     'rough_coords': '0.0, 0.0'}
+                     'coordinates': temp_model_coordinates}
                 if verbose:
                     print(f'Creating {model_name} with kwargs: {temp_model_kwargs}\n')
                 model_instance = MODEL_NAME_TO_MODEL[model_name](**temp_model_kwargs)
                 model_instance.save()
                 map_square_count += 1
+
+    if model_name == 'MapSquare':
+        mp_coords_csv.close() # Closes Map_Page_Output.csv
 
 
 class Command(BaseCommand):

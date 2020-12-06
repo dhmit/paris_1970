@@ -2,19 +2,17 @@ import csv
 # Input CSV - map_Square_page; lowest_map_square; highest_map_square; top_right_lat; top_right_long; is_irregular
 # Output CSV - map_square; top_right_lat; top_right_long
 
-# Map Pages:
-# change in longitude: 0.01361302273
-# change in latitutde: 0.011179
+# Map Pages: (5 x 4)
+# change in longitude: 0.01361302273 (width of map page)
+# change in latitutde: 0.011179 (height of map page)
 mp_delta_long = 0.01361302273
 mp_delta_lat = 0.011179
 
 # Map Squares:
-# change in longitude: 0.00340325568
-# change in latitude: 0.0022358
+# change in longitude: 0.00340325568 (width of map square)
+# change in latitude: 0.0022358 (height of map square)
 ms_delta_long = 0.00340325568
 ms_delta_lat = 0.0022358
-
-# SAMPLE ROW - ['3', '29', '48', '48.899596', '2.333051', 'FALSE']
 
 with open('Map_Page_Input.csv') as input:
     reader = csv.reader(input, delimiter = ' ')

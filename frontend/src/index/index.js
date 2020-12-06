@@ -55,9 +55,9 @@ class Map extends React.Component {
                         const coords = mapSquareData.topLeftCoords;
                         const numberOfPhotos = mapSquareData.photos.length;
 
-                        // Difference of 250m in coords
-                        const lngdiff = 0.01361302273;
-                        const latdiff = 0.011179;
+                        // Width and height of map squares
+                        const lngdiff = 0.00340325568;
+                        const latdiff = 0.0022358;
 
                         const msbounds = [[(coords.lat), (coords.lng)],
                                     [(coords.lat - latdiff), (coords.lng - lngdiff)]];
@@ -93,7 +93,7 @@ export class IndexView extends React.Component {
 
             for (const mapSquare of mapData) {
                 // This code right here might cause problems if said user hasn't run syncdb
-                const roughCoords = mapSquare.rough_coords;
+                const roughCoords = mapSquare.coordinates;
 
                 // If the map square has coordinates in the spreadsheet, it pulls those coordinates
                 // and makes those the coordinates of the marker (NOTE: This is entirely reliant
