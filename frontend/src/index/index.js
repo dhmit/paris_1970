@@ -54,8 +54,13 @@ class Map extends React.Component {
                         const index = mapSquareData.number;
                         const coords = mapSquareData.topLeftCoords;
                         const numberOfPhotos = mapSquareData.photos.length;
-                        const msbounds = [[(coords.lat - 0.001), (coords.lng - 0.001)],
-                                    [(coords.lat + 0.001), (coords.lng + 0.001)]];
+
+                        // Difference of 250m in coords
+                        const lngdiff = 0.0034203;
+                        const latdiff = 0.0010022;
+
+                        const msbounds = [[(coords.lat), (coords.lng)],
+                                    [(coords.lat - latdiff), (coords.lng - lngdiff)]];
                         const link = '/map_square/' + index;
                         return (
                             <Rectangle key={index} bounds={msbounds} pathOptions={{ color: 'cyan' }}>
