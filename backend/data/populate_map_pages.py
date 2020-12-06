@@ -27,12 +27,13 @@ with open('Map_Page_Input.csv') as input:
             if row[-1] != 'FALSE': # Skips the irregularly shaped map square pages + header
                 continue
 
-            # Pulls top right coordinate
-            top_right_lat = float(row[3]) # make a float
+            # Pulls top right coordinate of map page
+            top_right_lat = float(row[3])
             top_right_long = float(row[4])
 
-            current_ms = int(row[1])
-
+            current_ms = int(row[1]) # Defines the current map square
+            # Splits the map page into a 5 x 4 grid and assigns coordinates of map square by
+            # referring to the changes in latitude and longitude within the grid
             for y in range(5):
                 current_ms_lat = top_right_lat + (y * ms_delta_lat)
                 for x in range(4):
