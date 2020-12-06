@@ -56,8 +56,8 @@ class Map extends React.Component {
                         const numberOfPhotos = mapSquareData.photos.length;
 
                         // Difference of 250m in coords
-                        const lngdiff = 0.0034203;
-                        const latdiff = 0.0010022;
+                        const lngdiff = 0.01361302273;
+                        const latdiff = 0.011179;
 
                         const msbounds = [[(coords.lat), (coords.lng)],
                                     [(coords.lat - latdiff), (coords.lng - lngdiff)]];

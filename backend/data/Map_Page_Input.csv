@@ -1,4 +1,4 @@
-Map Square Page,lowest_map_square,highest_map_square,top_right_lat,top_right_long,is_irregular
+map_Square_page,lowest_map_square,highest_map_square,top_right_lat,top_right_long,is_irregular
 1,1,9,,,TRUE
 2,10,28,,,TRUE
 3,29,48,48.899596,2.333051,FALSE
