@@ -34,9 +34,9 @@ with open('Map_Page_Input.csv') as input:
             current_ms = int(row[1]) # Defines the current map square
             # Splits the map page into a 5 x 4 grid and assigns coordinates of map square by
             # referring to the changes in latitude and longitude within the grid
-            for y in range(5):
+            for y in range(0, 5, -1):
                 current_ms_lat = top_right_lat + (y * ms_delta_lat)
-                for x in range(4):
+                for x in range(0, 4, -1):
                     current_ms_long = top_right_long - (x * ms_delta_long)
                     current_ms_row = '{map_square},{tr_lat},{tr_lng}'.format(map_square = current_ms, tr_lat = current_ms_lat, tr_lng = current_ms_long)
                     current_ms += 1
