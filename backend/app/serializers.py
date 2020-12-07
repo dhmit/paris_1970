@@ -11,6 +11,7 @@ from .models import (
     Photo,
     PhotoAnalysisResult,
     Photographer,
+    Cluster,
 )
 
 
@@ -142,3 +143,19 @@ class PhotoAnalysisResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = PhotoAnalysisResult
         fields = ['name', 'result']
+
+
+class ClusterSerializer(serializers.ModelSerializer):
+    """
+    Serializes a map square
+    """
+    # clusters = serializers.SerializerMethodField()
+    #
+    # @staticmethod
+    # def get_clusters(instance):
+    #     cluster_obj = Photo.objects.filter(map_square__number=instance.number)
+    #     return PhotoSerializer(cluster_obj, many=True).data
+
+    class Meta:
+        model = Cluster
+        fields = ['id', 'model_n', 'label', 'photos']

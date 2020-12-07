@@ -26,6 +26,7 @@ from app.views import (
     get_map_square,
     get_corpus_analysis_results,
     get_photos_by_analysis,
+    get_photos_by_cluster
 )
 
 
@@ -52,6 +53,7 @@ urlpatterns = [
     path('api/all_photos/', all_photos),
     path('api/all_map_squares/', all_map_squares),
     path('api/analysis/<str:analysis_name>/', get_photos_by_analysis),
+    path('api/clustering/<int:number_of_clusters>/<int:cluster_number>/', get_photos_by_cluster),
 
     # React views
     react_view_path('', 'IndexView'),
@@ -60,4 +62,5 @@ urlpatterns = [
     react_view_path('map_square/<int:mapSquareNumber>/', 'MapSquareView'),
     react_view_path('about/', 'About'),
     react_view_path('analysis/<str:analysisName>/', 'AnalysisView'),
+    react_view_path('clustering/<int:numberOfClusters>/<int:clusterNumber>/', 'ClusterView'),
 ]
