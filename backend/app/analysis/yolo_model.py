@@ -56,21 +56,7 @@ def create_box(detection, image_dimensions):
     return [x_coordinate, y_coordinate, int(box_width), int(box_height)]
 
 
-
-def analyze(photo: Photo):
-    """
-        Uses yolo model to detect objects within photos
-        Returns a dictionary consisting of each object
-        and its frequency in the photo
-    """
-    yolo_model = load_yolo()
-    net = yolo_model[0]
-    labels = yolo_model[1]
-    # Get image and image dimensions
-    image = photo.get_image_data()
-    image_dimensions = image.shape[:2]
-    input_image = image # cv2.resize(image, (416, 416))
-
+def yolo_setup(input_image, net):
     # Determine only the *output* layer names that we need from YOLO
     # layer_names = net.getLayerNames()
     layer_names = [net.getLayerNames()[i[0] - 1] for i in net.getUnconnectedOutLayers()]
@@ -81,7 +67,24 @@ def analyze(photo: Photo):
 
     # Perform a forward pass of the YOLO object detector to get bounding boxes and their
     # associated probabilities
-    layer_outputs = net.forward(layer_names)
+    return net.forward(layer_names)
+
+
+def analyze(photo: Photo):
+    """
+        Uses yolo model to detect objects within photos
+        Returns a dictionary consisting of each object
+        and its frequency in the photo
+    """
+    yolo_model = load_yolo()
+    net = yolo_model[0]
+    labels = yolo_model[1]
+
+    # Get image and image dimensions
+    input_image = photo.get_image_data()
+
+    image_dimensions = input_image.shape[:2]
+    layer_outputs = yolo_setup(input_image, net)
 
     boxes = []
     confidences = []
