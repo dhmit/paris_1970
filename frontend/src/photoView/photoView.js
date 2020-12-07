@@ -141,20 +141,20 @@ export class YoloModelDisplayWidget extends React.Component {
                     width = {box['width'] * ratio}
                 />,
                 <g className={'boxGroup'}>
-                   <text
-                    className='label'
-                    x = {box['x_coord'] * ratio}
-                    y = {box['y_coord'] * ratio - 5}
-                >
-                    {box['label']}
-                </text>
-                <rect
-                    className = 'boundingBox'
-                    x = {box['x_coord'] * ratio}
-                    y = {box['y_coord'] * ratio}
-                    height = {box['height'] * ratio}
-                    width = {box['width'] * ratio}
-                />
+                    <text
+                        className='label'
+                        x = {box['x_coord'] * ratio}
+                        y = {box['y_coord'] * ratio - 5}
+                    >
+                        {box['label']}
+                    </text>
+                    <rect
+                        className = 'boundingBox'
+                        x = {box['x_coord'] * ratio}
+                        y = {box['y_coord'] * ratio}
+                        height = {box['height'] * ratio}
+                        width = {box['width'] * ratio}
+                    />
                 </g>,
             );
         }
@@ -362,7 +362,11 @@ export class PhotoView extends React.Component {
                     <br/>
                     <div className={'centerBtn'}>
                         {this.state.availableSides.map((side, k) => (
-                            <button className='btn btn-outline-dark mx-1' key={k} onClick={() => this.changeSide(side)}>
+                            <button
+                                className='btn btn-outline-dark mx-1'
+                                key={k}
+                                onClick={() => this.changeSide(side)}
+                            >
                                 {side[0].toUpperCase() + side.slice(1)} Side
                             </button>
                         ))}
@@ -448,11 +452,11 @@ export class PhotoView extends React.Component {
                                 </select>
                                 : <p>Not available</p>
                             }
-                            {(this.state.view === 3 && this.state.displaySide === 'cleaned') ?
-                                <p className={'px-3 my-0'}>
+                            {(this.state.view === 3 && this.state.displaySide === 'cleaned')
+                                ? <p className={'px-3 my-0'}>
                                     <i>Hover over the boxes to see the name of the object.</i>
-                                </p> :
-                                <span></span>
+                                </p>
+                                : <span></span>
                             }
                         </div>
                     </div>
