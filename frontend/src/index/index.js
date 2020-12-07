@@ -62,10 +62,21 @@ class Map extends React.Component {
                         const msbounds = [[(coords.lat), (coords.lng)],
                                     [(coords.lat - latdiff), (coords.lng - lngdiff)]];
                         const link = '/map_square/' + index;
-                        return (
-                            <Rectangle key={index} bounds={msbounds} pathOptions={{ color: 'cyan' }}>
+                        if (numberOfPhotos === 0) {
+                            return (
+                            <Rectangle key={index} bounds={msbounds} pathOptions={{color: 'gray' }}>
                                 <Popup>
                                     Map Square {index} <br />
+                                    <a href={link}>{numberOfPhotos} photos to show</a>
+                                </Popup>
+                            </Rectangle>
+                        );
+                        }
+                        return (
+                            <Rectangle key={index} bounds={msbounds}
+                                       pathOptions={{ color: 'cyan' }}>
+                                <Popup>
+                                    Map Square {index} <br/>
                                     <a href={link}>{numberOfPhotos} photos to show</a>
                                 </Popup>
                             </Rectangle>
