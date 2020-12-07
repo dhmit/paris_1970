@@ -30,5 +30,33 @@ rect {
 
 .label {
     fill: white;
-    font-size: 17px;
+    font-size: 20px;
+}
+
+.boxGroup {
+    opacity: 0;
+}
+
+.boxGroup rect {
+    pointer-events: all;
+}
+
+.boxGroup:hover {
+    opacity: 1;
+}
+
+.boxGroup rect:hover {
+    fill: blueviolet !important;
+    fill-opacity: 0.25;
+}
+
+.outsideBox {
+    stroke: cyan;
+    stroke-width: 2;
+    fill: none;
+    pointer-events: all;
+}
+
+.centerBtn {
+    text-align: center;
 }

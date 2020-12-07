@@ -133,20 +133,29 @@ export class YoloModelDisplayWidget extends React.Component {
         const ratio = this.props.height / this.props.natHeight;
         for (box of this.props.boxes) {
             items.push(
-                <text
+                <rect
+                    className = 'outsideBox'
+                    x = {box['x_coord'] * ratio}
+                    y = {box['y_coord'] * ratio}
+                    height = {box['height'] * ratio}
+                    width = {box['width'] * ratio}
+                />,
+                <g className={'boxGroup'}>
+                   <text
                     className='label'
                     x = {box['x_coord'] * ratio}
                     y = {box['y_coord'] * ratio - 5}
                 >
                     {box['label']}
-                </text>,
+                </text>
                 <rect
                     className = 'boundingBox'
                     x = {box['x_coord'] * ratio}
                     y = {box['y_coord'] * ratio}
                     height = {box['height'] * ratio}
                     width = {box['width'] * ratio}
-                />,
+                />
+                </g>,
             );
         }
 
@@ -351,11 +360,13 @@ export class PhotoView extends React.Component {
                         </svg>
                     </div>
                     <br/>
-                    {this.state.availableSides.map((side, k) => (
-                        <button key={k} onClick={() => this.changeSide(side)}>
-                            {side[0].toUpperCase() + side.slice(1)} Side
-                        </button>
-                    ))}
+                    <div className={'centerBtn'}>
+                        {this.state.availableSides.map((side, k) => (
+                            <button className='btn btn-outline-dark mx-1' key={k} onClick={() => this.changeSide(side)}>
+                                {side[0].toUpperCase() + side.slice(1)} Side
+                            </button>
+                        ))}
+                    </div>
                 </div>
                 <div className='image-info col-12 col-lg-6'>
                     <h5>Map Square</h5>
@@ -368,26 +379,6 @@ export class PhotoView extends React.Component {
                     <p>{photographerNumber || 'Unknown'}</p>
                     <h5>Photographer Caption</h5>
                     <p>{photographerCaption || 'None'}</p>
-                    <h5>Visual Analysis</h5>
-                    <div className="row">
-                        <div className="col-6">
-                            {(this.state.displaySide === 'cleaned')
-                                ? <select
-                                    id="toggleSelect"
-                                    className="custom-select"
-                                    onChange={this.toggleStatus}
-                                    value={this.state.view}
-                                >
-                                    <option value="0">None selected</option>
-                                    <option value="1">Perspective Lines</option>
-                                    <option value="2">Foreground Mask</option>
-                                    <option value="3">YOLO Model</option>
-                                </select>
-                                : <p>Not available</p>
-                            }
-                            <br /><br />
-                        </div>
-                    </div>
 
                     {analyses.map((analysisResult, index) => {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
@@ -438,6 +429,33 @@ export class PhotoView extends React.Component {
                             </React.Fragment>
                         );
                     })}
+
+
+                    <h5>Visual Analysis</h5>
+                    <div className="row">
+                        <div className="col-6">
+                            {(this.state.displaySide === 'cleaned')
+                                ? <select
+                                    id="toggleSelect"
+                                    className="custom-select"
+                                    onChange={this.toggleStatus}
+                                    value={this.state.view}
+                                >
+                                    <option value="0">None selected</option>
+                                    <option value="1">Perspective Lines</option>
+                                    <option value="2">Foreground Mask</option>
+                                    <option value="3">YOLO Model</option>
+                                </select>
+                                : <p>Not available</p>
+                            }
+                            {(this.state.view === 3 && this.state.displaySide === 'cleaned') ?
+                                <p className={'px-3 my-0'}>
+                                    <i>Hover over the boxes to see the name of the object.</i>
+                                </p> :
+                                <span></span>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
             <Footer />
