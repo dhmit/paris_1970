@@ -147,15 +147,9 @@ class PhotoAnalysisResultSerializer(serializers.ModelSerializer):
 
 class ClusterSerializer(serializers.ModelSerializer):
     """
-    Serializes a map square
+    Serializes a cluster
     """
-    # clusters = serializers.SerializerMethodField()
-    #
-    # @staticmethod
-    # def get_clusters(instance):
-    #     cluster_obj = Photo.objects.filter(map_square__number=instance.number)
-    #     return PhotoSerializer(cluster_obj, many=True).data
 
     class Meta:
         model = Cluster
-        fields = ['id', 'model_n', 'label', 'photos']
+        fields = ['model_n', 'label', 'photos']
