@@ -20,11 +20,6 @@ from .serializers import (
     CorpusAnalysisResultsSerializer,
 )
 
-import numpy as np
-import cv2
-import sklearn
-from sklearn.cluster import KMeans
-
 
 @api_view(['GET'])
 def photo(request, map_square_number, photo_number):
