@@ -105,9 +105,10 @@ export class ClusterView extends React.Component {
         return (<>
             <Navbar />
             <div className='display-box page'>
-                <h3 className='text-capitalize'>{
-                    this.props.numberOfClusters + '_' + this.props.clusterNumber
-                }</h3>
+                <h3>
+                    Number of clusters: {this.props.numberOfClusters + ' '}
+                    Cluster number: {this.props.clusterNumber}
+                </h3>
                 {options}
                 <br/>
                 {photos}
