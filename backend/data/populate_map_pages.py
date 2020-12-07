@@ -34,11 +34,13 @@ with open('Map_Page_Input.csv') as input:
             # referring to the changes in latitude and longitude within the grid
 
 
-            # TODO: FIND A WAY TO POPULATE MAP PAGES CORRECTLY
-            # Currently, each map page is inverted vertically and horizontally
-            for y in range(0, 5, -1):
-                current_ms_lat = top_right_lat + (y * ms_delta_lat)
-                for x in range(0, 4, -1):
+            # map pages are 5x4 row x col.
+            # since we start at top right corner coordinate,
+            # subtract incrementally larger values of y*ms_delta_lat (up to down)
+            # subtract incrementally smaller values of x*ms_dela_long (left to right)
+            for y in range(0, 5):
+                current_ms_lat = top_right_lat - (y * ms_delta_lat)
+                for x in range(4,0, -1):
                     current_ms_long = top_right_long - (x * ms_delta_long)
                     current_ms_row = '{map_square},{tr_lat},{tr_lng}'.format(map_square = current_ms, tr_lat = current_ms_lat, tr_lng = current_ms_long)
                     current_ms += 1
