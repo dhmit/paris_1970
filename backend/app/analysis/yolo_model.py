@@ -57,6 +57,10 @@ def create_box(detection, image_dimensions):
 
 
 def yolo_setup(input_image, net):
+    """
+        Generates the output layers used to extract class IDs and
+        confidence values of the object detections in the input image
+    """
     # Determine only the *output* layer names that we need from YOLO
     # layer_names = net.getLayerNames()
     layer_names = [net.getLayerNames()[i[0] - 1] for i in net.getUnconnectedOutLayers()]
