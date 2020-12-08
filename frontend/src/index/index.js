@@ -49,7 +49,10 @@ class Map extends React.Component {
                         attribution='&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-
+                    {
+                        // TODO: sort this.props.mapData so empty map squares drawn first, map
+                        // squares with photos drawn last
+                    }
                     {this.props.mapData.map((mapSquareData) => {
                         const index = mapSquareData.number;
                         const coords = mapSquareData.topLeftCoords;
@@ -75,7 +78,7 @@ class Map extends React.Component {
                             );
                         }
                         return (
-                            <Rectangle key={index} bounds={msbounds} color={'#8c8c8c'} weight={4}>
+                            <Rectangle key={index} bounds={msbounds} color={'#b51a00'} weight={4}>
                                 <Popup>
                                     Map Square {index} <br/>
                                     <a href={link}>{numberOfPhotos} photos to show</a>
