@@ -15,14 +15,14 @@ ms_delta_long = 0.00340325568
 ms_delta_lat = 0.0022358
 
 with open('Map_Page_Input.csv') as input:
-    reader = csv.reader(input, delimiter = ' ')
+    reader = csv.reader(input, delimiter=' ')
     output = open('Map_Page_Output.csv', 'w')
     with output:
         writer = csv.writer(output, delimiter=' ')
         writer.writerow(["map_square,top_right_lat,top_right_long"]) # Adds title columns
         for row in reader:
-            row = row[0].split(',') # Splits the row into an array of entries
-            if row[-1] != 'FALSE': # Skips the irregularly shaped map square pages + header
+            row = row[0].split(',')  # Splits the row into an array of entries
+            if row[-1] != 'FALSE':  # Skips the irregularly shaped map square pages + header
                 continue
 
             # Pulls top right coordinate of map page

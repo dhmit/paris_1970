@@ -62,9 +62,11 @@ class Map extends React.Component {
                         const msbounds = [[(coords.lat), (coords.lng)],
                                     [(coords.lat - latdiff), (coords.lng - lngdiff)]];
                         const link = '/map_square/' + index;
+
+                        // Greys out squares without photos in them
                         if (numberOfPhotos === 0) {
                             return (
-                            <Rectangle key={index} bounds={msbounds} pathOptions={{color: 'gray' }}>
+                            <Rectangle key={index} bounds={msbounds} color={'grey'}>
                                 <Popup>
                                     Map Square {index} <br />
                                     <a href={link}>{numberOfPhotos} photos to show</a>
@@ -74,7 +76,7 @@ class Map extends React.Component {
                         }
                         return (
                             <Rectangle key={index} bounds={msbounds}
-                                       pathOptions={{ color: 'cyan' }}>
+                                       color={'cyan'}>
                                 <Popup>
                                     Map Square {index} <br/>
                                     <a href={link}>{numberOfPhotos} photos to show</a>
