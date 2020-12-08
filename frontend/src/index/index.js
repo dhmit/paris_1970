@@ -23,8 +23,8 @@ class Map extends React.Component {
         lat: 48.858859,
         lng: 2.3470599,
         zoom: 13,
-        bounds: [[48.082142, 0.854779], [49.464403, 3.761125]],
-        minZoom: 10,
+        bounds: [[48.8030, 2.1330], [48.9608, 2.6193]],
+        minZoom: 12,
     }
 
     render() {
