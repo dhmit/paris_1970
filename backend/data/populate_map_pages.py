@@ -40,7 +40,7 @@ with open('Map_Page_Input.csv') as input:
             # subtract incrementally smaller values of x*ms_dela_long (left to right)
             for y in range(0, 5):
                 current_ms_lat = top_right_lat - (y * ms_delta_lat)
-                for x in range(4,0, -1):
+                for x in range(3,-1, -1):
                     current_ms_long = top_right_long - (x * ms_delta_long)
                     current_ms_row = '{map_square},{tr_lat},{tr_lng}'.format(map_square = current_ms, tr_lat = current_ms_lat, tr_lng = current_ms_long)
                     current_ms += 1
