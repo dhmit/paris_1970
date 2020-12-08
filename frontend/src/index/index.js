@@ -5,7 +5,7 @@
  * It's just for our convenience while developing,
  * so DO NOT spend too much time making this nice!
  */
-
+/* '#02bfe7' */
 import React from 'react';
 import * as PropTypes from 'prop-types';
 import {
@@ -60,23 +60,22 @@ class Map extends React.Component {
                         const latdiff = 0.0022358;
 
                         const msbounds = [[(coords.lat), (coords.lng)],
-                                    [(coords.lat - latdiff), (coords.lng - lngdiff)]];
+                            [(coords.lat - latdiff), (coords.lng - lngdiff)]];
                         const link = '/map_square/' + index;
 
                         // Greys out squares without photos in them
                         if (numberOfPhotos === 0) {
                             return (
-                            <Rectangle key={index} bounds={msbounds} color={'grey'}>
-                                <Popup>
-                                    Map Square {index} <br />
-                                    <a href={link}>{numberOfPhotos} photos to show</a>
-                                </Popup>
-                            </Rectangle>
-                        );
+                                <Rectangle key={index} bounds={msbounds} color={'#b3b3b3'} weight={2}>
+                                    <Popup>
+                                        Map Square {index} <br />
+                                        <a href={link}>{numberOfPhotos} photos to show</a>
+                                    </Popup>
+                                </Rectangle>
+                            );
                         }
                         return (
-                            <Rectangle key={index} bounds={msbounds}
-                                       color={'cyan'}>
+                            <Rectangle key={index} bounds={msbounds} color={'#8c8c8c'} weight={4}>
                                 <Popup>
                                     Map Square {index} <br/>
                                     <a href={link}>{numberOfPhotos} photos to show</a>
