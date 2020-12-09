@@ -2,6 +2,27 @@
     width: 100%;
 }
 
+line {
+    stroke: red;
+    stroke-width: 1;
+}
+
+.positionTopLeft {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+circle {
+    stroke: cyan;
+    stroke-width: 2;
+    fill: none;
+}
+
+rect {
+    fill: black;
+}
+
 .navButton {
     text-decoration: none;
     display: inline-block;
@@ -22,4 +43,3 @@
     position: relative;
     top: 70px;
 }
-

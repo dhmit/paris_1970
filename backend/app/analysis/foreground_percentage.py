@@ -36,8 +36,17 @@ def analyze_numpy_photo(photo):
     Returns percentage of a numpy photo that is part of the foreground
     """
     foreground_mask = grabcut_analysis(photo)
+
+    black_pixels = []
+    for i in range(0, len(foreground_mask), 20):
+        for j in range(0, len(foreground_mask[i]), 20):
+            if foreground_mask[i][j] == 0:
+                black_pixels.append([i, j])
     num_foreground_pixels = np.count_nonzero(foreground_mask)
-    return num_foreground_pixels / foreground_mask.size * 100
+    return {
+        "percent": num_foreground_pixels / foreground_mask.size * 100,
+        "mask": black_pixels,
+        }
 
 
 def grabcut_analysis(photo):
