@@ -214,7 +214,7 @@ def populate_database(
             line = line[0].split(',')
             try:
                 mp_coords_dict[int(line[0])] = line[1] + ", " + line[2]
-            except:
+            except ValueError:
                 continue
 
     for row in values_as_a_dict:
