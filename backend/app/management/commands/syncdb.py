@@ -5,17 +5,18 @@ Syncs local db with data from project Google Sheet
 """
 
 # Python standard library
-import io
-import pickle
-import os
 import csv
+import io
+import os
+import pickle
 from textwrap import dedent
 from pathlib import Path
 
 # 3rd party
+import cv2
 import tqdm
 from googleapiclient.discovery import build
-from googleapiclient.http import MediaIoBaseDownload
+from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
@@ -32,7 +33,7 @@ from app.common import print_header
 # The scope of our access to the Google API Account
 SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets.readonly',
-    'https://www.googleapis.com/auth/drive.readonly',
+    'https://www.googleapis.com/auth/drive',
 ]
 
 # Our metadata spreadsheet lives here:
@@ -41,7 +42,7 @@ METADATA_SPREADSHEET_ID = '1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I'
 PHOTO_FOLDER_ID = '1aiY1nFJn6T7khu5dhIs3U2o8RdHBu6V7'
 
 # Sides of a photo
-SIDES = ['cleaned', 'front', 'back', 'binder']
+SIDES = ['cleaned', 'front', 'back', 'binder', 'thumbnail']
 
 MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
 
@@ -77,7 +78,7 @@ def authorize_google_apps():
 def create_lookup_dict(drive_service):
     """
     Creates a quick look up dictionary to get the image URL using map square number and source name
-    :param credentials: Credentials object for drive service
+    :param drive_service: the Google drive service
     :return Look up dictionary to get the image URL using map square number and source name
     """
     # Resource object for interacting with the google API
@@ -102,7 +103,7 @@ def create_lookup_dict(drive_service):
 
         # Creates a dictionary mapping photo number to a list of the photo sources belonging to
         # that number
-        map_square_dict = {}
+        map_square_dict = {'GOOGLE_DRIVE_MAP_SQUARE_FOLDER_ID': map_square['id']}
         for image in images:
             photo_number = image['name'].split('_')[0]
             photo_drive_file_ids = map_square_dict.get(photo_number, {})
@@ -125,26 +126,40 @@ def add_photo_srcs(
     local_download,
     redownload,
     verbose,
+    create_thumbnails
 ):
     """
     Takes the map square folder and the photo number to dynamically adds the Google Drive urls
     into the model kwargs
+
     :param model_kwargs: Dictionary of keyword arguments to be used in creating the model
+    :param map_square_number: the map square number
     :param map_square_folder: Dictionary of photo sources with keys of photo_number
     :param photo_number: The number of the desired photo in the map_square_folder
-    :param local_download: should we download the photos locally?
+    :param drive_service: the Google Drive service
+    :param local_download: should we download the photos locally if we do not have them already?
+    :param redownload: should we redownload all photos locally?
+    :param verbose: should we print verbose messages
+    :param create_thumbnails: should we create thumbnails and upload it to Google Drive?
     """
+    # TODO(ra): this needs refactoring out into component parts -- has gotten too bloated
     # pylint: disable=too-many-locals
     photo_drive_file_ids = map_square_folder.get(str(photo_number), '')
     if photo_drive_file_ids == '':
         return
 
+    already_made_thumbnail = False
+
     for side in SIDES:
+
         drive_file_id = photo_drive_file_ids.get(f'{photo_number}_{side}.jpg', '')
 
         if drive_file_id:
             src_url = f"https://drive.google.com/uc?id={drive_file_id}&export=download"
             model_kwargs[f'{side}_src'] = src_url
+
+            if side == 'thumbnail':
+                continue  # we do not want to download thumbnails
 
             if local_download:
                 request = drive_service.files().get_media(fileId=drive_file_id)
@@ -165,9 +180,40 @@ def add_photo_srcs(
 
                 model_kwargs[f'{side}_local_path'] = local_photo_path
 
+                # Create thumbnails only on the cleaned image
+                if create_thumbnails and side in ['cleaned', 'front']:
+                    thumbnail_id = photo_drive_file_ids.get(f'{photo_number}_thumbnail.jpg', '')
+                    if thumbnail_id != '' or already_made_thumbnail:
+                        already_made_thumbnail = True
+                        return  # We already have that thumbnail in drive
+
+                    # Create thumbnail from existing local file
+                    img = cv2.imread(str(local_photo_path))
+                    thumbnail_dims = (500, 500) # Is this a good thumbnail size?
+                    thumbnail_img = cv2.resize(img, thumbnail_dims)
+                    thumbnail_path = Path(local_map_square_dir, f'{photo_number}_thumbnail.jpg')
+                    cv2.imwrite(str(thumbnail_path), thumbnail_img)
+
+                    file_metadata = {'name': f'{photo_number}_thumbnail.jpg'}
+                    media = MediaFileUpload(thumbnail_path, mimetype='image/jpeg')
+                    # Uploads the thumbnail to your personal Drive
+                    file = drive_service.files().create(body=file_metadata,
+                                                        media_body=media,
+                                                        fields='id').execute()
+                    # Sets the parent of that file to the DH Paris 1970 Photo Folder in Google Drive
+                    folder_id = map_square_folder['GOOGLE_DRIVE_MAP_SQUARE_FOLDER_ID']
+                    drive_service.files().update(fileId=file.get('id'),
+                                                 addParents=folder_id,
+                                                 fields='id, parents').execute()
+
+                    # Remove the temporary thumbnail image in local storage
+                    os.remove(thumbnail_path)
+
+                    already_made_thumbnail = True
         else:
             model_kwargs[f'{side}_src'] = None
-            model_kwargs[f'{side}_local_path'] = None
+            if side != 'thumbnail':
+                model_kwargs[f'{side}_local_path'] = None
 
 
 def call_sheets_api(spreadsheet_ranges, sheets_service):
@@ -220,6 +266,7 @@ def populate_database(
     local_download,
     redownload,
     verbose,
+    create_thumbnails
 ):
     """
     Adds model instances to the database based on the data imported from the google spreadsheet
@@ -227,6 +274,11 @@ def populate_database(
     :param values_as_a_dict: List of dictionaries representing spreadsheet rows in the form of
     { column names: cell values }
     :param photo_url_lookup: Dictionary of map square folders in the form of a dictionary
+    :param drive_service: the Google Drive service
+    :param local_download: should we download the photos locally if we do not have them already?
+    :param redownload: should we redownload all photos locally?
+    :param verbose: should we print verbose messages
+    :param create_thumbnails: should we create thumbnails and upload it to Google Drive?
     """
     # TODO(ra): @refactor -- this function has gotten bloated bc the handling code
     # for the different models has diverged a lot over the course of the semester
@@ -313,6 +365,7 @@ def populate_database(
                     local_download,
                     redownload,
                     verbose,
+                    create_thumbnails
                 )
 
             # Get the corresponding Photographer objects
@@ -353,14 +406,19 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--local', action='store_true')
+        parser.add_argument('--create_thumbnails', action='store_true')
         parser.add_argument('--redownload', action='store_true')
         parser.add_argument('--verbose', action='store_true')
 
     def handle(self, *args, **options):
         # pylint: disable=too-many-locals
         local_download = options.get('local')
+        create_thumbnails = options.get('create_thumbnails')
         redownload = options.get('redownload')
         verbose = options.get('verbose')
+
+        if create_thumbnails and not local_download:
+            local_download = True
 
         # redownload always does local_download
         if redownload and not local_download:
@@ -435,4 +493,5 @@ class Command(BaseCommand):
                 local_download,
                 redownload,
                 verbose,
+                create_thumbnails
             )
