@@ -201,6 +201,21 @@ def populate_database(
     :param photo_url_lookup: Dictionary of map square folders in the form of a dictionary
     """
     # pylint: disable=too-many-locals
+    # pylint: disable=too-many-branches
+    if model_name == "MapSquare":
+        map_square_count = 1
+        # Opens Map_Page_Output.csv and creates a dictionary with the map square
+        # number as the key and the coordinates as the value
+        map_page_output_path = Path(settings.BACKEND_DATA_DIR, 'map_page_output.csv')
+        with open(map_page_output_path, encoding='utf-8') as mp_coords_csv:
+            mp_coords_reader = csv.reader(mp_coords_csv)
+            mp_coords_dict = {}
+            for line in mp_coords_reader:
+                try:
+                    mp_coords_dict[int(line[0])] = line[1] + ", " + line[2]
+                except ValueError:  # missing coords
+                    continue
+
     for row in values_as_a_dict:
         # Filter column headers for model fields
         model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
