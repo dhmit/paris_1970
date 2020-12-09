@@ -28,6 +28,9 @@ class Map extends React.Component {
     }
 
     render() {
+        // Sorts the map squares by number of photos (ascending order)
+        const sortedData = Object.values(this.props.mapData).sort((a, b) => a.photos.length - b.photos.length);
+
         return (
             <div id="mapContainer">
                 <LeafletMap
@@ -50,10 +53,9 @@ class Map extends React.Component {
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     {
-                        // TODO: sort this.props.mapData so empty map squares drawn first, map
-                        // squares with photos drawn last
-                    }
-                    {this.props.mapData.map((mapSquareData) => {
+                        sortedData.map((mapSquareData) => {
+                        // console.log(mapSquareData);
+
                         const index = mapSquareData.number;
                         const coords = mapSquareData.topLeftCoords;
                         const numberOfPhotos = mapSquareData.photos.length;
