@@ -21,12 +21,11 @@ class Map extends React.Component {
 
     render() {
         // Sorts the map squares by number of photos (ascending order)
-        // eslint-disable-next-line max-len
-        const sortedData = Object.values(this.props.mapData)
+        const sortedMapData = Object.values(this.props.mapData)
             .sort((a, b) => a.photos.length - b.photos.length);
 
         return (
-            <div id="mapContainer">
+            <div id="map-container">
                 <LeafletMap
                     // Initial state of Map
                     center={[this.state.lat, this.state.lng]}
@@ -47,19 +46,19 @@ class Map extends React.Component {
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                     {
-                        sortedData.map((mapSquareData) => {
-                        // console.log(mapSquareData);
-
+                        sortedMapData.map((mapSquareData) => {
                             const index = mapSquareData.number;
                             const coords = mapSquareData.topLeftCoords;
                             const numberOfPhotos = mapSquareData.photos.length;
 
                             // Width and height of map squares
-                            const lngdiff = 0.00340325568;
-                            const latdiff = 0.0022358;
+                            const lngDiff = 0.00340325568;
+                            const latDiff = 0.0022358;
 
-                            const msbounds = [[(coords.lat), (coords.lng)],
-                                [(coords.lat - latdiff), (coords.lng - lngdiff)]];
+                            const mapSquareBounds = [
+                                [coords.lat, coords.lng],
+                                [coords.lat - latDiff, coords.lng - lngDiff],
+                            ];
                             const link = '/map_square/' + index;
 
                             // Greys out squares without photos in them
@@ -67,7 +66,7 @@ class Map extends React.Component {
                                 return (
                                     <Rectangle
                                         key={index}
-                                        bounds={msbounds}
+                                        bounds={mapSquareBounds}
                                         color={'#b3b3b3'} weight={2}
                                     >
                                         <Popup>
@@ -80,7 +79,7 @@ class Map extends React.Component {
                             return (
                                 <Rectangle
                                     key={index}
-                                    bounds={msbounds}
+                                    bounds={mapSquareBounds}
                                     color={'#b51a00'} weight={4}
                                 >
                                     <Popup>
@@ -102,8 +101,11 @@ Map.propTypes = {
 
 
 export class IndexView extends React.Component {
-    state = {
-        incidents: [],
+    constructor(props) {
+        super(props);
+        this.state = {
+            mapData: null,
+        };
     }
 
     async componentDidMount() {
@@ -115,18 +117,16 @@ export class IndexView extends React.Component {
                 // This code right here might cause problems if said user hasn't run syncdb
                 const roughCoords = mapSquare.coordinates;
 
-                // If the map square has coordinates in the spreadsheet, it pulls those coordinates
-                // and makes those the coordinates of the marker (NOTE: This is entirely reliant
-                // on things being in the form of "lat, lng")
+                // If the map square has coordinates in the spreadsheet,
+                // it pulls those coordinates and makes those the coordinates of the marker
+                // Coords must be in (lat, lng)
 
-                // If the map square does not have the coordinates in the spread sheet, it sets
-                // them to (0, 0)
+                // If the map square does not have the coordinates it sets them to (0, 0)
+                // NOTE(ra): this no longer happens, so we can probably remove this safety check
                 if (roughCoords) {
                     const roughCoordsList = roughCoords.split(', ');
                     const lat = parseFloat(roughCoordsList[0]);
                     const lng = parseFloat(roughCoordsList[1]);
-                    // console.log(lat);
-                    // console.log(lng);
                     mapSquare.topLeftCoords = { lat, lng };
                 } else {
                     const lat = 0.0;

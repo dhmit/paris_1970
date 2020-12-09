@@ -5,13 +5,23 @@ Pulls from an input csv that details each map page's top right coordinates and
 the map squares it contains
 
 Creates and overwrites an output csv that details the top right coordinates of each map square
+
+Input CSV fields:
+    map_Square_page
+    lowest_map_square
+    highest_map_square
+    top_right_lat
+    top_right_long
+    is_irregular
+
+Output CSV fields:
+    map_square
+    top_right_lat
+    top_right_long
 """
 
 import csv
 
-# Input CSV - map_Square_page; lowest_map_square; highest_map_square; top_right_lat;
-# top_right_long; is_irregular
-# Output CSV - map_square; top_right_lat; top_right_long
 
 # Map Pages: (5 x 4)
 # change in longitude: 0.01361302273 (width of map page)
@@ -25,16 +35,13 @@ mp_delta_lat = 0.011179
 ms_delta_long = 0.00340325568
 ms_delta_lat = 0.0022358
 
-with open('Map_Page_Input.csv') as input:
-    reader = csv.reader(input, delimiter=' ')
-    # Opens in 'write' mode so that the output csv overwrites
-    # each time this runs
-    output = open('Map_Page_Output.csv', 'w')
-    with output:
-        writer = csv.writer(output, delimiter=' ')
-        writer.writerow(["map_square,top_right_lat,top_right_long"])  # Adds title columns
+
+def populate_map_pages():
+    with open('map_page_input.csv', encoding='utf-8') as map_page_input_csv:
+        reader = csv.reader(map_page_input_csv)
+        output_rows = []
+
         for row in reader:
-            row = row[0].split(',')  # Splits the row into an array of entries
             if row[-1] != 'FALSE':  # Skips the irregularly shaped map square pages + header
                 continue
 
@@ -42,7 +49,9 @@ with open('Map_Page_Input.csv') as input:
             top_right_lat = float(row[3])
             top_right_long = float(row[4])
 
-            current_ms = int(row[1])  # Defines the current map square
+            # Defines the current map square (starting with the lowest map square on the page)
+            current_map_square = int(row[1])
+
             # Splits the map page into a 5 x 4 grid and assigns coordinates of map square by
             # referring to the changes in latitude and longitude within the grid
 
@@ -54,11 +63,18 @@ with open('Map_Page_Input.csv') as input:
                 current_ms_lat = top_right_lat - (y * ms_delta_lat)
                 for x in range(3, -1, -1):
                     current_ms_long = top_right_long - (x * ms_delta_long)
-                    current_ms_row = '{map_square},{tr_lat},{tr_lng}' \
-                        .format(
-                        map_square=current_ms,
-                        tr_lat=current_ms_lat,
-                        tr_lng=current_ms_long
-                    )
-                    current_ms += 1
-                    writer.writerow([current_ms_row])
+                    current_ms_row = [current_map_square, current_ms_lat, current_ms_long]
+                    current_map_square += 1
+                    output_rows.append(current_ms_row)
+
+    with open('map_page_output.csv', 'w', encoding='utf-8', newline='\n') as output_csv:
+        writer = csv.writer(output_csv)
+        writer.writerow(['map_square', 'top_right_lat', 'top_right_long'])  # add header
+        for row in output_rows:
+            writer.writerow(row)
+
+
+if __name__ == '__main__':
+    print('Producing map page output csv...')
+    populate_map_pages()
+    print('Done!')

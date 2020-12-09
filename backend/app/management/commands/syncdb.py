@@ -237,18 +237,18 @@ def populate_database(
 
     if model_name == "MapSquare":
         map_square_count = 1
-
         # Opens Map_Page_Output.csv and creates a dictionary with the map square
         # number as the key and the coordinates as the value
-        mp_coords_csv = open('data/Map_Page_Output.csv')
-        mp_coords_reader = csv.reader(mp_coords_csv, delimiter=' ')
-        mp_coords_dict = {}
-        for line in mp_coords_reader:
-            line = line[0].split(',')
-            try:
-                mp_coords_dict[int(line[0])] = line[1] + ", " + line[2]
-            except ValueError:
-                continue
+        map_page_output_path = Path(settings.BACKEND_DATA_DIR, 'map_page_output.csv')
+        with open(map_page_output_path, encoding='utf-8') as mp_coords_csv:
+            mp_coords_reader = csv.reader(mp_coords_csv, delimiter=' ')
+            mp_coords_dict = {}
+            for line in mp_coords_reader:
+                line = line[0].split(',')
+                try:
+                    mp_coords_dict[int(line[0])] = line[1] + ", " + line[2]
+                except ValueError:
+                    continue
 
     for row in values_as_a_dict:
         # Filter column headers for model fields
@@ -345,8 +345,6 @@ def populate_database(
                 create_map_square(map_square_count, mp_coords_dict, verbose)
                 map_square_count += 1
 
-    if model_name == 'MapSquare':
-        mp_coords_csv.close()  # Closes Map_Page_Output.csv
 
 
 class Command(BaseCommand):
@@ -405,7 +403,7 @@ class Command(BaseCommand):
         # the MapSquare database, so we add the Map Squares first
         spreadsheet_ranges = ['MapSquare', 'Photographer', 'Photo']
 
-        print_header(f'''Will import ranges {", ".join(spreadsheet_ranges)}. (If nothing
+        print_header(f'''Will import ranges {", ".join(spreadsheet_ranges)}.\n # (If nothing
           is happening, please try again.)''')
 
         # Create resource objects for interacting with the google API
