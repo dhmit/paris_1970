@@ -6,7 +6,6 @@ Syncs local db with data from project Google Sheet
 
 # Python standard library
 import csv
-import cv2
 import io
 import os
 import pickle
@@ -14,6 +13,7 @@ from textwrap import dedent
 from pathlib import Path
 
 # 3rd party
+import cv2
 import tqdm
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
