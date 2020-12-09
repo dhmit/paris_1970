@@ -185,6 +185,34 @@ def call_sheets_api(spreadsheet_ranges, sheets_service):
     return databases
 
 
+def create_map_square(map_square_count, mp_coords_dict, verbose):
+    """
+    Final step to create map squares. Factored out for now because it's called twice:
+    once to create map squares that are explicitly specified in the spreadsheet,
+    and a second time to create the missing map squares.
+
+    TODO: refactor out the rest of the map square creation code out of populate_database into
+    this function.
+    """
+    if map_square_count in mp_coords_dict.keys():
+        temp_model_coordinates = mp_coords_dict[map_square_count]
+    else:
+        temp_model_coordinates = '0.0, 0.0'
+
+    temp_model_kwargs = {
+        'number': map_square_count,
+        'name': f'map square {map_square_count}',
+        'coordinates': temp_model_coordinates
+    }
+
+    if verbose:
+        print(f'Creating map square with kwargs: {temp_model_kwargs}\n')
+
+    model_instance = MapSquare(**temp_model_kwargs)
+    model_instance.save()
+    map_square_count += 1
+
+
 def populate_database(
     model_name,
     values_as_a_dict,
@@ -201,7 +229,13 @@ def populate_database(
     { column names: cell values }
     :param photo_url_lookup: Dictionary of map square folders in the form of a dictionary
     """
+    # TODO(ra): @refactor -- this function has gotten bloated bc the handling code
+    # for the different models has diverged a lot over the course of the semester
+    # Probably needs to be separated into a single function per model
+    # Disabling these pylint checks now for expedience, but needs a cleanup
     # pylint: disable=too-many-locals
+    # pylint: disable=too-many-branches
+
     if model_name == "MapSquare":
         map_square_count = 1
 
@@ -293,18 +327,7 @@ def populate_database(
         # previous row and the current one
         if model_name == "MapSquare":
             while map_square_count != model_kwargs['number']:
-                if map_square_count in mp_coords_dict.keys():
-                    temp_model_coordinates = mp_coords_dict[map_square_count]
-                else:
-                    temp_model_coordinates = '0.0, 0.0'
-                temp_model_kwargs = \
-                    {'number': map_square_count, 'name': f'map square {map_square_count}',
-                     'coordinates': temp_model_coordinates}
-                if verbose:
-                    print(f'Creating {model_name} with kwargs: {temp_model_kwargs}\n')
-                model_instance = MODEL_NAME_TO_MODEL[model_name](**temp_model_kwargs)
-                model_instance.save()
-                map_square_count += 1
+                create_map_square(map_square_count, mp_coords_dict, verbose)
             map_square_count += 1
 
         if verbose:
@@ -315,24 +338,14 @@ def populate_database(
 
         # When the last row in the spreadsheet is reached, creates MapSquare models for all
         # remaining, absent MapSquares (total: 1,755)
-        if model_name == 'MapSquare' and model_kwargs['number'] == int(values_as_a_dict[-1][
-                                                                           'number']):
+        if (model_name == 'MapSquare'
+            and model_kwargs['number'] == int(values_as_a_dict[-1]['number'])
+        ):
             while map_square_count <= 1755:
-                if map_square_count in mp_coords_dict.keys():
-                    temp_model_coordinates = mp_coords_dict[map_square_count]
-                else:
-                    temp_model_coordinates = '0.0, 0.0'
-                temp_model_kwargs = \
-                    {'number': map_square_count, 'name': f'map square {map_square_count}',
-                     'coordinates': temp_model_coordinates}
-                if verbose:
-                    print(f'Creating {model_name} with kwargs: {temp_model_kwargs}\n')
-                model_instance = MODEL_NAME_TO_MODEL[model_name](**temp_model_kwargs)
-                model_instance.save()
-                map_square_count += 1
+                create_map_square(map_square_count, mp_coords_dict, verbose)
 
     if model_name == 'MapSquare':
-        mp_coords_csv.close() # Closes Map_Page_Output.csv
+        mp_coords_csv.close()  # Closes Map_Page_Output.csv
 
 
 class Command(BaseCommand):
