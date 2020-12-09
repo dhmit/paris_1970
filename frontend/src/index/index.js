@@ -1,11 +1,3 @@
-/*
-  The landing page for the prototyping environment.
- *
- * PLEASE NOTE: this is not going to go into the EdX course.
- * It's just for our convenience while developing,
- * so DO NOT spend too much time making this nice!
- */
-/* '#02bfe7' */
 import React from 'react';
 import * as PropTypes from 'prop-types';
 import {

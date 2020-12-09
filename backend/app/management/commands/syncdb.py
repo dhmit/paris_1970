@@ -210,7 +210,6 @@ def create_map_square(map_square_count, mp_coords_dict, verbose):
 
     model_instance = MapSquare(**temp_model_kwargs)
     model_instance.save()
-    map_square_count += 1
 
 
 def populate_database(
@@ -328,6 +327,7 @@ def populate_database(
         if model_name == "MapSquare":
             while map_square_count != model_kwargs['number']:
                 create_map_square(map_square_count, mp_coords_dict, verbose)
+                map_square_count += 1
             map_square_count += 1
 
         if verbose:
@@ -343,6 +343,7 @@ def populate_database(
         ):
             while map_square_count <= 1755:
                 create_map_square(map_square_count, mp_coords_dict, verbose)
+                map_square_count += 1
 
     if model_name == 'MapSquare':
         mp_coords_csv.close()  # Closes Map_Page_Output.csv
