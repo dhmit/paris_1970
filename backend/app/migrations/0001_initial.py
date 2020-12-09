@@ -30,6 +30,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=252)),
                 ('number', models.IntegerField(null=True)),
                 ('boundaries', models.CharField(max_length=252)),
+                ('coordinates', models.CharField(max_length=252)),
             ],
         ),
         migrations.CreateModel(
