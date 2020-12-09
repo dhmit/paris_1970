@@ -11,6 +11,7 @@ const SIDES = {
     BINDER: 'binder',
 };
 
+const photoArray = [];
 
 function formatPercentageValue(value) {
     return `${parseInt(value)}%`;
@@ -46,6 +47,9 @@ export class PhotoView extends React.Component {
             photoData: null,
             displaySide: '',
             availableSides: [],
+            mapData: null,
+            prevLink: null,
+            nextLink: null,
         };
     }
 
@@ -70,14 +74,31 @@ export class PhotoView extends React.Component {
         } catch (e) {
             console.log(e);
         }
+        try {
+            const mapResponse = await fetch('/api/all_map_squares/');
+            const mapData = await mapResponse.json();
+            this.setState({
+                mapData,
+                loading: false,
+            });
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     changeSide = (displaySide) => {
         this.setState({ displaySide: displaySide });
     };
 
+    setLinks = (prevLink, nextLink) => {
+        this.setState({
+            prevLink: prevLink,
+            nextLink: nextLink,
+        });
+    }
+
     render() {
-        if (this.state.loading) {
+        if (this.state.loading || !this.state.mapData) {
             return (<h1>
                 Loading!
             </h1>);
@@ -97,8 +118,27 @@ export class PhotoView extends React.Component {
             analyses,
         } = this.state.photoData;
 
+        if (photoArray.length === 0) {
+            for (const mapSquare of this.state.mapData) {
+                for (const photoData of mapSquare.photos) {
+                    let url = window.location.origin;
+                    url += `/photo/${photoData.map_square_number}/${photoData.number}/`;
+                    photoArray.push(url);
+                }
+            }
+            const idx = photoArray.indexOf(window.location.href);
+            const prevLink = photoArray[(idx - 1) % photoArray.length];
+            const nextLink = photoArray[(idx + 1) % photoArray.length];
+            this.setLinks(prevLink, nextLink);
+        }
         return (<>
             <Navbar />
+            <div className= 'top-button row'>
+                <div className='center'>
+                    <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
+                    <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
+                </div>
+            </div>
             <div className="page row">
                 <div className='image-view col-12 col-lg-6'>
                     <img
@@ -153,6 +193,10 @@ export class PhotoView extends React.Component {
                             </React.Fragment>
                         );
                     })}
+                </div>
+                <div className='center'>
+                    <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
+                    <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
                 </div>
             </div>
             <Footer />

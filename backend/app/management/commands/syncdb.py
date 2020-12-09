@@ -5,12 +5,13 @@ Syncs local db with data from project Google Sheet
 """
 
 # Python standard library
+import csv
+import cv2
+import io
+import os
+import pickle
 from textwrap import dedent
 from pathlib import Path
-import io
-import pickle
-import os
-import cv2
 
 # 3rd party
 import tqdm
@@ -34,7 +35,6 @@ SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets.readonly',
     'https://www.googleapis.com/auth/drive',
 ]
-
 
 # Our metadata spreadsheet lives here:
 # https://docs.google.com/spreadsheets/d/1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I/edit#gid=0
@@ -142,6 +142,7 @@ def add_photo_srcs(
     :param verbose: should we print verbose messages
     :param create_thumbnails: should we create thumbnails and upload it to Google Drive?
     """
+    # TODO(ra): this needs refactoring out into component parts -- has gotten too bloated
     # pylint: disable=too-many-locals
     photo_drive_file_ids = map_square_folder.get(str(photo_number), '')
     if photo_drive_file_ids == '':
@@ -230,6 +231,33 @@ def call_sheets_api(spreadsheet_ranges, sheets_service):
     return databases
 
 
+def create_map_square(map_square_count, mp_coords_dict, verbose):
+    """
+    Final step to create map squares. Factored out for now because it's called twice:
+    once to create map squares that are explicitly specified in the spreadsheet,
+    and a second time to create the missing map squares.
+
+    TODO: refactor out the rest of the map square creation code out of populate_database into
+    this function.
+    """
+    if map_square_count in mp_coords_dict.keys():
+        temp_model_coordinates = mp_coords_dict[map_square_count]
+    else:
+        temp_model_coordinates = '0.0, 0.0'
+
+    temp_model_kwargs = {
+        'number': map_square_count,
+        'name': f'map square {map_square_count}',
+        'coordinates': temp_model_coordinates
+    }
+
+    if verbose:
+        print(f'Creating map square with kwargs: {temp_model_kwargs}\n')
+
+    model_instance = MapSquare(**temp_model_kwargs)
+    model_instance.save()
+
+
 def populate_database(
     model_name,
     values_as_a_dict,
@@ -252,7 +280,26 @@ def populate_database(
     :param verbose: should we print verbose messages
     :param create_thumbnails: should we create thumbnails and upload it to Google Drive?
     """
+    # TODO(ra): @refactor -- this function has gotten bloated bc the handling code
+    # for the different models has diverged a lot over the course of the semester
+    # Probably needs to be separated into a single function per model
+    # Disabling these pylint checks now for expedience, but needs a cleanup
     # pylint: disable=too-many-locals
+    # pylint: disable=too-many-branches
+    if model_name == "MapSquare":
+        map_square_count = 1
+        # Opens Map_Page_Output.csv and creates a dictionary with the map square
+        # number as the key and the coordinates as the value
+        map_page_output_path = Path(settings.BACKEND_DATA_DIR, 'map_page_output.csv')
+        with open(map_page_output_path, encoding='utf-8') as mp_coords_csv:
+            mp_coords_reader = csv.reader(mp_coords_csv)
+            mp_coords_dict = {}
+            for line in mp_coords_reader:
+                try:
+                    mp_coords_dict[int(line[0])] = line[1] + ", " + line[2]
+                except ValueError:  # missing coords
+                    continue
+
     for row in values_as_a_dict:
         # Filter column headers for model fields
         model_fields = MODEL_NAME_TO_MODEL[model_name]._meta.get_fields()
@@ -280,7 +327,17 @@ def populate_database(
                         value = bool(value)
                     else:
                         continue
+
                 model_kwargs[header] = value
+
+        # Loads the appropriate coordinates from the CSV into the map Square
+        # model. If they aren't there, it sets the coordinates into the default
+        # values: '0.0, 0.0'
+        if len(model_kwargs) != 0 and model_name == 'MapSquare':
+            if model_kwargs['number'] in mp_coords_dict.keys():
+                model_kwargs['coordinates'] = mp_coords_dict[model_kwargs['number']]
+            else:
+                model_kwargs['coordinates'] = '0.0, 0.0'
 
         # If no model fields found, do not create model instance
         if len(model_kwargs) == 0:
@@ -316,11 +373,29 @@ def populate_database(
             model_kwargs['photographer'] = \
                 Photographer.objects.filter(number=photographer_number).first()
 
+        # Creates models for all of the MapSquares not listed in the spreadsheet between the
+        # previous row and the current one
+        if model_name == "MapSquare":
+            while map_square_count != model_kwargs['number']:
+                create_map_square(map_square_count, mp_coords_dict, verbose)
+                map_square_count += 1
+            map_square_count += 1
+
         if verbose:
             print(f'Creating {model_name} with kwargs: {model_kwargs}\n')
 
         model_instance = MODEL_NAME_TO_MODEL[model_name](**model_kwargs)
         model_instance.save()
+
+        # When the last row in the spreadsheet is reached, creates MapSquare models for all
+        # remaining, absent MapSquares (total: 1,755)
+        if (model_name == 'MapSquare'
+            and model_kwargs['number'] == int(values_as_a_dict[-1]['number'])
+        ):
+            while map_square_count <= 1755:
+                create_map_square(map_square_count, mp_coords_dict, verbose)
+                map_square_count += 1
+
 
 
 class Command(BaseCommand):
@@ -348,8 +423,6 @@ class Command(BaseCommand):
         # redownload always does local_download
         if redownload and not local_download:
             local_download = True
-
-
 
         # Delete database
         if os.path.exists(settings.DB_PATH):
@@ -386,7 +459,7 @@ class Command(BaseCommand):
         # the MapSquare database, so we add the Map Squares first
         spreadsheet_ranges = ['MapSquare', 'Photographer', 'Photo']
 
-        print_header(f'''Will import ranges {", ".join(spreadsheet_ranges)}. (If nothing
+        print_header(f'''Will import ranges {", ".join(spreadsheet_ranges)}.\n # (If nothing
           is happening, please try again.)''')
 
         # Create resource objects for interacting with the google API
@@ -407,7 +480,9 @@ class Command(BaseCommand):
 
         for model_name, values in zip(spreadsheet_ranges, databases):
             print_header(f'{model_name}: Importing these values from the spreadsheet')
-
+            # Sorts the rows in the spreadsheet by the map square number [MapSquare ONLY]
+            if model_name == 'MapSquare':
+                values = [values[0]] + sorted(values[1:], key=lambda x: int(x[0]))
             header = values[0]
             values_as_a_dict = [dict(zip(header, row)) for row in values[1:]]
             populate_database(
