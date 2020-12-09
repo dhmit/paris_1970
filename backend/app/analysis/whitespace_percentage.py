@@ -21,6 +21,9 @@ def analyze(photo: Photo):
     """
     image = photo.get_image_data()
 
+    if image is None:
+        return -1
+
     # Convert image to grayscale
     # (Changes image array shape from (height, width, 3) to (height, width))
     # (Pixels (image[h][w]) will be a value from 0 to 255)

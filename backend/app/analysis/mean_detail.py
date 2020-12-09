@@ -19,6 +19,9 @@ def analyze(photo: Photo):
     """
     Calculate the mean detail for a given Photo arithmetically
     """
+    image = photo.get_image_data()
+    if image is None:
+        return 0
 
     detail = detail_analyze(photo)
     square = square_analyze(photo)
