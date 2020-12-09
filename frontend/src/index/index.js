@@ -29,7 +29,9 @@ class Map extends React.Component {
 
     render() {
         // Sorts the map squares by number of photos (ascending order)
-        const sortedData = Object.values(this.props.mapData).sort((a, b) => a.photos.length - b.photos.length);
+        // eslint-disable-next-line max-len
+        const sortedData = Object.values(this.props.mapData)
+            .sort((a, b) => a.photos.length - b.photos.length);
 
         return (
             <div id="mapContainer">
@@ -56,38 +58,47 @@ class Map extends React.Component {
                         sortedData.map((mapSquareData) => {
                         // console.log(mapSquareData);
 
-                        const index = mapSquareData.number;
-                        const coords = mapSquareData.topLeftCoords;
-                        const numberOfPhotos = mapSquareData.photos.length;
+                            const index = mapSquareData.number;
+                            const coords = mapSquareData.topLeftCoords;
+                            const numberOfPhotos = mapSquareData.photos.length;
 
-                        // Width and height of map squares
-                        const lngdiff = 0.00340325568;
-                        const latdiff = 0.0022358;
+                            // Width and height of map squares
+                            const lngdiff = 0.00340325568;
+                            const latdiff = 0.0022358;
 
-                        const msbounds = [[(coords.lat), (coords.lng)],
-                            [(coords.lat - latdiff), (coords.lng - lngdiff)]];
-                        const link = '/map_square/' + index;
+                            const msbounds = [[(coords.lat), (coords.lng)],
+                                [(coords.lat - latdiff), (coords.lng - lngdiff)]];
+                            const link = '/map_square/' + index;
 
-                        // Greys out squares without photos in them
-                        if (numberOfPhotos === 0) {
+                            // Greys out squares without photos in them
+                            if (numberOfPhotos === 0) {
+                                return (
+                                    <Rectangle
+                                        key={index}
+                                        bounds={msbounds}
+                                        color={'#b3b3b3'} weight={2}
+                                    >
+                                        <Popup>
+                                            Map Square {index} <br />
+                                            <a href={link}>{numberOfPhotos} photos to show</a>
+                                        </Popup>
+                                    </Rectangle>
+                                );
+                            }
                             return (
-                                <Rectangle key={index} bounds={msbounds} color={'#b3b3b3'} weight={2}>
+                                <Rectangle
+                                    key={index}
+                                    bounds={msbounds}
+                                    color={'#b51a00'} weight={4}
+                                >
                                     <Popup>
-                                        Map Square {index} <br />
+                                        Map Square {index} <br/>
                                         <a href={link}>{numberOfPhotos} photos to show</a>
                                     </Popup>
                                 </Rectangle>
                             );
-                        }
-                        return (
-                            <Rectangle key={index} bounds={msbounds} color={'#b51a00'} weight={4}>
-                                <Popup>
-                                    Map Square {index} <br/>
-                                    <a href={link}>{numberOfPhotos} photos to show</a>
-                                </Popup>
-                            </Rectangle>
-                        );
-                    })}
+                        })
+                    }
                 </LeafletMap>
             </div>
         );
