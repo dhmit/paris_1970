@@ -67,20 +67,30 @@ class Command(BaseCommand):
             else:
                 model_instances = model.objects.all()
 
+            num_computed = 0
+            save_threshold = 20 # Number of analyses that need to be done before pickling
+
             for model_instance in model_instances:
-                print(f'Running {analysis_name} on {model} {model_instance.id} '
-                      f'(Photo number: {model_instance.number}, '
-                      f'Map square: {model_instance.map_square.number})')
-                instance_identifier = f'photo_{model_instance.number}_{model_instance.map_square}'
+                # NOTE: These identifiers assume that the photo number and map square number are
+                #       not None
+                print_msg = f'Running {analysis_name} on {model} {model_instance.id} '\
+                            f'(Photo number: {model_instance.number}, '\
+                            f'Map square: {model_instance.map_square.number})'
+                instance_identifier = f'photo_{model_instance.number}_' \
+                                      f'{model_instance.map_square.number}'
 
                 if use_pickled:
                     if instance_identifier in stored_results:
+                        print(f'Using stored results on (Photo number: {model_instance.number}, '\
+                              f'Map square: {model_instance.map_square.number})')
                         result = stored_results[instance_identifier]
                     else:
                         print('No stored result was found, so recomputing.')
+                        print(print_msg)
                         result = analysis_func(model_instance)
 
                 else:
+                    print(print_msg)
                     result = analysis_func(model_instance)
 
                 analysis_result = analysis_result_model(
@@ -92,6 +102,13 @@ class Command(BaseCommand):
 
                 # Store the result
                 stored_results[instance_identifier] = result
+                num_computed += 1
+
+                # Quick save the analysis results so far in case of failure
+                if num_computed == save_threshold:
+                    num_computed = 0
+                    with open(result_path, 'wb') as analysis_pickle:
+                        pickle.dump(stored_results, analysis_pickle)
 
             # Save the analysis stored_results
             # TODO: handle case where analysis fails (this won't pickle if something fails)

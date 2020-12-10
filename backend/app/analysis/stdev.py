@@ -1,7 +1,7 @@
 """
 stdev.py
 
-Isolate local regions of an image and find the mean standard deviation to determine
+Isolates local regions of an image and find the mean standard deviation to determine
 level of detail in a photo
 
 Josh
@@ -17,12 +17,11 @@ MODEL = Photo
 
 def analyze(photo: Photo):
     """
-    Calculate the mean standard deviation of pixels over local regions
+    Calculates the mean standard deviation of pixels over local regions
     Std computed locally and then averaged to account for, say, black-and-white images
     """
 
     image = photo.get_image_data()
-
     # Convert image to grayscale
     # (Changes image array shape from (height, width, 3) to (height, width))
     # (Pixels (image[h][w]) will be a value from 0 to 255)

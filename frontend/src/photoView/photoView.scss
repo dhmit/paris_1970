@@ -1,3 +1,45 @@
 .image-photo {
     width: 100%;
 }
+
+line {
+    stroke: red;
+    stroke-width: 1;
+}
+
+.positionTopLeft {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+circle {
+    stroke: cyan;
+    stroke-width: 2;
+    fill: none;
+}
+
+rect {
+    fill: black;
+}
+
+.navButton {
+    text-decoration: none;
+    display: inline-block;
+    color: gray;
+    font-size: 50px;
+}
+
+.navButton:hover {
+    color: black;
+    text-decoration: none;
+}
+
+.center {
+    margin: auto;
+}
+
+.top-button {
+    position: relative;
+    top: 70px;
+}

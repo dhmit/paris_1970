@@ -4,6 +4,26 @@ import * as PropTypes from 'prop-types';
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
+const percentFormat = (x) => Math.floor(x) + '%';
+const numberFormat = (x) => Math.floor(x);
+
+const ANALYSIS = {
+    whitespace_percentage: {
+        displayName: 'Average Whitespace Percentage',
+        analysisType: 'average',
+        displayFormat: percentFormat,
+    },
+    portrait_detection: {
+        displayName: 'Percentage of Portraits',
+        analysisType: 'count',
+        displayFormat: percentFormat,
+    },
+    mean_detail: {
+        displayName: 'Average Mean Detail',
+        analysisType: 'average',
+        displayFormat: numberFormat,
+    },
+};
 
 export class PhotographerView extends React.Component {
     constructor(props) {
@@ -31,6 +51,37 @@ export class PhotographerView extends React.Component {
         }
     }
 
+    getAggregatePhotoAnalysis = (photos) => {
+        const analysisAcc = {};
+        Object.keys(ANALYSIS).forEach((analysisName) => {
+            analysisAcc[analysisName] = 0;
+        });
+        photos.forEach((photo) => {
+            photo['analyses'].forEach((analysis) => {
+                const analysisName = analysis.name;
+                const result = analysis.result;
+                const analysisType = ANALYSIS[analysisName].analysisType;
+                if (analysisType === 'average') {
+                    analysisAcc[analysisName] += parseFloat(result);
+                } else if (analysisType === 'count') {
+                    analysisAcc[analysisName] += 1;
+                }
+            });
+        });
+
+        const results = {};
+        Object.keys(analysisAcc).forEach((analysisName) => {
+            const analysisType = ANALYSIS[analysisName].analysisType;
+            let result;
+            if (analysisType === 'average') {
+                result = analysisAcc[analysisName] / photos.length;
+            } else if (analysisType === 'count') {
+                result = analysisAcc[analysisName];
+            }
+            results[analysisName] = ANALYSIS[analysisName].displayFormat(result);
+        });
+        return results;
+    };
 
     render() {
         if (this.state.loading) {
@@ -47,31 +98,47 @@ export class PhotographerView extends React.Component {
             name,
             map_square: mapSquare,  // n.b. here we rename while doing the object destructuring
             number,
-            sentiment,
-            type,
             photos,
         } = this.state.photographerData;
 
+        const photographerAnalysis = this.getAggregatePhotoAnalysis(photos);
         return (<>
             <Navbar/>
-            <div className='page'>
-                <h1>{name} (ID: {number})</h1>
-                <h3>Assigned to:</h3>
-                <h5>Map Square {mapSquare.number}</h5>
-                <h3 className='photographer-heading'>Sentiment on Paris:</h3>
-                <h5>{sentiment === '' ? 'N/A' : sentiment }</h5>
-                <h3>Type of Photographer:</h3>
-                <h5>{type === '' ? 'N/A' : type }</h5>
-                <h3>Photos:</h3>
-                <ul className='photo-list'>
+            <div className='page row'>
+                <div className='col-6'>
+                    <h1>{name} (ID: {number})</h1>
+                    <h2 className="h3">Assigned to:</h2>
+                    <h3 className="h5">Map Square {mapSquare.number}</h3>
+                </div>
+                <div className='col-6'>
+                    <h2 className="h3">Analysis Results</h2>
+                    {Object.keys(photographerAnalysis).map((analysis) => {
+                        return (
+                            <div key={analysis}>
+                                <h3 className="h5">{ANALYSIS[analysis].displayName}:</h3>
+                                {photographerAnalysis[analysis]}
+                            </div>
+                        );
+                    })}
+                </div>
+                <h2 className="h3">Photos Gallery:</h2>
+                <div className='photo_gallery'>
                     {photos.map((photo, k) => (
-                        <li key={k}>
-                            <a href={`/photo/${mapSquare.number}/${photo.number}/`}>
-                                <h3>Photo {photo.id}</h3>
+                        <div className="photo" key={k}>
+                            <a
+                                key={k}
+                                href={`/photo/${photo['map_square_number']}/${photo['number']}/`}
+                            >
+                                <img
+                                    alt={photo.alt}
+                                    height={200}
+                                    width={200}
+                                    src={photo['thumbnail_src']}
+                                />
                             </a>
-                        </li>
+                        </div>
                     ))}
-                </ul>
+                </div>
             </div>
             <Footer/>
         </>);
