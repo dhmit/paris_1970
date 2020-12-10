@@ -15,8 +15,11 @@ def analyze(photo: Photo):
     Produce a list of all other photos by cosine similarity to this photo's feature vector
     np"""
     similarities = similarity_utils.analyze_similarity(photo, cosine_similarity)
-    similarities.sort(key=lambda x: x[2])
-    return similarities
+    if similarities is not None:
+        similarities.sort(key=lambda x: x[2])
+        return similarities
+    else:
+        return []
 
 
 def cosine_similarity(photo_features, other_photo_features):
