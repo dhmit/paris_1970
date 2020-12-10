@@ -164,4 +164,3 @@ backend/app/analysis/yolo_files/yolov3.weights
 
 # Locally cached photos
 backend/data/local_photos/
-

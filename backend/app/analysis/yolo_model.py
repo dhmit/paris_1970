@@ -65,6 +65,23 @@ def create_box(detection, image_dimensions):
     return [x_coordinate, y_coordinate, int(box_width), int(box_height)]
 
 
+def yolo_setup(input_image, net):
+    """
+    Generates the output layers used to extract class IDs and
+    confidence values of the object detections in the input image
+    """
+    # Determine only the *output* layer names that we need from YOLO
+    layer_names = [net.getLayerNames()[i[0] - 1] for i in net.getUnconnectedOutLayers()]
+
+    # Construct a blob from the input image
+    blob = cv2.dnn.blobFromImage(input_image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
+    net.setInput(blob)
+
+    # Perform a forward pass of the YOLO object detector to get bounding boxes and their
+    # associated probabilities
+    return net.forward(layer_names)
+
+
 def analyze(photo: Photo):
     """
     Uses yolo model to detect objects within photos
@@ -78,20 +95,10 @@ def analyze(photo: Photo):
     labels = yolo_model[1]
 
     # Get image and image dimensions
-    image = photo.get_image_data()
-    image_dimensions = image.shape[:2]
-    input_image = image  # cv2.resize(image, (416, 416))
+    input_image = photo.get_image_data()
 
-    # Determine only the *output* layer names that we need from YOLO
-    layer_names = [net.getLayerNames()[i[0] - 1] for i in net.getUnconnectedOutLayers()]
-
-    # Construct a blob from the input image
-    blob = cv2.dnn.blobFromImage(input_image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
-    net.setInput(blob)
-
-    # Perform a forward pass of the YOLO object detector to get bounding boxes and their
-    # associated probabilities
-    layer_outputs = net.forward(layer_names)
+    image_dimensions = input_image.shape[:2]
+    layer_outputs = yolo_setup(input_image, net)
 
     boxes = []
     confidences = []
@@ -114,16 +121,34 @@ def analyze(photo: Photo):
 
     # Apply non-maxima suppression to suppress weak, overlapping bounding boxes
     indexes = cv2.dnn.NMSBoxes(boxes, confidences, CONFIDENCE, THRESHOLD)
-
-    if len(indexes) == 0:
+    if indexes is None or len(indexes) == 0:
         return {}
 
     # Get quantity of detected objects in the image based on indexes
-    result = {}
+    classes = {}
+    result = []
 
     # Loop over the indexes we are keeping
     for i in indexes.flatten():
         object_class = labels[class_ids[i]]
-        result[object_class] = result.get(object_class,0) + 1
+        rect_coord = boxes[i]
 
-    return result
+        if object_class in classes:
+            classes[object_class] += 1
+        else:
+            classes[object_class] = 1
+
+        result.append(
+            {
+                "label": object_class,
+                "x_coord": rect_coord[0],
+                "y_coord": rect_coord[1],
+                "width": rect_coord[2],
+                "height": rect_coord[3],
+            }
+        )
+
+    return {
+        "boxes": result,
+        "labels": classes,
+    }
