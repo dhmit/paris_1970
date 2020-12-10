@@ -385,7 +385,6 @@ export class PhotoView extends React.Component {
 
                     {analyses.map((analysisResult, index) => {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
-                        const parsedValue = JSON.parse(analysisResult.result);
 
                         // handled in a different div
                         if (analysisResult.name in VISUAL_ANALYSES) {
@@ -393,13 +392,13 @@ export class PhotoView extends React.Component {
                         }
 
                         let analysisDisplayName;
-                        let analysisResultStr = parsedValue;
+                        let analysisResultStr = analysisResult.result;
                         if (!analysisConfig) {
                             analysisDisplayName = analysisResult.name;
                         } else {
                             analysisDisplayName = analysisConfig.displayName;
                             if (analysisConfig.formatter) {
-                                analysisResultStr = analysisConfig.formatter(parsedValue);
+                                analysisResultStr = analysisConfig.formatter(analysisResult.result);
                             }
                         }
 
