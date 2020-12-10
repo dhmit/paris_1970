@@ -24,6 +24,8 @@ jobs:
     - name: Install Python packages
       run: |
         pip install -r requirements.txt
+    - name: Download YOLO weights
+      run: ./.github/scripts/download_yolo_weights.sh
     - name: Run Django tests
       run: |
         cd backend
