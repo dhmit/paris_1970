@@ -385,7 +385,6 @@ export class PhotoView extends React.Component {
 
                     {analyses.map((analysisResult, index) => {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
-                        const parsedValue = JSON.parse(analysisResult.result);
 
                         // handled in a different div
                         if (analysisResult.name in VISUAL_ANALYSES) {
