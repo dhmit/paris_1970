@@ -1,9 +1,9 @@
 """
 These view functions and classes implement API endpoints
 """
+import ast
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-import ast
 from .models import Photo, MapSquare, Photographer, CorpusAnalysisResult, PhotoAnalysisResult
 from .serializers import (
     PhotoSerializer,

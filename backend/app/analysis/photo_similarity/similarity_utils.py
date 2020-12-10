@@ -13,6 +13,9 @@ from app.models import Photo
 
 
 def deserialize_tensor(photo):
+    """
+    Retrieve and deserialize the tensor that was generated for the input photo.
+    """
     dir_path = Path(settings.ANALYSIS_PICKLE_PATH,
                     'resnet18_features',
                     str(photo.map_square.number))
