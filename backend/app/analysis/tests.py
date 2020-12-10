@@ -202,9 +202,9 @@ class AnalysisTestBase(TestCase):
         :return: boolean statements from assertions
         """
         photo_with_people = self.add_photo('test_portrait_detection_true')
-        photo_with_no_objects = self.add_photo('100x100-GreySquare')
+        photo_of_nothing = self.add_photo('100x100-GreySquare')
         result_with_people = yolo_model.analyze(photo_with_people)
-        result_with_nothing = yolo_model.analyze(photo_with_no_objects)
+        result_with_nothing = yolo_model.analyze(photo_of_nothing)
         self.assertIsNotNone(result_with_people)
         self.assertEqual(result_with_nothing, {})
 
