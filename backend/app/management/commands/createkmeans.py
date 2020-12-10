@@ -32,6 +32,12 @@ class Command(BaseCommand):
             help='Number of different clusters the model tries to group the photos into',
         )
         parser.add_argument(
+            '--limit',
+            type=int,
+            action='store',
+            help='Number of photos to run the clustering over (mostly for prototyping runs)',
+        )
+        parser.add_argument(
             '--resize',
             action='store',
             type=int,
@@ -48,7 +54,9 @@ class Command(BaseCommand):
         parser.add_argument('--use_pickled', action='store_true')
 
     def handle(self, *args, **options):
+        # pylint: disable=too-many-locals
         number_of_clusters = options.get('n_clusters')
+        limit = options.get('limit', None)
         random_state = options.get('random_state')
         use_pickled = options.get('use_pickled')
         dimensions = tuple(options.get('resize'))
@@ -74,26 +82,28 @@ class Command(BaseCommand):
         else:
             # Create Kmeans model and get labels
             print_header("Preparing reformatted photos (This might take a couple of minutes)...")
-            if use_pickled and os.path.exists(photos_path):
-                with open(photos_path, 'rb') as photos_pickle:
-                    stored_photos = pickle.load(photos_pickle)
-            else:
-                stored_photos = None
             reformatted_photos = []
-            valid_photos = [photo for photo in Photo.objects.all() if photo.has_valid_source()]
-            if not stored_photos:
-                for photo in valid_photos:
+            if use_pickled and os.path.exists(photos_path):
+                print('Loading pickled reformatted photos.')
+                with open(photos_path, 'rb') as photos_pickle:
+                    reformatted_photos = pickle.load(photos_pickle)
+            else:
+                valid_photos = [photo for photo in Photo.objects.all() if photo.has_valid_source()]
+                if limit:
+                    valid_photos = valid_photos[:limit]
+                num_photos = len(valid_photos)
+                for i, photo in enumerate(valid_photos):
                     grayscale_image = photo.get_image_data(True)
                     reformatted_photo = cv2.resize(grayscale_image, dimensions).flatten() / 255
                     reformatted_photos.append(reformatted_photo)
-            else:
-                reformatted_photos = stored_photos
-            # Save reformatted_photos
-            # TODO: handle case where analysis fails (this won't pickle if something fails)
-            with open(photos_path, 'wb') as photos_pickle:
-                pickle.dump(reformatted_photos, photos_pickle)
-            print('')
+                    print(f'Reformatted {i} of {num_photos} photos.')
+
+                # TODO: handle case where analysis fails (this won't pickle if something fails)
+                # Save reformatted_photos
+                with open(photos_path, 'wb') as photos_pickle:
+                    pickle.dump(reformatted_photos, photos_pickle)
             print("Done!")
+
             print_header("Generating labels...")
             kmeans = KMeans(
                 n_clusters=number_of_clusters, random_state=random_state
@@ -106,8 +116,9 @@ class Command(BaseCommand):
         if not clusters:
             clusters = []
             for i in range(number_of_clusters):
-                clusters.append(Cluster(model_n=number_of_clusters, label=i))
-                clusters[i].save()
+                cluster = Cluster(model_n=number_of_clusters, label=i)
+                cluster.save()
+                clusters.append(cluster)
         else:
             # Reset clusters if they exist to prevent previous photos from remaining in the
             # cluster if they should not be
@@ -115,6 +126,7 @@ class Command(BaseCommand):
                 cluster.photos.remove(*cluster.photos.all())
 
         # Add photos to clusters
+        print('Adding photos to clusters')
         for photo, label in zip(valid_photos, labels):
             label = int(label)
             clusters[label].photos.add(photo)
