@@ -416,6 +416,7 @@ class Command(BaseCommand):
         parser.add_argument('--create_thumbnails', action='store_true')
         parser.add_argument('--redownload', action='store_true')
         parser.add_argument('--verbose', action='store_true')
+        parser.add_argument('--quick', action='store_true')
         parser.add_argument('--cli_auth', action='store_true')
 
     def handle(self, *args, **options):
@@ -424,6 +425,7 @@ class Command(BaseCommand):
         create_thumbnails = options.get('create_thumbnails')
         redownload = options.get('redownload')
         verbose = options.get('verbose')
+        quick = options.get('quick')
         cli_auth = options.get('cli_auth')
 
         if create_thumbnails and not local_download:
@@ -463,6 +465,9 @@ class Command(BaseCommand):
 
         # THIS IS JUST FOR PROTOTYPING NEVER EVER EVER EVER IN PRODUCTION do this
         User.objects.create_superuser('admin', password='adminadmin')
+
+        if quick:
+            return
 
         # The order of these ranges matter. The Photographer model needs to have foreign keys to
         # the MapSquare database, so we add the Map Squares first
