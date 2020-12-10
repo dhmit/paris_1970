@@ -203,6 +203,8 @@ const VISUAL_ANALYSES = {
     'yolo_model': [configAnalysisYoloModel, 3],
 };
 
+const photoArray = [];
+
 function formatPercentageValue(value) {
     return `${parseInt(value)}%`;
 }
@@ -210,6 +212,10 @@ function formatPercentageValue(value) {
 function formatCoordinate(value) {
     return `(${parseInt(value[0][0])}, ${parseInt(value[0][1])})`;
 }
+
+const formatBoolean = (value) => {
+    return value ? 'Yes' : 'No';
+};
 
 const ANALYSIS_CONFIGS = {
     whitespace_percentage: {
@@ -227,6 +233,10 @@ const ANALYSIS_CONFIGS = {
         formatter: formatCoordinate,
         displayName: 'Vanishing Point Coordinate',
     },
+    portrait_detection: {
+        formatter: formatBoolean,
+        displayName: 'Is It a Portrait',
+    },
 };
 
 export class PhotoView extends React.Component {
@@ -243,6 +253,9 @@ export class PhotoView extends React.Component {
             natWidth: null,
             natHeight: null,
             labels: null,
+            mapData: null,
+            prevLink: null,
+            nextLink: null,
         };
         this.onImgLoad = this.onImgLoad.bind(this);
         this.photoRef = React.createRef();
@@ -266,6 +279,16 @@ export class PhotoView extends React.Component {
                     loading: false,
                 });
             }
+        } catch (e) {
+            console.log(e);
+        }
+        try {
+            const mapResponse = await fetch('/api/all_map_squares/');
+            const mapData = await mapResponse.json();
+            this.setState({
+                mapData,
+                loading: false,
+            });
         } catch (e) {
             console.log(e);
         }
@@ -298,8 +321,15 @@ export class PhotoView extends React.Component {
         });
     }
 
+    setLinks = (prevLink, nextLink) => {
+        this.setState({
+            prevLink: prevLink,
+            nextLink: nextLink,
+        });
+    }
+
     render() {
-        if (this.state.loading) {
+        if (this.state.loading || !this.state.mapData) {
             return (<h1>
                 Loading!
             </h1>);
@@ -319,10 +349,31 @@ export class PhotoView extends React.Component {
             analyses,
         } = this.state.photoData;
 
+        // Resize SVG overlays on viewport resize
         window.addEventListener('resize', () => this.handleResize());
+
+        if (photoArray.length === 0) {
+            for (const mapSquare of this.state.mapData) {
+                for (const photoData of mapSquare.photos) {
+                    let url = window.location.origin;
+                    url += `/photo/${photoData.map_square_number}/${photoData.number}/`;
+                    photoArray.push(url);
+                }
+            }
+            const idx = photoArray.indexOf(window.location.href);
+            const prevLink = photoArray[(idx - 1) % photoArray.length];
+            const nextLink = photoArray[(idx + 1) % photoArray.length];
+            this.setLinks(prevLink, nextLink);
+        }
 
         return (<>
             <Navbar />
+            <div className= 'top-button row'>
+                <div className='center'>
+                    <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
+                    <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
+                </div>
+            </div>
             <div className="page row">
                 <div className='image-view col-12 col-lg-6'>
                     <div>
@@ -379,9 +430,17 @@ export class PhotoView extends React.Component {
                     <p>{photoNumber}</p>
                     <h5>Photographer Name</h5>
                     <p>{photographerName || 'Unknown'}</p>
-                    <h5>Photographer Number</h5>
-                    <p>{photographerNumber || 'Unknown'}</p>
-                    <h5>Photographer Caption</h5>
+                    <h5>Photographer number</h5>
+                    <p>
+                        {
+                            photographerNumber
+                                ? <a href={`/photographer/${photographerNumber}/`}>
+                                    {photographerNumber}
+                                </a>
+                                : 'Unknown'
+                        }
+                    </p>
+                    <h5>Photographer caption</h5>
                     <p>{photographerCaption || 'None'}</p>
 
                     {analyses.map((analysisResult, index) => {
@@ -426,6 +485,7 @@ export class PhotoView extends React.Component {
                                 analysisResultStr = analysisConfig.formatter(analysisResult.result);
                             }
                         }
+
                         return (
                             <React.Fragment key={index}>
                                 <h5>{analysisDisplayName}</h5>
@@ -460,6 +520,10 @@ export class PhotoView extends React.Component {
                             }
                         </div>
                     </div>
+                </div>
+                <div className='center'>
+                    <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
+                    <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
                 </div>
             </div>
             <Footer />

@@ -19,11 +19,19 @@ jobs:
     - uses: actions/checkout@v1
     - uses: actions/setup-python@v1
       with:
-        python-version: '3.7'
+        python-version: '3.8'
         architecture: 'x64'
     - name: Install Python packages
-      run: |
-        pip install -r requirements.txt
+      run: pip install -r requirements.txt
+    - name: Cache YOLO weights
+      id: cache-yolo-weights
+      uses: actions/cache@v2
+      with:
+          path: ./backend/app/analysis/yolo_files/yolov3.weights
+          key: yolo-weights-cache
+    - name: Download YOLO weights
+      if: steps.cache-yolo-weights.outputs.cache-hit != 'true'
+      run: ./.github/scripts/download_yolo_weights.sh
     - name: Run Django tests
       run: |
         cd backend
