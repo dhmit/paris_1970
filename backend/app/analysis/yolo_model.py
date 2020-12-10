@@ -11,6 +11,7 @@ links:
 
 """
 import os
+import sys
 
 import numpy as np
 import cv2
@@ -30,8 +31,16 @@ CLASS_NAMES = os.path.join(settings.YOLO_DIR, 'coco.names')
 
 def load_yolo():
     """
-        Loads yolo model to analyze photo.
+    Loads yolo model to analyze photo.
     """
+    if not os.path.exists(WEIGHTS):
+        print(
+            'Please download the YLOLOv3-608 weights file at '
+            'https://pjreddie.com/media/files/yolov3.weights '
+            'and place it in the yolo_files directory before running this analysis.'
+        )
+        sys.exit(1)
+
     net = cv2.dnn.readNet(WEIGHTS, CONFIG)
     with open(CLASS_NAMES, "r") as file:
         classes = [line.strip() for line in file.readlines()]
@@ -43,7 +52,7 @@ def load_yolo():
 
 def create_box(detection, image_dimensions):
     """
-       Creates box around detected objects.
+    Creates box around detected objects.
     """
     image_height, image_width = image_dimensions
     box = detection[0:4] * np.array([image_width, image_height, image_width, image_height])
@@ -55,22 +64,25 @@ def create_box(detection, image_dimensions):
 
     return [x_coordinate, y_coordinate, int(box_width), int(box_height)]
 
+
 def analyze(photo: Photo):
     """
-        Uses yolo model to detect objects within photos
-        Returns a dictionary consisting of each object
-        and its frequency in the photo
+    Uses yolo model to detect objects within photos
+    Returns a dictionary consisting of each object
+    and its frequency in the photo
     """
+    # pylint: disable=too-many-locals
+
     yolo_model = load_yolo()
     net = yolo_model[0]
     labels = yolo_model[1]
+
     # Get image and image dimensions
     image = photo.get_image_data()
     image_dimensions = image.shape[:2]
-    input_image = image # cv2.resize(image, (416, 416))
+    input_image = image  # cv2.resize(image, (416, 416))
 
     # Determine only the *output* layer names that we need from YOLO
-    # layer_names = net.getLayerNames()
     layer_names = [net.getLayerNames()[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
     # Construct a blob from the input image
@@ -108,8 +120,10 @@ def analyze(photo: Photo):
 
     # Get quantity of detected objects in the image based on indexes
     result = {}
+
     # Loop over the indexes we are keeping
     for i in indexes.flatten():
         object_class = labels[class_ids[i]]
         result[object_class] = result.get(object_class,0) + 1
+
     return result
