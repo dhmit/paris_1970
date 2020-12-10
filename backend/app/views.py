@@ -103,19 +103,23 @@ def get_photo_by_similarity(request, map_square_number, photo_number):
     """
 
     photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
-    analysis_obj = PhotoAnalysisResult.objects.filter(
+    analysis_obj_list = PhotoAnalysisResult.objects.filter(
         name="resnet18_cosine_similarity",
         photo=photo_obj,
-    )[0]
+    )
+    if len(analysis_obj_list) <= 0:
+        photo_obj = []
 
-    # splices the list of similar photos to get top 10 photos
-    similarity_list = ast.literal_eval(analysis_obj.result)[:10]
+    else:
+        analysis_obj = analysis_obj_list[0]
+        # splices the list of similar photos to get top 10 photos
+        similarity_list = ast.literal_eval(analysis_obj.result)[:10]
 
-    photo_obj = []
-    for simPhoto in similarity_list:
-        map_square = simPhoto[0]
-        id_number = simPhoto[1]
-        photo_obj.append(Photo.objects.get(number=id_number, map_square__number=map_square))
+        photo_obj = []
+        for simPhoto in similarity_list:
+            map_square = simPhoto[0]
+            id_number = simPhoto[1]
+            photo_obj.append(Photo.objects.get(number=id_number, map_square__number=map_square))
 
     serializer = PhotoSerializer(photo_obj, many=True)
 

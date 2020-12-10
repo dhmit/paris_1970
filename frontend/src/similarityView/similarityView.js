@@ -61,6 +61,12 @@ export class SimilarityView extends React.Component {
             </h1>);
         }
 
+        if (this.state.photoData.length === 0) {
+            return (<h1>
+                Photo with id {window.location.pathname.split('/')[2]} has no similarity results.
+            </h1>);
+        }
+
         /*
         For each photo from get_photo_by_similarity, creates a thumbnail
          */
