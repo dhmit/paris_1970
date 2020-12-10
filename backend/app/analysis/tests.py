@@ -205,8 +205,8 @@ class AnalysisTestBase(TestCase):
         photo_of_nothing = self.add_photo('100x100-GreySquare')
         result_with_people = yolo_model.analyze(photo_with_people)
         result_with_nothing = yolo_model.analyze(photo_of_nothing)
-        self.assertIsNotNone(result_with_people,msg="this is a portrait, should detect people")
-        self.assertIsNone(result_with_nothing,msg="this is an empty photo, shouldn't have anything")
+        self.assertIsNotNone(result_with_people)
+        self.assertEqual(result_with_nothing, {})
 
     def test_stdev(self):
         """
