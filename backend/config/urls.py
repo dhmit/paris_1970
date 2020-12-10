@@ -49,7 +49,7 @@ urlpatterns = [
     # API endpoints
     path('api/photo/<int:map_square_number>/<int:photo_number>/', photo),
     path('api/similar_photos/<int:map_square_number>/<int:photo_number>/', get_photo_by_similarity),
-    path('api/photographer/<int:photographer_id>/', get_photographer),
+    path('api/photographer/<int:photographer_number>/', get_photographer),
     path('api/map_square/<int:map_square_number>/', get_map_square),
     path('api/corpus_analysis/', get_corpus_analysis_results),
     path('api/all_photos/', all_photos),

@@ -24,7 +24,7 @@ class Photo(models.Model):
     # Use number and map_square to uniquely identify a photo
     # DO NOT use the database pk, as that may change as we rebuild the database
     number = models.IntegerField(null=True)  # NOT the database PK, but rather based on shelfmark
-    map_square = models.ForeignKey('MapSquare', on_delete=models.CASCADE)
+    map_square = models.ForeignKey('MapSquare', on_delete=models.CASCADE, null=True)
     photographer = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
 
     # These are computed and set by syncdb: could be null if a photo is missing a side
@@ -32,6 +32,7 @@ class Photo(models.Model):
     front_src = models.CharField(max_length=252, null=True)
     back_src = models.CharField(max_length=252, null=True)
     binder_src = models.CharField(max_length=252, null=True)
+    thumbnail_src = models.CharField(max_length=252, null=True)
     cleaned_local_path = models.CharField(max_length=252, null=True)
     front_local_path = models.CharField(max_length=252, null=True)
     back_local_path = models.CharField(max_length=252, null=True)
@@ -90,6 +91,7 @@ class MapSquare(models.Model):
     name = models.CharField(max_length=252)
     number = models.IntegerField(null=True)
     boundaries = models.CharField(max_length=252)
+    coordinates = models.CharField(max_length=252)
 
 
 class Photographer(models.Model):
@@ -100,6 +102,8 @@ class Photographer(models.Model):
     name = models.CharField(max_length=252)
     number = models.IntegerField(null=True)
     map_square = models.ForeignKey(MapSquare, on_delete=models.SET_NULL, null=True)
+    type = models.CharField(max_length=252, null=True)
+    sentiment = models.CharField(max_length=252, null=True)
 
 
 class AnalysisResult(models.Model):
