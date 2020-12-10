@@ -30,9 +30,9 @@ def analyze(photo: Photo):
     dir_path.mkdir(parents=True, exist_ok=True)
     out_path = Path(dir_path, f'{photo.number}.pt')
 
-    # if out_path.exists():
-    #     # don't recompute -- if you need to, delete the serialized version
-    #     return None
+    if out_path.exists():
+        # don't recompute -- if you need to, delete the serialized version
+        return None
 
     # Load the image using Pillow
     image = photo.get_image_data(use_pillow=True)
