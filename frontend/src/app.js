@@ -12,6 +12,7 @@ import { PhotoView } from './photoView/photoView';
 import { PhotographerView } from './photographerView/photographerView';
 import { MapSquareView } from './mapSquareView/mapSquareView';
 import { AnalysisView } from './analysisView/analysisView';
+import { ClusterView } from './clusterView/clusterView';
 import About from './about/about';
 
 // Import all styles
@@ -28,4 +29,5 @@ window.app_modules = {
     PhotographerView,
     MapSquareView,
     AnalysisView,
+    ClusterView,
 };

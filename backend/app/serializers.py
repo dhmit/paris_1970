@@ -11,6 +11,7 @@ from .models import (
     Photo,
     PhotoAnalysisResult,
     Photographer,
+    Cluster,
 )
 
 
@@ -142,3 +143,13 @@ class PhotoAnalysisResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = PhotoAnalysisResult
         fields = ['name', 'result']
+
+
+class ClusterSerializer(serializers.ModelSerializer):
+    """
+    Serializes a cluster
+    """
+
+    class Meta:
+        model = Cluster
+        fields = ['model_n', 'label', 'photos']

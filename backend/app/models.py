@@ -44,7 +44,15 @@ class Photo(models.Model):
     librarian_caption = models.CharField(max_length=252)
     photographer_caption = models.CharField(max_length=252)
 
-    def get_image_data(self):
+    def has_valid_source(self):
+        return (self.cleaned_local_path or
+                self.front_local_path or
+                self.binder_local_path or
+                self.cleaned_src or
+                self.front_src or
+                self.binder_src)
+
+    def get_image_data(self, as_gray=False):
         """
         Get the image data via skimage's imread, for use in analyses
         We try for a local filepath first, as that's faster,
@@ -66,7 +74,7 @@ class Photo(models.Model):
             print(f'{self} has no front or binder src')
             return None
         try:
-            image = io.imread(source)
+            image = io.imread(source, as_gray)
         except (HTTPError, RemoteDisconnected) as base_exception:
             raise Exception(
                 f'Failed to download image data for {self} due to Google API rate limiting.'
@@ -149,3 +157,15 @@ class MapSquareAnalysisResult(AnalysisResult):
     This model is used to store an analysis result for a single Photo
     """
     map_square = models.ForeignKey(MapSquare, on_delete=models.CASCADE, null=False)
+
+
+class Cluster(models.Model):
+    """
+    This model is used to organize groups of similar photos
+    """
+    model_n = models.IntegerField(null=True)
+    label = models.IntegerField(null=True)
+    photos = models.ManyToManyField(Photo)
+
+    class Meta:
+        unique_together = ['model_n', 'label']

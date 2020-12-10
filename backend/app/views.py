@@ -4,7 +4,15 @@ These view functions and classes implement API endpoints
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Photo, MapSquare, Photographer, CorpusAnalysisResult, PhotoAnalysisResult
+from .models import (
+    Photo,
+    MapSquare,
+    Photographer,
+    CorpusAnalysisResult,
+    PhotoAnalysisResult,
+    Cluster,
+)
+
 from .serializers import (
     PhotoSerializer,
     MapSquareSerializer,
@@ -100,4 +108,14 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
         sorted_analysis_obj = analysis_obj
     sorted_photo_obj = [instance.photo for instance in sorted_analysis_obj]
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_photos_by_cluster(request, number_of_clusters, cluster_number):
+    """
+    API endpoint to get clusters of similar photos
+    """
+    cluster = Cluster.objects.get(model_n=number_of_clusters, label=cluster_number)
+    serializer = PhotoSerializer(cluster.photos.all(), many=True)
     return Response(serializer.data)
