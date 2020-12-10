@@ -23,7 +23,14 @@ jobs:
         architecture: 'x64'
     - name: Install Python packages
       run: pip install -r requirements.txt
+    - name: Cache YOLO weights
+      id: cache-yolo-weights
+      uses: actions/cache@v2
+      with:
+          path: backend/app/analysis/yolo_weights/yolov3.weights
+          key: yolo-weights
     - name: Download YOLO weights
+      if: steps.cache-yolo-weights.outputs.cache-hit != 'true'
       run: ./.github/scripts/download_yolo_weights.sh
     - name: Run Django tests
       run: |
