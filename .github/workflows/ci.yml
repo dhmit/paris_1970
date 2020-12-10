@@ -27,8 +27,8 @@ jobs:
       id: cache-yolo-weights
       uses: actions/cache@v2
       with:
-          path: backend/app/analysis/yolo_weights/yolov3.weights
-          key: yolo-weights
+          path: ./backend/app/analysis/yolo_weights/yolov3.weights
+          key: cache-yolo-weights
     - name: Download YOLO weights
       if: steps.cache-yolo-weights.outputs.cache-hit != 'true'
       run: ./.github/scripts/download_yolo_weights.sh
