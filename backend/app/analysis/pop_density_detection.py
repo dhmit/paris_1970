@@ -11,14 +11,13 @@ import cv2
 from ..models import Photo
 
 
-
-
 MODEL = Photo
 
 def analyze(photo: Photo):
     """
     Analysis function that returns the length of the photographer caption for a Photo object
     """
+    # pylint: disable=too-many-locals
 
     # initialize the HOG descriptor/person detector
     hog = cv2.HOGDescriptor()
@@ -31,7 +30,10 @@ def analyze(photo: Photo):
     orig = image.copy()
 
     # detect people in the image, try adjusting parameters before creating new one
-    (rects, weights) = hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.05)
+    (rects, _weights) = hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.05)
+
+    # Single character variable names useful here for the math...
+    # pylint: disable=invalid-name
 
     # draw the original bounding boxes
     for (x, y, w, h) in rects:
@@ -47,8 +49,8 @@ def analyze(photo: Photo):
     for (xA, yA, xB, yB) in pick:
         cv2.rectangle(image, (xA, yA), (xB, yB), (0, 255, 0), 2)
 
-    #cv2.imwrite(f'test_pop_density_detection_{photo.id}.jpg', image)
+    # Write out photos for manual inspection - for debugging
+    # cv2.imwrite(f'test_pop_density_detection_{photo.id}.jpg', image)
 
     num_people = len(pick)
     return num_people
-

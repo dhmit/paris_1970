@@ -51,18 +51,18 @@ class AnalysisTestBase(TestCase):
         self.assertEqual(50, result)
 
     def test_pop_density_detection(self):
+        """
+        Tests for pop_density_detection analysis
+        """
         photo_three_people = Photo(number=3, map_square=self.map_square)
         test_photo_path = Path(settings.TEST_PHOTOS_DIR, 'pop_density_detection_test_3_people.jpg')
         photo_three_people.cleaned_local_path = test_photo_path
         photo_three_people.save()
 
         # this photo we know has 3 people
-        print("HERE 1")
         result = pop_density_detection.analyze(photo_three_people)
-        print("HERE 2")
         self.assertEqual(3, result)
-        print("HERE 3")
+
         # this is the half black half white square with no people
         result = pop_density_detection.analyze(self.photo_0)
-        print("HERE 4")
         self.assertEqual(0, result)
