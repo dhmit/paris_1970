@@ -98,7 +98,7 @@ class AnalysisTestBase(TestCase):
         self.assertEqual(3, result)
 
         # this is the half black half white square with no people
-        photo_no_people = self.add_photo('100x100_500px-white_500px-black')
+        photo_no_people = self.add_photo('100x100-BlackSquare')
         result = pop_density_detection.analyze(photo_no_people)
         self.assertEqual(0, result)
 
