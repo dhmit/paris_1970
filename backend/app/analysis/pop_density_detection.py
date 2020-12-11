@@ -25,8 +25,10 @@ def analyze(photo: Photo):
 
     # load the image and resize it to (1) reduce detection time
     # and (2) improve detection accuracy
+    # images less than 400 in width get resized up, otherwise we can crash due to winStride
+    # below going out of bounds
     image = photo.get_image_data()
-    image = imutils.resize(image, width=min(400, image.shape[1]))
+    image = imutils.resize(image, width=400)
     orig = image.copy()
 
     # detect people in the image, try adjusting parameters before creating new one
