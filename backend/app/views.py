@@ -1,6 +1,8 @@
 """
 These view functions and classes implement API endpoints
 """
+import ast
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -112,6 +114,46 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
 
 
 @api_view(['GET'])
+def get_all_photos_in_order(request):
+    """
+    API endpoint to get photos sorted by map square
+    """
+    analysis_obj = PhotoAnalysisResult.objects.filter(name="resnet18_cosine_similarity")
+    sorted_analysis_obj = sorted(analysis_obj, key=lambda instance: instance.parsed_result())
+    sorted_photo_obj = [instance.photo for instance in sorted_analysis_obj]
+    serializer = PhotoSerializer(sorted_photo_obj, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_photo_by_similarity(request, map_square_number, photo_number):
+    """
+    API endpoint to get top 10 similar photos of a specific photo
+    """
+
+    photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
+    analysis_obj_list = PhotoAnalysisResult.objects.filter(
+        name="resnet18_cosine_similarity",
+        photo=photo_obj,
+    )
+
+    similar_photos = []
+    if analysis_obj_list:
+        analysis_obj = analysis_obj_list[0]
+        # splices the list of similar photos to get top 10 photos
+        similarity_list = ast.literal_eval(analysis_obj.result)[:10]
+
+        for simPhoto in similarity_list:
+            map_square = simPhoto[0]
+            id_number = simPhoto[1]
+            similar_photos.append(
+                Photo.objects.get(number=id_number, map_square__number=map_square)
+            )
+
+    serializer = PhotoSerializer(similar_photos, many=True)
+    return Response(serializer.data)
+
+
 def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     """
     API endpoint to get clusters of similar photos

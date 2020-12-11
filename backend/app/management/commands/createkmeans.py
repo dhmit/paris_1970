@@ -93,7 +93,7 @@ class Command(BaseCommand):
                     valid_photos = valid_photos[:limit]
                 num_photos = len(valid_photos)
                 for i, photo in enumerate(valid_photos):
-                    grayscale_image = photo.get_image_data(True)
+                    grayscale_image = photo.get_image_data(as_gray=True)
                     reformatted_photo = cv2.resize(grayscale_image, dimensions).flatten() / 255
                     reformatted_photos.append(reformatted_photo)
                     print(f'Reformatted {i} of {num_photos} photos.')
