@@ -44,7 +44,7 @@ def analyze(photo: Photo):
     model = models.resnet18(pretrained=True)
     model.eval()
     layer_name = 'avgpool'
-    layer = model._modules.get(layer_name)
+    layer = model._modules.get(layer_name)  # pylint: disable=protected-access
 
     # Transform the image and save it to a PyTorch Variable
     scale = transforms.Resize((224, 224))
@@ -70,17 +70,17 @@ def analyze(photo: Photo):
     feature_vector = get_feature_vector[layer_name]
 
     # Define a function that will copy the output of a layer
-    def copy_data(m, i, o):
-        feature_vector.copy_(o.data)
+    def copy_data(_module, _input, output):
+        feature_vector.copy_(output.data)
 
     # Attach that function to our selected layer
-    h = layer.register_forward_hook(copy_data)
+    hook = layer.register_forward_hook(copy_data)
 
     # Run the model on our transformed image
     model(image_tensor)
 
     # Detach our copy function from the layer
-    h.remove()
+    hook.remove()
 
     # Serialize out the result
     torch.save(feature_vector, out_path)
