@@ -4,8 +4,10 @@ Tests for the main main.
 
 from pathlib import Path
 import os
+
 from django.conf import settings
 from django.test import TestCase
+
 # NOTE(ra): we have to use absolute imports in this module because the Django test runner
 # will resolve imports relative to the backend working directory
 # If you do, e.g.,
@@ -13,17 +15,18 @@ from django.test import TestCase
 # ... you'll crash the test runner. Please don't!
 from app.models import Photo, MapSquare
 from app.analysis import (
-    photographer_caption_length,
-    foreground_percentage,
-    whitespace_percentage,
-    text_ocr,
-    find_vanishing_point,
-    portrait_detection,
-    stdev,
     detail_fft2,
+    find_vanishing_point,
+    foreground_percentage,
     local_variance,
     mean_detail,
-    yolo_model
+    photographer_caption_length,
+    pop_density_detection,
+    portrait_detection,
+    stdev,
+    text_ocr,
+    whitespace_percentage,
+    yolo_model,
 )
 from app.analysis.indoor_analysis import (
     combined_indoor,
@@ -45,7 +48,6 @@ class AnalysisTestBase(TestCase):
         self.map_square = MapSquare()
         self.map_square.save()
 
-
     def add_photo(self, photo_name_or_path):
         """
         Creates a Photo object and adds it to self.photo_dict given
@@ -65,7 +67,6 @@ class AnalysisTestBase(TestCase):
             photo.front_local_path = Path(settings.TEST_PHOTOS_DIR, photo_name_or_path)
 
         photo.save()
-
         return photo
 
     def test_photographer_caption_length(self):
@@ -105,6 +106,20 @@ class AnalysisTestBase(TestCase):
         photo_hello = self.add_photo('300x300_hello')
         result = text_ocr.analyze(photo_hello)
         self.assertEqual("Hello", result)
+
+    def test_pop_density_detection(self):
+        """
+        Tests for pop_density_detection analysis
+        """
+        # this photo we know has 3 people
+        photo_three_people = self.add_photo('pop_density_detection_test_3_people')
+        result = pop_density_detection.analyze(photo_three_people)
+        self.assertEqual(3, result)
+
+        # this is the half black half white square with no people
+        photo_no_people = self.add_photo('100x100-BlackSquare')
+        result = pop_density_detection.analyze(photo_no_people)
+        self.assertEqual(0, result)
 
     def test_portrait_detection_true(self):
         photo = self.add_photo('test_portrait_detection_true')
@@ -311,16 +326,16 @@ class AnalysisTestBase(TestCase):
         Partition on location of vanishing point: at intersection between lines, does not exist
         Partition on number of lines: 0, 1, >1
         """
-        #add photo
         photo = self.add_photo('100px_100px_vanishing_point_X')
         photo2 = self.add_photo('100x100_500px-white_500px-black')
+
         # covers when image is x, intersecting lines in the middle, vanishing point exists
         result = find_vanishing_point.analyze(photo)['vanishing_point_coord']
         expected = (50, 50)
         distance = ((result['x'] - expected[0]) ** 2 + (result['y'] - expected[1]) ** 2) ** (1/2)
         self.assertTrue(distance < 2)
 
-        # covers when online line is horizontal (supposed to ignore),  1 line, van point does
-        # not exist
+        # covers when online line is horizontal (supposed to ignore),
+        # 1 line, vanishing point does not exist
         result2 = find_vanishing_point.analyze(photo2)['vanishing_point_coord']
         self.assertEqual(None, result2)
