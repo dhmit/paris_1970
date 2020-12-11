@@ -443,6 +443,32 @@ export class PhotoView extends React.Component {
                     <h5>Photographer caption</h5>
                     <p>{photographerCaption || 'None'}</p>
 
+                    <h5>Visual Analysis</h5>
+                    <div className="row">
+                        <div className="col-6">
+                            {(this.state.displaySide === 'cleaned')
+                                ? <select
+                                    id="toggleSelect"
+                                    className="custom-select"
+                                    onChange={this.toggleStatus}
+                                    value={this.state.view}
+                                >
+                                    <option value="0">None selected</option>
+                                    <option value="1">Perspective Lines</option>
+                                    <option value="2">Foreground Mask</option>
+                                    <option value="3">YOLO Model</option>
+                                </select>
+                                : <p>Not available</p>
+                            }
+                            {(this.state.view === 3 && this.state.displaySide === 'cleaned')
+                                ? <p className={'px-3 my-0'}>
+                                    <i>Hover over the boxes to see the name of the object.</i>
+                                </p>
+                                : <span></span>
+                            }
+                        </div>
+                    </div>
+
                     {analyses.map((analysisResult, index) => {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
                         const parsedValue = JSON.parse(analysisResult.result);
@@ -495,31 +521,6 @@ export class PhotoView extends React.Component {
                     })}
 
 
-                    <h5>Visual Analysis</h5>
-                    <div className="row">
-                        <div className="col-6">
-                            {(this.state.displaySide === 'cleaned')
-                                ? <select
-                                    id="toggleSelect"
-                                    className="custom-select"
-                                    onChange={this.toggleStatus}
-                                    value={this.state.view}
-                                >
-                                    <option value="0">None selected</option>
-                                    <option value="1">Perspective Lines</option>
-                                    <option value="2">Foreground Mask</option>
-                                    <option value="3">YOLO Model</option>
-                                </select>
-                                : <p>Not available</p>
-                            }
-                            {(this.state.view === 3 && this.state.displaySide === 'cleaned')
-                                ? <p className={'px-3 my-0'}>
-                                    <i>Hover over the boxes to see the name of the object.</i>
-                                </p>
-                                : <span></span>
-                            }
-                        </div>
-                    </div>
                 </div>
                 <div className='center'>
                     <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
