@@ -25,7 +25,6 @@ jobs:
       run: |
         pip install -r requirements.txt
         sudo apt install tesseract-ocr
-      run: pip install -r requirements.txt
     - name: Cache YOLO weights
       id: cache-yolo-weights
       uses: actions/cache@v2
