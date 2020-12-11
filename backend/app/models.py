@@ -2,10 +2,13 @@
 Models for the paris_1970 app.
 
 """
+import json
+
 from urllib.error import HTTPError
 from http.client import RemoteDisconnected
 
 from skimage import io
+from PIL import Image
 
 from django.db import models
 
@@ -21,7 +24,7 @@ class Photo(models.Model):
     # Use number and map_square to uniquely identify a photo
     # DO NOT use the database pk, as that may change as we rebuild the database
     number = models.IntegerField(null=True)  # NOT the database PK, but rather based on shelfmark
-    map_square = models.ForeignKey('MapSquare', on_delete=models.CASCADE)
+    map_square = models.ForeignKey('MapSquare', on_delete=models.CASCADE, null=True)
     photographer = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
 
     # These are computed and set by syncdb: could be null if a photo is missing a side
@@ -29,6 +32,7 @@ class Photo(models.Model):
     front_src = models.CharField(max_length=252, null=True)
     back_src = models.CharField(max_length=252, null=True)
     binder_src = models.CharField(max_length=252, null=True)
+    thumbnail_src = models.CharField(max_length=252, null=True)
     cleaned_local_path = models.CharField(max_length=252, null=True)
     front_local_path = models.CharField(max_length=252, null=True)
     back_local_path = models.CharField(max_length=252, null=True)
@@ -41,11 +45,25 @@ class Photo(models.Model):
     librarian_caption = models.CharField(max_length=252)
     photographer_caption = models.CharField(max_length=252)
 
-    def get_image_data(self):
+    def has_valid_source(self):
+        return (self.cleaned_local_path or
+                self.front_local_path or
+                self.binder_local_path or
+                self.cleaned_src or
+                self.front_src or
+                self.binder_src)
+
+    def get_image_data(self, as_gray=False, use_pillow=False):
         """
         Get the image data via skimage's imread, for use in analyses
+
         We try for a local filepath first, as that's faster,
         and we fallback on Google Drive if there's nothing local.
+
+        Optionally use Pillow instead (for pytorch analyses)
+        and return as_gray
+
+        TODO: implement as_gray for use_pillow
         """
         if self.cleaned_local_path:
             source = self.cleaned_local_path
@@ -63,7 +81,10 @@ class Photo(models.Model):
             print(f'{self} has no front or binder src')
             return None
         try:
-            image = io.imread(source)
+            if use_pillow:
+                image = Image.open(source)
+            else:
+                image = io.imread(source, as_gray)
         except (HTTPError, RemoteDisconnected) as base_exception:
             raise Exception(
                 f'Failed to download image data for {self} due to Google API rate limiting.'
@@ -83,6 +104,7 @@ class MapSquare(models.Model):
     name = models.CharField(max_length=252)
     number = models.IntegerField(null=True)
     boundaries = models.CharField(max_length=252)
+    coordinates = models.CharField(max_length=252)
 
 
 class Photographer(models.Model):
@@ -93,6 +115,8 @@ class Photographer(models.Model):
     name = models.CharField(max_length=252)
     number = models.IntegerField(null=True)
     map_square = models.ForeignKey(MapSquare, on_delete=models.SET_NULL, null=True)
+    type = models.CharField(max_length=252, null=True)
+    sentiment = models.CharField(max_length=252, null=True)
 
 
 class AnalysisResult(models.Model):
@@ -103,6 +127,9 @@ class AnalysisResult(models.Model):
     """
     name = models.CharField(max_length=252)
     result = models.TextField(null=True)
+
+    def parsed_result(self):
+        return json.loads(self.result)
 
     class Meta:
         # Make this an abstract base class, which means that Django won't create a database
@@ -140,3 +167,15 @@ class MapSquareAnalysisResult(AnalysisResult):
     This model is used to store an analysis result for a single Photo
     """
     map_square = models.ForeignKey(MapSquare, on_delete=models.CASCADE, null=False)
+
+
+class Cluster(models.Model):
+    """
+    This model is used to organize groups of similar photos
+    """
+    model_n = models.IntegerField(null=True)
+    label = models.IntegerField(null=True)
+    photos = models.ManyToManyField(Photo)
+
+    class Meta:
+        unique_together = ['model_n', 'label']

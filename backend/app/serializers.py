@@ -11,6 +11,7 @@ from .models import (
     Photo,
     PhotoAnalysisResult,
     Photographer,
+    Cluster,
 )
 
 
@@ -51,8 +52,8 @@ class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
         fields = [
-            'id', 'number', 'cleaned_src', 'front_src', 'back_src', 'binder_src', 'alt',
-            'photographer_name', 'photographer_number',
+            'id', 'number', 'cleaned_src', 'front_src', 'back_src', 'binder_src',
+            'thumbnail_src', 'alt', 'photographer_name', 'photographer_number',
             'map_square_number', 'shelfmark', 'librarian_caption', 'photographer_caption',
             'contains_sticker', 'analyses',
         ]
@@ -71,7 +72,7 @@ class MapSquareSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MapSquare
-        fields = ['id', 'photos', 'boundaries', 'name', 'number']
+        fields = ['id', 'photos', 'boundaries', 'name', 'number', 'coordinates']
 
 
 class PhotographerSerializer(serializers.ModelSerializer):
@@ -109,17 +110,17 @@ class PhotoForPhotographerSerializer(serializers.ModelSerializer):
         model = Photo
         fields = ['id', 'front_src', 'back_src', 'binder_src', 'alt', 'map_square', 'number',
                   'shelfmark', 'librarian_caption', 'photographer_caption', 'contains_sticker',
-        ]
+                  ]
 
 
 class MapSquareForPhotosSerializer(serializers.ModelSerializer):
     """
     Serializes a Map Square for the Photo model, but without a reference to the list of photos
     """
+
     class Meta:
         model = MapSquare
         fields = ['id', 'name', 'number', 'boundaries']
-
 
 
 class CorpusAnalysisResultsSerializer(serializers.ModelSerializer):
@@ -142,3 +143,13 @@ class PhotoAnalysisResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = PhotoAnalysisResult
         fields = ['name', 'result']
+
+
+class ClusterSerializer(serializers.ModelSerializer):
+    """
+    Serializes a cluster
+    """
+
+    class Meta:
+        model = Cluster
+        fields = ['model_n', 'label', 'photos']
