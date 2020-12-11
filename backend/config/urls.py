@@ -27,7 +27,8 @@ from app.views import (
     get_corpus_analysis_results,
     get_photos_by_analysis,
     get_all_photos_in_order,
-    get_photo_by_similarity
+    get_photo_by_similarity,
+    get_photos_by_cluster,
 )
 
 
@@ -56,8 +57,11 @@ urlpatterns = [
     path('api/all_map_squares/', all_map_squares),
     path('api/similarity/', get_all_photos_in_order),
     path('api/analysis/<str:analysis_name>/', get_photos_by_analysis),
+    path('api/clustering/<int:number_of_clusters>/<int:cluster_number>/', get_photos_by_cluster),
+    path('api/analysis/<str:analysis_name>/<str:object_name>/', get_photos_by_analysis),
+    # path('api/faster_rcnn_object_detection/<str:object_name>/', get_photos_by_object_rcnn),
+    # path('api/model/<str:model_name>/<str:object_name>/', get_photos_by_object),
 
-    # React views
     react_view_path('', 'IndexView'),
     react_view_path('photo/<int:mapSquareNumber>/<int:photoNumber>/', 'PhotoView'),
     react_view_path('similar_photos/<int:mapSquareNumber>/<int:photoNumber>/',
@@ -67,5 +71,6 @@ urlpatterns = [
     react_view_path('about/', 'About'),
     react_view_path('similarity/', 'AllPhotosView'),
     react_view_path('analysis/<str:analysisName>/', 'AnalysisView'),
-
+    react_view_path('analysis/<str:analysisName>/<str:objectName>', 'AnalysisView'),
+    react_view_path('clustering/<int:numberOfClusters>/<int:clusterNumber>/', 'ClusterView'),
 ]

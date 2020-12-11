@@ -126,9 +126,81 @@ ForegroundPercentageDisplayWidget.propTypes = {
     natWidth: PropTypes.number,
 };
 
+export class YoloModelDisplayWidget extends React.Component {
+    render() {
+        const items = [];
+        let box;
+        const ratio = this.props.height / this.props.natHeight;
+        for (box of this.props.boxes) {
+            items.push(
+                <rect
+                    className = 'outsideBox'
+                    x = {box['x_coord'] * ratio}
+                    y = {box['y_coord'] * ratio}
+                    height = {box['height'] * ratio}
+                    width = {box['width'] * ratio}
+                />,
+                <g className={'boxGroup'}>
+                    <text
+                        className='label'
+                        x = {box['x_coord'] * ratio}
+                        y = {box['y_coord'] * ratio - 5}
+                    >
+                        {box['label']}
+                    </text>
+                    <rect
+                        className = 'boundingBox'
+                        x = {box['x_coord'] * ratio}
+                        y = {box['y_coord'] * ratio}
+                        height = {box['height'] * ratio}
+                        width = {box['width'] * ratio}
+                    />
+                </g>,
+            );
+        }
+
+        return (
+            <div>
+                <svg
+                    className='analysis-overlay positionTopLeft'
+                    height={this.props.height}
+                    width={this.props.width}
+                >
+                    {items}
+                </svg>
+            </div>
+        );
+    }
+}
+
+function configAnalysisYoloModel(parsedValue, height, width, natHeight, natWidth) {
+    let boxes = [];
+    if ('boxes' in parsedValue) {
+        boxes = parsedValue['boxes'];
+    }
+    return (
+        <YoloModelDisplayWidget
+            boxes={boxes}
+            height={height}
+            width={width}
+            natHeight={natHeight}
+            natWidth={natWidth}
+        />
+    );
+}
+
+YoloModelDisplayWidget.propTypes = {
+    boxes: PropTypes.array,
+    height: PropTypes.number,
+    width: PropTypes.number,
+    natHeight: PropTypes.number,
+    natWidth: PropTypes.number,
+};
+
 const VISUAL_ANALYSES = {
     'find_vanishing_point': [configAnalysisFindVanishingPoint, 1],
     'foreground_percentage': [configAnalysisForegroundPercentage, 2],
+    'yolo_model': [configAnalysisYoloModel, 3],
 };
 
 const photoArray = [];
@@ -180,6 +252,7 @@ export class PhotoView extends React.Component {
             height: null,
             natWidth: null,
             natHeight: null,
+            labels: null,
             mapData: null,
             prevLink: null,
             nextLink: null,
@@ -338,11 +411,17 @@ export class PhotoView extends React.Component {
                         </svg>
                     </div>
                     <br/>
-                    {this.state.availableSides.map((side, k) => (
-                        <button key={k} onClick={() => this.changeSide(side)}>
-                            {side[0].toUpperCase() + side.slice(1)} Side
-                        </button>
-                    ))}
+                    <div className={'centerBtn'}>
+                        {this.state.availableSides.map((side, k) => (
+                            <button
+                                className='btn btn-outline-dark mx-1'
+                                key={k}
+                                onClick={() => this.changeSide(side)}
+                            >
+                                {side[0].toUpperCase() + side.slice(1)} Side
+                            </button>
+                        ))}
+                    </div>
                 </div>
                 <div className='image-info col-12 col-lg-6'>
                     <h5>Map Square</h5>
@@ -363,6 +442,59 @@ export class PhotoView extends React.Component {
                     </p>
                     <h5>Photographer caption</h5>
                     <p>{photographerCaption || 'None'}</p>
+
+                    {analyses.map((analysisResult, index) => {
+                        const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
+                        const parsedValue = JSON.parse(analysisResult.result);
+
+                        // handled in a different div
+                        if (analysisResult.name === 'yolo_model') {
+                            let labels = [];
+                            if ('labels' in parsedValue) {
+                                labels = parsedValue['labels'];
+                            } else {
+                                return (
+                                    <React.Fragment>
+                                        <h5>Objects Detected</h5>
+                                        <p>None</p>
+                                    </React.Fragment>
+                                );
+                            }
+                            return (
+                                <React.Fragment>
+                                    <h5>Objects Detected</h5>
+                                    <ul>
+                                        {Object.keys(labels).map((key, i) => (
+                                            <li key={i}>{key}: {labels[key]}</li>
+                                        ))}
+                                    </ul>
+                                </React.Fragment>
+                            );
+                        }
+                        if (analysisResult.name in VISUAL_ANALYSES) {
+                            return null;
+                        }
+
+                        let analysisDisplayName;
+                        let analysisResultStr = analysisResult.result;
+                        if (!analysisConfig) {
+                            analysisDisplayName = analysisResult.name;
+                        } else {
+                            analysisDisplayName = analysisConfig.displayName;
+                            if (analysisConfig.formatter) {
+                                analysisResultStr = analysisConfig.formatter(analysisResult.result);
+                            }
+                        }
+
+                        return (
+                            <React.Fragment key={index}>
+                                <h5>{analysisDisplayName}</h5>
+                                <p>{analysisResultStr}</p>
+                            </React.Fragment>
+                        );
+                    })}
+
+
                     <h5>Visual Analysis</h5>
                     <div className="row">
                         <div className="col-6">
@@ -376,40 +508,18 @@ export class PhotoView extends React.Component {
                                     <option value="0">None selected</option>
                                     <option value="1">Perspective Lines</option>
                                     <option value="2">Foreground Mask</option>
+                                    <option value="3">YOLO Model</option>
                                 </select>
                                 : <p>Not available</p>
                             }
-                            <br /><br />
+                            {(this.state.view === 3 && this.state.displaySide === 'cleaned')
+                                ? <p className={'px-3 my-0'}>
+                                    <i>Hover over the boxes to see the name of the object.</i>
+                                </p>
+                                : <span></span>
+                            }
                         </div>
                     </div>
-
-                    {analyses.map((analysisResult, index) => {
-                        const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
-                        const parsedValue = JSON.parse(analysisResult.result);
-
-                        // handled in a different div
-                        if (analysisResult.name in VISUAL_ANALYSES) {
-                            return null;
-                        }
-
-                        let analysisDisplayName;
-                        let analysisResultStr = parsedValue;
-                        if (!analysisConfig) {
-                            analysisDisplayName = analysisResult.name;
-                        } else {
-                            analysisDisplayName = analysisConfig.displayName;
-                            if (analysisConfig.formatter) {
-                                analysisResultStr = analysisConfig.formatter(parsedValue);
-                            }
-                        }
-
-                        return (
-                            <React.Fragment key={index}>
-                                <h5>{analysisDisplayName}</h5>
-                                <p>{analysisResultStr}</p>
-                            </React.Fragment>
-                        );
-                    })}
                 </div>
                 <div className='center'>
                     <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>

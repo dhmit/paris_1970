@@ -111,4 +111,16 @@ class Migration(migrations.Migration):
             name='photo',
             unique_together={('number', 'map_square')},
         ),
+        migrations.CreateModel(
+            name='Cluster',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('model_n', models.IntegerField(null=True)),
+                ('label', models.IntegerField(null=True)),
+                ('photos', models.ManyToManyField(to='app.Photo')),
+            ],
+            options={
+                'unique_together': {('model_n', 'label')},
+            },
+        ),
     ]

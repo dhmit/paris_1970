@@ -41,15 +41,20 @@ SCOPES = [
 METADATA_SPREADSHEET_ID = '1R4zBXLwM08yq_d4R9_JrDSGThpoaI46_Vmn9tDu8w9I'
 PHOTO_FOLDER_ID = '1aiY1nFJn6T7khu5dhIs3U2o8RdHBu6V7'
 
+GOOGLE_API_CREDENTIALS_FILE = os.path.join(settings.SETTINGS_DIR, 'google_api_credentials.json')
+
 # Sides of a photo
 SIDES = ['cleaned', 'front', 'back', 'binder', 'thumbnail']
 
 MODEL_NAME_TO_MODEL = {"Photo": Photo, "MapSquare": MapSquare, "Photographer": Photographer}
 
 
-def authorize_google_apps():
+def authorize_google_apps(cli_auth):
     """
     Authorization flow for letting our application talk with the Google API
+
+    cli_auth: if False, launches a browser and does the auth that way
+              if True, gives instructions for copy/pasting a code
     """
     credentials = None
     # The file token.pickle stores the user's access and refresh tokens, and is
@@ -64,10 +69,13 @@ def authorize_google_apps():
             credentials.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                settings.GOOGLE_API_CREDENTIALS_FILE,
+                GOOGLE_API_CREDENTIALS_FILE,
                 SCOPES
             )
-            credentials = flow.run_local_server(port=8080)
+            if cli_auth:
+                credentials = flow.run_console()
+            else:
+                credentials = flow.run_local_server(port=8080)
         # Save the credentials for the next run
         with open(settings.GOOGLE_TOKEN_FILE, 'wb') as token:
             pickle.dump(credentials, token)
@@ -397,7 +405,6 @@ def populate_database(
                 map_square_count += 1
 
 
-
 class Command(BaseCommand):
     """
     Custom django-admin command used to sync the local db with data from project Google Sheet
@@ -409,6 +416,8 @@ class Command(BaseCommand):
         parser.add_argument('--create_thumbnails', action='store_true')
         parser.add_argument('--redownload', action='store_true')
         parser.add_argument('--verbose', action='store_true')
+        parser.add_argument('--quick', action='store_true')
+        parser.add_argument('--cli_auth', action='store_true')
 
     def handle(self, *args, **options):
         # pylint: disable=too-many-locals
@@ -416,6 +425,8 @@ class Command(BaseCommand):
         create_thumbnails = options.get('create_thumbnails')
         redownload = options.get('redownload')
         verbose = options.get('verbose')
+        quick = options.get('quick')
+        cli_auth = options.get('cli_auth')
 
         if create_thumbnails and not local_download:
             local_download = True
@@ -455,6 +466,9 @@ class Command(BaseCommand):
         # THIS IS JUST FOR PROTOTYPING NEVER EVER EVER EVER IN PRODUCTION do this
         User.objects.create_superuser('admin', password='adminadmin')
 
+        if quick:
+            return
+
         # The order of these ranges matter. The Photographer model needs to have foreign keys to
         # the MapSquare database, so we add the Map Squares first
         spreadsheet_ranges = ['MapSquare', 'Photographer', 'Photo']
@@ -463,7 +477,8 @@ class Command(BaseCommand):
           is happening, please try again.)''')
 
         # Create resource objects for interacting with the google API
-        credentials = authorize_google_apps()
+        credentials = authorize_google_apps(cli_auth)
+
         sheets_service = build('sheets', 'v4', credentials=credentials)
         drive_service = build('drive', 'v3', credentials=credentials)
 

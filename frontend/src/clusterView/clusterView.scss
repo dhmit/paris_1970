@@ -1,0 +1,30 @@
+.order-button {
+    display: flex;
+}
+
+.display-box {
+    display: inline-block;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.state-buttons {
+    width: 10%;
+    padding-left: 10px;
+    padding-right: 10px;
+    justify-content: space-between;
+}
+
+$header-height: 100px;
+$footer-height: 150px;
+$side-padding: 25px;
+
+.page {
+    padding: $header-height $side-padding $footer-height;
+}
+
+@media (max-width: 992px) {
+    .page {
+        padding: $header-height 0 $footer-height;
+    }
+}

@@ -22,6 +22,7 @@ from app.analysis import (
     detail_fft2,
     local_variance,
     mean_detail,
+    yolo_model
 )
 from app.analysis.indoor_analysis import (
     combined_indoor,
@@ -194,6 +195,18 @@ class AnalysisTestBase(TestCase):
         self.assertEqual(True, front_desk_result)
         far_building_result = combined_indoor.analyze(photo_far_building)
         self.assertEqual(False, far_building_result)
+
+    def test_yolo_model_object_detection(self):
+        """
+        Testing images for object detection tasks using the Yolo model
+        :return: boolean statements from assertions
+        """
+        photo_with_people = self.add_photo('test_portrait_detection_true')
+        photo_with_no_objects = self.add_photo('100x100-GreySquare')
+        result_with_people = yolo_model.analyze(photo_with_people)
+        result_with_nothing = yolo_model.analyze(photo_with_no_objects)
+        self.assertIsNotNone(result_with_people)
+        self.assertEqual(result_with_nothing, {})
 
     def test_stdev(self):
         """

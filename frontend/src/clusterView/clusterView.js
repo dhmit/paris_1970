@@ -12,20 +12,20 @@ const SIDES = {
 };
 
 
-export class AnalysisView extends React.Component {
+export class ClusterView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             loading: true,
             photoData: null,
-            displayOrder: 'Ascending',
         };
     }
 
     async componentDidMount() {
         try {
-            const dictKey = this.props.objectName ? this.props.objectName : '';
-            const apiURL = `/api/analysis/${this.props.analysisName}/${dictKey}`;
+            const apiURL = '/api/clustering/'
+                + `${this.props.numberOfClusters}/${this.props.clusterNumber}/`;
+            console.log(apiURL);
             const response = await fetch(apiURL);
             if (!response.ok) {
                 this.setState({ loading: false });
@@ -40,20 +40,6 @@ export class AnalysisView extends React.Component {
             console.log(e);
         }
     }
-
-    reverseOrder = () => {
-        let newOrder;
-        if (this.state.displayOrder === 'Descending') {
-            newOrder = 'Ascending';
-        } else {
-            newOrder = 'Descending';
-        }
-        const newPhotoData = this.state.photoData.reverse();
-        this.setState({
-            photoData: newPhotoData,
-            displayOrder: newOrder,
-        });
-    };
 
     getSource(photoData) {
         const availableSides = Object.values(SIDES).filter(
@@ -73,14 +59,11 @@ export class AnalysisView extends React.Component {
             </h1>);
         }
 
+        console.log(this.state.photoData);
         const photos = this.state.photoData.map((photo, k) => {
-            const currentAnalysis = photo['analyses'].filter(
-                (analysisObject) => analysisObject.name === this.props.analysisName,
-            )[0];
             return (
                 <a
                     key={k}
-                    title={currentAnalysis.result}
                     href={`/photo/${photo['map_square_number']}/${photo['number']}/`}
                 >
                     <img
@@ -93,25 +76,39 @@ export class AnalysisView extends React.Component {
             );
         });
 
+        const prevButton = this.props.clusterNumber - 1 >= 0 ? (
+            <a
+                title='prev'
+                href={`/clustering/${this.props.numberOfClusters}/${this.props.clusterNumber - 1}/`}
+            >
+                <button className='order-button'>
+                    Prev
+                </button>
+            </a>) : (<></>);
+
+        const nextButton = this.props.clusterNumber + 1 < this.props.numberOfClusters ? (
+            <a
+                title='next'
+                href={`/clustering/${this.props.numberOfClusters}/${this.props.clusterNumber + 1}/`}
+            >
+                <button className='order-button'>
+                    Next
+                </button>
+            </a>) : (<></>);
+
         const options = this.state.photoData.length === 0 ? (
             <p>
-                {`There are no photos that have an analysis result for ${this.props.analysisName}`
-                + ' or the analysis does not exist.'}
-            </p>) : (<div className='options'>
-            <p>Current photo order: {this.state.displayOrder} values</p>
-            <button className='order-button' onClick={() => this.reverseOrder()}>
-                Reverse photo order
-            </button></div>);
-
-        const objectName = this.props.objectName ? `key: ${this.props.objectName}` : '';
+                {`There are no photos that are in cluster ${this.props.clusterNumber}`
+                + ' or the cluster number is out of bounds.'}
+            </p>) : (<div className='state-buttons row'>{prevButton}{nextButton}</div>);
 
         return (<>
             <Navbar />
             <div className='display-box page'>
-                <h3 className='text-capitalize'>{
-                    this.props.analysisName.split('_').join(' ')
-                }</h3>
-                <h5>{objectName}</h5>
+                <h3>
+                    Number of clusters: {this.props.numberOfClusters + ' '}
+                    Cluster number: {this.props.clusterNumber}
+                </h3>
                 {options}
                 <br/>
                 {photos}
@@ -120,7 +117,7 @@ export class AnalysisView extends React.Component {
         </>);
     }
 }
-AnalysisView.propTypes = {
-    analysisName: PropTypes.string,
-    objectName: PropTypes.string,
+ClusterView.propTypes = {
+    numberOfClusters: PropTypes.number,
+    clusterNumber: PropTypes.number,
 };
