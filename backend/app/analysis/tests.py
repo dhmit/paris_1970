@@ -90,19 +90,19 @@ class AnalysisTestBase(TestCase):
         self.assertEqual(50, result)
 
     def test_text_ocr_francais(self):
-        # Tests words with the ç
+        """ Tests words with the ç """
         photo_francais = self.add_photo('300x300_francais')
         result = text_ocr.analyze(photo_francais)
         self.assertEqual("Français", result)
 
     def test_text_ocr_carre(self):
-        # Tests words with accent mark
+        """ Tests words with accent mark """
         photo_carre = self.add_photo('300x300_carre')
         result = text_ocr.analyze(photo_carre)
         self.assertEqual("carré", result)
 
     def test_text_ocr_hello(self):
-        # Tests english word
+        """ Tests english word """
         photo_hello = self.add_photo('300x300_hello')
         result = text_ocr.analyze(photo_hello)
         self.assertEqual("Hello", result)
