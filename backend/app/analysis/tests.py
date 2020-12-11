@@ -92,14 +92,14 @@ class AnalysisTestBase(TestCase):
         """
         Tests for pop_density_detection analysis
         """
-        photo_three_people = self.add_photo('pop_density_detection_test_3_people')
-
         # this photo we know has 3 people
+        photo_three_people = self.add_photo('pop_density_detection_test_3_people')
         result = pop_density_detection.analyze(photo_three_people)
         self.assertEqual(3, result)
 
         # this is the half black half white square with no people
-        result = pop_density_detection.analyze(self.photo_0)
+        photo_no_people = self.add_photo('100x100_500px-white_500px-black')
+        result = pop_density_detection.analyze(photo_no_people)
         self.assertEqual(0, result)
 
     def test_portrait_detection_true(self):
