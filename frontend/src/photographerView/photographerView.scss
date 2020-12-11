@@ -1,0 +1,15 @@
+.photo_gallery {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.photo {
+    padding: 3px;
+    opacity: 1;
+	-webkit-transition: .3s ease-in-out;
+	transition: .3s ease-in-out;
+}
+
+.photo:hover {
+	opacity: .5;
+}

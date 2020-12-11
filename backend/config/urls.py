@@ -25,6 +25,10 @@ from app.views import (
     get_photographer,
     get_map_square,
     get_corpus_analysis_results,
+    get_photos_by_analysis,
+    get_all_photos_in_order,
+    get_photo_by_similarity,
+    get_photos_by_cluster,
 )
 
 
@@ -45,16 +49,28 @@ urlpatterns = [
 
     # API endpoints
     path('api/photo/<int:map_square_number>/<int:photo_number>/', photo),
-    path('api/photographer/<int:photographer_id>/', get_photographer),
+    path('api/similar_photos/<int:map_square_number>/<int:photo_number>/', get_photo_by_similarity),
+    path('api/photographer/<int:photographer_number>/', get_photographer),
     path('api/map_square/<int:map_square_number>/', get_map_square),
     path('api/corpus_analysis/', get_corpus_analysis_results),
     path('api/all_photos/', all_photos),
     path('api/all_map_squares/', all_map_squares),
+    path('api/similarity/', get_all_photos_in_order),
+    path('api/analysis/<str:analysis_name>/', get_photos_by_analysis),
+    path('api/clustering/<int:number_of_clusters>/<int:cluster_number>/', get_photos_by_cluster),
+    path('api/analysis/<str:analysis_name>/<str:object_name>/', get_photos_by_analysis),
+    # path('api/faster_rcnn_object_detection/<str:object_name>/', get_photos_by_object_rcnn),
+    # path('api/model/<str:model_name>/<str:object_name>/', get_photos_by_object),
 
-    # React views
     react_view_path('', 'IndexView'),
     react_view_path('photo/<int:mapSquareNumber>/<int:photoNumber>/', 'PhotoView'),
+    react_view_path('similar_photos/<int:mapSquareNumber>/<int:photoNumber>/',
+                    'SimilarityView'),
     react_view_path('photographer/<int:photographerNumber>/', 'PhotographerView'),
     react_view_path('map_square/<int:mapSquareNumber>/', 'MapSquareView'),
     react_view_path('about/', 'About'),
+    react_view_path('similarity/', 'AllPhotosView'),
+    react_view_path('analysis/<str:analysisName>/', 'AnalysisView'),
+    react_view_path('analysis/<str:analysisName>/<str:objectName>', 'AnalysisView'),
+    react_view_path('clustering/<int:numberOfClusters>/<int:clusterNumber>/', 'ClusterView'),
 ]

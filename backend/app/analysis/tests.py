@@ -6,7 +6,6 @@ from pathlib import Path
 import os
 from django.conf import settings
 from django.test import TestCase
-
 # NOTE(ra): we have to use absolute imports in this module because the Django test runner
 # will resolve imports relative to the backend working directory
 # If you do, e.g.,
@@ -18,11 +17,13 @@ from app.analysis import (
     foreground_percentage,
     whitespace_percentage,
     text_ocr,
+    find_vanishing_point,
     portrait_detection,
     stdev,
     detail_fft2,
     local_variance,
     mean_detail,
+    yolo_model
 )
 from app.analysis.indoor_analysis import (
     combined_indoor,
@@ -44,21 +45,6 @@ class AnalysisTestBase(TestCase):
         self.map_square = MapSquare()
         self.map_square.save()
 
-        self.photo_2 = Photo(number=3, map_square=self.map_square)
-        test_photo_path_2 = Path(settings.TEST_PHOTOS_DIR, '300x300_francais.jpg')
-        self.photo_2.front_local_path = test_photo_path_2
-
-        self.photo_3 = Photo(number=4, map_square=self.map_square)
-        test_photo_path_3 = Path(settings.TEST_PHOTOS_DIR, '300x300_carre.jpg')
-        self.photo_3.front_local_path = test_photo_path_3
-
-        self.photo_4 = Photo(number=5, map_square=self.map_square)
-        test_photo_path_4 = Path(settings.TEST_PHOTOS_DIR, '300x300_hello.jpg')
-        self.photo_4.front_local_path = test_photo_path_4
-
-        self.photo_5 = Photo(number=6, map_square=self.map_square)
-        test_photo_path_5 = Path(settings.TEST_PHOTOS_DIR, 'test_text.jpg')
-        self.photo_5.front_local_path = test_photo_path_5
 
     def add_photo(self, photo_name_or_path):
         """
@@ -104,17 +90,20 @@ class AnalysisTestBase(TestCase):
 
     def test_text_ocr_francais(self):
         # Tests words with the ç
-        result = text_ocr.analyze(self.photo_2)
+        photo_francais = self.add_photo('300x300_francais')
+        result = text_ocr.analyze(photo_francais)
         self.assertEqual("Français", result)
 
     def test_text_ocr_carre(self):
         # Tests words with accent mark
-        result = text_ocr.analyze(self.photo_3)
+        photo_carre = self.add_photo('300x300_carre')
+        result = text_ocr.analyze(photo_carre)
         self.assertEqual("carré", result)
 
     def test_text_ocr_hello(self):
         # Tests english word
-        result = text_ocr.analyze(self.photo_4)
+        photo_hello = self.add_photo('300x300_hello')
+        result = text_ocr.analyze(photo_hello)
         self.assertEqual("Hello", result)
 
     def test_portrait_detection_true(self):
@@ -133,7 +122,7 @@ class AnalysisTestBase(TestCase):
         surrounded by all white pixels
         """
         photo = self.add_photo('4%_black')
-        result = foreground_percentage.analyze(photo)
+        result = (foreground_percentage.analyze(photo))["percent"]
         # Result is not exact (range of values)
         # Needs more testing
         self.assertTrue(2 <= result <= 6)
@@ -143,7 +132,7 @@ class AnalysisTestBase(TestCase):
         Test the foreground percentage function on a real competition photo.
         """
         photo = self.add_photo('foreground_801_4')
-        result = foreground_percentage.analyze(photo)
+        result = (foreground_percentage.analyze(photo))["percent"]
 
         # Result is not exact (range of values)
         # Needs more testing
@@ -158,7 +147,7 @@ class AnalysisTestBase(TestCase):
         """
         file_path = Path(settings.TEST_PHOTOS_DIR, 'foreground_801_4.jpg')
 
-        result = foreground_percentage.analyze_from_file(file_path)
+        result = (foreground_percentage.analyze_from_file(file_path))["percent"]
         # Result is not exact (range of values)
         # Needs more testing
         self.assertTrue(60 <= result <= 64)
@@ -226,6 +215,18 @@ class AnalysisTestBase(TestCase):
         self.assertEqual(True, front_desk_result)
         far_building_result = combined_indoor.analyze(photo_far_building)
         self.assertEqual(False, far_building_result)
+
+    def test_yolo_model_object_detection(self):
+        """
+        Testing images for object detection tasks using the Yolo model
+        :return: boolean statements from assertions
+        """
+        photo_with_people = self.add_photo('test_portrait_detection_true')
+        photo_with_no_objects = self.add_photo('100x100-GreySquare')
+        result_with_people = yolo_model.analyze(photo_with_people)
+        result_with_nothing = yolo_model.analyze(photo_with_no_objects)
+        self.assertIsNotNone(result_with_people)
+        self.assertEqual(result_with_nothing, {})
 
     def test_stdev(self):
         """
@@ -301,3 +302,25 @@ class AnalysisTestBase(TestCase):
             result = mean_detail.analyze(self.add_photo(image))
             print(f'Mean Detail performed on {image}. Result: {result}')
             self.assertEqual(expected_values[image], int(result))
+
+    def test_find_vanishing_point(self):
+        """
+        Vanishing point returned should be the point that has the most intersections
+        with the lines detected in a photo
+
+        Partition on location of vanishing point: at intersection between lines, does not exist
+        Partition on number of lines: 0, 1, >1
+        """
+        #add photo
+        photo = self.add_photo('100px_100px_vanishing_point_X')
+        photo2 = self.add_photo('100x100_500px-white_500px-black')
+        # covers when image is x, intersecting lines in the middle, vanishing point exists
+        result = find_vanishing_point.analyze(photo)['vanishing_point_coord']
+        expected = (50, 50)
+        distance = ((result['x'] - expected[0]) ** 2 + (result['y'] - expected[1]) ** 2) ** (1/2)
+        self.assertTrue(distance < 2)
+
+        # covers when online line is horizontal (supposed to ignore),  1 line, van point does
+        # not exist
+        result2 = find_vanishing_point.analyze(photo2)['vanishing_point_coord']
+        self.assertEqual(None, result2)
