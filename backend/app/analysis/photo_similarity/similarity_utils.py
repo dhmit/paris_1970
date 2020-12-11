@@ -32,11 +32,14 @@ def deserialize_tensor(photo):
     return tensor
 
 
-def analyze_similarity(photo: Photo, similarity_function):
+def analyze_similarity(photo: Photo, similarity_function, reverse=False):
     """
     Produce a list of all other photos by similarity to this photo's feature vector.
     Similarity is measured using similarity_function, a binary operation between feature
     vectors.
+
+    reverse argument is needed because the output sort order from the sim function
+    is sometimes ascending, sometimes descending
     """
     photo_features = deserialize_tensor(photo)
     if photo_features is None:
@@ -53,4 +56,9 @@ def analyze_similarity(photo: Photo, similarity_function):
         similarities.append(
             (other_photo.map_square.number, other_photo.number, similarity_value)
         )
-    return similarities
+
+    if similarities is not None:
+        similarities.sort(key=lambda x: x[2], reverse=reverse)
+        return similarities
+    else:
+        return []
