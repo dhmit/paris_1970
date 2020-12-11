@@ -24,6 +24,7 @@ from app.analysis import (
     pop_density_detection,
     portrait_detection,
     stdev,
+    text_ocr,
     whitespace_percentage,
     yolo_model,
 )
@@ -87,6 +88,24 @@ class AnalysisTestBase(TestCase):
         print(f'Whitespace Percentage performed on \
             100x100_500px-white_500px-black. Result:'f' {result}')
         self.assertEqual(50, result)
+
+    def test_text_ocr_francais(self):
+        """ Tests words with the ç """
+        photo_francais = self.add_photo('300x300_francais')
+        result = text_ocr.analyze(photo_francais)
+        self.assertEqual("Français", result)
+
+    def test_text_ocr_carre(self):
+        """ Tests words with accent mark """
+        photo_carre = self.add_photo('300x300_carre')
+        result = text_ocr.analyze(photo_carre)
+        self.assertEqual("carré", result)
+
+    def test_text_ocr_hello(self):
+        """ Tests english word """
+        photo_hello = self.add_photo('300x300_hello')
+        result = text_ocr.analyze(photo_hello)
+        self.assertEqual("Hello", result)
 
     def test_pop_density_detection(self):
         """
@@ -307,16 +326,16 @@ class AnalysisTestBase(TestCase):
         Partition on location of vanishing point: at intersection between lines, does not exist
         Partition on number of lines: 0, 1, >1
         """
-        #add photo
         photo = self.add_photo('100px_100px_vanishing_point_X')
         photo2 = self.add_photo('100x100_500px-white_500px-black')
+
         # covers when image is x, intersecting lines in the middle, vanishing point exists
         result = find_vanishing_point.analyze(photo)['vanishing_point_coord']
         expected = (50, 50)
         distance = ((result['x'] - expected[0]) ** 2 + (result['y'] - expected[1]) ** 2) ** (1/2)
         self.assertTrue(distance < 2)
 
-        # covers when online line is horizontal (supposed to ignore),  1 line, van point does
-        # not exist
+        # covers when online line is horizontal (supposed to ignore),
+        # 1 line, vanishing point does not exist
         result2 = find_vanishing_point.analyze(photo2)['vanishing_point_coord']
         self.assertEqual(None, result2)
