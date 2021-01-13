@@ -18,6 +18,7 @@ from .models import (
 from .serializers import (
     PhotoSerializer,
     MapSquareSerializer,
+    MapSquareSerializerWithoutPhotos,
     PhotographerSerializer,
     CorpusAnalysisResultsSerializer,
 )
@@ -56,10 +57,10 @@ def get_map_square(request, map_square_number):
 @api_view(['GET'])
 def all_map_squares(request):
     """
-    API endpoint to get all map squares in the database
+    API endpoint to get all map squares in the database for landing page
     """
     map_square_obj = MapSquare.objects.all()
-    serializer = MapSquareSerializer(map_square_obj, many=True)
+    serializer = MapSquareSerializerWithoutPhotos(map_square_obj, many=True)
     return Response(serializer.data)
 
 

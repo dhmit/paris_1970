@@ -22,7 +22,7 @@ class Map extends React.Component {
     render() {
         // Sorts the map squares by number of photos (ascending order)
         const sortedMapData = Object.values(this.props.mapData)
-            .sort((a, b) => a.photos.length - b.photos.length);
+            .sort((a, b) => a.num_photos - b.num_photos);
 
         return (
             <div id="map-container">
@@ -49,7 +49,7 @@ class Map extends React.Component {
                         sortedMapData.map((mapSquareData) => {
                             const index = mapSquareData.number;
                             const coords = mapSquareData.topLeftCoords;
-                            const numberOfPhotos = mapSquareData.photos.length;
+                            const numberOfPhotos = mapSquareData.num_photos;
 
                             // Width and height of map squares
                             const lngDiff = 0.00340325568;
