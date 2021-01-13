@@ -8,7 +8,7 @@ import {
 } from 'react-leaflet';
 
 import Navbar from '../about/navbar';
-import { Footer } from '../UILibrary/components';
+import { Footer, Loading } from '../UILibrary/components';
 
 class Map extends React.Component {
     state = {
@@ -146,12 +146,16 @@ export class IndexView extends React.Component {
 
     render() {
         if (!this.state.mapData) {
-            return (<>
-                Loading...
-            </>);
+            return (
+                <React.Fragment>
+                    <Navbar />
+                    <Loading/>
+                    <Footer />
+                </React.Fragment>
+            );
         }
 
-        return (<React.Fragment>
+        return (<React.Fragment className="landing-page">
             <Navbar />
             <Map mapData={this.state.mapData} />
             <Footer />

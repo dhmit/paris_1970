@@ -2,7 +2,7 @@ import React from 'react';
 import * as PropTypes from 'prop-types';
 
 import Navbar from '../about/navbar';
-import { Footer } from '../UILibrary/components';
+import { Footer, Loading } from '../UILibrary/components';
 
 export class MapSquareView extends React.Component {
     constructor(props) {
@@ -33,9 +33,13 @@ export class MapSquareView extends React.Component {
 
     render() {
         if (this.state.loading) {
-            return (<>
-                Loading!
-            </>);
+            return (
+                <React.Fragment>
+                    <Navbar />
+                    <Loading/>
+                    <Footer />
+                </React.Fragment>
+            );
         }
         if (!this.state.mapSquareData) {
             return (<>

@@ -2,7 +2,7 @@ import React from 'react';
 import * as PropTypes from 'prop-types';
 
 import Navbar from '../about/navbar';
-import { Footer } from '../UILibrary/components';
+import { Footer, Loading } from '../UILibrary/components';
 
 const SIDES = {
     CLEANED: 'cleaned',
@@ -330,9 +330,13 @@ export class PhotoView extends React.Component {
 
     render() {
         if (this.state.loading || !this.state.mapData) {
-            return (<h1>
-                Loading!
-            </h1>);
+            return (
+                <React.Fragment>
+                    <Navbar />
+                    <Loading/>
+                    <Footer />
+                </React.Fragment>
+            );
         }
         if (!this.state.photoData) {
             return (<h1>

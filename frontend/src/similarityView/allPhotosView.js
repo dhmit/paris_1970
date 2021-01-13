@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Navbar from '../about/navbar';
-import { Footer } from '../UILibrary/components';
+import { Footer, Loading } from '../UILibrary/components';
 
 const SIDES = {
     CLEANED: 'cleaned',
@@ -65,9 +65,13 @@ export class AllPhotosView extends React.Component {
 
     render() {
         if (this.state.loading) {
-            return (<h1>
-                Loading!
-            </h1>);
+            return (
+                <React.Fragment>
+                    <Navbar />
+                    <Loading/>
+                    <Footer />
+                </React.Fragment>
+            );
         }
 
         const photos = this.state.photoData.map((photo, k) => {
