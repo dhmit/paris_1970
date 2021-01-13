@@ -1,7 +1,6 @@
 import React from 'react';
 
-import Navbar from '../about/navbar';
-import { Footer } from '../UILibrary/components';
+import { Navbar, Footer } from '../UILibrary/components';
 
 const SIDES = {
     CLEANED: 'cleaned',
