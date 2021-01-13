@@ -80,7 +80,7 @@ class Map extends React.Component {
                                 <Rectangle
                                     key={index}
                                     bounds={mapSquareBounds}
-                                    color={'#b51a00'} weight={4}
+                                    color={'#b51a00'} weight={2}
                                 >
                                     <Popup>
                                         Map Square {index} <br/>
