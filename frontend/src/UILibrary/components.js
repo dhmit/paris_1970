@@ -150,13 +150,8 @@ export class Navbar extends Component {
         return (
             <nav>
                 <div className='paris-navbar'>
-                    <div className='d-sm-block d-none'>
+                    <div className='d-block'>
                         <a className='nav-title' href='/'>
-                            This was Paris in 1970
-                        </a>
-                    </div>
-                    <div className='d-block d-sm-none'>
-                        <a className='nav-title-small' href='/'>
                             This was Paris in 1970
                         </a>
                     </div>
