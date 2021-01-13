@@ -203,8 +203,6 @@ const VISUAL_ANALYSES = {
     'yolo_model': [configAnalysisYoloModel, 3],
 };
 
-const photoArray = [];
-
 function formatPercentageValue(value) {
     return `${parseInt(value)}%`;
 }
