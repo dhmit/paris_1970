@@ -518,19 +518,23 @@ export class PhotoView extends React.Component {
                                 );
                             }
                             return (
-                               <React.Fragment>
-                                  <h5>Similar Photos</h5>
-                                  <ul>
-                                      {parsedValue.map((photo, i) => (
-                                          <li key={i}>Map Square {photo[0]}, Photo {photo[1]}, Similarity: {photo[2] * 100}%</li>
-                                      ))}
-                                  </ul>
-                               </React.Fragment>
+                                <React.Fragment>
+                                    <h5>Similar Photos</h5>
+                                    <ul>
+                                        {parsedValue.map((photo, i) => (
+                                            <li key={i}>Map Square {photo[0]},
+                                                        Photo {photo[1]},
+                                                        Similarity: {photo[2] * 100}%
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </React.Fragment>
                             );
                         }
 
                         // handled in a different div
-                        if (analysisResult.name in VISUAL_ANALYSES) {
+                        if (analysisResult.name in VISUAL_ANALYSES
+                        || analysisResult.name === 'photo_similarity.resnet18_feature_vectors') {
                             return null;
                         }
 
