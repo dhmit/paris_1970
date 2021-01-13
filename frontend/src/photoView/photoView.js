@@ -218,24 +218,35 @@ const formatBoolean = (value) => {
 };
 
 const ANALYSIS_CONFIGS = {
-    whitespace_percentage: {
+    'whitespace_percentage': {
         formatter: formatPercentageValue,
         displayName: '% whitespace',
     },
-    photographer_caption_length: {
+    'photographer_caption_length': {
         displayName: 'Length of photographer caption',
     },
-    foreground_percentage: {
+    'foreground_percentage': {
         formatter: formatPercentageValue,
         displayName: '% foreground',
     },
-    find_vanishing_point: {
+    'find_vanishing_point': {
         formatter: formatCoordinate,
         displayName: 'Vanishing Point Coordinate',
     },
-    portrait_detection: {
+    'portrait_detection': {
         formatter: formatBoolean,
         displayName: 'Is It a Portrait',
+    },
+    'indoor_analysis.combined_indoor': {
+        formatter: formatBoolean,
+        displayName: 'Is It Taken Indoors?',
+    },
+    'text_ocr': {
+        displayName: 'Text Detected',
+    },
+    'mean_detail': {
+        // formatter: formatPercentageValue,
+        displayName: 'Average Amount of Detail',
     },
 };
 
@@ -473,7 +484,6 @@ export class PhotoView extends React.Component {
                         const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
                         const parsedValue = JSON.parse(analysisResult.result);
 
-                        // handled in a different div
                         if (analysisResult.name === 'yolo_model') {
                             let labels = [];
                             if ('labels' in parsedValue) {
@@ -497,6 +507,29 @@ export class PhotoView extends React.Component {
                                 </React.Fragment>
                             );
                         }
+
+                        if (analysisResult.name === 'photo_similarity.resnet18_cosine_similarity') {
+                            if (parsedValue === []) {
+                                return (
+                                    <React.Fragment>
+                                        <h5>Similar Photos</h5>
+                                        <p>None</p>
+                                    </React.Fragment>
+                                );
+                            }
+                            return (
+                               <React.Fragment>
+                                  <h5>Similar Photos</h5>
+                                  <ul>
+                                      {parsedValue.map((photo, i) => (
+                                          <li key={i}>Map Square {photo[0]}, Photo {photo[1]}, Similarity: {photo[2] * 100}%</li>
+                                      ))}
+                                  </ul>
+                               </React.Fragment>
+                            );
+                        }
+
+                        // handled in a different div
                         if (analysisResult.name in VISUAL_ANALYSES) {
                             return null;
                         }
