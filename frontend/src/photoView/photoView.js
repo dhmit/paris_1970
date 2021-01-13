@@ -511,6 +511,9 @@ export class PhotoView extends React.Component {
                                 analysisResultStr = analysisConfig.formatter(analysisResult.result);
                             }
                         }
+                        if (['null', '""'].includes(analysisResultStr)) {
+                            analysisResultStr = 'N/A';
+                        }
 
                         return (
                             <React.Fragment key={index}>
