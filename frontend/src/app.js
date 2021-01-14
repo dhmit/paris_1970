@@ -13,6 +13,7 @@ import { SimilarityView } from './similarityView/similarityView';
 import { PhotographerView } from './photographerView/photographerView';
 import { MapSquareView } from './mapSquareView/mapSquareView';
 import { AnalysisView } from './analysisView/analysisView';
+import { AllAnalysisView } from './analysisView/allAnalysisView';
 import { AllPhotosView } from './similarityView/allPhotosView';
 import { ClusterView } from './clusterView/clusterView';
 import About from './about/about';
@@ -31,6 +32,7 @@ window.app_modules = {
     SimilarityView,
     PhotographerView,
     MapSquareView,
+    AllAnalysisView,
     AnalysisView,
     AllPhotosView,
     ClusterView,

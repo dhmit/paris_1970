@@ -84,6 +84,17 @@ def get_corpus_analysis_results(request):
 
 
 @api_view(['GET'])
+def all_analyses(request):
+    """
+    API endpoint to get all available analyses
+    """
+    photo_analysis_obj = PhotoAnalysisResult.objects.all()
+    print(photo_analysis_obj)
+    # serializer = MapSquareSerializer(map_square_obj, many=True)
+    return Response("hi")
+
+
+@api_view(['GET'])
 def get_photos_by_analysis(request, analysis_name, object_name=None):
     """
     API endpoint to get photos sorted by analysis
