@@ -9,7 +9,32 @@ import {
 
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
+import searchApp from '../searchApp/searchApp';
 
+// Attempt at a search bar
+// class searchApp extends React.Component {
+//     state = {
+//         searchTerm: '',
+//         searchData: Object.values(this.props.mapData),
+//         searchDataArray: [],
+//     }
+//
+//     render() {
+//         for (const key in this.searchData) {
+//             this.searchDataArray.push(this.searchData[key]);
+//         }
+//     }
+//
+//     // editSearch = (e) => {
+//     //     this.setState({searchTerm: e.target.value})
+//     // }
+//     //
+//     // dynamicSearch = () => {
+//     //
+//     // }
+// }
+
+// The Leaflet Map
 class Map extends React.Component {
     state = {
         lat: 48.858859,
@@ -153,6 +178,7 @@ export class IndexView extends React.Component {
 
         return (<React.Fragment>
             <Navbar />
+            <searchApp searchData={this.state.mapData} />
             <Map mapData={this.state.mapData} />
             <Footer />
         </React.Fragment>);
