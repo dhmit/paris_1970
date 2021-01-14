@@ -88,10 +88,8 @@ def all_analyses(request):
     """
     API endpoint to get all available analyses
     """
-    photo_analysis_obj = PhotoAnalysisResult.objects.all()
-    print(photo_analysis_obj)
-    # serializer = MapSquareSerializer(map_square_obj, many=True)
-    return Response("hi")
+    photo_analysis_obj = PhotoAnalysisResult.objects.values_list('name').distinct()
+    return Response([analysis[0] for analysis in photo_analysis_obj])
 
 
 @api_view(['GET'])

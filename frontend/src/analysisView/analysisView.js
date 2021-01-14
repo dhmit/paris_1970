@@ -76,20 +76,23 @@ export class AnalysisView extends React.Component {
             const currentAnalysis = photo['analyses'].filter(
                 (analysisObject) => analysisObject.name === this.props.analysisName,
             )[0];
-            return (
-                <a
-                    key={k}
-                    title={currentAnalysis.result}
-                    href={`/photo/${photo['map_square_number']}/${photo['number']}/`}
-                >
-                    <img
-                        alt={photo.alt}
-                        height={100}
-                        width={100}
-                        src={this.getSource(photo)}
-                    />
-                </a>
-            );
+            if (photo.cleaned_src || photo.front_src) {
+                return (
+                    <a
+                        key={k}
+                        title={currentAnalysis.result}
+                        href={`/photo/${photo['map_square_number']}/${photo['number']}/`}
+                    >
+                        <img
+                            alt={photo.alt}
+                            height={100}
+                            width={100}
+                            src={this.getSource(photo)}
+                        />
+                    </a>
+                );
+            }
+            return '';
         });
 
         const options = this.state.photoData.length === 0 ? (
