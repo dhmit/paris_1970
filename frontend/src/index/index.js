@@ -36,15 +36,22 @@ class Map extends React.Component {
                     maxBounds={this.state.bounds}
                     minZoom={this.state.minZoom}
                 >
+
                     <TileLayer
                         // Sets Map Boundaries - Keeps user from leaving Paris
                         maxBoundsViscosity={1.0}
                         bounds={this.state.bounds}
                         minZoom={this.state.minZoom}
                         // Retrieves Map image
-                        attribution='&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+
+                        // HOT option
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
+                        url="https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+
+
+
                     />
+
                     {
                         sortedMapData.map((mapSquareData) => {
                             const index = mapSquareData.number;
@@ -67,7 +74,10 @@ class Map extends React.Component {
                                     <Rectangle
                                         key={index}
                                         bounds={mapSquareBounds}
-                                        color={'#b3b3b3'} weight={2}
+                                        color={'#d06c5a'} weight={2}
+                                        opacity={0.45}
+                                        fillOpacity={0}
+
                                     >
                                         <Popup>
                                             Map Square {index} <br />
@@ -80,7 +90,8 @@ class Map extends React.Component {
                                 <Rectangle
                                     key={index}
                                     bounds={mapSquareBounds}
-                                    color={'#007db5'} weight={1}
+                                    color={'#008fd4'} weight={1}
+
                                 >
                                     <Popup>
                                         Map Square {index} <br/>
