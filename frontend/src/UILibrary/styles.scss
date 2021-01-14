@@ -59,7 +59,7 @@ footer {
     z-index: 101;
 }
 
-.nav-about {
+.nav-link-link {
     font-size: 1rem;
     font-weight: bold;
     color: white;
@@ -67,8 +67,8 @@ footer {
     margin-right: 30px;
 }
 
-.about-div {
-    margin-top: 10px;
+.nav-link-div {
+    margin-top: 7px;
 }
 
 .nav-title {
@@ -86,7 +86,7 @@ footer {
     text-decoration: none;
 }
 
-.about-nav-link {
+.nav-link-link {
     text-decoration: none;
     color: white;
     padding-right: 2vw;
@@ -95,7 +95,7 @@ footer {
 
 .nav-title:hover,
 .nav-title-small:hover,
-.nav-about:hover {
+.nav-link-link:hover {
     text-decoration: none;
     color: #d3d3d3;
 }
