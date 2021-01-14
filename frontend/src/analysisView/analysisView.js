@@ -1,8 +1,7 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
 
-import Navbar from '../about/navbar';
-import { Footer } from '../UILibrary/components';
+import { Navbar, Footer } from '../UILibrary/components';
 
 const SIDES = {
     CLEANED: 'cleaned',
@@ -107,7 +106,7 @@ export class AnalysisView extends React.Component {
 
         return (<>
             <Navbar />
-            <div className='display-box page'>
+            <div className='display-box analysis-page'>
                 <h3 className='text-capitalize'>{
                     this.props.analysisName.split('_').join(' ')
                 }</h3>

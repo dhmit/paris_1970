@@ -2,7 +2,7 @@
  *  Components that are reused frequently throughout the project
  */
 
-import React from 'react';
+import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import * as d3 from 'd3';
 
@@ -133,6 +133,65 @@ export class Footer extends React.Component {
                     </div>
                 </div>
             </footer>
+        );
+    }
+}
+
+const navbarLinks = [
+    { name: 'Analyses', link: '/all_analysis/' },
+    { name: 'Similarities', link: '/similarity/' },
+    { name: 'About', link: '/about/' },
+];
+
+export class Navbar extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            showNav: false,
+        };
+    }
+
+    render() {
+        return (
+            <nav>
+                <div className='paris-navbar'>
+                    <div className='d-block'>
+                        <a className='nav-title' href='/'>
+                            This was Paris in 1970
+                        </a>
+                    </div>
+                    <div className='d-none d-lg-flex ml-auto'>
+                        {
+                            navbarLinks.map((page) => (
+                                <div key={page.name} className='nav-link-div'>
+                                    <a className="nav-link-link" href={page.link}>{page.name}</a>
+                                </div>
+                            ))
+                        }
+                    </div>
+
+                    <div
+                        className="hamburger d-block d-lg-none"
+                        onClick={() => { this.setState({ showNav: !this.state.showNav }); }}
+                    >
+                        <div className="rectangle"/>
+                        <div className="rectangle"/>
+                        <div className="rectangle"/>
+                    </div>
+                </div>
+                {
+                    this.state.showNav
+                    && <div className='alternate-nav d-block d-lg-none'>
+                        {
+                            navbarLinks.map((page) => (
+                                <a key={page.name} className='alternate-link' href={page.link}>
+                                    {page.name}
+                                </a>
+                            ))
+                        }
+                    </div>
+                }
+            </nav>
         );
     }
 }

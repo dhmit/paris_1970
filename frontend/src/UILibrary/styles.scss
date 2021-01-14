@@ -8,6 +8,7 @@
 @import '../photographerView/photographerView';
 @import '../mapSquareView/mapSquareView';
 @import '../clusterView/clusterView';
+@import '../analysisView/analysisView';
 
 html {
     position: relative;
@@ -24,11 +25,16 @@ body {
     @extend .flex-column;
 }
 
+/**
+ * Footer Styles
+ */
+
 footer {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
+    z-index: 101;
 }
 
 .footer-img {
@@ -36,4 +42,110 @@ footer {
     max-height: 10vh;
     max-width: 20vw;
     object-fit: contain;
+}
+
+/**
+ * Navbar styles
+ */
+
+.paris-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    padding: 18px 0 18px 18px;
+    background-color: #333;
+    width: 100%;
+    z-index: 101;
+}
+
+.nav-link-link {
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    margin-right: 30px;
+}
+
+.nav-link-div {
+    margin-top: 7px;
+}
+
+.nav-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: white;
+    margin-right: 30px;
+    text-decoration: none;
+}
+
+.nav-title-small {
+    font-size: 110%;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+}
+
+.nav-link-link {
+    text-decoration: none;
+    color: white;
+    padding-right: 2vw;
+    font-size: 1.25rem;
+}
+
+.nav-title:hover,
+.nav-title-small:hover,
+.nav-link-link:hover {
+    text-decoration: none;
+    color: #d3d3d3;
+}
+
+.rectangle {
+    width: 25px;
+    height: 4px;
+    margin: 4px;
+}
+
+.hamburger {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    color: white;
+    cursor: pointer;
+    .rectangle {
+        background-color: white;
+    }
+}
+
+.hamburger:hover {
+    .rectangle {
+        background-color: #d3d3d3;
+    }
+}
+
+.rectangle:hover {
+    background-color: #d3d3d3;
+}
+
+.alternate-nav {
+    background-color: #444;
+    position: fixed;
+    width: 100%;
+    left: 0;
+    top: 60px;
+    padding-top: 15px;
+    z-index: 10;
+    text-align: left;
+}
+
+.alternate-link {
+    display: block;
+    color: white;
+    text-decoration: none;
+    margin: 20px;
+}
+
+.alternate-link:hover {
+    text-decoration: none;
+    color: #d3d3d3;
 }

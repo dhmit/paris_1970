@@ -1,7 +1,6 @@
 import React from 'react';
 
-import Navbar from '../about/navbar';
-import { Footer } from '../UILibrary/components';
+import { Navbar, Footer } from '../UILibrary/components';
 
 const SIDES = {
     CLEANED: 'cleaned',
@@ -54,15 +53,6 @@ export class AllPhotosView extends React.Component {
         });
     };
 
-    getSource(photoData) {
-        const availableSides = Object.values(SIDES).filter(
-            (side) => photoData[`${side}_src`] !== null,
-        );
-        const displaySide = availableSides.length > 0 ? availableSides[0] : '';
-        const source = photoData[`${displaySide}_src`];
-        return source;
-    }
-
     render() {
         if (this.state.loading) {
             return (<h1>
@@ -74,20 +64,24 @@ export class AllPhotosView extends React.Component {
             /* const currentAnalysis = photo['analyses'].filter(
                 (analysisObject) => analysisObject.name === 'resnet18_cosine_similarity',
             )[0]; */
-            return (
-                <a
-                    key={k}
-                    title={`Map Square: ${photo['map_square_number']},\nPhoto: ${photo['number']}`}
-                    href={`/similar_photos/${photo['map_square_number']}/${photo['number']}/`}
-                >
-                    <img
-                        alt={photo.alt}
-                        height={100}
-                        width={100}
-                        src={this.getSource(photo)}
-                    />
-                </a>
-            );
+            if (photo.thumbnail_src) {
+                return (
+                    <a
+                        key={k}
+                        title={`Map Square: ${photo['map_square_number']},`
+                               + `\nPhoto: ${photo['number']}`}
+                        href={`/similar_photos/${photo['map_square_number']}/${photo['number']}/`}
+                    >
+                        <img
+                            alt={photo.alt}
+                            height={100}
+                            width={100}
+                            src={photo.thumbnail_src}
+                        />
+                    </a>
+                );
+            }
+            return '';
         });
 
         const options = this.state.photoData.length === 0 ? (

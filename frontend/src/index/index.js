@@ -5,10 +5,10 @@ import {
     TileLayer,
     Popup,
     Rectangle,
+    ZoomControl,
 } from 'react-leaflet';
 
-import Navbar from '../about/navbar';
-import { Footer } from '../UILibrary/components';
+import { Navbar, Footer } from '../UILibrary/components';
 
 class Map extends React.Component {
     state = {
@@ -30,12 +30,14 @@ class Map extends React.Component {
                     // Initial state of Map
                     center={[this.state.lat, this.state.lng]}
                     zoom={this.state.zoom}
-                    style={{ width: '100%', height: '75vh' }}
+                    style={{ width: '100%', height: '85vh' }}
                     // Sets Map Boundaries - Keeps user from leaving Paris
                     maxBoundsViscosity={1.0}
                     maxBounds={this.state.bounds}
                     minZoom={this.state.minZoom}
+                    zoomControl={false}
                 >
+                    <ZoomControl position="bottomleft"/>
                     <TileLayer
                         // Sets Map Boundaries - Keeps user from leaving Paris
                         maxBoundsViscosity={1.0}

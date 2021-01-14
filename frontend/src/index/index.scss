@@ -9,7 +9,8 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 #map-container {
-    margin: 10vh 0 15vh 0;
+    margin: 0 0 10vh 0;
+    z-index: 1;
 }
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
@@ -25,6 +26,7 @@ code {
 $header-height: 100px;
 $footer-height: 150px;
 $side-padding: 100px;
+$side-padding-mobile: 20px;
 
 .page {
     padding: $header-height $side-padding $footer-height;
@@ -32,7 +34,7 @@ $side-padding: 100px;
 
 @media (max-width: 992px) {
     .page {
-        padding: $header-height 0 $footer-height;
+        padding: $header-height $side-padding-mobile $footer-height;
     }
 }
 
