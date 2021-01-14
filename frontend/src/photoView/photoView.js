@@ -589,6 +589,9 @@ export class PhotoView extends React.Component {
                     <br/>
                     <br/>
                     <br/>
+                    <br/>
+                    <br/>
+                    <br/>
                 </div>
             </div>
             <Footer />
