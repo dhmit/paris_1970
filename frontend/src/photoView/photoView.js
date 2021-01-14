@@ -342,16 +342,16 @@ export class PhotoView extends React.Component {
     }
 
     handleAPICall(photographerCaption) {
-      console.log('API CALL');
-      console.log(photographerCaption);
-      // const photographerCaption = this.state.photoData.photographer_caption;
-      if (photographerCaption) {
-        console.log('CAPTION EXISTS');
-        const url = 'https://translation.googleapis.com/language/translate/v2?q=' + photographerCaption + '&target=fr';
-        fetch(url, {
-          method: 'POST',
-        }).then((response) => { console.log(response); });
-      }
+        console.log('API CALL');
+        console.log(photographerCaption);
+        // const photographerCaption = this.state.photoData.photographer_caption;
+        if (photographerCaption) {
+            console.log('CAPTION EXISTS');
+            const url = 'https://translation.googleapis.com/language/translate/v2?q=' + photographerCaption + '&target=fr';
+            fetch(url, {
+                method: 'POST',
+            }).then((response) => { console.log(response); });
+        }
     }
 
     render() {
@@ -466,9 +466,10 @@ export class PhotoView extends React.Component {
                                 : 'Unknown'
                         }
                     </p>
-                    <div><h5 className="caption">Photographer caption</h5>
-                    <button className="btn btn-secondary btn-sm mx-2" onClick={() => this.handleAPICall(photographerCaption)}>Translate</button>
-                    </div>
+                    <h5 className="caption">Photographer caption</h5>
+                    <button className="btn btn-secondary btn-sm mx-2"
+                        onClick={() => this.handleAPICall(photographerCaption)}>Translate
+                    </button>
                     <p>{photographerCaption || 'None'}</p>
 
                     <h5>Visual Analysis</h5>
@@ -536,13 +537,19 @@ export class PhotoView extends React.Component {
                             }
                             return (
                                 <React.Fragment>
-                                    <h5>Similar Photos</h5>
+                                    <h5>Similar Photos (% Similiarity)</h5>
                                     <ul>
                                         {parsedValue.map((photo, i) => (
-                                            <li key={i}>Map Square {photo[0]},
-                                                        Photo {photo[1]},
-                                                        Similarity: {photo[2] * 100}%
-                                            </li>
+                                            (photo[0] !== mapSquareNumber
+                                              || photo[1] !== photoNumber)
+                                                ? <li key={i}>
+                                                    <a href={`/photo/${photo[0]}/${photo[1]}/`}>
+                                                        Map Square {photo[0]},
+                                                        Photo {photo[1]} </a>
+                                                        ({photo[2] * 100}%)
+                                                </li>
+                                                : null
+
                                         ))}
                                     </ul>
                                 </React.Fragment>
