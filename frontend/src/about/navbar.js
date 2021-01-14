@@ -13,6 +13,9 @@ class Navbar extends Component {
         const aboutClassName = (
             `about-nav-link ${this.props.currentPage === 'about' && 'font-weight-bold'}`
         );
+        const searchClassName = (
+            `about-nav-link ${this.props.currentPage === 'about' && 'font-weight-bold'}`
+        );
 
         return (
             <nav>
@@ -28,6 +31,7 @@ class Navbar extends Component {
                         </a>
                     </div>
                     <div className='d-none d-lg-block ml-auto'>
+                        <a className={searchClassName} href='/search/'>Search</a>
                         <a className={aboutClassName} href='/about/'>About</a>
                     </div>
                     <div
@@ -42,6 +46,7 @@ class Navbar extends Component {
                 {
                     this.state.showNav
                     && <div className='alternate-nav d-block d-lg-none'>
+                        <a className='alternate-link' href='/search/'>Search</a>
                         <a className='alternate-link' href='/about/'>About</a>
                     </div>
                 }
