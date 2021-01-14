@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import * as PropTypes from 'prop-types';
 import {
     Map as LeafletMap,
@@ -7,6 +7,10 @@ import {
     Rectangle,
 } from 'react-leaflet';
 
+import {
+    Modal,
+    Button,
+} from 'react-bootstrap';
 import Navbar from '../about/navbar';
 import { Footer } from '../UILibrary/components';
 
@@ -23,7 +27,6 @@ class Map extends React.Component {
         // Sorts the map squares by number of photos (ascending order)
         const sortedMapData = Object.values(this.props.mapData)
             .sort((a, b) => a.photos.length - b.photos.length);
-
         return (
             <div id="map-container">
                 <LeafletMap
@@ -100,6 +103,42 @@ Map.propTypes = {
 };
 
 
+function Instructions() {
+    const [show, setShow] = useState(true);
+
+    const handleClose = () => setShow(false);
+
+    return (
+        <>
+            <Modal
+                show={show}
+                onHide={handleClose}
+                backdrop="static"
+                keyboard={false}
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Modal title</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    I will not close if you click outside me. Don't even try to press
+                    escape key.
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                    <Button variant="primary">Understood</Button>
+                </Modal.Footer>
+            </Modal>
+        </>
+    );
+}
+
+
+
 export class IndexView extends React.Component {
     constructor(props) {
         super(props);
@@ -112,6 +151,7 @@ export class IndexView extends React.Component {
         try {
             const mapResponse = await fetch('/api/all_map_squares/');
             const mapData = await mapResponse.json();
+
 
             for (const mapSquare of mapData) {
                 // This code right here might cause problems if said user hasn't run syncdb
@@ -155,6 +195,7 @@ export class IndexView extends React.Component {
             <Navbar />
             <Map mapData={this.state.mapData} />
             <Footer />
+            <Instructions />
         </React.Fragment>);
     }
 }
