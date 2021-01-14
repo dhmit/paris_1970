@@ -380,9 +380,9 @@ export class PhotoView extends React.Component {
 
         return (<>
             <Navbar />
-            <div className='title center'>
+            <div className='center'>
                 <br/>
-                <h2>Map Square {mapSquareNumber}, Photo {photoNumber}</h2>
+                <h2 className='title'>Map Square {mapSquareNumber}, Photo {photoNumber}</h2>
             </div>
             <div className='center'>
                 <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
@@ -444,7 +444,7 @@ export class PhotoView extends React.Component {
                         {
                             photographerNumber
                                 ? <span>
-                                {' (Number: '}
+                                    {' (Number: '}
                                     <a href={`/photographer/${photographerNumber}/`}>
                                         {photographerNumber}
                                     </a>
@@ -453,7 +453,7 @@ export class PhotoView extends React.Component {
                                 : ' (Number: Unknown)'
                         }
                     </p>
-                    <h5 className="caption">Photographer caption</h5>
+                    <h5 className="caption">Photographer Caption</h5>
                     <p>{photographerCaption || 'None'}</p>
 
                     <h5>Visual Analysis</h5>
