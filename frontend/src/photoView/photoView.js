@@ -453,18 +453,25 @@ export class PhotoView extends React.Component {
                     </div>
                 </div>
                 <div className='image-info col-12 col-lg-6'>
-                    <h5>Photographer Name</h5>
-                    <p>{photographerName || 'Unknown'}</p>
-                    <h5>Photographer number</h5>
-                    <p>
-                        {
-                            photographerNumber
-                                ? <a href={`/photographer/${photographerNumber}/`}>
-                                    {photographerNumber}
-                                </a>
-                                : 'Unknown'
-                        }
-                    </p>
+                    <h5>Photographer</h5>
+                    {
+                        photographerName
+                            ? <p>
+                                {photographerName + ' '}
+                                {
+                                    photographerNumber
+                                        ? <span>
+                                        (Number:
+                                            <a href={`/photographer/${photographerNumber}/`}>
+                                                {photographerNumber}
+                                            </a>
+                                        )
+                                        </span>
+                                        : '(Number: Unknown)'
+                                }
+                            </p>
+                            : <p>Unknown</p>
+                    }
                     <h5 className="caption">Photographer caption</h5>
                     <button className="btn btn-secondary btn-sm mx-2"
                         onClick={() => this.handleAPICall(photographerCaption)}>Translate
