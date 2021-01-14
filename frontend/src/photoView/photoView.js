@@ -91,7 +91,7 @@ export class ForegroundPercentageDisplayWidget extends React.Component {
                 <svg
                     className='analysis-overlay positionTopLeft'
                     height={this.props.height}
-                    width={this.props.width}
+                    width={this.props.width - 15}
                 >
                     {items}
                 </svg>

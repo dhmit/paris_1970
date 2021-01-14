@@ -1,5 +1,10 @@
 .image-photo {
     width: 100%;
+    padding: 0 15px 0 15px;
+}
+
+.analysis-overlay{
+  padding: 0 15px 0 15px;
 }
 
 line {
@@ -10,7 +15,6 @@ line {
 .positionTopLeft {
     position: absolute;
     top: 0px;
-    left: 0px;
 }
 
 circle {
