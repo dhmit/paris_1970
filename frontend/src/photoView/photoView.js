@@ -394,6 +394,9 @@ export class PhotoView extends React.Component {
 
         return (<>
             <Navbar />
+            <div className='title center'>
+                <h2>Map Square {mapSquareNumber}, Photo {photoNumber}</h2>
+            </div>
             <div className= 'top-button row'>
                 <div className='center'>
                     <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
@@ -450,10 +453,6 @@ export class PhotoView extends React.Component {
                     </div>
                 </div>
                 <div className='image-info col-12 col-lg-6'>
-                    <h5>Map Square</h5>
-                    <p>{mapSquareNumber}</p>
-                    <h5>Photo Number</h5>
-                    <p>{photoNumber}</p>
                     <h5>Photographer Name</h5>
                     <p>{photographerName || 'Unknown'}</p>
                     <h5>Photographer number</h5>
@@ -549,7 +548,6 @@ export class PhotoView extends React.Component {
                                                         ({photo[2] * 100}%)
                                                 </li>
                                                 : null
-
                                         ))}
                                     </ul>
                                 </React.Fragment>
@@ -583,12 +581,14 @@ export class PhotoView extends React.Component {
                             </React.Fragment>
                         );
                     })}
-
-
                 </div>
                 <div className='center'>
                     <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
                     <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
                 </div>
             </div>
             <Footer />
