@@ -267,10 +267,8 @@ export class PhotoView extends React.Component {
             mapData: null,
             prevLink: null,
             nextLink: null,
-            translation: null,
         };
         this.onImgLoad = this.onImgLoad.bind(this);
-        this.handleAPICall = this.handleAPICall.bind(this);
         this.photoRef = React.createRef();
     }
 
@@ -341,18 +339,6 @@ export class PhotoView extends React.Component {
         });
     }
 
-    handleAPICall(photographerCaption) {
-        console.log('API CALL');
-        console.log(photographerCaption);
-        // const photographerCaption = this.state.photoData.photographer_caption;
-        if (photographerCaption) {
-            console.log('CAPTION EXISTS');
-            const url = 'https://translation.googleapis.com/language/translate/v2?q=' + photographerCaption + '&target=fr';
-            fetch(url, {
-                method: 'POST',
-            }).then((response) => { console.log(response); });
-        }
-    }
 
     render() {
         if (this.state.loading || !this.state.mapData) {
@@ -469,9 +455,6 @@ export class PhotoView extends React.Component {
                         }
                     </p>
                     <h5 className="caption">Photographer caption</h5>
-                    <button className="btn btn-secondary btn-sm mx-2"
-                        onClick={() => this.handleAPICall(photographerCaption)}>Translate
-                    </button>
                     <p>{photographerCaption || 'None'}</p>
 
                     <h5>Visual Analysis</h5>
