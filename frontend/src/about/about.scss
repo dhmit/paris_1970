@@ -1,6 +1,7 @@
 .about-text {
     font-size: 20px;
     padding-bottom: 30px;
+    display: inline-block;
 }
 
 .about-title {
@@ -57,19 +58,18 @@
     margin-bottom: 50px;
 }
 
-.evan-img-div {
+.prof-img-div {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
 }
 
-.evan-img {
+.prof-img {
     border-radius: 270px;
     width: 100%;
     margin-right: 20px;
 }
 
-footer{
-    height: 15vh;
+.text-wrap {
+    float: left;
 }
-

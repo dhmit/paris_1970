@@ -106,7 +106,7 @@ export class AnalysisView extends React.Component {
 
         return (<>
             <Navbar />
-            <div className='display-box page'>
+            <div className='display-box analysis-page'>
                 <h3 className='text-capitalize'>{
                     this.props.analysisName.split('_').join(' ')
                 }</h3>
