@@ -11,15 +11,26 @@ class SearchForm extends React.Component {
             keyword: '',
             photographer: '',
             caption: '',
-            tags: '',
+            tags: [],
             searchData: null,
+            exampleTags: ['boat', 'child', 'star', 'house-cat'],
         };
     }
 
     handleChange = (event) => {
+        console.log(event.target);
         this.setState({
             ...this.state,
             [event.target.name]: event.target.value,
+        });
+    }
+
+    handleMultiSelectChange = (event) => {
+        console.log(event.target);
+        const value = Array.from(event.target.selectedOptions, (option) => option.value);
+        this.setState({
+            ...this.state,
+            tags: value,
         });
     }
 
@@ -92,12 +103,18 @@ class SearchForm extends React.Component {
                     <br/>
                     <label>
                         <p>Tags:&nbsp;
-                            <input
-                                type="text"
-                                name="tags"
-                                value={this.state.tags}
-                                onChange={this.handleChange}
-                            />
+                            <br/>
+                            <select name="tags" multiple={true} value={this.state.tags} onChange={this.handleMultiSelectChange}>
+                                {
+                                    this.state.exampleTags.map((tagData, key) => {
+                                        return (
+                                            <option value={tagData} key={key}>
+                                                {tagData}
+                                            </option>
+                                        );
+                                    })
+                                }
+                            </select>
                         </p>
                     </label>
                     <br/>
@@ -157,3 +174,10 @@ export class Search extends React.Component {
         );
     }
 }
+
+// <input
+//                                 type="text"
+//                                 name="tags"
+//                                 value={this.state.tags}
+//                                 onChange={this.handleChange}
+//                             />
