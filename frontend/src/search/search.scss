@@ -1,5 +1,16 @@
 .search-results {
+    overflow-y: scroll;
+    height: 88vh;
+}
+
+.search-page {
     margin-top: 30px;
+}
+
+.search-form {
+    background: #d3d3d3;
+    padding: 20px;
+    margin-bottom: 30px;
 }
 
 .tag-selection {
