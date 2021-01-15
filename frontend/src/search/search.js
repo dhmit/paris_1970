@@ -14,19 +14,16 @@ class SearchForm extends React.Component {
             tags: '',
             searchData: null,
         };
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleChange(event) {
+    handleChange = (event) => {
         this.setState({
             ...this.state,
             [event.target.name]: event.target.value,
         });
     }
 
-    async handleFullTextSubmit(event) {
+    handleFullTextSubmit = async (event) => {
         event.preventDefault();
         if (this.state.keyword || this.state.photographer
             || this.state.caption || this.state.tags) {
@@ -44,9 +41,9 @@ class SearchForm extends React.Component {
         }
     }
 
-    handleAdvancedSubmit(event) {
+    handleAdvancedSubmit = async (event) => {
         event.preventDefault();
-    }
+    };
 
 
     // When it comes to separating the advanced search and full text search ("normal" search),
