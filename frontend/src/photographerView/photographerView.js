@@ -2,7 +2,7 @@ import React from 'react';
 import * as PropTypes from 'prop-types';
 
 import Navbar from '../about/navbar';
-import { Footer } from '../UILibrary/components';
+import { Footer, LoadingPage } from '../UILibrary/components';
 
 const percentFormat = (x) => Math.floor(x) + '%';
 const numberFormat = (x) => Math.floor(x);
@@ -85,9 +85,7 @@ export class PhotographerView extends React.Component {
 
     render() {
         if (this.state.loading) {
-            return (<>
-                Loading!
-            </>);
+            return (<LoadingPage/>);
         }
         if (!this.state.photographerData) {
             return (<>
