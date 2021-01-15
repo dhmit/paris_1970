@@ -161,8 +161,8 @@ export class Search extends React.Component {
                     <SearchForm updateSearchData={this.updateSearchData}/>
                     {
                         this.state.data
-                        && <div className='searchResults'>
-                            <h2>{this.state.searchedText}</h2>
+                        && <div className='search-results'>
+                            <h2>{this.state.searchText}</h2>
                             {this.state.data.map((photo, k) => {
                                 const photoId = `${photo['map_square_number']}/${photo['number']}`;
                                 if (photo.cleaned_src || photo.front_src) {
