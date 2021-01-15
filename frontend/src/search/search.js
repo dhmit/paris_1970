@@ -13,7 +13,7 @@ class SearchForm extends React.Component {
             photographer: '',
             caption: '',
             tags: [],
-            exampleTags: ['boat', 'child', 'star', 'house-cat'],
+            tagData: ['boat', 'child', 'star', 'house-cat'],
         };
     }
 
@@ -41,9 +41,9 @@ class SearchForm extends React.Component {
         if (body.caption) {
             searchText += 'Caption contains: ' + body.caption + ' ';
         }
-        // if (body.tags) {
-        //     searchText += 'Photographed by: ' + body.photographer;
-        // }
+        if (body.tags.length > 0) {
+            searchText += 'Has Tags: ' + body.tags;
+        }
         this.props.updateSearchData({
             data: searchData,
             isAdvanced: body.isAdvanced,
@@ -81,6 +81,16 @@ class SearchForm extends React.Component {
             });
         }
     };
+
+    async componentDidMount() {
+        try {
+            const tagResponse = await fetch('/api/get_tags/');
+            const tagData = await tagResponse.json();
+            this.setState({ tagData });
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     // When it comes to separating the advanced search and full text search ("normal" search),
     // should we split the two forms? I think this would work with the same submit button
@@ -131,12 +141,13 @@ class SearchForm extends React.Component {
                             <br/>
                             <select
                                 name="tags"
+                                className='tag-selection'
                                 multiple={true}
                                 value={this.state.tags}
                                 onChange={this.handleMultiSelectChange}
                             >
                                 {
-                                    this.state.exampleTags.map((tagData, key) => {
+                                    this.state.tagData.map((tagData, key) => {
                                         return (
                                             <option value={tagData} key={key}>
                                                 {tagData}

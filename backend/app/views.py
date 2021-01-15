@@ -3,12 +3,14 @@ These view functions and classes implement API endpoints
 """
 import ast
 import json
+import os
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from django.db.models import Q
 
+from config.settings.base import YOLO_DIR
 from .models import (
     Photo,
     MapSquare,
@@ -212,3 +214,14 @@ def search(request):
 
     serializer = PhotoSerializer(photo_obj, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_tags(request):
+    tags = []
+    with open(os.path.join(YOLO_DIR, 'coco.names'), 'r') as f:
+        tag = f.readline()
+        while tag:
+            tags.append(tag)
+            tag = f.readline()
+    return Response(tags)

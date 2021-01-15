@@ -32,6 +32,7 @@ from app.views import (
     get_photo_by_similarity,
     get_photos_by_cluster,
     search,
+    get_tags,
 )
 
 
@@ -65,6 +66,7 @@ urlpatterns = [
     path('api/clustering/<int:number_of_clusters>/<int:cluster_number>/', get_photos_by_cluster),
     path('api/analysis/<str:analysis_name>/<str:object_name>/', get_photos_by_analysis),
     path('api/search/', search),
+    path('api/get_tags/', get_tags),
     # path('api/faster_rcnn_object_detection/<str:object_name>/', get_photos_by_object_rcnn),
     # path('api/model/<str:model_name>/<str:object_name>/', get_photos_by_object),
 
