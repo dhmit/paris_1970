@@ -137,7 +137,7 @@ function Instructions() {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={handleClose}>
-                        Got it
+                        Got it!
                     </Button>
                 </Modal.Footer>
             </Modal>
