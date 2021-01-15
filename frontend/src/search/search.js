@@ -11,6 +11,7 @@ class SearchForm extends React.Component {
             photographer: '',
             caption: '',
             tags: [],
+            tagFilter: '',
         };
     }
 
@@ -82,6 +83,13 @@ class SearchForm extends React.Component {
     // When it comes to separating the advanced search and full text search ("normal" search),
     // should we split the two forms? I think this would work with the same submit button
     render() {
+        const filteredTagData = this.props.tagData.filter(
+            (tag) => tag.toLowerCase().includes(this.state.tagFilter.toLowerCase())
+        );
+
+        console.log(this.props.tagData);
+        console.log(filteredTagData);
+
         return (
             <div>
                 {/* Full-Text Form */}
@@ -125,6 +133,12 @@ class SearchForm extends React.Component {
                     <br/>
                     <label>
                         <p>Tags:&nbsp;
+                            <input
+                                type="text"
+                                name="tagFilter"
+                                value={this.state.tagFilter}
+                                onChange={this.handleChange}
+                            />
                             <br/>
                             <select
                                 name="tags"
@@ -134,7 +148,7 @@ class SearchForm extends React.Component {
                                 onChange={this.handleMultiSelectChange}
                             >
                                 {
-                                    this.props.tagData.map((tagData, key) => {
+                                    filteredTagData.map((tagData, key) => {
                                         return (
                                             <option value={tagData} key={key}>
                                                 {tagData}
