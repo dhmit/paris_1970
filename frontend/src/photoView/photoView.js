@@ -218,14 +218,14 @@ const formatBoolean = (value) => {
 const ANALYSIS_CONFIGS = {
     'whitespace_percentage': {
         formatter: formatPercentageValue,
-        displayName: '% whitespace',
+        displayName: '% Whitespace',
     },
     'photographer_caption_length': {
-        displayName: 'Length of photographer caption',
+        displayName: 'Length of Photographer Caption',
     },
     'foreground_percentage': {
         formatter: formatPercentageValue,
-        displayName: '% foreground',
+        displayName: '% Foreground',
     },
     'find_vanishing_point': {
         formatter: formatCoordinate,
@@ -447,7 +447,7 @@ export class PhotoView extends React.Component {
                                     : ' (Number: Unknown)'
                             }
                         </p>
-                        <h5 className="caption">Photographer caption</h5>
+                        <h5 className="caption">Photographer Caption</h5>
                         <p>{photographerCaption || 'None'}</p>
 
                         <h5>Visual Analysis</h5>
