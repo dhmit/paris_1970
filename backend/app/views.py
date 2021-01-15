@@ -191,15 +191,24 @@ def search(request):
     API endpoint to search for photos that match the search query
     """
     query = json.loads(request.body)
-    keyword = query['keyword'].strip()
-    photographer = query['photographer'].strip()
-    caption = query['caption'].strip()
-    tags = query['tags'].strip()
-    print(keyword, photographer, caption, tags)
-    if keyword != '':
-        print('searching')
+    is_advanced = query['isAdvanced']
+
+    if is_advanced:
+        photographer = query['photographer'].strip()
+        caption = query['caption'].strip()
+        tags = query['tags'].strip()
+        django_query = Q()
+        if photographer != '':
+            django_query &= Q(photographer__name__icontains=photographer)
+        if caption != '':
+            django_query &= Q(photographer_caption__icontains=caption) | \
+                            Q(librarian_caption__icontains=caption)
+        photo_obj = Photo.objects.filter(django_query)
+    else:
+        keyword = query['keyword'].strip()
         photo_obj = Photo.objects.filter(Q(photographer__name__icontains=keyword) |
                                          Q(photographer_caption__icontains=keyword) |
                                          Q(librarian_caption__icontains=keyword))
+
     serializer = PhotoSerializer(photo_obj, many=True)
     return Response(serializer.data)

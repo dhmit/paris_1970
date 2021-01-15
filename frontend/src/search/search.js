@@ -1,6 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Navbar, Footer } from '../UILibrary/components';
-// import PropTypes from 'prop-types';
+import { getSource } from '../analysisView/analysisView';
 
 // const exampleTags = ["boat", "child", "star", "house-cat"];
 
@@ -12,7 +13,6 @@ class SearchForm extends React.Component {
             photographer: '',
             caption: '',
             tags: '',
-            searchData: null,
         };
     }
 
@@ -21,30 +21,55 @@ class SearchForm extends React.Component {
             ...this.state,
             [event.target.name]: event.target.value,
         });
-    }
+    };
+
+    handleSearch = async (body) => {
+        const searchResponse = await fetch('/api/search/', {
+            method: 'POST',
+            body: JSON.stringify(body),
+        });
+        const searchData = await searchResponse.json();
+        let searchText = '';
+        if (body.keyword) {
+            searchText += 'Keyword: ' + body.keyword + ' ';
+        }
+        if (body.photographer) {
+            searchText += 'Photographed by: ' + body.photographer + ' ';
+        }
+        if (body.caption) {
+            searchText += 'Caption contains: ' + body.caption + ' ';
+        }
+        // if (body.tags) {
+        //     searchText += 'Photographed by: ' + body.photographer;
+        // }
+        this.props.updateSearchData({
+            data: searchData,
+            isAdvanced: body.isAdvanced,
+            searchText,
+        });
+    };
 
     handleFullTextSubmit = async (event) => {
         event.preventDefault();
-        if (this.state.keyword || this.state.photographer
-            || this.state.caption || this.state.tags) {
-            const searchResponse = await fetch('/api/search/', {
-                method: 'POST',
-                body: JSON.stringify({
-                    keyword: this.state.keyword,
-                    photographer: this.state.photographer,
-                    caption: this.state.caption,
-                    tags: this.state.tags,
-                }),
+        if (this.state.keyword) {
+            await this.handleSearch({
+                keyword: this.state.keyword,
+                isAdvanced: false,
             });
-            const searchData = await searchResponse.json();
-            this.setState({ searchData });
         }
-    }
+    };
 
     handleAdvancedSubmit = async (event) => {
         event.preventDefault();
+        if (this.state.photographer || this.state.caption || this.state.tags) {
+            await this.handleSearch({
+                photographer: this.state.photographer,
+                caption: this.state.caption,
+                tags: this.state.tags,
+                isAdvanced: true,
+            });
+        }
     };
-
 
     // When it comes to separating the advanced search and full text search ("normal" search),
     // should we split the two forms? I think this would work with the same submit button
@@ -107,6 +132,9 @@ class SearchForm extends React.Component {
         );
     }
 }
+SearchForm.propTypes = {
+    updateSearchData: PropTypes.func,
+};
 
 export class Search extends React.Component {
     constructor(props) {
@@ -114,32 +142,13 @@ export class Search extends React.Component {
         this.state = {
             loading: true,
             data: null,
+            isAdvanced: false,
+            searchedText: '',
         };
     }
 
-    async componentDidMount() {
-        // this section implements the photographers view drop-down menu
-        // try {
-        //     // do sth
-        //     const photographersURL = 'api/'
-        // } catch (e) {
-        //     console.log(e);
-        // }
-        // try {
-        //     const apiURL = '/api/something';
-        //     const response = await fetch(apiURL);
-        //     if (!response.ok) {
-        //         this.setState({ loading: false });
-        //     } else {
-        //         const data = await response.json();
-        //         this.setState({
-        //             data,
-        //             loading: false,
-        //         });
-        //     }
-        // } catch (e) {
-        //     console.log(e);
-        // }
+    updateSearchData = (searchData) => {
+        this.setState({...searchData});
     }
 
     // This follows the full text + advanced search model here: http://photogrammar.yale.edu/search/
@@ -149,7 +158,34 @@ export class Search extends React.Component {
                 <Navbar />
                 <div className='page'>
                     <h1>Search</h1>
-                    <SearchForm />
+                    <SearchForm updateSearchData={this.updateSearchData}/>
+                    {
+                        this.state.data
+                        && <div className='searchResults'>
+                            <h2>{this.state.searchedText}</h2>
+                            {this.state.data.map((photo, k) => {
+                                const photoId = `${photo['map_square_number']}/${photo['number']}`;
+                                if (photo.cleaned_src || photo.front_src) {
+                                    return (
+                                        <a
+                                            key={k}
+                                            title={'Map Square: ' + photo['map_square_number']
+                                                   + ', Number: ' + photo['number']}
+                                            href={'/photo/' + photoId + '/'}
+                                        >
+                                            <img
+                                                alt={photo.alt}
+                                                height={100}
+                                                width={100}
+                                                src={getSource(photo)}
+                                            />
+                                        </a>
+                                    );
+                                }
+                                return '';
+                            })}
+                        </div>
+                    }
                 </div>
                 <Footer />
             </>

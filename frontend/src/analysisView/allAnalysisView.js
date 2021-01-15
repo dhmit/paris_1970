@@ -28,6 +28,10 @@ export const analysisDescriptions = {
         name: 'Text Detected',
         desc: 'This analysis attempts to recognize the text in an image.',
     },
+    yolo_model: {
+        name: 'Yolo Model',
+        desc: 'This analysis detects objects.',
+    },
 };
 
 export class AllAnalysisView extends React.Component {

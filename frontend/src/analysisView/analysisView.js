@@ -10,6 +10,15 @@ const SIDES = {
     BINDER: 'binder',
 };
 
+export const getSource = (photoData) => {
+    const availableSides = Object.values(SIDES).filter(
+        (side) => photoData[`${side}_src`] !== null,
+    );
+    const displaySide = availableSides.length > 0 ? availableSides[0] : '';
+    const source = photoData[`${displaySide}_src`];
+    const fileId = source.split('=')[1];
+    return `https://drive.google.com/thumbnail?authuser=0&sz=w100&id=${fileId}`;
+};
 
 export class AnalysisView extends React.Component {
     constructor(props) {
@@ -54,17 +63,6 @@ export class AnalysisView extends React.Component {
         });
     };
 
-    getSource(photoData) {
-        const availableSides = Object.values(SIDES).filter(
-            (side) => photoData[`${side}_src`] !== null,
-        );
-        const displaySide = availableSides.length > 0 ? availableSides[0] : '';
-        const source = photoData[`${displaySide}_src`];
-        const fileId = source.split('=')[1];
-        const thumbnail = `https://drive.google.com/thumbnail?authuser=0&sz=w100&id=${fileId}`;
-        return thumbnail;
-    }
-
     render() {
         if (this.state.loading) {
             return (<h1>
@@ -87,7 +85,7 @@ export class AnalysisView extends React.Component {
                             alt={photo.alt}
                             height={100}
                             width={100}
-                            src={this.getSource(photo)}
+                            src={getSource(photo)}
                         />
                     </a>
                 );
