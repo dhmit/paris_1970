@@ -15,10 +15,16 @@
     justify-content: space-between;
 }
 
+$header-height: 100px;
 $footer-height: 150px;
+$side-padding: 25px;
+
+.page {
+    padding: $header-height $side-padding $footer-height;
+}
 
 @media (max-width: 992px) {
     .page {
-        padding: 0 0 $footer-height;
+        padding: $header-height 0 $footer-height;
     }
 }

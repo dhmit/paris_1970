@@ -10,26 +10,42 @@ class Navbar extends Component {
     }
 
     render() {
-        const aboutclassName = (
+        const aboutClassName = (
             `about-nav-link ${this.props.currentPage === 'about' && 'font-weight-bold'}`
         );
 
         return (
-            <div>
-              <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-                <a className="navbar-brand" style={{ 'font-size': '200%'}} href="/"><b>This Was Paris in 1970</b></a>
-                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                  <span className="navbar-toggler-icon"></span>
-                </button>
-                <ul className="navbar-nav ml-auto">
-                  <li className="collapse navbar-collapse" id="navbarNavAltMarkup">
-                    <div className="navbar-nav">
-                      <a className="nav-item nav-link" style={{ 'font-size': '150%', 'color': 'light-grey'}} href="/about">About</a>
+            <nav>
+                <div className='about-nav'>
+                    <div className='d-sm-block d-none'>
+                        <a className='nav-title' href='/'>
+                            This was Paris in 1970
+                        </a>
                     </div>
-                  </li>
-                </ul>
-              </nav>
-            </div>
+                    <div className='d-block d-sm-none'>
+                        <a className='nav-title-small' href='/'>
+                            This was Paris in 1970
+                        </a>
+                    </div>
+                    <div className='d-none d-lg-block ml-auto'>
+                        <a className={aboutClassName} href='/about/'>About</a>
+                    </div>
+                    <div
+                        className="hamburger d-block d-lg-none"
+                        onClick={() => { this.setState({ showNav: !this.state.showNav }); }}
+                    >
+                        <div className="rectangle"/>
+                        <div className="rectangle"/>
+                        <div className="rectangle"/>
+                    </div>
+                </div>
+                {
+                    this.state.showNav
+                    && <div className='alternate-nav d-block d-lg-none'>
+                        <a className='alternate-link' href='/about/'>About</a>
+                    </div>
+                }
+            </nav>
         );
     }
 }
