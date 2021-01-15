@@ -5,6 +5,7 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
 import * as d3 from 'd3';
+import Navbar from '../about/navbar';
 
 /**
  * Component used to render paths into SVGs
@@ -108,6 +109,17 @@ export class Loading extends React.Component {
     }
 }
 
+export class LoadingPage extends React.Component {
+    render() {
+        return (
+            <>
+                <Navbar />
+                <Loading/>
+                <Footer />
+            </>
+        );
+    }
+}
 
 export class Footer extends React.Component {
     render() {
