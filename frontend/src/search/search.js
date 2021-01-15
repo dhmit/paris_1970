@@ -16,7 +16,6 @@ class SearchForm extends React.Component {
     }
 
     handleChange = (event) => {
-        console.log(event.target);
         this.setState({
             ...this.state,
             [event.target.name]: event.target.value,
@@ -29,18 +28,18 @@ class SearchForm extends React.Component {
             body: JSON.stringify(body),
         });
         const searchData = await searchResponse.json();
-        let searchText = '';
+        let searchText = searchData.length + ' photographs';
         if (body.keyword) {
-            searchText += 'Keyword: ' + body.keyword + ' ';
+            searchText += ' found with keyword \'' + body.keyword + '\'';
         }
         if (body.photographer) {
-            searchText += 'Photographed by: ' + body.photographer + ' ';
+            searchText += ' by ' + body.photographer;
         }
         if (body.caption) {
-            searchText += 'Caption contains: ' + body.caption + ' ';
+            searchText += ' containing caption \'' + body.caption + '\'';
         }
         if (body.tags && body.tags.length > 0) {
-            searchText += 'Has Tags: ' + body.tags;
+            searchText += ' with tags [' + body.tags + ']';
         }
         this.props.updateSearchData({
             data: searchData,
@@ -50,7 +49,6 @@ class SearchForm extends React.Component {
     };
 
     handleMultiSelectChange = (event) => {
-        console.log(event.target);
         const value = Array.from(event.target.selectedOptions, (option) => option.value);
         this.setState({
             ...this.state,
@@ -62,7 +60,7 @@ class SearchForm extends React.Component {
         event.preventDefault();
         if (this.state.keyword) {
             await this.handleSearch({
-                keyword: this.state.keyword,
+                keyword: this.state.keyword.trim(),
                 isAdvanced: false,
             });
         }
@@ -70,7 +68,8 @@ class SearchForm extends React.Component {
 
     handleAdvancedSubmit = async (event) => {
         event.preventDefault();
-        if (this.state.photographer || this.state.caption || this.state.tags) {
+        if (this.state.photographer.trim() || this.state.caption.trim()
+            || this.state.tags.length > 0) {
             await this.handleSearch({
                 photographer: this.state.photographer,
                 caption: this.state.caption,
@@ -93,9 +92,6 @@ class SearchForm extends React.Component {
             (tag) => tag.toLowerCase().includes(this.state.tagFilter.toLowerCase())
         );
 
-        console.log(this.props.tagData);
-        console.log(filteredTagData);
-
         return (
             <div>
                 {/* Full-Text Form */}
@@ -109,6 +105,7 @@ class SearchForm extends React.Component {
                             onChange={this.handleChange}
                         />
                     </label>
+                    <br />
                     <input type="submit" value="Search" />
                 </form>
                 {/* Advanced Search Form */}
@@ -127,43 +124,41 @@ class SearchForm extends React.Component {
                     </label>
                     <br/>
                     <label>
-                        <p>Caption:&nbsp;
-                            <input
-                                type="text"
-                                name="caption"
-                                value={this.state.caption}
-                                onChange={this.handleChange}
-                            />
-                        </p>
+                        <p>Caption:</p>
+                        <input
+                            type="text"
+                            name="caption"
+                            value={this.state.caption}
+                            onChange={this.handleChange}
+                        />
                     </label>
                     <br/>
                     <label>
-                        <p>Tags:&nbsp;
-                            <input
-                                type="text"
-                                name="tagFilter"
-                                value={this.state.tagFilter}
-                                onChange={this.handleChange}
-                            />
-                            <br/>
-                            <select
-                                name="tags"
-                                className='tag-selection'
-                                multiple={true}
-                                value={this.state.tags}
-                                onChange={this.handleMultiSelectChange}
-                            >
-                                {
-                                    filteredTagData.map((tagData, key) => {
-                                        return (
-                                            <option value={tagData} key={key}>
-                                                {tagData}
-                                            </option>
-                                        );
-                                    })
-                                }
-                            </select>
-                        </p>
+                        <p>Tags:</p>
+                        <input
+                            type="text"
+                            name="tagFilter"
+                            value={this.state.tagFilter}
+                            onChange={this.handleChange}
+                        />
+                        <br/>
+                        <select
+                            name="tags"
+                            className='tag-selection'
+                            multiple={true}
+                            value={this.state.tags}
+                            onChange={this.handleMultiSelectChange}
+                        >
+                            {
+                                filteredTagData.map((tagData, key) => {
+                                    return (
+                                        <option value={tagData} key={key}>
+                                            {tagData}
+                                        </option>
+                                    );
+                                })
+                            }
+                        </select>
                     </label>
                     <br/>
                     <input type="submit" value="Search" />
@@ -214,40 +209,52 @@ export class Search extends React.Component {
         return (
             <>
                 <Navbar />
-                <div className='page'>
-                    <br />
-                    <h1>Search</h1>
-                    <SearchForm
-                        updateSearchData={this.updateSearchData}
-                        tagData={this.state.tagData}
-                    />
-                    {
-                        this.state.data
-                        && <div className='search-results'>
-                            <h2>{this.state.searchText}</h2>
-                            {this.state.data.map((photo, k) => {
-                                const photoId = `${photo['map_square_number']}/${photo['number']}`;
-                                if (photo.cleaned_src || photo.front_src) {
-                                    return (
-                                        <a
-                                            key={k}
-                                            title={'Map Square: ' + photo['map_square_number']
-                                                   + ', Number: ' + photo['number']}
-                                            href={'/photo/' + photoId + '/'}
-                                        >
-                                            <img
-                                                alt={photo.alt}
-                                                height={100}
-                                                width={100}
-                                                src={getSource(photo)}
-                                            />
-                                        </a>
-                                    );
-                                }
-                                return '';
-                            })}
-                        </div>
-                    }
+                <div className='search-page page row'>
+                    <div className='col-sm-12 col-lg-4 search-form'>
+                        <h1>Search</h1>
+                        <SearchForm
+                            updateSearchData={this.updateSearchData}
+                            tagData={this.state.tagData}
+                        />
+                    </div>
+                    <div className='col-sm-12 col-lg-8'>
+                        {
+                            this.state.data
+                            && <div>
+                                <h2>
+                                    {this.state.isAdvanced
+                                        ? 'Advanced Search Results'
+                                        : 'Search Results'}
+                                </h2>
+                                <p>{this.state.searchText}</p>
+                                <div className='search-results'>
+                                    {this.state.data.map((photo, k) => {
+                                        const photoId = `${photo['map_square_number']}`
+                                                      + `/${photo['number']}`;
+                                        if (photo.cleaned_src || photo.front_src) {
+                                            return (
+                                                <a
+                                                    key={k}
+                                                    title={'Map Square: '
+                                                           + photo['map_square_number']
+                                                           + ', Number: ' + photo['number']}
+                                                    href={'/photo/' + photoId + '/'}
+                                                >
+                                                    <img
+                                                        alt={photo.alt}
+                                                        height={150}
+                                                        width={150}
+                                                        src={getSource(photo)}
+                                                    />
+                                                </a>
+                                            );
+                                        }
+                                        return '';
+                                    })}
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
                 <Footer />
             </>

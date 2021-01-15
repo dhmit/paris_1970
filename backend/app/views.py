@@ -226,7 +226,7 @@ def search(request):
         photographer = query['photographer'].strip()
         caption = query['caption'].strip()
         tags = query['tags']
-        print(tags)
+
         django_query = Q()
         if photographer != '':
             django_query &= Q(photographer__name__icontains=photographer)
@@ -242,7 +242,11 @@ def search(request):
         keyword = query['keyword'].strip()
         photo_obj = Photo.objects.filter(Q(photographer__name__icontains=keyword) |
                                          Q(photographer_caption__icontains=keyword) |
-                                         Q(librarian_caption__icontains=keyword))
+                                         Q(librarian_caption__icontains=keyword) |
+                                         (Q(photoanalysisresult__name='yolo_model') &
+                                          Q(photoanalysisresult__result__icontains=keyword)))\
+            .distinct()
+        # distinct is to prevent duplicates
 
     serializer = PhotoSerializer(photo_obj, many=True)
     return Response(serializer.data)
