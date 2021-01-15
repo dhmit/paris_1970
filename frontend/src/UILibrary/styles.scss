@@ -24,18 +24,12 @@ body {
     @extend .flex-column;
 }
 
-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-}
-
 .footer-img {
     height: 80px;
     max-height: 10vh;
     max-width: 20vw;
     object-fit: contain;
+    padding-bottom: 10px;
 }
 
 .spinner-border {

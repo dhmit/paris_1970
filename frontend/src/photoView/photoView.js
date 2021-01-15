@@ -366,213 +366,208 @@ export class PhotoView extends React.Component {
 
         return (<>
             <Navbar />
-            <div className='center'>
-                <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
-                <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
-            </div>
-            <div className="row mapsquare">
-                <div className="col">
-                    <a className="btn btn-outline-dark" href={`/map_square/${mapSquareNumber}`}>Back to Map Square</a>
-                </div>
-                <div className="col text-center">
-                    <h2>Map Square {mapSquareNumber}, Photo {photoNumber}</h2>
-                </div>
-                <div className="col">
-                </div>
-            </div>
-            <br/>
-            <div className="page row">
-                <div className='image-view col-12 col-lg-6'>
-                    <div>
-                        <img
-                            className='image-photo positionTopLeft'
-                            src={this.state.photoData[`${this.state.displaySide}_src`]}
-                            alt={alt}
-                            onLoad={this.onImgLoad}
-                            ref={this.photoRef}
-                        />
-
-                        {analyses.map((analysisResult) => {
-                            const parsedValue = JSON.parse(analysisResult.result);
-
-                            if (analysisResult.name in VISUAL_ANALYSES
-                                && this.state.displaySide === 'cleaned') {
-                                if (VISUAL_ANALYSES[analysisResult.name][1] === this.state.view) {
-                                    return VISUAL_ANALYSES[analysisResult.name][0](
-                                        parsedValue,
-                                        this.state.height,
-                                        this.state.width,
-                                        this.state.natHeight,
-                                        this.state.natWidth,
-                                    );
-                                }
-                                return null;
-                            }
-                            // handled in a different div
-                            return null;
-                        })}
-                        <svg
-                            height={this.state.height}
-                            width={this.state.width}
-                        >
-                        </svg>
-                    </div>
-                    <br/>
-                    <div className={'centerBtn'}>
-                        {this.state.availableSides.map((side, k) => (
-                            <button
-                                className='btn btn-outline-dark mx-1'
-                                key={k}
-                                onClick={() => this.changeSide(side)}
-                            >
-                                {side[0].toUpperCase() + side.slice(1)} Side
-                            </button>
-                        ))}
-                    </div>
-                </div>
-                <div className='image-info col-12 col-lg-6'>
-                    <h5>Photographer</h5>
-                    <p>
-                        {photographerName || 'Unknown'}
-                        {
-                            photographerNumber
-                                ? <span>
-                                    {' (Number: '}
-                                    <a href={`/photographer/${photographerNumber}/`}>
-                                        {photographerNumber}
-                                    </a>
-                                )
-                                </span>
-                                : ' (Number: Unknown)'
-                        }
-                    </p>
-                    <h5 className="caption">Photographer caption</h5>
-                    <p>{photographerCaption || 'None'}</p>
-
-                    <h5>Visual Analysis</h5>
-                    <div className="row">
-                        <div className="col-6">
-                            {(this.state.displaySide === 'cleaned')
-                                ? <select
-                                    id="toggleSelect"
-                                    className="custom-select"
-                                    onChange={this.toggleStatus}
-                                    value={this.state.view}
-                                >
-                                    <option value="0">None selected</option>
-                                    <option value="1">Perspective Lines</option>
-                                    <option value="2">Foreground Mask</option>
-                                    <option value="3">YOLO Model</option>
-                                </select>
-                                : <p>Not available</p>
-                            }
-                            {(this.state.view === 3 && this.state.displaySide === 'cleaned')
-                                ? <p className={'px-3 my-0'}>
-                                    <i>Hover over the boxes to see the name of the object.</i>
-                                </p>
-                                : <span></span>
-                            }
-                        </div>
-                    </div>
-
-                    {analyses.map((analysisResult, index) => {
-                        const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
-                        const parsedValue = JSON.parse(analysisResult.result);
-
-                        if (analysisResult.name === 'yolo_model') {
-                            let labels = [];
-                            if ('labels' in parsedValue) {
-                                labels = parsedValue['labels'];
-                            } else {
-                                return (
-                                    <React.Fragment>
-                                        <h5>Objects Detected</h5>
-                                        <p>None</p>
-                                    </React.Fragment>
-                                );
-                            }
-                            return (
-                                <React.Fragment>
-                                    <h5>Objects Detected</h5>
-                                    <ul>
-                                        {Object.keys(labels).map((key, i) => (
-                                            <li key={i}>{key}: {labels[key]}</li>
-                                        ))}
-                                    </ul>
-                                </React.Fragment>
-                            );
-                        }
-
-                        if (analysisResult.name === 'photo_similarity.resnet18_cosine_similarity') {
-                            if (parsedValue === []) {
-                                return (
-                                    <React.Fragment>
-                                        <h5>Similar Photos</h5>
-                                        <p>None</p>
-                                    </React.Fragment>
-                                );
-                            }
-                            return (
-                                <React.Fragment>
-                                    <h5>Similar Photos (% Similiarity)</h5>
-                                    <ul>
-                                        {parsedValue.map((photo, i) => (
-                                            (photo[0] !== mapSquareNumber
-                                              || photo[1] !== photoNumber)
-                                                ? <li key={i}>
-                                                    <a href={`/photo/${photo[0]}/${photo[1]}/`}>
-                                                        Map Square {photo[0]},
-                                                        Photo {photo[1]} </a>
-                                                        ({photo[2] * 100}%)
-                                                </li>
-                                                : null
-                                        ))}
-                                    </ul>
-                                </React.Fragment>
-                            );
-                        }
-
-                        // handled in a different div
-                        if (analysisResult.name in VISUAL_ANALYSES
-                        || analysisResult.name === 'photo_similarity.resnet18_feature_vectors') {
-                            return null;
-                        }
-
-                        let analysisDisplayName;
-                        let analysisResultStr = analysisResult.result;
-                        if (!analysisConfig) {
-                            analysisDisplayName = analysisResult.name;
-                        } else {
-                            analysisDisplayName = analysisConfig.displayName;
-                            if (analysisConfig.formatter) {
-                                analysisResultStr = analysisConfig.formatter(analysisResult.result);
-                            }
-                        }
-                        if (['null', '""'].includes(analysisResultStr)) {
-                            analysisResultStr = 'N/A';
-                        }
-
-                        return (
-                            <React.Fragment key={index}>
-                                <h5>{analysisDisplayName}</h5>
-                                <p>{analysisResultStr}</p>
-                            </React.Fragment>
-                        );
-                    })}
-                </div>
+            <div className="container">
                 <div className='center'>
                     <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
                     <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
                 </div>
+                <div className="row mapsquare">
+                    <div className="col">
+                        <a className="btn btn-outline-dark" href={`/map_square/${mapSquareNumber}`}>Back to Map Square</a>
+                    </div>
+                    <div className="col text-center">
+                        <h2>Map Square {mapSquareNumber}, Photo {photoNumber}</h2>
+                    </div>
+                    <div className="col">
+                    </div>
+                </div>
+                <br/>
+                <div className="page row">
+                    <div className='image-view col-12 col-lg-6'>
+                        <div>
+                            <img
+                                className='image-photo positionTopLeft'
+                                src={this.state.photoData[`${this.state.displaySide}_src`]}
+                                alt={alt}
+                                onLoad={this.onImgLoad}
+                                ref={this.photoRef}
+                            />
+
+                            {analyses.map((analysisResult) => {
+                                const parsedValue = JSON.parse(analysisResult.result);
+
+                                if (analysisResult.name in VISUAL_ANALYSES
+                                    && this.state.displaySide === 'cleaned') {
+                                    if (VISUAL_ANALYSES[analysisResult.name][1] === this.state.view) {
+                                        return VISUAL_ANALYSES[analysisResult.name][0](
+                                            parsedValue,
+                                            this.state.height,
+                                            this.state.width,
+                                            this.state.natHeight,
+                                            this.state.natWidth,
+                                        );
+                                    }
+                                    return null;
+                                }
+                                // handled in a different div
+                                return null;
+                            })}
+                            <svg
+                                height={this.state.height}
+                                width={this.state.width}
+                            >
+                            </svg>
+                        </div>
+                        <br/>
+                        <div className={'centerBtn'}>
+                            {this.state.availableSides.map((side, k) => (
+                                <button
+                                    className='btn btn-outline-dark mx-1'
+                                    key={k}
+                                    onClick={() => this.changeSide(side)}
+                                >
+                                    {side[0].toUpperCase() + side.slice(1)} Side
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    <div className='image-info col-12 col-lg-6'>
+                        <h5>Photographer</h5>
+                        <p>
+                            {photographerName || 'Unknown'}
+                            {
+                                photographerNumber
+                                    ? <span>
+                                        {' (Number: '}
+                                        <a href={`/photographer/${photographerNumber}/`}>
+                                            {photographerNumber}
+                                        </a>
+                                    )
+                                    </span>
+                                    : ' (Number: Unknown)'
+                            }
+                        </p>
+                        <h5 className="caption">Photographer caption</h5>
+                        <p>{photographerCaption || 'None'}</p>
+
+                        <h5>Visual Analysis</h5>
+                        <div className="row">
+                            <div className="col-6">
+                                {(this.state.displaySide === 'cleaned')
+                                    ? <select
+                                        id="toggleSelect"
+                                        className="custom-select"
+                                        onChange={this.toggleStatus}
+                                        value={this.state.view}
+                                    >
+                                        <option value="0">None selected</option>
+                                        <option value="1">Perspective Lines</option>
+                                        <option value="2">Foreground Mask</option>
+                                        <option value="3">YOLO Model</option>
+                                    </select>
+                                    : <p>Not available</p>
+                                }
+                                {(this.state.view === 3 && this.state.displaySide === 'cleaned')
+                                    ? <p className={'px-3 my-0'}>
+                                        <i>Hover over the boxes to see the name of the object.</i>
+                                    </p>
+                                    : <span></span>
+                                }
+                            </div>
+                        </div>
+
+                        {analyses.map((analysisResult, index) => {
+                            const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
+                            const parsedValue = JSON.parse(analysisResult.result);
+
+                            if (analysisResult.name === 'yolo_model') {
+                                let labels = [];
+                                if ('labels' in parsedValue) {
+                                    labels = parsedValue['labels'];
+                                } else {
+                                    return (
+                                        <React.Fragment>
+                                            <h5>Objects Detected</h5>
+                                            <p>None</p>
+                                        </React.Fragment>
+                                    );
+                                }
+                                return (
+                                    <React.Fragment>
+                                        <h5>Objects Detected</h5>
+                                        <ul>
+                                            {Object.keys(labels).map((key, i) => (
+                                                <li key={i}>{key}: {labels[key]}</li>
+                                            ))}
+                                        </ul>
+                                    </React.Fragment>
+                                );
+                            }
+
+                            if (analysisResult.name === 'photo_similarity.resnet18_cosine_similarity') {
+                                if (parsedValue === []) {
+                                    return (
+                                        <React.Fragment>
+                                            <h5>Similar Photos</h5>
+                                            <p>None</p>
+                                        </React.Fragment>
+                                    );
+                                }
+                                return (
+                                    <React.Fragment>
+                                        <h5>Similar Photos (% Similiarity)</h5>
+                                        <ul>
+                                            {parsedValue.map((photo, i) => (
+                                                (photo[0] !== mapSquareNumber
+                                                  || photo[1] !== photoNumber)
+                                                    ? <li key={i}>
+                                                        <a href={`/photo/${photo[0]}/${photo[1]}/`}>
+                                                            Map Square {photo[0]},
+                                                            Photo {photo[1]} </a>
+                                                            ({photo[2] * 100}%)
+                                                    </li>
+                                                    : null
+                                            ))}
+                                        </ul>
+                                    </React.Fragment>
+                                );
+                            }
+
+                            // handled in a different div
+                            if (analysisResult.name in VISUAL_ANALYSES
+                            || analysisResult.name === 'photo_similarity.resnet18_feature_vectors') {
+                                return null;
+                            }
+
+                            let analysisDisplayName;
+                            let analysisResultStr = analysisResult.result;
+                            if (!analysisConfig) {
+                                analysisDisplayName = analysisResult.name;
+                            } else {
+                                analysisDisplayName = analysisConfig.displayName;
+                                if (analysisConfig.formatter) {
+                                    analysisResultStr = analysisConfig.formatter(analysisResult.result);
+                                }
+                            }
+                            if (['null', '""'].includes(analysisResultStr)) {
+                                analysisResultStr = 'N/A';
+                            }
+
+                            return (
+                                <React.Fragment key={index}>
+                                    <h5>{analysisDisplayName}</h5>
+                                    <p>{analysisResultStr}</p>
+                                </React.Fragment>
+                            );
+                        })}
+                    </div>
+                    <div className='center'>
+                        <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
+                        <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
+                    </div>
+                </div>
+                <Footer />
             </div>
-            <Footer />
         </>);
     }
 }
