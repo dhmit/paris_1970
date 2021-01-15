@@ -74,6 +74,13 @@ export class Search extends React.Component {
     }
 
     async componentDidMount() {
+        // this section implements the photographers view drop-down menu
+        try {
+            // do sth
+            const photographersURL = 'api/'
+        } catch (e) {
+            console.log(e);
+        }
         // try {
         //     const apiURL = '/api/something';
         //     const response = await fetch(apiURL);
