@@ -12,6 +12,6 @@ $footer-height: 150px;
 
 @media (max-width: 992px) {
     .page {
-        padding-bottom: $footer-height;
+        padding: 0 0 $footer-height;
     }
 }
