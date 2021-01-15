@@ -96,6 +96,11 @@ def analyze(photo: Photo):
 
     # Get image and image dimensions
     input_image = photo.get_image_data()
+    if input_image is None:
+        return {
+            "boxes": [],
+            "labels": [],
+        }
 
     image_dimensions = input_image.shape[:2]
     layer_outputs = yolo_setup(input_image, net)
