@@ -59,20 +59,16 @@ $side-padding: 100px;
     color: black;
 }
 
-Rectangle{
-    fill: none;
-}
-
 .map-grid{
-    stroke: gray;
+    stroke: lightslategray;
     fill: none;
-    stroke-width: 1.5;
-    stroke-opacity: 0.6;
+    stroke-width: 2;
+    stroke-opacity: 0.5;
 }
 
 .map-square-box{
     stroke: steelblue !important;
-    stroke-width: 2;
+    stroke-width: 2.5;
     fill: dodgerblue;
     fill-opacity: 0.3;
 }
