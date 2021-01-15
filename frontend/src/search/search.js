@@ -80,6 +80,12 @@ class SearchForm extends React.Component {
         }
     };
 
+    handleSingleSelect = (event) => {
+        // for photographer select, needs to delete the alert
+        alert('You selected ' + this.state.value);
+        event.preventDefault();
+    }
+
     // When it comes to separating the advanced search and full text search ("normal" search),
     // should we split the two forms? I think this would work with the same submit button
     render() {
@@ -111,12 +117,12 @@ class SearchForm extends React.Component {
                     <h3>Advanced Search</h3>
                     <label>
                         <p>Photographer:&nbsp;
-                            <input
-                                type="text"
-                                name="photographer"
-                                value={this.state.photographer}
-                                onChange={this.handleChange}
-                            />
+                            <select value={this.state.value} onChange={this.handleChange}>
+                            <option value="grapefruit">Grapefruit</option>
+                            <option value="lime">Lime</option>
+                            <option value="coconut">Coconut</option>
+                            <option value="mango">Mango</option>
+                            </select>
                         </p>
                     </label>
                     <br/>
@@ -180,6 +186,7 @@ export class Search extends React.Component {
             isAdvanced: false,
             searchedText: '',
             tagData: null,
+            photographerData: null,
         };
     }
 
@@ -191,7 +198,9 @@ export class Search extends React.Component {
         try {
             const tagResponse = await fetch('/api/get_tags/');
             const tagData = await tagResponse.json();
-            this.setState({ tagData, loading: false });
+            const photographerResponse = await fetch('/api/all_photographers/');
+            const photographerData = await photographerResponse.json();
+            this.setState({ photographerData, tagData, loading: false });
         } catch (e) {
             console.log(e);
         }
