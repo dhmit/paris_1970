@@ -153,30 +153,35 @@ export class Navbar extends Component {
     }
 
     render() {
+        const show = (this.state.showNav) ? 'show' : '';
         return (
-          <div>
-              <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-                  <a className="navbar-brand"
-                      href="/"><b>This Was Paris in 1970</b></a>
-                  <button className="navbar-toggler" type="button" data-toggle="collapse"
-                      data-target="#navbarNav" aria-controls="navbarNav"
-                      aria-expanded="false" aria-label="Toggle navigation">
-                      <span className="navbar-toggler-icon"></span>
-                  </button>
-                  <ul className="navbar-nav ml-auto">
-                      <li className="collapse bar-collapse" id="navbarNavAltMarkup">
-                          <div className="navbar-nav">
-                              {
-                                  navbarLinks.map((page) => (
-                                      <a key={page.name} className="nav-item nav-link"
-                                          href={page.link}>{page.name}</a>
-                                  ))
-                              }
-                          </div>
-                      </li>
-                  </ul>
-              </nav>
-          </div>
+            <div>
+                <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+                    <div className="container-fluid">
+                        <a className="navbar-brand" style={{ 'font-size': '200%' }}
+                            href="/"><b>This Was Paris in 1970</b></a>
+                        <button className="navbar-toggler" type="button"
+                            onClick={() => { this.setState({ showNav: !this.state.showNav }); }}
+                            data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                            aria-controls="navbarNav" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                            <span className="navbar-toggler-icon"></span>
+                        </button>
+                        <div className={'collapse navbar-collapse ' + show} id="navbarNav">
+                            <ul className="navbar-nav ml-auto">
+                                {
+                                    navbarLinks.map((page) => (
+                                        <li key={page.name} className="nav-item">
+                                            <a key={page.name} className="nav-link"
+                                                href={page.link}>{page.name}</a>
+                                        </li>
+                                    ))
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
         );
     }
 }
