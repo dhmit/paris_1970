@@ -2,9 +2,12 @@
 These view functions and classes implement API endpoints
 """
 import ast
+import json
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from django.db.models import Q
 
 from .models import (
     Photo,
@@ -169,4 +172,24 @@ def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     """
     cluster = Cluster.objects.get(model_n=number_of_clusters, label=cluster_number)
     serializer = PhotoSerializer(cluster.photos.all(), many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def search(request):
+    """
+    API endpoint to search for photos that match the search query
+    """
+    query = json.loads(request.body)
+    keyword = query['keyword'].strip()
+    photographer = query['photographer'].strip()
+    caption = query['caption'].strip()
+    tags = query['tags'].strip()
+    print(keyword, photographer, caption, tags)
+    if keyword != '':
+        print('searching')
+        photo_obj = Photo.objects.filter(Q(photographer__name__icontains=keyword) |
+                                         Q(photographer_caption__icontains=keyword) |
+                                         Q(librarian_caption__icontains=keyword))
+    serializer = PhotoSerializer(photo_obj, many=True)
     return Response(serializer.data)
