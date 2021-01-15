@@ -71,13 +71,9 @@ class Map extends React.Component {
                             // Greys out squares without photos in them
                             if (numberOfPhotos === 0) {
                                 return (
-                                    <Rectangle
+                                    <Rectangle className="map-grid"
                                         key={index}
                                         bounds={mapSquareBounds}
-                                        color={'#737a7a'} weight={1}
-                                        opacity={0.45}
-                                        fillOpacity={0}
-
                                     >
                                         <Popup>
                                             Map Square {index} <br />
@@ -87,11 +83,9 @@ class Map extends React.Component {
                                 );
                             }
                             return (
-                                <Rectangle
+                                <Rectangle className="map-square-box"
                                     key={index}
                                     bounds={mapSquareBounds}
-                                    color={'#017db8'} weight={2}
-                                    opacity={1.5}
                                 >
                                     <Popup>
                                         Map Square {index} <br/>

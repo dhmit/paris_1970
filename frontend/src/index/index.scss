@@ -58,3 +58,21 @@ $side-padding: 100px;
 .map-square:hover {
     color: black;
 }
+
+Rectangle{
+    fill: none;
+}
+
+.map-grid{
+    stroke: gray;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-opacity: 0.6;
+}
+
+.map-square-box{
+    stroke: steelblue !important;
+    stroke-width: 2;
+    fill: dodgerblue;
+    fill-opacity: 0.3;
+}
