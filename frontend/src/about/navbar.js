@@ -10,26 +10,25 @@ class Navbar extends Component {
     }
 
     render() {
+        const aboutclassName = (
+            `about-nav-link ${this.props.currentPage === 'about' && 'font-weight-bold'}`
+        );
+
         return (
             <div>
-                <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-                    <a className="navbar-brand" style={{ 'font-size': '200%' }}
-                        href="/"><b>This Was Paris in 1970</b></a>
-                    <button className="navbar-toggler" type="button" data-toggle="collapse"
-                        data-target="#navbarNav" aria-controls="navbarNav"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <ul className="navbar-nav ml-auto">
-                        <li className="collapse navbar-collapse" id="navbarNavAltMarkup">
-                            <div className="navbar-nav">
-                                <a className="nav-item nav-link"
-                                    style={{ 'font-size': '150%', 'color': 'light-grey' }}
-                                    href="/about">About</a>
-                            </div>
-                        </li>
-                    </ul>
-                </nav>
+              <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+                <a className="navbar-brand" style={{ 'font-size': '200%'}} href="/"><b>This Was Paris in 1970</b></a>
+                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                  <span className="navbar-toggler-icon"></span>
+                </button>
+                <ul className="navbar-nav ml-auto">
+                  <li className="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div className="navbar-nav">
+                      <a className="nav-item nav-link" style={{ 'font-size': '150%', 'color': 'light-grey'}} href="/about">About</a>
+                    </div>
+                  </li>
+                </ul>
+              </nav>
             </div>
         );
     }
