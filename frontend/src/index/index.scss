@@ -23,18 +23,17 @@ code {
     margin-bottom: 1px;
 }
 
-$header-height: 100px;
 $footer-height: 150px;
 $side-padding: 100px;
 $side-padding-mobile: 20px;
 
 .page {
-    padding: $header-height $side-padding $footer-height;
+    padding: 0 $side-padding $footer-height;
 }
 
 @media (max-width: 992px) {
     .page {
-        padding: $header-height $side-padding-mobile $footer-height;
+        padding: 0 $side-padding-mobile $footer-height;
     }
 }
 

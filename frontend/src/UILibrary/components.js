@@ -154,45 +154,29 @@ export class Navbar extends Component {
 
     render() {
         return (
-            <nav>
-                <div className='paris-navbar'>
-                    <div className='d-block'>
-                        <a className='nav-title' href='/'>
-                            This was Paris in 1970
-                        </a>
-                    </div>
-                    <div className='d-none d-lg-flex ml-auto'>
-                        {
-                            navbarLinks.map((page) => (
-                                <div key={page.name} className='nav-link-div'>
-                                    <a className="nav-link-link" href={page.link}>{page.name}</a>
-                                </div>
-                            ))
-                        }
-                    </div>
-
-                    <div
-                        className="hamburger d-block d-lg-none"
-                        onClick={() => { this.setState({ showNav: !this.state.showNav }); }}
-                    >
-                        <div className="rectangle"/>
-                        <div className="rectangle"/>
-                        <div className="rectangle"/>
-                    </div>
-                </div>
-                {
-                    this.state.showNav
-                    && <div className='alternate-nav d-block d-lg-none'>
-                        {
-                            navbarLinks.map((page) => (
-                                <a key={page.name} className='alternate-link' href={page.link}>
-                                    {page.name}
-                                </a>
-                            ))
-                        }
-                    </div>
-                }
-            </nav>
+          <div>
+              <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+                  <a className="navbar-brand"
+                      href="/"><b>This Was Paris in 1970</b></a>
+                  <button className="navbar-toggler" type="button" data-toggle="collapse"
+                      data-target="#navbarNav" aria-controls="navbarNav"
+                      aria-expanded="false" aria-label="Toggle navigation">
+                      <span className="navbar-toggler-icon"></span>
+                  </button>
+                  <ul className="navbar-nav ml-auto">
+                      <li className="collapse bar-collapse" id="navbarNavAltMarkup">
+                          <div className="navbar-nav">
+                              {
+                                  navbarLinks.map((page) => (
+                                      <a key={page.name} className="nav-item nav-link"
+                                          href={page.link}>{page.name}</a>
+                                  ))
+                              }
+                          </div>
+                      </li>
+                  </ul>
+              </nav>
+          </div>
         );
     }
 }
