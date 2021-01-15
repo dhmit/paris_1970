@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { Navbar, Footer } from '../UILibrary/components';
 import { getSource } from '../analysisView/analysisView';
 
-// const exampleTags = ["boat", "child", "star", "house-cat"];
-
 class SearchForm extends React.Component {
     constructor(props) {
         super(props);
@@ -13,7 +11,6 @@ class SearchForm extends React.Component {
             photographer: '',
             caption: '',
             tags: [],
-            tagData: ['boat', 'child', 'star', 'house-cat'],
         };
     }
 
