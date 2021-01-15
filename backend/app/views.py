@@ -23,6 +23,7 @@ from .models import (
 from .serializers import (
     PhotoSerializer,
     MapSquareSerializer,
+    MapSquareSerializerWithoutPhotos,
     PhotographerSerializer,
     CorpusAnalysisResultsSerializer,
 )
@@ -31,11 +32,37 @@ from .serializers import (
 @api_view(['GET'])
 def photo(request, map_square_number, photo_number):
     """
-    API endpoint to get a photo with a primary key of photo_id
+    API endpoint to get a photo with a map square number of map_square_number
+    and photo number of photo_number
     """
     photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
     serializer = PhotoSerializer(photo_obj)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def previous_next_photos(request, map_square_number, photo_number):
+    """
+    API endpoint to get the previous and next photos given the map square number and
+    photo number of the current photo
+    """
+    photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
+    resp = []
+    if photo_obj.id > 1:
+        previous_photo_object = Photo.objects.get(id=photo_obj.id - 1)
+        previous_serialized = PhotoSerializer(previous_photo_object)
+        resp.append(previous_serialized.data)
+    else:
+        resp.append("")
+
+    if photo_obj.id < len(Photo.objects.all()):
+        next_photo_object = Photo.objects.get(id=photo_obj.id + 1)
+        next_serialized = PhotoSerializer(next_photo_object)
+        resp.append(next_serialized.data)
+    else:
+        resp.append("")
+
+    return Response(resp)
 
 
 @api_view(['GET'])
@@ -61,10 +88,10 @@ def get_map_square(request, map_square_number):
 @api_view(['GET'])
 def all_map_squares(request):
     """
-    API endpoint to get all map squares in the database
+    API endpoint to get all map squares in the database for landing page
     """
     map_square_obj = MapSquare.objects.all()
-    serializer = MapSquareSerializer(map_square_obj, many=True)
+    serializer = MapSquareSerializerWithoutPhotos(map_square_obj, many=True)
     return Response(serializer.data)
 
 
@@ -222,6 +249,6 @@ def get_tags(request):
     with open(os.path.join(YOLO_DIR, 'coco.names'), 'r') as f:
         tag = f.readline()
         while tag:
-            tags.append(tag)
+            tags.append(tag.strip())
             tag = f.readline()
     return Response(tags)

@@ -1,7 +1,7 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
 
-import { Navbar, Footer } from '../UILibrary/components';
+import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 
 const SIDES = {
     CLEANED: 'cleaned',
@@ -202,8 +202,6 @@ const VISUAL_ANALYSES = {
     'yolo_model': [configAnalysisYoloModel, 3],
 };
 
-const photoArray = [];
-
 function formatPercentageValue(value) {
     return `${parseInt(value)}%`;
 }
@@ -261,8 +259,9 @@ export class PhotoView extends React.Component {
     }
 
     async componentDidMount() {
+        const mapPhotoString = `${this.props.mapSquareNumber}/${this.props.photoNumber}/`;
         try {
-            const apiURL = `/api/photo/${this.props.mapSquareNumber}/${this.props.photoNumber}/`;
+            const apiURL = '/api/photo/' + mapPhotoString;
             const response = await fetch(apiURL);
             if (!response.ok) {
                 this.setState({ loading: false });
@@ -282,10 +281,14 @@ export class PhotoView extends React.Component {
             console.log(e);
         }
         try {
-            const mapResponse = await fetch('/api/all_map_squares/');
-            const mapData = await mapResponse.json();
+            const photoResponse = await fetch('/api/prev_next_photos/' + mapPhotoString);
+            let prevNextPhotos = await photoResponse.json();
+            prevNextPhotos = prevNextPhotos.map((photo) => {
+                return photo ? `/photo/${photo.map_square_number}/${photo.number}/` : null;
+            });
             this.setState({
-                mapData,
+                prevLink: prevNextPhotos[0],
+                nextLink: prevNextPhotos[1],
                 loading: false,
             });
         } catch (e) {
@@ -320,18 +323,9 @@ export class PhotoView extends React.Component {
         });
     }
 
-    setLinks = (prevLink, nextLink) => {
-        this.setState({
-            prevLink: prevLink,
-            nextLink: nextLink,
-        });
-    }
-
     render() {
-        if (this.state.loading || !this.state.mapData) {
-            return (<h1>
-                Loading!
-            </h1>);
+        if (this.state.loading) {
+            return (<LoadingPage/>);
         }
         if (!this.state.photoData) {
             return (<h1>
@@ -350,20 +344,6 @@ export class PhotoView extends React.Component {
 
         // Resize SVG overlays on viewport resize
         window.addEventListener('resize', () => this.handleResize());
-
-        if (photoArray.length === 0) {
-            for (const mapSquare of this.state.mapData) {
-                for (const photoData of mapSquare.photos) {
-                    let url = window.location.origin;
-                    url += `/photo/${photoData.map_square_number}/${photoData.number}/`;
-                    photoArray.push(url);
-                }
-            }
-            const idx = photoArray.indexOf(window.location.href);
-            const prevLink = photoArray[(idx - 1) % photoArray.length];
-            const nextLink = photoArray[(idx + 1) % photoArray.length];
-            this.setLinks(prevLink, nextLink);
-        }
 
         return (<>
             <Navbar />

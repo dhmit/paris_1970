@@ -20,6 +20,7 @@ from django.urls import path
 from app.common import render_react_view
 from app.views import (
     photo,
+    previous_next_photos,
     all_photos,
     all_map_squares,
     all_analyses,
@@ -53,6 +54,7 @@ urlpatterns = [
 
     # API endpoints
     path('api/photo/<int:map_square_number>/<int:photo_number>/', photo),
+    path('api/prev_next_photos/<int:map_square_number>/<int:photo_number>/', previous_next_photos),
     path('api/similar_photos/<int:map_square_number>/<int:photo_number>/', get_photo_by_similarity),
     path('api/photographer/<int:photographer_number>/', get_photographer),
     path('api/all_photographers/',get_all_photographers),

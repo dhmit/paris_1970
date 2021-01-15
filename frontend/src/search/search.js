@@ -41,7 +41,7 @@ class SearchForm extends React.Component {
         if (body.caption) {
             searchText += 'Caption contains: ' + body.caption + ' ';
         }
-        if (body.tags.length > 0) {
+        if (body.tags && body.tags.length > 0) {
             searchText += 'Has Tags: ' + body.tags;
         }
         this.props.updateSearchData({

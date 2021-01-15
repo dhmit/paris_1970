@@ -75,6 +75,22 @@ class MapSquareSerializer(serializers.ModelSerializer):
         fields = ['id', 'photos', 'boundaries', 'name', 'number', 'coordinates']
 
 
+class MapSquareSerializerWithoutPhotos(serializers.ModelSerializer):
+    """
+    Serializes a map square without the photos for landing page (faster loading time)
+    """
+    num_photos = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_num_photos(instance):
+        photo_obj = Photo.objects.filter(map_square__number=instance.number)
+        return len(photo_obj)
+
+    class Meta:
+        model = MapSquare
+        fields = ['id', 'num_photos', 'boundaries', 'name', 'number', 'coordinates']
+
+
 class PhotographerSerializer(serializers.ModelSerializer):
     """
     Serializes a photographer
