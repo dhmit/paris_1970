@@ -124,35 +124,35 @@ export class LoadingPage extends React.Component {
 export class Footer extends React.Component {
     render() {
         return (
-                <div className="row text-center footer">
-                    <div className="col-4 py-3">
-                        <a href="https://digitalhumanities.mit.edu/">
-                            <img
-                                src="/static/img/footer/dh_logo.svg"
-                                className='footer-img'
-                                alt='Digital Humanities at MIT Logo'
-                            />
-                        </a>
-                    </div>
-                    <div className="col-4 py-3">
-                        <a href="https://www.mit.edu/">
-                            <img
-                                src="/static/img/footer/mit_logo.svg"
-                                className='footer-img'
-                                alt='MIT Logo'
-                            />
-                        </a>
-                    </div>
-                    <div className="col-4 py-3">
-                        <a href="https://www.mellon.org/">
-                            <img
-                                src="/static/img/footer/mellon_logo.svg"
-                                className='footer-img'
-                                alt="Mellon Foundation Logo"
-                            />
-                        </a>
-                    </div>
+            <div className="row text-center footer">
+                <div className="col-4 py-3">
+                    <a href="https://digitalhumanities.mit.edu/">
+                        <img
+                            src="/static/img/footer/dh_logo.svg"
+                            className='footer-img'
+                            alt='Digital Humanities at MIT Logo'
+                        />
+                    </a>
                 </div>
+                <div className="col-4 py-3">
+                    <a href="https://www.mit.edu/">
+                        <img
+                            src="/static/img/footer/mit_logo.svg"
+                            className='footer-img'
+                            alt='MIT Logo'
+                        />
+                    </a>
+                </div>
+                <div className="col-4 py-3">
+                    <a href="https://www.mellon.org/">
+                        <img
+                            src="/static/img/footer/mellon_logo.svg"
+                            className='footer-img'
+                            alt="Mellon Foundation Logo"
+                        />
+                    </a>
+                </div>
+            </div>
         );
     }
 }

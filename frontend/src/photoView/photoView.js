@@ -373,7 +373,8 @@ export class PhotoView extends React.Component {
                 </div>
                 <div className="row mapsquare">
                     <div className="col">
-                        <a className="btn btn-outline-dark" href={`/map_square/${mapSquareNumber}`}>Back to Map Square</a>
+                        <a className="btn btn-outline-dark" href={`/map_square/${mapSquareNumber}`}>
+                            Back to Map Square</a>
                     </div>
                     <div className="col text-center">
                         <h2>Map Square {mapSquareNumber}, Photo {photoNumber}</h2>
@@ -398,7 +399,8 @@ export class PhotoView extends React.Component {
 
                                 if (analysisResult.name in VISUAL_ANALYSES
                                     && this.state.displaySide === 'cleaned') {
-                                    if (VISUAL_ANALYSES[analysisResult.name][1] === this.state.view) {
+                                    if (VISUAL_ANALYSES[analysisResult.name][1]
+                                        === this.state.view) {
                                         return VISUAL_ANALYSES[analysisResult.name][0](
                                             parsedValue,
                                             this.state.height,
@@ -504,7 +506,8 @@ export class PhotoView extends React.Component {
                                 );
                             }
 
-                            if (analysisResult.name === 'photo_similarity.resnet18_cosine_similarity') {
+                            if (analysisResult.name
+                                === 'photo_similarity.resnet18_cosine_similarity') {
                                 if (parsedValue === []) {
                                     return (
                                         <React.Fragment>
@@ -519,12 +522,12 @@ export class PhotoView extends React.Component {
                                         <ul>
                                             {parsedValue.map((photo, i) => (
                                                 (photo[0] !== mapSquareNumber
-                                                  || photo[1] !== photoNumber)
+                                                    || photo[1] !== photoNumber)
                                                     ? <li key={i}>
                                                         <a href={`/photo/${photo[0]}/${photo[1]}/`}>
                                                             Map Square {photo[0]},
                                                             Photo {photo[1]} </a>
-                                                            ({photo[2] * 100}%)
+                                                        ({photo[2] * 100}%)
                                                     </li>
                                                     : null
                                             ))}
@@ -535,7 +538,8 @@ export class PhotoView extends React.Component {
 
                             // handled in a different div
                             if (analysisResult.name in VISUAL_ANALYSES
-                            || analysisResult.name === 'photo_similarity.resnet18_feature_vectors') {
+                                || analysisResult.name
+                                === 'photo_similarity.resnet18_feature_vectors') {
                                 return null;
                             }
 
@@ -546,7 +550,9 @@ export class PhotoView extends React.Component {
                             } else {
                                 analysisDisplayName = analysisConfig.displayName;
                                 if (analysisConfig.formatter) {
-                                    analysisResultStr = analysisConfig.formatter(analysisResult.result);
+                                    analysisResultStr = analysisConfig.formatter(
+                                        analysisResult.result,
+                                    );
                                 }
                             }
                             if (['null', '""'].includes(analysisResultStr)) {
