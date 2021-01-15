@@ -107,9 +107,12 @@ function Instructions() {
     const [show, setShow] = useState(true);
 
     const handleClose = () => setShow(false);
-
+    const handleShow = () => setShow(true);
     return (
         <>
+            <Button variant="primary" onClick={handleShow}>
+                View Instructions
+            </Button>
             <Modal
                 show={show}
                 onHide={handleClose}
@@ -120,17 +123,22 @@ function Instructions() {
                 centered
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal title</Modal.Title>
+                    <Modal.Title>Welcome</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    I will not close if you click outside me. Don't even try to press
-                    escape key.
+                    Welcome to the map view of Paris in 1970! The images in this archive are from
+                    a photography competition in 1970's Paris hosted to capture Paris before
+                    rapid industrial change altered the city permanently.
+                </Modal.Body>
+                <Modal.Body>
+                    To explore images from specific areas of Paris, click on a red square.
+                    You will see the map square number and how many images are available.
+                    Click on the link to see the images from that area!
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Close
+                    <Button variant="primary" onClick={handleClose}>
+                        Got it
                     </Button>
-                    <Button variant="primary">Understood</Button>
                 </Modal.Footer>
             </Modal>
         </>
