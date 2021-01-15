@@ -384,8 +384,15 @@ export class PhotoView extends React.Component {
                 <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
                 <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
             </div>
-            <div className='center'>
-                <h2>Map Square {mapSquareNumber}, Photo {photoNumber}</h2>
+            <div className="row mapsquare">
+                <div className="col">
+                    <a className="btn btn-outline-dark" href={`/map_square/${mapSquareNumber}`}>Back to Map Square</a>
+                </div>
+                <div className="col text-center">
+                    <h2>Map Square {mapSquareNumber}, Photo {photoNumber}</h2>
+                </div>
+                <div className="col">
+                </div>
             </div>
             <br/>
             <div className="page row">
