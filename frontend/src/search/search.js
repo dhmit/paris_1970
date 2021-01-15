@@ -99,6 +99,7 @@ class SearchForm extends React.Component {
                             onChange={this.handleChange}
                         />
                     </label>
+                    <br />
                     <input type="submit" value="Search" />
                 </form>
                 {/* Advanced Search Form */}
@@ -106,54 +107,51 @@ class SearchForm extends React.Component {
                 <form onSubmit={this.handleAdvancedSubmit}>
                     <h3>Advanced Search</h3>
                     <label>
-                        <p>Photographer:&nbsp;
-                            <input
-                                type="text"
-                                name="photographer"
-                                value={this.state.photographer}
-                                onChange={this.handleChange}
-                            />
-                        </p>
+                        <p>Photographer:</p>
+                        <input
+                            type="text"
+                            name="photographer"
+                            value={this.state.photographer}
+                            onChange={this.handleChange}
+                        />
                     </label>
                     <br/>
                     <label>
-                        <p>Caption:&nbsp;
-                            <input
-                                type="text"
-                                name="caption"
-                                value={this.state.caption}
-                                onChange={this.handleChange}
-                            />
-                        </p>
+                        <p>Caption:</p>
+                        <input
+                            type="text"
+                            name="caption"
+                            value={this.state.caption}
+                            onChange={this.handleChange}
+                        />
                     </label>
                     <br/>
                     <label>
-                        <p>Tags:&nbsp;
-                            <input
-                                type="text"
-                                name="tagFilter"
-                                value={this.state.tagFilter}
-                                onChange={this.handleChange}
-                            />
-                            <br/>
-                            <select
-                                name="tags"
-                                className='tag-selection'
-                                multiple={true}
-                                value={this.state.tags}
-                                onChange={this.handleMultiSelectChange}
-                            >
-                                {
-                                    filteredTagData.map((tagData, key) => {
-                                        return (
-                                            <option value={tagData} key={key}>
-                                                {tagData}
-                                            </option>
-                                        );
-                                    })
-                                }
-                            </select>
-                        </p>
+                        <p>Tags:</p>
+                        <input
+                            type="text"
+                            name="tagFilter"
+                            value={this.state.tagFilter}
+                            onChange={this.handleChange}
+                        />
+                        <br/>
+                        <select
+                            name="tags"
+                            className='tag-selection'
+                            multiple={true}
+                            value={this.state.tags}
+                            onChange={this.handleMultiSelectChange}
+                        >
+                            {
+                                filteredTagData.map((tagData, key) => {
+                                    return (
+                                        <option value={tagData} key={key}>
+                                            {tagData}
+                                        </option>
+                                    );
+                                })
+                            }
+                        </select>
                     </label>
                     <br/>
                     <input type="submit" value="Search" />
