@@ -366,7 +366,7 @@ export class PhotoView extends React.Component {
 
         return (<>
             <Navbar />
-            <div className="container">
+            <div>
                 <div className='center'>
                     <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
                     <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
