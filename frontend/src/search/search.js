@@ -192,6 +192,7 @@ export class Search extends React.Component {
             <>
                 <Navbar />
                 <div className='page'>
+                    <br />
                     <h1>Search</h1>
                     <SearchForm
                         updateSearchData={this.updateSearchData}
