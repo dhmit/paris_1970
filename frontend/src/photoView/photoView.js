@@ -380,14 +380,14 @@ export class PhotoView extends React.Component {
 
         return (<>
             <Navbar />
-            <br/>
-            <div className='center'>
-                <h2 className='title'>Map Square {mapSquareNumber}, Photo {photoNumber}</h2>
-            </div>
             <div className='center'>
                 <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
                 <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
             </div>
+            <div className='center'>
+                <h2>Map Square {mapSquareNumber}, Photo {photoNumber}</h2>
+            </div>
+            <br/>
             <div className="page row">
                 <div className='image-view col-12 col-lg-6'>
                     <div>
