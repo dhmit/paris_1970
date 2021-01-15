@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Navbar, Footer } from '../UILibrary/components';
+import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 import { getSource } from '../analysisView/analysisView';
 
 // const exampleTags = ["boat", "child", "star", "house-cat"];
@@ -13,7 +13,6 @@ class SearchForm extends React.Component {
             photographer: '',
             caption: '',
             tags: [],
-            tagData: ['boat', 'child', 'star', 'house-cat'],
         };
     }
 
@@ -82,16 +81,6 @@ class SearchForm extends React.Component {
         }
     };
 
-    async componentDidMount() {
-        try {
-            const tagResponse = await fetch('/api/get_tags/');
-            const tagData = await tagResponse.json();
-            this.setState({ tagData });
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
     // When it comes to separating the advanced search and full text search ("normal" search),
     // should we split the two forms? I think this would work with the same submit button
     render() {
@@ -147,7 +136,7 @@ class SearchForm extends React.Component {
                                 onChange={this.handleMultiSelectChange}
                             >
                                 {
-                                    this.state.tagData.map((tagData, key) => {
+                                    this.props.tagData.map((tagData, key) => {
                                         return (
                                             <option value={tagData} key={key}>
                                                 {tagData}
@@ -167,6 +156,7 @@ class SearchForm extends React.Component {
 }
 SearchForm.propTypes = {
     updateSearchData: PropTypes.func,
+    tagData: PropTypes.array,
 };
 
 export class Search extends React.Component {
@@ -177,6 +167,7 @@ export class Search extends React.Component {
             data: null,
             isAdvanced: false,
             searchedText: '',
+            tagData: null,
         };
     }
 
@@ -184,14 +175,30 @@ export class Search extends React.Component {
         this.setState({ ...searchData });
     }
 
+    async componentDidMount() {
+        try {
+            const tagResponse = await fetch('/api/get_tags/');
+            const tagData = await tagResponse.json();
+            this.setState({ tagData, loading: false });
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
     // This follows the full text + advanced search model here: http://photogrammar.yale.edu/search/
     render() {
+        if (!this.state.tagData) {
+            return (<LoadingPage/>);
+        }
         return (
             <>
                 <Navbar />
                 <div className='page'>
                     <h1>Search</h1>
-                    <SearchForm updateSearchData={this.updateSearchData}/>
+                    <SearchForm
+                        updateSearchData={this.updateSearchData}
+                        tagData={this.state.tagData}
+                    />
                     {
                         this.state.data
                         && <div className='search-results'>
