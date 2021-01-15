@@ -225,13 +225,18 @@ def search(request):
     if is_advanced:
         photographer = query['photographer'].strip()
         caption = query['caption'].strip()
-        tags = query['tags'].strip()
+        tags = query['tags']
+        print(tags)
         django_query = Q()
         if photographer != '':
             django_query &= Q(photographer__name__icontains=photographer)
         if caption != '':
             django_query &= Q(photographer_caption__icontains=caption) | \
                             Q(librarian_caption__icontains=caption)
+        if len(tags) > 0:
+            for tag in tags:
+                django_query &= Q(photoanalysisresult__name='yolo_model') & \
+                                Q(photoanalysisresult__result__icontains=tag)
         photo_obj = Photo.objects.filter(django_query)
     else:
         keyword = query['keyword'].strip()

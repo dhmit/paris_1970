@@ -169,7 +169,7 @@ export class Navbar extends Component {
             <div>
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                     <div className="container-fluid">
-                        <a className="navbar-brand" style={{ 'font-size': '200%' }}
+                        <a className="navbar-brand" style={{ 'fontSize': '200%' }}
                             href="/"><b>This Was Paris in 1970</b></a>
                         <button className="navbar-toggler" type="button"
                             onClick={() => { this.setState({ showNav: !this.state.showNav }); }}
