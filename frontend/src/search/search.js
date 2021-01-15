@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 import { getSource } from '../analysisView/analysisView';
 
-// const exampleTags = ["boat", "child", "star", "house-cat"];
-
 class SearchForm extends React.Component {
     constructor(props) {
         super(props);
