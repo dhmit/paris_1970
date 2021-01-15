@@ -170,7 +170,7 @@ export class Search extends React.Component {
     }
 
     updateSearchData = (searchData) => {
-        this.setState({...searchData});
+        this.setState({ ...searchData });
     }
 
     // This follows the full text + advanced search model here: http://photogrammar.yale.edu/search/
@@ -215,10 +215,3 @@ export class Search extends React.Component {
         );
     }
 }
-
-// <input
-//                                 type="text"
-//                                 name="tags"
-//                                 value={this.state.tags}
-//                                 onChange={this.handleChange}
-//                             />
