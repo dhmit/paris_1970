@@ -58,3 +58,10 @@ $side-padding: 100px;
 .map-square:hover {
     color: black;
 }
+
+#instructionButton {
+    z-index: 999;
+    position: absolute;
+    top: 60px;
+    right: 2px;
+}

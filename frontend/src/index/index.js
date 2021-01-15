@@ -104,13 +104,13 @@ Map.propTypes = {
 
 
 function Instructions() {
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     return (
         <>
-            <Button variant="primary" onClick={handleShow}>
+            <Button id="instructionButton" variant="primary" onClick={handleShow}>
                 View Instructions
             </Button>
             <Modal
