@@ -2,7 +2,7 @@ import React from 'react';
 import * as PropTypes from 'prop-types';
 
 import Navbar from '../about/navbar';
-import { Footer } from '../UILibrary/components';
+import { Footer, LoadingPage } from '../UILibrary/components';
 
 const SIDES = {
     CLEANED: 'cleaned',
@@ -50,9 +50,7 @@ export class SimilarityView extends React.Component {
 
     render() {
         if (this.state.loading) {
-            return (<h1>
-                Loading!
-            </h1>);
+            return (<LoadingPage/>);
         }
 
         if (!this.state.photoData) {

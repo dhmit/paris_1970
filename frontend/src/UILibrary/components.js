@@ -5,6 +5,7 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
 import * as d3 from 'd3';
+import Navbar from '../about/navbar';
 
 /**
  * Component used to render paths into SVGs
@@ -96,6 +97,29 @@ CaptionedImage.propTypes = {
     alt: PropTypes.string,
 };
 
+export class Loading extends React.Component {
+    render() {
+        return (
+            <div className="m-auto">
+                <div className="spinner-border" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+            </div>
+        );
+    }
+}
+
+export class LoadingPage extends React.Component {
+    render() {
+        return (
+            <>
+                <Navbar />
+                <Loading/>
+                <Footer />
+            </>
+        );
+    }
+}
 
 export class Footer extends React.Component {
     render() {
