@@ -142,27 +142,23 @@ class SearchForm extends React.Component {
                             onChange={this.handleChange}
                         />
                         <br/>
-
-                        {
-                            this.state.tagFilter.length > 0 ?
-                                <select
-                                    name="tags"
-                                    className='tag-selection'
-                                    multiple={true}
-                                    value={this.state.tags}
-                                    onChange={this.handleMultiSelectChange}
-                                >
-                                    {
-                                        filteredTagData.map((tagData, key) => {
-                                            return (
-                                                <option value={tagData} key={key}>
-                                                    {tagData}
-                                                </option>
-                                            );
-                                        })
-                                    }
-                                </select> : null
-                        }
+                        <select
+                            name="tags"
+                            className='tag-selection'
+                            multiple={true}
+                            value={this.state.tags}
+                            onChange={this.handleMultiSelectChange}
+                        >
+                            {
+                                filteredTagData.map((tagData, key) => {
+                                    return (
+                                        <option value={tagData} key={key}>
+                                            {tagData}
+                                        </option>
+                                    );
+                                })
+                            }
+                        </select>
                     </label>
                     <br/>
                     <input type="submit" value="Search" />
