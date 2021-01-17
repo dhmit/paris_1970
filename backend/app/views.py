@@ -224,12 +224,18 @@ def search(request):
 
     if is_advanced:
         photographer = query['photographer'].strip()
+        photographer_name = photographer.split(',')[0]
+        if photographer.split(',')[-1]:
+            photographer_id = int(photographer.split(',')[-1])
+        else:
+            photographer_id = 0
         caption = query['caption'].strip()
         tags = query['tags']
 
         django_query = Q()
         if photographer != '':
-            django_query &= Q(photographer__name__icontains=photographer)
+            django_query &= Q(photographer__name=photographer_name) | Q(
+                photographer_id=photographer_id)
         if caption != '':
             django_query &= Q(photographer_caption__icontains=caption) | \
                             Q(librarian_caption__icontains=caption)

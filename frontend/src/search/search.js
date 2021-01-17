@@ -79,13 +79,6 @@ class SearchForm extends React.Component {
         }
     };
 
-    handleSingleSelect = (event) => {
-        // for photographer select, needs to delete the alert
-        // Do we still need this? Can this be deleted?
-        alert('You selected ' + this.state.value);
-        event.preventDefault();
-    }
-
     // When it comes to separating the advanced search and full text search ("normal" search),
     // should we split the two forms? I think this would work with the same submit button
     render() {
@@ -175,7 +168,7 @@ class SearchForm extends React.Component {
                             name="tagFilter"
                             value={this.state.tagFilter}
                             onChange={this.handleChange}
-                            placeholder="Tag Filter..."
+                            placeholder="Tag Filter"
                         />
                         <br/>
                         <select
