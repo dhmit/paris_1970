@@ -81,6 +81,7 @@ class SearchForm extends React.Component {
 
     handleSingleSelect = (event) => {
         // for photographer select, needs to delete the alert
+        // Do we still need this? Can this be deleted?
         alert('You selected ' + this.state.value);
         event.preventDefault();
     }
@@ -116,7 +117,12 @@ class SearchForm extends React.Component {
                     <h3>Advanced Search</h3>
                     <label>
                         <p>Photographer:&nbsp;
-                            <select value={this.state.photographer} onChange={this.handleMultiSelectChange}>
+                            <select
+                                value={this.state.photographer}
+                                onChange={this.handleChange}
+                                name="photographer"
+                            >
+                                <option value="">None</option>
                                 {
                                     photographerData.map((photographer, key) => {
                                         const valueArray = [photographer.name, photographer.number];
