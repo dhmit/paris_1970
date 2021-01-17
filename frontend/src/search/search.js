@@ -52,7 +52,7 @@ class SearchForm extends React.Component {
         const value = Array.from(event.target.selectedOptions, (option) => option.value);
         this.setState({
             ...this.state,
-            tags: value,
+            [event.target.name]: value,
         });
     }
 
@@ -92,6 +92,8 @@ class SearchForm extends React.Component {
             (tag) => tag.toLowerCase().includes(this.state.tagFilter.toLowerCase())
         );
 
+        const photographerData = this.props.photographerData;
+
         return (
             <div>
                 {/* Full-Text Form */}
@@ -114,11 +116,32 @@ class SearchForm extends React.Component {
                     <h3>Advanced Search</h3>
                     <label>
                         <p>Photographer:&nbsp;
-                            <select value={this.state.value} onChange={this.handleChange}>
-                            <option value="grapefruit">Grapefruit</option>
-                            <option value="lime">Lime</option>
-                            <option value="coconut">Coconut</option>
-                            <option value="mango">Mango</option>
+                            <select value={this.state.photographer} onChange={this.handleMultiSelectChange}>
+                                {
+                                    photographerData.map((photographer, key) => {
+                                        const valueArray = [photographer.name, photographer.number];
+
+                                        if (photographer.name.length === 0) {
+                                            return (
+                                                <option value={valueArray} key={key}>
+                                                    Unknown [{photographer.number}]
+                                                </option>
+                                            );
+                                        }
+                                        if (photographer.number === null) {
+                                            return (
+                                                <option value={valueArray} key={key}>
+                                                    {photographer.name} [Unknown]
+                                                </option>
+                                            );
+                                        }
+                                        return (
+                                            <option value={valueArray} key={key}>
+                                                {photographer.name} [{photographer.number}]
+                                            </option>
+                                        );
+                                    })
+                                }
                             </select>
                         </p>
                     </label>
@@ -137,9 +160,15 @@ class SearchForm extends React.Component {
                         <p>Tags:</p>
                         <input
                             type="text"
+                            value={this.state.tags}
+                            disabled="disabled"
+                        />
+                        <input
+                            type="text"
                             name="tagFilter"
                             value={this.state.tagFilter}
                             onChange={this.handleChange}
+                            placeholder="Tag Filter..."
                         />
                         <br/>
                         <select
@@ -170,6 +199,7 @@ class SearchForm extends React.Component {
 SearchForm.propTypes = {
     updateSearchData: PropTypes.func,
     tagData: PropTypes.array,
+    photographerData: PropTypes.array,
 };
 
 export class Search extends React.Component {
@@ -203,7 +233,7 @@ export class Search extends React.Component {
 
     // This follows the full text + advanced search model here: http://photogrammar.yale.edu/search/
     render() {
-        if (!this.state.tagData) {
+        if (!this.state.tagData || !this.state.photographerData) {
             return (<LoadingPage/>);
         }
         return (
@@ -215,6 +245,7 @@ export class Search extends React.Component {
                         <SearchForm
                             updateSearchData={this.updateSearchData}
                             tagData={this.state.tagData}
+                            photographerData={this.state.photographerData}
                         />
                     </div>
                     <div className='col-sm-12 col-lg-8'>
