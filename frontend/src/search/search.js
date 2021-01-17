@@ -169,6 +169,7 @@ class SearchForm extends React.Component {
                             value={this.state.tags}
                             disabled="disabled"
                         />
+                        <br/>
                         <input
                             type="text"
                             name="tagFilter"
