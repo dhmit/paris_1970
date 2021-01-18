@@ -25,6 +25,7 @@ from .serializers import (
     MapSquareSerializer,
     MapSquareSerializerWithoutPhotos,
     PhotographerSerializer,
+    PhotographerSearchSerializer,
     CorpusAnalysisResultsSerializer,
 )
 
@@ -223,19 +224,18 @@ def search(request):
     is_advanced = query['isAdvanced']
 
     if is_advanced:
-        photographer = query['photographer'].strip()
-        photographer_name = photographer.split(',')[0]
-        if photographer.split(',')[-1]:
-            photographer_id = int(photographer.split(',')[-1])
-        else:
-            photographer_id = 0
+        photographer_name = query['photographerName']
+        photographer_num = query['photographerId']
         caption = query['caption'].strip()
         tags = query['tags']
 
         django_query = Q()
-        if photographer != '':
-            django_query &= Q(photographer__name=photographer_name) | Q(
-                photographer_id=photographer_id)
+        if photographer_name != '':
+            django_query &= Q(photographer__name=photographer_name)
+
+        if photographer_num != '':
+            django_query &= Q(photographer__number=photographer_num)
+
         if caption != '':
             django_query &= Q(photographer_caption__icontains=caption) | \
                             Q(librarian_caption__icontains=caption)
@@ -247,6 +247,7 @@ def search(request):
     else:
         keyword = query['keyword'].strip()
         photo_obj = Photo.objects.filter(Q(photographer__name__icontains=keyword) |
+                                         Q(photographer__number__icontains=keyword) |
                                          Q(photographer_caption__icontains=keyword) |
                                          Q(librarian_caption__icontains=keyword) |
                                          (Q(photoanalysisresult__name='yolo_model') &
@@ -260,10 +261,15 @@ def search(request):
 
 @api_view(['GET'])
 def get_tags(request):
+    """
+    API endpoint to get YOLO model tags and photographer data for search
+    """
     tags = []
     with open(os.path.join(YOLO_DIR, 'coco.names'), 'r') as f:
         tag = f.readline()
         while tag:
             tags.append(tag.strip())
             tag = f.readline()
-    return Response(tags)
+    photographer_obj = Photographer.objects.all()
+    serializer = PhotographerSearchSerializer(photographer_obj, many=True)
+    return Response({'tags': tags, 'photographers': serializer.data})

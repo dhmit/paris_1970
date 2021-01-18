@@ -32,8 +32,14 @@ class SearchForm extends React.Component {
         if (body.keyword) {
             searchText += ' found with keyword \'' + body.keyword + '\'';
         }
-        if (body.photographer) {
-            searchText += ' by ' + body.photographer;
+        if (body.photographerName || body.photographerId) {
+            if (!body.photographerId) {
+                searchText += ' by ' + body.photographerName;
+            } else if (!body.photographerName) {
+                searchText += ' by #' + body.photographerId;
+            } else {
+                searchText += ' by ' + body.photographerName + ' (#' + body.photographerId + ')';
+            }
         }
         if (body.caption) {
             searchText += ' containing caption \'' + body.caption + '\'';
@@ -70,8 +76,12 @@ class SearchForm extends React.Component {
         event.preventDefault();
         if (this.state.photographer.trim() || this.state.caption.trim()
             || this.state.tags.length > 0) {
+            const photographerParts = this.state.photographer.split(',');
+            const photographerName = photographerParts[0] ? photographerParts[0] : '';
+            const photographerId = photographerParts[1] ? photographerParts[1] : '';
             await this.handleSearch({
-                photographer: this.state.photographer,
+                photographerName,
+                photographerId,
                 caption: this.state.caption,
                 tags: this.state.tags,
                 isAdvanced: true,
@@ -79,11 +89,9 @@ class SearchForm extends React.Component {
         }
     };
 
-    // When it comes to separating the advanced search and full text search ("normal" search),
-    // should we split the two forms? I think this would work with the same submit button
     render() {
         const filteredTagData = this.props.tagData.filter(
-            (tag) => tag.toLowerCase().includes(this.state.tagFilter.toLowerCase())
+            (tag) => tag.toLowerCase().includes(this.state.tagFilter.toLowerCase()),
         );
 
         const photographerData = this.props.photographerData;
@@ -221,11 +229,10 @@ export class Search extends React.Component {
 
     async componentDidMount() {
         try {
-            const tagResponse = await fetch('/api/get_tags/');
-            const tagData = await tagResponse.json();
-            const photographerResponse = await fetch('/api/all_photographers/');
-            const photographerData = await photographerResponse.json();
-            this.setState({ photographerData, tagData, loading: false });
+            const searchTagResponse = await fetch('/api/get_tags/');
+            const searchTags = await searchTagResponse.json();
+            const { tags, photographers } = searchTags;
+            this.setState({ photographerData: photographers, tagData: tags, loading: false });
         } catch (e) {
             console.log(e);
         }
@@ -273,8 +280,8 @@ export class Search extends React.Component {
                                                 >
                                                     <img
                                                         alt={photo.alt}
-                                                        height={150}
-                                                        width={150}
+                                                        height={120}
+                                                        width={120}
                                                         src={getSource(photo)}
                                                     />
                                                 </a>
