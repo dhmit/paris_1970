@@ -1,6 +1,7 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
 
+import { getSource } from '../analysisView/analysisView';
 import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 
 const percentFormat = (x) => Math.floor(x) + '%';
@@ -24,7 +25,7 @@ const ANALYSIS = {
     },
     photographer_caption_length: {
         displayName: 'Average Photographer Caption Length',
-        analysisType: 'average',
+        analysisType: 'none',
         displayFormat: numberFormat,
     },
     yolo_model: {
@@ -138,21 +139,29 @@ export class PhotographerView extends React.Component {
                 </div>
                 <h2 className="h3">Photos Gallery:</h2>
                 <div className='photo_gallery'>
-                    {photos.map((photo, k) => (
-                        <div className="photo" key={k}>
-                            <a
-                                key={k}
-                                href={`/photo/${photo['map_square_number']}/${photo['number']}/`}
-                            >
-                                <img
-                                    alt={photo.alt}
-                                    height={200}
-                                    width={200}
-                                    src={photo['thumbnail_src']}
-                                />
-                            </a>
-                        </div>
-                    ))}
+                    {photos.map((photo, k) => {
+                        if (photo.binder_src || photo.front_src || photo.cleaned_src) {
+                            return (
+                                <div className="photo" key={k}>
+                                    <a
+                                        key={k}
+                                        title={`Map Square: ${photo['map_square_number']}`
+                                        + `, Number: ${photo['number']}`}
+                                        href={`/photo/${photo['map_square_number']}`
+                                        + `/${photo['number']}/`}
+                                    >
+                                        <img
+                                            alt={photo.alt}
+                                            height={150}
+                                            width={150}
+                                            src={getSource(photo)}
+                                        />
+                                    </a>
+                                </div>
+                            );
+                        }
+                        return '';
+                    })}
                 </div>
             </div>
             <Footer/>

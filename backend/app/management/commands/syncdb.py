@@ -362,7 +362,7 @@ def populate_database(
             map_square_number = str(row.get('map_square_number', ''))
             map_square_folder = photo_url_lookup.get(map_square_number, '')
             photo_number = row.get('number', '')
-            photographer_name = row.get('photographer_name', '')
+            photographer_name = row.get('photographer_name', '').strip()
 
             if map_square_folder:
                 add_photo_srcs(
@@ -382,10 +382,10 @@ def populate_database(
             if photographer_number is not None:
                 model_kwargs['photographer'] = \
                     Photographer.objects.filter(number=photographer_number).first()
-            if photographer_name is not None and 'photographer' not in model_kwargs:
+
+            if photographer_name != '' and 'photographer' not in model_kwargs:
                 model_kwargs['photographer'] = \
                     Photographer.objects.filter(name=photographer_name).first()
-
 
         # Creates models for all of the MapSquares not listed in the spreadsheet between the
         # previous row and the current one
