@@ -22,6 +22,21 @@ const ANALYSIS = {
         analysisType: 'average',
         displayFormat: numberFormat,
     },
+    photographer_caption_length: {
+        displayName: 'Average Photographer Caption Length',
+        analysisType: 'average',
+        displayFormat: numberFormat,
+    },
+    yolo_model: {
+        displayName: 'Yolo Model',
+        analysisType: 'none',
+        displayFormat: numberFormat,
+    },
+    text_ocr: {
+        displayName: 'text_ocr',
+        analysisType: 'none',
+        displayFormat: numberFormat,
+    },
 };
 
 export class PhotographerView extends React.Component {
@@ -110,12 +125,15 @@ export class PhotographerView extends React.Component {
                 <div className='col-6'>
                     <h2 className="h3">Analysis Results</h2>
                     {Object.keys(photographerAnalysis).map((analysis) => {
-                        return (
-                            <div key={analysis}>
-                                <h3 className="h5">{ANALYSIS[analysis].displayName}:</h3>
-                                {photographerAnalysis[analysis]}
-                            </div>
-                        );
+                        if (ANALYSIS[analysis].analysisType !== 'none') {
+                            return (
+                                <div key={analysis}>
+                                    <h3 className="h5">{ANALYSIS[analysis].displayName}:</h3>
+                                    {photographerAnalysis[analysis]}
+                                </div>
+                            );
+                        }
+                        return '';
                     })}
                 </div>
                 <h2 className="h3">Photos Gallery:</h2>
