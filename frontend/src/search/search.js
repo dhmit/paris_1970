@@ -1,4 +1,5 @@
 import React from 'react';
+import Select from 'react-select';
 import PropTypes from 'prop-types';
 import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 import { getSource } from '../analysisView/analysisView';
@@ -11,7 +12,7 @@ class SearchForm extends React.Component {
             photographer: '',
             caption: '',
             tags: [],
-            tagFilter: '',
+            exampleTags: [{value: 'hey', label: 'hey'}, {value: 'bob', label: 'bob'}, {value: 'hehe', label: 'hehe'}],
         };
     }
 
@@ -90,9 +91,7 @@ class SearchForm extends React.Component {
     };
 
     render() {
-        const filteredTagData = this.props.tagData.filter(
-            (tag) => tag.toLowerCase().includes(this.state.tagFilter.toLowerCase()),
-        );
+        const tagOptions = this.props.tagData.map((tag) => ({value: tag, label: tag}));
 
         const photographerData = this.props.photographerData;
 
@@ -165,38 +164,8 @@ class SearchForm extends React.Component {
                     </label>
                     <br/>
                     <label>
-                        <p>Tags:</p>
-                        <input
-                            type="text"
-                            value={this.state.tags}
-                            disabled="disabled"
-                        />
-                        <br/>
-                        <input
-                            type="text"
-                            name="tagFilter"
-                            value={this.state.tagFilter}
-                            onChange={this.handleChange}
-                            placeholder="Tag Filter"
-                        />
-                        <br/>
-                        <select
-                            name="tags"
-                            className='tag-selection'
-                            multiple={true}
-                            value={this.state.tags}
-                            onChange={this.handleMultiSelectChange}
-                        >
-                            {
-                                filteredTagData.map((tagData, key) => {
-                                    return (
-                                        <option value={tagData} key={key}>
-                                            {tagData}
-                                        </option>
-                                    );
-                                })
-                            }
-                        </select>
+                        <p>Tags:&nbsp;</p>
+                        <Select options={tagOptions} />
                     </label>
                     <br/>
                     <input type="submit" value="Search" />
