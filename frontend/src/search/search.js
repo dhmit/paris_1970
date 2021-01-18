@@ -12,7 +12,6 @@ class SearchForm extends React.Component {
             photographer: '',
             caption: '',
             tags: [],
-            exampleTags: [{value: 'hey', label: 'hey'}, {value: 'bob', label: 'bob'}, {value: 'hehe', label: 'hehe'}],
         };
     }
 
@@ -22,6 +21,13 @@ class SearchForm extends React.Component {
             [event.target.name]: event.target.value,
         });
     };
+
+    handleSelectDropdownChange = (selectedOptions) => {
+        this.setState({
+            ...this.state,
+            tags: selectedOptions,
+        });
+    }
 
     handleSearch = async (body) => {
         const searchResponse = await fetch('/api/search/', {
@@ -80,11 +86,15 @@ class SearchForm extends React.Component {
             const photographerParts = this.state.photographer.split(',');
             const photographerName = photographerParts[0] ? photographerParts[0] : '';
             const photographerId = photographerParts[1] ? photographerParts[1] : '';
+            const newTags = [];
+            for (const tag of this.state.tags) {
+                newTags.push(tag.value);
+            }
             await this.handleSearch({
                 photographerName,
                 photographerId,
                 caption: this.state.caption,
-                tags: this.state.tags,
+                tags: newTags,
                 isAdvanced: true,
             });
         }
@@ -164,8 +174,14 @@ class SearchForm extends React.Component {
                     </label>
                     <br/>
                     <label>
-                        <p>Tags:&nbsp;</p>
-                        <Select options={tagOptions} />
+                        <p>Tags:</p>
+                        <Select
+                            defaultValue={this.state.tags}
+                            isMulti
+                            name="tags"
+                            options={tagOptions}
+                            onChange={this.handleSelectDropdownChange}
+                        />
                     </label>
                     <br/>
                     <input type="submit" value="Search" />
