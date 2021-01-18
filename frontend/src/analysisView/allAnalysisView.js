@@ -26,11 +26,12 @@ export const analysisDescriptions = {
     },
     text_ocr: {
         name: 'Text Detected',
-        desc: 'This analysis attempts to recognize the text in an image.',
+        desc: 'This analysis attempts to recognize the text in an image using the OpenCV East'
+               + ' text detector and Tesseract OCR.',
     },
     yolo_model: {
         name: 'Yolo Model',
-        desc: 'This analysis detects objects.',
+        desc: 'This analysis detects objects in a photo using the YOLO model.',
     },
 };
 

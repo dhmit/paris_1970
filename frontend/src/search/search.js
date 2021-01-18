@@ -269,7 +269,8 @@ export class Search extends React.Component {
                                     {this.state.data.map((photo, k) => {
                                         const photoId = `${photo['map_square_number']}`
                                                       + `/${photo['number']}`;
-                                        if (photo.cleaned_src || photo.front_src) {
+                                        if (photo.cleaned_src || photo.front_src
+                                            || photo.binder_src) {
                                             return (
                                                 <a
                                                     key={k}
