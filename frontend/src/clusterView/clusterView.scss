@@ -24,5 +24,6 @@ $footer-height: 150px;
 @media (max-width: 992px) {
     .page {
         padding: 0;
+        flex: 1 0 auto;
     }
 }

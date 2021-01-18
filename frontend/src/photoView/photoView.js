@@ -366,7 +366,7 @@ export class PhotoView extends React.Component {
 
         return (<>
             <Navbar />
-            <div>
+            <div className="page">
                 <div className="d-flex justify-content-center">
                     <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
                     <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
@@ -572,8 +572,8 @@ export class PhotoView extends React.Component {
                         <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
                     </div>
                 </div>
-                <Footer />
             </div>
+            <Footer />
         </>);
     }
 }

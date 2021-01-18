@@ -82,6 +82,10 @@ rect {
     display: inline-block;
 }
 
+.content {
+    flex: 1 0 auto;
+}
+
 .mapsquare {
     padding-left: 10px;
 }
