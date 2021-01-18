@@ -154,13 +154,14 @@ class SearchForm extends React.Component {
                     </label>
                     <br/>
                     <label>
-                        <p>Caption:</p>
-                        <input
-                            type="text"
-                            name="caption"
-                            value={this.state.caption}
-                            onChange={this.handleChange}
-                        />
+                        <p>Caption:&nbsp;
+                            <input
+                                type="text"
+                                name="caption"
+                                value={this.state.caption}
+                                onChange={this.handleChange}
+                            />
+                        </p>
                     </label>
                     <br/>
                     <label>
