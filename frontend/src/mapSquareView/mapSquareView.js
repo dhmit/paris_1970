@@ -2,6 +2,7 @@ import React from 'react';
 import * as PropTypes from 'prop-types';
 
 import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
+import { getSource } from '../analysisView/analysisView';
 
 export class MapSquareView extends React.Component {
     constructor(props) {
@@ -45,12 +46,21 @@ export class MapSquareView extends React.Component {
         } = this.state.mapSquareData;
 
         const photoListItem = (photo, k) => {
+            const photoId = `${photo['map_square_number']}/${photo['number']}`;
             return (
-                <li key={k}>
-                    <a href={`/photo/${this.props.mapSquareNumber}/${photo.number}/`}>
-                        <h3>Photo {photo.id}</h3>
-                    </a>
-                </li>
+                <a
+                    key={k}
+                    title={`Map Square: ${photo['map_square_number']}`
+                           + `, Number: ${photo['number']}`}
+                    href={'/photo/' + photoId + '/'}
+                >
+                    <img
+                        alt={photo.alt}
+                        height={120}
+                        width={120}
+                        src={getSource(photo)}
+                    />
+                </a>
             );
         };
 
@@ -59,11 +69,7 @@ export class MapSquareView extends React.Component {
             <div className="page">
                 <h1>Map Square {number}</h1>
                 { photos.length
-                    ? (
-                        <ul className='photo-list'>
-                            {photos.map((photo, k) => photoListItem(photo, k))}
-                        </ul>
-                    )
+                    ? (<>{photos.map((photo, k) => photoListItem(photo, k))}</>)
                     : 'No metadata has been transcribed for these photos.'
                 }
             </div>
