@@ -211,6 +211,10 @@ function formatCoordinate(value) {
     return `(${parseInt(value[0][0])}, ${parseInt(value[0][1])})`;
 }
 
+function formatMeanDetailValue(value) {
+    return `${parseInt(value)}`;
+}
+
 const formatBoolean = (value) => {
     return value ? 'Yes' : 'No';
 };
@@ -243,7 +247,7 @@ const ANALYSIS_CONFIGS = {
         displayName: 'Text Detected',
     },
     'mean_detail': {
-        // formatter: formatPercentageValue,
+        formatter: formatMeanDetailValue,
         displayName: 'Average Amount of Detail',
     },
 };
@@ -527,7 +531,7 @@ export class PhotoView extends React.Component {
                                                         <a href={`/photo/${photo[0]}/${photo[1]}/`}>
                                                             Map Square {photo[0]},
                                                             Photo {photo[1]} </a>
-                                                        ({photo[2] * 100}%)
+                                                        ({formatPercentageValue(photo[2] * 100)})
                                                     </li>
                                                     : null
                                             ))}
