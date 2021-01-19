@@ -255,11 +255,11 @@ def get_tags(request):
     API endpoint to get YOLO model tags and photographer data for search
     """
     tags = []
-    with open(os.path.join(YOLO_DIR, 'coco.names'), 'r') as f:
-        tag = f.readline()
+    with open(os.path.join(YOLO_DIR, 'coco.names'), 'r') as file:
+        tag = file.readline()
         while tag:
             tags.append(tag.strip())
-            tag = f.readline()
+            tag = file.readline()
     photographer_obj = Photographer.objects.all()
     serializer = PhotographerSearchSerializer(photographer_obj, many=True)
     return Response({'tags': tags, 'photographers': serializer.data})
