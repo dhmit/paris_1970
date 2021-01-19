@@ -175,8 +175,6 @@ class SearchForm extends React.Component {
                     <br/>
                     <label>
                         <p>Tags:</p>
-                        {/*TODO: Get this to auto-size*/}
-                        {/*TODO: Get the dropdown appear *in front of* the footer*/}
                         <div style={{width: '300px'}}>
                             <Select
                                 defaultValue={this.state.tags}
