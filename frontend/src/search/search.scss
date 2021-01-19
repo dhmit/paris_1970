@@ -1,6 +1,6 @@
 .search-results {
     overflow-y: scroll;
-    height: 770px;
+    height: 500px;
 }
 
 .search-page {
@@ -16,4 +16,22 @@
 
 .tag-selection {
     height: 300px;
+}
+
+.input-div {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.search-label {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.search-text-input {
+    width: 100%;
+}
+
+.search-form form:first-child {
+    margin-bottom: 40px;
 }

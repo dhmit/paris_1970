@@ -101,7 +101,7 @@ class SearchForm extends React.Component {
     };
 
     render() {
-        const tagOptions = this.props.tagData.map((tag) => ({value: tag, label: tag}));
+        const tagOptions = this.props.tagData.map((tag) => ({ value: tag, label: tag }));
 
         const photographerData = this.props.photographerData;
 
@@ -110,8 +110,9 @@ class SearchForm extends React.Component {
                 {/* Full-Text Form */}
                 <form onSubmit={this.handleFullTextSubmit}>
                     <h3>Full Text Search</h3>
-                    <label>
+                    <label className='input-div'>
                         <input
+                            className='search-text-input'
                             type="text"
                             name="keyword"
                             value={this.state.keyword}
@@ -122,70 +123,67 @@ class SearchForm extends React.Component {
                     <input type="submit" value="Search" />
                 </form>
                 {/* Advanced Search Form */}
-                <br/><br/>
                 <form onSubmit={this.handleAdvancedSubmit}>
                     <h3>Advanced Search</h3>
-                    <label>
-                        <p>Photographer:&nbsp;
-                            <select
-                                value={this.state.photographer}
-                                onChange={this.handleChange}
-                                name="photographer"
-                            >
-                                <option value="">None</option>
-                                {
-                                    photographerData.map((photographer, key) => {
-                                        const valueArray = [photographer.name, photographer.number];
+                    <label className='input-div'>
+                        <p className='search-label'>Photographer:</p>
+                        <select
+                            className='search-text-input'
+                            value={this.state.photographer}
+                            onChange={this.handleChange}
+                            name="photographer"
+                        >
+                            <option value="">None</option>
+                            {
+                                photographerData.map((photographer, key) => {
+                                    const valueArray = [photographer.name, photographer.number];
 
-                                        if (photographer.name.length === 0) {
-                                            return (
-                                                <option value={valueArray} key={key}>
-                                                    Unknown [{photographer.number}]
-                                                </option>
-                                            );
-                                        }
-                                        if (photographer.number === null) {
-                                            return (
-                                                <option value={valueArray} key={key}>
-                                                    {photographer.name} [Unknown]
-                                                </option>
-                                            );
-                                        }
+                                    if (photographer.name.length === 0) {
                                         return (
                                             <option value={valueArray} key={key}>
-                                                {photographer.name} [{photographer.number}]
+                                                Unknown [{photographer.number}]
                                             </option>
                                         );
-                                    })
-                                }
-                            </select>
-                        </p>
+                                    }
+                                    if (photographer.number === null) {
+                                        return (
+                                            <option value={valueArray} key={key}>
+                                                {photographer.name} [Unknown]
+                                            </option>
+                                        );
+                                    }
+                                    return (
+                                        <option value={valueArray} key={key}>
+                                            {photographer.name} [{photographer.number}]
+                                        </option>
+                                    );
+                                })
+                            }
+                        </select>
                     </label>
                     <br/>
-                    <label>
-                        <p>Caption:&nbsp;
-                            <input
-                                type="text"
-                                name="caption"
-                                value={this.state.caption}
-                                onChange={this.handleChange}
-                            />
-                        </p>
+                    <label className='input-div'>
+                        <p className='search-label'>Caption:</p>
+                        <input
+                            className='search-text-input'
+                            type="text"
+                            name="caption"
+                            value={this.state.caption}
+                            onChange={this.handleChange}
+                        />
                     </label>
                     <br/>
-                    <label>
-                        <p>Tags:</p>
-                        <div style={{width: '300px'}}>
-                            <Select
-                                defaultValue={this.state.tags}
-                                isMulti
-                                name="tags"
-                                options={tagOptions}
-                                onChange={this.handleSelectDropdownChange}
-                                menuPlacement="auto"
-                                menuPosition="fixed"
-                            />
-                        </div>
+                    <label className='input-div'>
+                        <p className='search-label'>Tags:</p>
+                        <Select
+                            defaultValue={this.state.tags}
+                            isMulti
+                            name="tags"
+                            options={tagOptions}
+                            onChange={this.handleSelectDropdownChange}
+                            menuPlacement="auto"
+                            menuPosition="fixed"
+                        />
                     </label>
                     <br/>
                     <input type="submit" value="Search" />
@@ -222,6 +220,30 @@ export class Search extends React.Component {
             const searchTagResponse = await fetch('/api/get_tags/');
             const searchTags = await searchTagResponse.json();
             const { tags, photographers } = searchTags;
+            // Sort by name and then by number, if the photographers have one
+            photographers.sort((a, b) => {
+                const aName = a.name;
+                const bName = b.name;
+                if (aName && bName) {
+                    if (a.number && b.number) {
+                        return aName.localeCompare(bName);
+                    }
+                    if (a.number) {
+                        return -1;
+                    }
+                    if (b.number) {
+                        return 1;
+                    }
+                    return aName.localeCompare(bName);
+                }
+                if (aName) {
+                    return -1;
+                }
+                if (bName) {
+                    return 1;
+                }
+                return 0;
+            });
             this.setState({ photographerData: photographers, tagData: tags, loading: false });
         } catch (e) {
             console.log(e);
