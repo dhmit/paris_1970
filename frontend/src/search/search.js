@@ -175,13 +175,19 @@ class SearchForm extends React.Component {
                     <br/>
                     <label>
                         <p>Tags:</p>
-                        <Select
-                            defaultValue={this.state.tags}
-                            isMulti
-                            name="tags"
-                            options={tagOptions}
-                            onChange={this.handleSelectDropdownChange}
-                        />
+                        {/*TODO: Get this to auto-size*/}
+                        {/*TODO: Get the dropdown appear *in front of* the footer*/}
+                        <div style={{width: '300px'}}>
+                            <Select
+                                defaultValue={this.state.tags}
+                                isMulti
+                                name="tags"
+                                options={tagOptions}
+                                onChange={this.handleSelectDropdownChange}
+                                menuPlacement="auto"
+                                menuPosition="fixed"
+                            />
+                        </div>
                     </label>
                     <br/>
                     <input type="submit" value="Search" />
