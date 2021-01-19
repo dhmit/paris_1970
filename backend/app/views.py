@@ -107,16 +107,6 @@ def get_photographer(request, photographer_number):
 
 
 @api_view(['GET'])
-def get_all_photographers(request):
-    """
-    API endpoint to get all photographers
-    """
-    photographers_obj = Photographer.objects.all()
-    serializer = PhotographerSerializer(photographers_obj, many=True)
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
 def get_corpus_analysis_results(request):
     """
     API endpoint to get corpus analysis results
