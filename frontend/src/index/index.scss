@@ -1,3 +1,4 @@
+
 body {
     margin: 0;
     padding: 0;
@@ -8,9 +9,11 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
 #map-container {
-    margin: 0 0 10vh 0;
     z-index: 1;
+    height: 100%;
+    position: relative;
 }
 
 code {
@@ -24,8 +27,6 @@ code {
     margin-bottom: 1px;
 }
 
-$side-padding: 100px;
-$side-padding-mobile: 20px;
 
 .page {
     padding: 0 $side-padding 0;
@@ -64,8 +65,9 @@ $side-padding-mobile: 20px;
 #instructionButton {
     z-index: 999;
     position: absolute;
-    top: 60px;
-    right: 2px;
+    bottom: 25px;
+    right: 5px;
+}
 
 .map-grid {
     stroke: lightslategray;
