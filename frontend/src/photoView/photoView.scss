@@ -78,7 +78,14 @@ rect {
     margin: auto;
 }
 
-.top-button {
-    position: relative;
-    top: 70px;
+.caption {
+    display: inline-block;
+}
+
+.content {
+    flex: 1 0 auto;
+}
+
+.mapsquare {
+    padding-left: 10px;
 }
