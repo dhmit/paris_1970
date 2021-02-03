@@ -40,15 +40,22 @@ class Map extends React.Component {
                     maxBounds={this.state.bounds}
                     minZoom={this.state.minZoom}
                 >
+
                     <TileLayer
                         // Sets Map Boundaries - Keeps user from leaving Paris
                         maxBoundsViscosity={1.0}
                         bounds={this.state.bounds}
                         minZoom={this.state.minZoom}
                         // Retrieves Map image
-                        attribution='&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+
+                        // HOT option
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
+                        url="https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+
+
+
                     />
+
                     {
                         sortedMapData.map((mapSquareData) => {
                             const index = mapSquareData.number;
@@ -68,10 +75,9 @@ class Map extends React.Component {
                             // Greys out squares without photos in them
                             if (numberOfPhotos === 0) {
                                 return (
-                                    <Rectangle
+                                    <Rectangle className="map-grid"
                                         key={index}
                                         bounds={mapSquareBounds}
-                                        color={'#b3b3b3'} weight={2}
                                     >
                                         <Popup>
                                             Map Square {index} <br />
@@ -81,10 +87,9 @@ class Map extends React.Component {
                                 );
                             }
                             return (
-                                <Rectangle
+                                <Rectangle className="map-square-box"
                                     key={index}
                                     bounds={mapSquareBounds}
-                                    color={'#b51a00'} weight={4}
                                 >
                                     <Popup>
                                         Map Square {index} <br/>
