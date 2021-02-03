@@ -2,10 +2,15 @@
 These view functions and classes implement API endpoints
 """
 import ast
+import json
+import os
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from django.db.models import Q
+
+from config.settings.base import YOLO_DIR
 from .models import (
     Photo,
     MapSquare,
@@ -20,6 +25,7 @@ from .serializers import (
     MapSquareSerializer,
     MapSquareSerializerWithoutPhotos,
     PhotographerSerializer,
+    PhotographerSearchSerializer,
     CorpusAnalysisResultsSerializer,
 )
 
@@ -111,6 +117,15 @@ def get_corpus_analysis_results(request):
 
 
 @api_view(['GET'])
+def all_analyses(request):
+    """
+    API endpoint to get all available analyses
+    """
+    photo_analysis_obj = PhotoAnalysisResult.objects.values_list('name').distinct()
+    return Response([analysis[0] for analysis in photo_analysis_obj])
+
+
+@api_view(['GET'])
 def get_photos_by_analysis(request, analysis_name, object_name=None):
     """
     API endpoint to get photos sorted by analysis
@@ -188,3 +203,63 @@ def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     cluster = Cluster.objects.get(model_n=number_of_clusters, label=cluster_number)
     serializer = PhotoSerializer(cluster.photos.all(), many=True)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+def search(request):
+    """
+    API endpoint to search for photos that match the search query
+    """
+    query = json.loads(request.body)
+    is_advanced = query['isAdvanced']
+
+    if is_advanced:
+        photographer_name = query['photographerName']
+        photographer_num = query['photographerId']
+        caption = query['caption'].strip()
+        tags = query['tags']
+
+        django_query = Q()
+        if photographer_name:
+            django_query &= Q(photographer__name=photographer_name)
+
+        if photographer_num:
+            django_query &= Q(photographer__number=photographer_num)
+
+        if caption:
+            django_query &= Q(photographer_caption__icontains=caption) | \
+                            Q(librarian_caption__icontains=caption)
+        if tags:
+            for tag in tags:
+                django_query &= Q(photoanalysisresult__name='yolo_model') & \
+                                Q(photoanalysisresult__result__icontains=tag)
+        photo_obj = Photo.objects.filter(django_query)
+    else:
+        keyword = query['keyword'].strip()
+        photo_obj = Photo.objects.filter(Q(photographer__name__icontains=keyword) |
+                                         Q(photographer__number__icontains=keyword) |
+                                         Q(photographer_caption__icontains=keyword) |
+                                         Q(librarian_caption__icontains=keyword) |
+                                         (Q(photoanalysisresult__name='yolo_model') &
+                                          Q(photoanalysisresult__result__icontains=keyword)))\
+            .distinct()
+        # distinct is to prevent duplicates
+
+    serializer = PhotoSerializer(photo_obj, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_tags(request):
+    """
+    API endpoint to get YOLO model tags and photographer data for search
+    """
+    tags = []
+    with open(os.path.join(YOLO_DIR, 'coco.names'), 'r') as file:
+        tag = file.readline()
+        while tag:
+            tags.append(tag.strip())
+            tag = file.readline()
+    photographer_obj = Photographer.objects.all()
+    serializer = PhotographerSearchSerializer(photographer_obj, many=True)
+    return Response({'tags': tags, 'photographers': serializer.data})

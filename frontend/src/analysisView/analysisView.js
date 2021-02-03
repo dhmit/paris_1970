@@ -1,8 +1,7 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
 
-import Navbar from '../about/navbar';
-import { Footer, LoadingPage } from '../UILibrary/components';
+import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 
 const SIDES = {
     CLEANED: 'cleaned',
@@ -11,6 +10,15 @@ const SIDES = {
     BINDER: 'binder',
 };
 
+export const getSource = (photoData) => {
+    const availableSides = Object.values(SIDES).filter(
+        (side) => photoData[`${side}_src`] !== null,
+    );
+    const displaySide = availableSides.length > 0 ? availableSides[0] : '';
+    const source = photoData[`${displaySide}_src`];
+    const fileId = source.split('=')[1];
+    return `https://drive.google.com/thumbnail?authuser=0&sz=w100&id=${fileId}`;
+};
 
 export class AnalysisView extends React.Component {
     constructor(props) {
@@ -55,17 +63,6 @@ export class AnalysisView extends React.Component {
         });
     };
 
-    getSource(photoData) {
-        const availableSides = Object.values(SIDES).filter(
-            (side) => photoData[`${side}_src`] !== null,
-        );
-        const displaySide = availableSides.length > 0 ? availableSides[0] : '';
-        const source = photoData[`${displaySide}_src`];
-        const fileId = source.split('=')[1];
-        const thumbnail = `https://drive.google.com/thumbnail?authuser=0&sz=w100&id=${fileId}`;
-        return thumbnail;
-    }
-
     render() {
         if (this.state.loading) {
             return (<LoadingPage/>);
@@ -75,20 +72,23 @@ export class AnalysisView extends React.Component {
             const currentAnalysis = photo['analyses'].filter(
                 (analysisObject) => analysisObject.name === this.props.analysisName,
             )[0];
-            return (
-                <a
-                    key={k}
-                    title={currentAnalysis.result}
-                    href={`/photo/${photo['map_square_number']}/${photo['number']}/`}
-                >
-                    <img
-                        alt={photo.alt}
-                        height={100}
-                        width={100}
-                        src={this.getSource(photo)}
-                    />
-                </a>
-            );
+            if (photo.cleaned_src || photo.front_src) {
+                return (
+                    <a
+                        key={k}
+                        title={currentAnalysis.result}
+                        href={`/photo/${photo['map_square_number']}/${photo['number']}/`}
+                    >
+                        <img
+                            alt={photo.alt}
+                            height={100}
+                            width={100}
+                            src={getSource(photo)}
+                        />
+                    </a>
+                );
+            }
+            return '';
         });
 
         const options = this.state.photoData.length === 0 ? (
@@ -105,7 +105,7 @@ export class AnalysisView extends React.Component {
 
         return (<>
             <Navbar />
-            <div className='display-box page'>
+            <div className='display-box analysis-page'>
                 <h3 className='text-capitalize'>{
                     this.props.analysisName.split('_').join(' ')
                 }</h3>

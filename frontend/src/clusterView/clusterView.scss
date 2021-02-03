@@ -17,13 +17,12 @@
 
 $footer-height: 150px;
 
-.page {
-    padding: 0 $side-padding 0;
+.cluster-page {
+    padding: $header-height 25px $footer-height;
 }
 
 @media (max-width: 992px) {
-    .page {
-        padding: 0;
-        flex: 1 0 auto;
+    .cluster-page {
+        padding: $header-height 0 $footer-height;
     }
 }

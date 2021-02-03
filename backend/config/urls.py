@@ -23,6 +23,7 @@ from app.views import (
     previous_next_photos,
     all_photos,
     all_map_squares,
+    all_analyses,
     get_photographer,
     get_map_square,
     get_corpus_analysis_results,
@@ -30,6 +31,8 @@ from app.views import (
     get_all_photos_in_order,
     get_photo_by_similarity,
     get_photos_by_cluster,
+    search,
+    get_tags,
 )
 
 
@@ -56,11 +59,14 @@ urlpatterns = [
     path('api/map_square/<int:map_square_number>/', get_map_square),
     path('api/corpus_analysis/', get_corpus_analysis_results),
     path('api/all_photos/', all_photos),
+    path('api/all_analyses/', all_analyses),
     path('api/all_map_squares/', all_map_squares),
     path('api/similarity/', get_all_photos_in_order),
     path('api/analysis/<str:analysis_name>/', get_photos_by_analysis),
     path('api/clustering/<int:number_of_clusters>/<int:cluster_number>/', get_photos_by_cluster),
     path('api/analysis/<str:analysis_name>/<str:object_name>/', get_photos_by_analysis),
+    path('api/search/', search),
+    path('api/get_tags/', get_tags),
     # path('api/faster_rcnn_object_detection/<str:object_name>/', get_photos_by_object_rcnn),
     # path('api/model/<str:model_name>/<str:object_name>/', get_photos_by_object),
 
@@ -71,8 +77,10 @@ urlpatterns = [
     react_view_path('photographer/<int:photographerNumber>/', 'PhotographerView'),
     react_view_path('map_square/<int:mapSquareNumber>/', 'MapSquareView'),
     react_view_path('about/', 'About'),
+    react_view_path('search/', 'Search'),
     react_view_path('similarity/', 'AllPhotosView'),
     react_view_path('analysis/<str:analysisName>/', 'AnalysisView'),
     react_view_path('analysis/<str:analysisName>/<str:objectName>', 'AnalysisView'),
+    react_view_path('all_analysis/', 'AllAnalysisView'),
     react_view_path('clustering/<int:numberOfClusters>/<int:clusterNumber>/', 'ClusterView'),
 ]

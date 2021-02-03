@@ -1,8 +1,7 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
 
-import Navbar from '../about/navbar';
-import { Footer, LoadingPage } from '../UILibrary/components';
+import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 
 const SIDES = {
     CLEANED: 'cleaned',

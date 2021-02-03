@@ -13,8 +13,10 @@ import { SimilarityView } from './similarityView/similarityView';
 import { PhotographerView } from './photographerView/photographerView';
 import { MapSquareView } from './mapSquareView/mapSquareView';
 import { AnalysisView } from './analysisView/analysisView';
+import { AllAnalysisView } from './analysisView/allAnalysisView';
 import { AllPhotosView } from './similarityView/allPhotosView';
 import { ClusterView } from './clusterView/clusterView';
+import { Search } from './search/search';
 import About from './about/about';
 
 // Import all styles
@@ -27,10 +29,12 @@ window.app_modules = {
     // Add all frontend views here
     IndexView,
     About,
+    Search,
     PhotoView,
     SimilarityView,
     PhotographerView,
     MapSquareView,
+    AllAnalysisView,
     AnalysisView,
     AllPhotosView,
     ClusterView,

@@ -1,8 +1,7 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
 
-import Navbar from '../about/navbar';
-import { Footer, LoadingPage } from '../UILibrary/components';
+import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 
 const SIDES = {
     CLEANED: 'cleaned',
@@ -102,7 +101,7 @@ export class ClusterView extends React.Component {
 
         return (<>
             <Navbar />
-            <div className='display-box page'>
+            <div className='display-box cluster-page'>
                 <h3>
                     Number of clusters: {this.props.numberOfClusters + ' '}
                     Cluster number: {this.props.clusterNumber}

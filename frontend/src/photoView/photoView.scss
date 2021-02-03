@@ -78,6 +78,10 @@ rect {
     margin: auto;
 }
 
+.top-button {
+    position: relative;
+}
+
 .caption {
     display: inline-block;
 }
@@ -86,6 +90,6 @@ rect {
     flex: 1 0 auto;
 }
 
-.mapsquare {
+.map-square {
     padding-left: 10px;
 }

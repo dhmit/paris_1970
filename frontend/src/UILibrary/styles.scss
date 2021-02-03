@@ -1,6 +1,15 @@
 /*
  * Import all styles. This file is imported in app.js.
  */
+
+
+// Global CSS variables first, so they're available to stylesheets imported below
+$side-padding: 100px;
+$side-padding-mobile: 20px;
+$header-height: 100px;
+$footer-height: 150px;
+
+// Individual imports
 @import "../../node_modules/bootstrap/scss/bootstrap";
 @import '../about/about';
 @import '../index/index';
@@ -8,6 +17,8 @@
 @import '../photographerView/photographerView';
 @import '../mapSquareView/mapSquareView';
 @import '../clusterView/clusterView';
+@import '../analysisView/analysisView';
+@import '../search/search';
 
 html {
     position: relative;
@@ -24,6 +35,19 @@ body {
     @extend .flex-column;
 }
 
+/**
+ * Footer Styles
+ */
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 101;
+    flex-shrink: 0;
+}
+
 .footer-img {
     height: 80px;
     max-height: 10vh;
@@ -32,8 +56,18 @@ body {
     padding-bottom: 10px;
 }
 
-.footer {
-    flex-shrink: 0;
+
+/**
+ * Navbar styles
+ */
+
+.navbar-brand {
+    font-size: 1.50rem;
+}
+
+
+.nav-link {
+    font-size: 1.25rem;
 }
 
 .spinner-border {

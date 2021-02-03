@@ -112,6 +112,15 @@ class PhotographerSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'number', 'type', 'sentiment', 'photos', 'map_square']
 
 
+class PhotographerSearchSerializer(serializers.ModelSerializer):
+    """
+    Serializes a photographer for the search page
+    """
+    class Meta:
+        model = Photographer
+        fields = ['id', 'name', 'number']
+
+
 class PhotoForPhotographerSerializer(serializers.ModelSerializer):
     """
     Serializes a Photo for the Photographer model, but without a reference to the photographer

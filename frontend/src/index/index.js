@@ -5,14 +5,14 @@ import {
     TileLayer,
     Popup,
     Rectangle,
+    ZoomControl,
 } from 'react-leaflet';
 
 import {
     Modal,
     Button,
 } from 'react-bootstrap';
-import Navbar from '../about/navbar';
-import { Footer, LoadingPage } from '../UILibrary/components';
+import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 
 class Map extends React.Component {
     state = {
@@ -30,17 +30,19 @@ class Map extends React.Component {
 
         return (
             <div id="map-container">
+                <Instructions />
                 <LeafletMap
                     // Initial state of Map
                     center={[this.state.lat, this.state.lng]}
                     zoom={this.state.zoom}
-                    style={{ width: '100%', height: '86vh' }}
+                    style={{ width: '100%', height: '100%' }}
                     // Sets Map Boundaries - Keeps user from leaving Paris
                     maxBoundsViscosity={1.0}
                     maxBounds={this.state.bounds}
                     minZoom={this.state.minZoom}
+                    zoomControl={false}
                 >
-
+                    <ZoomControl position="bottomleft"/>
                     <TileLayer
                         // Sets Map Boundaries - Keeps user from leaving Paris
                         maxBoundsViscosity={1.0}
@@ -117,7 +119,7 @@ function Instructions() {
     return (
         <>
             <Button id="instructionButton" variant="primary" onClick={handleShow}>
-                View Instructions
+                Instructions
             </Button>
             <Modal
                 show={show}
@@ -137,7 +139,7 @@ function Instructions() {
                     rapid industrial change altered the city permanently.
                 </Modal.Body>
                 <Modal.Body>
-                    To explore images from specific areas of Paris, click on a red square.
+                    To explore images from specific areas of Paris, click on a highlighted square.
                     You will see the map square number and how many images are available.
                     Click on the link to see the images from that area!
                 </Modal.Body>
@@ -207,7 +209,6 @@ export class IndexView extends React.Component {
             <Navbar />
             <Map mapData={this.state.mapData} />
             <Footer />
-            <Instructions />
         </React.Fragment>);
     }
 }

@@ -8,15 +8,18 @@
     justify-content: space-between;
 }
 
-$side-padding: 25px;
 
-.page {
-    padding: 0 $side-padding 0;
-    flex: 1 0 auto;
+.analysis-page {
+    padding: $header-height 25px $footer-height;
 }
 
 @media (max-width: 992px) {
-    .page {
-        padding: 0;
+    .analysis-page {
+        padding: $header-height 0 $footer-height;
     }
+}
+
+.analysis-link,
+.analysis-link:hover{
+    color: black;
 }

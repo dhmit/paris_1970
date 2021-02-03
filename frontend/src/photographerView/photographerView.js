@@ -1,8 +1,8 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
 
-import Navbar from '../about/navbar';
-import { Footer, LoadingPage } from '../UILibrary/components';
+import { getSource } from '../analysisView/analysisView';
+import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 
 const percentFormat = (x) => Math.floor(x) + '%';
 const numberFormat = (x) => Math.floor(x);
@@ -21,6 +21,21 @@ const ANALYSIS = {
     mean_detail: {
         displayName: 'Average Mean Detail',
         analysisType: 'average',
+        displayFormat: numberFormat,
+    },
+    photographer_caption_length: {
+        displayName: 'Average Photographer Caption Length',
+        analysisType: 'none',
+        displayFormat: numberFormat,
+    },
+    yolo_model: {
+        displayName: 'Yolo Model',
+        analysisType: 'none',
+        displayFormat: numberFormat,
+    },
+    text_ocr: {
+        displayName: 'text_ocr',
+        analysisType: 'none',
         displayFormat: numberFormat,
     },
 };
@@ -111,31 +126,42 @@ export class PhotographerView extends React.Component {
                 <div className='col-6'>
                     <h2 className="h3">Analysis Results</h2>
                     {Object.keys(photographerAnalysis).map((analysis) => {
-                        return (
-                            <div key={analysis}>
-                                <h3 className="h5">{ANALYSIS[analysis].displayName}:</h3>
-                                {photographerAnalysis[analysis]}
-                            </div>
-                        );
+                        if (ANALYSIS[analysis].analysisType !== 'none') {
+                            return (
+                                <div key={analysis}>
+                                    <h3 className="h5">{ANALYSIS[analysis].displayName}:</h3>
+                                    {photographerAnalysis[analysis]}
+                                </div>
+                            );
+                        }
+                        return '';
                     })}
                 </div>
                 <h2 className="h3">Photos Gallery:</h2>
                 <div className='photo_gallery'>
-                    {photos.map((photo, k) => (
-                        <div className="photo" key={k}>
-                            <a
-                                key={k}
-                                href={`/photo/${photo['map_square_number']}/${photo['number']}/`}
-                            >
-                                <img
-                                    alt={photo.alt}
-                                    height={200}
-                                    width={200}
-                                    src={photo['thumbnail_src']}
-                                />
-                            </a>
-                        </div>
-                    ))}
+                    {photos.map((photo, k) => {
+                        if (photo.binder_src || photo.front_src || photo.cleaned_src) {
+                            return (
+                                <div className="photo" key={k}>
+                                    <a
+                                        key={k}
+                                        title={`Map Square: ${photo['map_square_number']}`
+                                        + `, Number: ${photo['number']}`}
+                                        href={`/photo/${photo['map_square_number']}`
+                                        + `/${photo['number']}/`}
+                                    >
+                                        <img
+                                            alt={photo.alt}
+                                            height={150}
+                                            width={150}
+                                            src={getSource(photo)}
+                                        />
+                                    </a>
+                                </div>
+                            );
+                        }
+                        return '';
+                    })}
                 </div>
             </div>
             <Footer/>

@@ -1,14 +1,7 @@
 import React from 'react';
 
-import Navbar from '../about/navbar';
-import { Footer, LoadingPage } from '../UILibrary/components';
-
-const SIDES = {
-    CLEANED: 'cleaned',
-    FRONT: 'front',
-    BACK: 'back',
-    BINDER: 'binder',
-};
+import { getSource } from '../analysisView/analysisView';
+import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 
 // TODO: fix similarityView, photos don't show
 
@@ -54,15 +47,6 @@ export class AllPhotosView extends React.Component {
         });
     };
 
-    getSource(photoData) {
-        const availableSides = Object.values(SIDES).filter(
-            (side) => photoData[`${side}_src`] !== null,
-        );
-        const displaySide = availableSides.length > 0 ? availableSides[0] : '';
-        const source = photoData[`${displaySide}_src`];
-        return source;
-    }
-
     render() {
         if (this.state.loading) {
             return (<LoadingPage/>);
@@ -72,20 +56,24 @@ export class AllPhotosView extends React.Component {
             /* const currentAnalysis = photo['analyses'].filter(
                 (analysisObject) => analysisObject.name === 'resnet18_cosine_similarity',
             )[0]; */
-            return (
-                <a
-                    key={k}
-                    title={`Map Square: ${photo['map_square_number']},\nPhoto: ${photo['number']}`}
-                    href={`/similar_photos/${photo['map_square_number']}/${photo['number']}/`}
-                >
-                    <img
-                        alt={photo.alt}
-                        height={100}
-                        width={100}
-                        src={this.getSource(photo)}
-                    />
-                </a>
-            );
+            if (photo.front_src || photo.cleaned_src) {
+                return (
+                    <a
+                        key={k}
+                        title={`Map Square: ${photo['map_square_number']},`
+                               + `\nPhoto: ${photo['number']}`}
+                        href={`/similar_photos/${photo['map_square_number']}/${photo['number']}/`}
+                    >
+                        <img
+                            alt={photo.alt}
+                            height={100}
+                            width={100}
+                            src={getSource(photo)}
+                        />
+                    </a>
+                );
+            }
+            return '';
         });
 
         const options = this.state.photoData.length === 0 ? (
