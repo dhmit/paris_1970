@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import * as PropTypes from 'prop-types';
 import {
     Map as LeafletMap,
@@ -8,6 +8,10 @@ import {
     ZoomControl,
 } from 'react-leaflet';
 
+import {
+    Modal,
+    Button,
+} from 'react-bootstrap';
 import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 
 class Map extends React.Component {
@@ -44,9 +48,15 @@ class Map extends React.Component {
                         bounds={this.state.bounds}
                         minZoom={this.state.minZoom}
                         // Retrieves Map image
-                        attribution='&copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+
+                        // HOT option
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
+                        url="https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+
+
+
                     />
+
                     {
                         sortedMapData.map((mapSquareData) => {
                             const index = mapSquareData.number;
@@ -66,10 +76,9 @@ class Map extends React.Component {
                             // Greys out squares without photos in them
                             if (numberOfPhotos === 0) {
                                 return (
-                                    <Rectangle
+                                    <Rectangle className="map-grid"
                                         key={index}
                                         bounds={mapSquareBounds}
-                                        color={'#b3b3b3'} weight={2}
                                     >
                                         <Popup>
                                             Map Square {index} <br />
@@ -79,10 +88,9 @@ class Map extends React.Component {
                                 );
                             }
                             return (
-                                <Rectangle
+                                <Rectangle className="map-square-box"
                                     key={index}
                                     bounds={mapSquareBounds}
-                                    color={'#b51a00'} weight={4}
                                 >
                                     <Popup>
                                         Map Square {index} <br/>
@@ -102,6 +110,50 @@ Map.propTypes = {
 };
 
 
+function Instructions() {
+    const [show, setShow] = useState(true);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    return (
+        <>
+            <Button id="instructionButton" variant="primary" onClick={handleShow}>
+                View Instructions
+            </Button>
+            <Modal
+                show={show}
+                onHide={handleClose}
+                backdrop="static"
+                keyboard={false}
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Welcome</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Welcome to the map view of Paris in 1970! The images in this archive are from
+                    a photography competition in 1970's Paris hosted to capture Paris before
+                    rapid industrial change altered the city permanently.
+                </Modal.Body>
+                <Modal.Body>
+                    To explore images from specific areas of Paris, click on a red square.
+                    You will see the map square number and how many images are available.
+                    Click on the link to see the images from that area!
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleClose}>
+                        Got it!
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
+    );
+}
+
+
+
 export class IndexView extends React.Component {
     constructor(props) {
         super(props);
@@ -114,6 +166,7 @@ export class IndexView extends React.Component {
         try {
             const mapResponse = await fetch('/api/all_map_squares/');
             const mapData = await mapResponse.json();
+
 
             for (const mapSquare of mapData) {
                 // This code right here might cause problems if said user hasn't run syncdb
@@ -155,6 +208,7 @@ export class IndexView extends React.Component {
             <Navbar />
             <Map mapData={this.state.mapData} />
             <Footer />
+            <Instructions />
         </React.Fragment>);
     }
 }

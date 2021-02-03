@@ -12,6 +12,7 @@ body {
     margin: 0 0 10vh 0;
     z-index: 1;
 }
+
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
         monospace;
@@ -28,6 +29,7 @@ $side-padding-mobile: 20px;
 
 .page {
     padding: 0 $side-padding 0;
+    flex: 1 0 auto;
 }
 
 @media (max-width: 992px) {
@@ -59,3 +61,22 @@ $side-padding-mobile: 20px;
     color: black;
 }
 
+#instructionButton {
+    z-index: 999;
+    position: absolute;
+    top: 60px;
+    right: 2px;
+
+.map-grid {
+    stroke: lightslategray;
+    fill: none;
+    stroke-width: 2;
+    stroke-opacity: 0.5;
+}
+
+.map-square-box {
+    stroke: steelblue;
+    stroke-width: 2.8;
+    fill: dodgerblue;
+    fill-opacity: 0.3;
+}

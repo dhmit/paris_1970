@@ -111,39 +111,35 @@ export class Loading extends React.Component {
 export class Footer extends React.Component {
     render() {
         return (
-            <footer className="footer bg-white text-dark text-center mt-auto">
-                <div className="container-fluid">
-                    <div className="row">
-                        <div className="col-4 py-3">
-                            <a href="https://digitalhumanities.mit.edu/">
-                                <img
-                                    src="/static/img/footer/dh_logo.svg"
-                                    className='footer-img'
-                                    alt='Digital Humanities at MIT Logo'
-                                />
-                            </a>
-                        </div>
-                        <div className="col-4 py-3">
-                            <a href="https://www.mit.edu/">
-                                <img
-                                    src="/static/img/footer/mit_logo.svg"
-                                    className='footer-img'
-                                    alt='MIT Logo'
-                                />
-                            </a>
-                        </div>
-                        <div className="col-4 py-3">
-                            <a href="https://www.mellon.org/">
-                                <img
-                                    src="/static/img/footer/mellon_logo.svg"
-                                    className='footer-img'
-                                    alt="Mellon Foundation Logo"
-                                />
-                            </a>
-                        </div>
-                    </div>
+            <div className="row text-center footer">
+                <div className="col-4 py-3">
+                    <a href="https://digitalhumanities.mit.edu/">
+                        <img
+                            src="/static/img/footer/dh_logo.svg"
+                            className='footer-img'
+                            alt='Digital Humanities at MIT Logo'
+                        />
+                    </a>
                 </div>
-            </footer>
+                <div className="col-4 py-3">
+                    <a href="https://www.mit.edu/">
+                        <img
+                            src="/static/img/footer/mit_logo.svg"
+                            className='footer-img'
+                            alt='MIT Logo'
+                        />
+                    </a>
+                </div>
+                <div className="col-4 py-3">
+                    <a href="https://www.mellon.org/">
+                        <img
+                            src="/static/img/footer/mellon_logo.svg"
+                            className='footer-img'
+                            alt="Mellon Foundation Logo"
+                        />
+                    </a>
+                </div>
+            </div>
         );
     }
 }

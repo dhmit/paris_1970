@@ -80,4 +80,15 @@ rect {
 
 .top-button {
     position: relative;
+
+.caption {
+    display: inline-block;
+}
+
+.content {
+    flex: 1 0 auto;
+}
+
+.map-square {
+    padding-left: 10px;
 }

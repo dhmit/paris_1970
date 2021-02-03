@@ -36,6 +36,7 @@ footer {
     left: 0;
     width: 100%;
     z-index: 101;
+    flex-shrink: 0;
 }
 
 .footer-img {
@@ -43,7 +44,9 @@ footer {
     max-height: 10vh;
     max-width: 20vw;
     object-fit: contain;
+    padding-bottom: 10px;
 }
+
 
 /**
  * Navbar styles
