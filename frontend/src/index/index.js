@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import * as PropTypes from 'prop-types';
 import {
     Map as LeafletMap,
@@ -7,6 +7,10 @@ import {
     Rectangle,
 } from 'react-leaflet';
 
+import {
+    Modal,
+    Button,
+} from 'react-bootstrap';
 import Navbar from '../about/navbar';
 import { Footer, LoadingPage } from '../UILibrary/components';
 
@@ -105,6 +109,50 @@ Map.propTypes = {
 };
 
 
+function Instructions() {
+    const [show, setShow] = useState(true);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    return (
+        <>
+            <Button id="instructionButton" variant="primary" onClick={handleShow}>
+                View Instructions
+            </Button>
+            <Modal
+                show={show}
+                onHide={handleClose}
+                backdrop="static"
+                keyboard={false}
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Welcome</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Welcome to the map view of Paris in 1970! The images in this archive are from
+                    a photography competition in 1970's Paris hosted to capture Paris before
+                    rapid industrial change altered the city permanently.
+                </Modal.Body>
+                <Modal.Body>
+                    To explore images from specific areas of Paris, click on a red square.
+                    You will see the map square number and how many images are available.
+                    Click on the link to see the images from that area!
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleClose}>
+                        Got it!
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
+    );
+}
+
+
+
 export class IndexView extends React.Component {
     constructor(props) {
         super(props);
@@ -117,6 +165,7 @@ export class IndexView extends React.Component {
         try {
             const mapResponse = await fetch('/api/all_map_squares/');
             const mapData = await mapResponse.json();
+
 
             for (const mapSquare of mapData) {
                 // This code right here might cause problems if said user hasn't run syncdb
@@ -158,6 +207,7 @@ export class IndexView extends React.Component {
             <Navbar />
             <Map mapData={this.state.mapData} />
             <Footer />
+            <Instructions />
         </React.Fragment>);
     }
 }
