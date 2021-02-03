@@ -220,16 +220,16 @@ def search(request):
         tags = query['tags']
 
         django_query = Q()
-        if photographer_name != '':
+        if photographer_name:
             django_query &= Q(photographer__name=photographer_name)
 
-        if photographer_num != '':
+        if photographer_num:
             django_query &= Q(photographer__number=photographer_num)
 
-        if caption != '':
+        if caption:
             django_query &= Q(photographer_caption__icontains=caption) | \
                             Q(librarian_caption__icontains=caption)
-        if len(tags) > 0:
+        if tags:
             for tag in tags:
                 django_query &= Q(photoanalysisresult__name='yolo_model') & \
                                 Q(photoanalysisresult__result__icontains=tag)
