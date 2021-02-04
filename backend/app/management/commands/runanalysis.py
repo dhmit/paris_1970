@@ -79,19 +79,22 @@ class Command(BaseCommand):
                 instance_identifier = f'photo_{model_instance.number}_' \
                                       f'{model_instance.map_square.number}'
 
+                should_run_analysis = True
                 if use_pickled:
                     if instance_identifier in stored_results:
                         print(f'Using stored results on (Photo number: {model_instance.number}, '\
                               f'Map square: {model_instance.map_square.number})')
                         result = stored_results[instance_identifier]
+                        should_run_analysis = False
                     else:
                         print('No stored result was found, so recomputing.')
-                        print(print_msg)
-                        result = analysis_func(model_instance)
 
-                else:
+                if should_run_analysis:
                     print(print_msg)
-                    result = analysis_func(model_instance)
+                    try:
+                        result = analysis_func(model_instance)
+                    except:  # pylint: disable=broad-except
+                        print(f'Photo number {model_instance.number} failed. Skipping.')
 
                 analysis_result = analysis_result_model(
                     name=analysis_name,

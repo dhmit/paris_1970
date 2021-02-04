@@ -33,6 +33,10 @@ export const analysisDescriptions = {
         name: 'Yolo Model',
         desc: 'This analysis detects objects in a photo using the YOLO model.',
     },
+    find_vanishing_point: {
+        name: 'Vanishing Point and Significant Lines',
+        desc: 'This analysis detects significant lines and if a photo has a vanishing point.',
+    },
 };
 
 export class AllAnalysisView extends React.Component {
