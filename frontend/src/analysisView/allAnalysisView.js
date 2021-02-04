@@ -99,7 +99,5 @@ export class AllAnalysisView extends React.Component {
                 <Footer />
             </>
         );
-
-
     }
 }
