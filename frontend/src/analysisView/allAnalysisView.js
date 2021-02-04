@@ -73,22 +73,33 @@ export class AllAnalysisView extends React.Component {
                 Loading!
             </h1>);
         }
+
+        const analysisDivs = [];
+        this.state.analysisData.forEach((analysis) => {
+            if (analysisDescriptions[analysis].name !== undefined) {
+                const div = (
+                    <div key={analysis}>
+                        <h2><a className='analysis-link' href={`/analysis/${analysis}/`}>
+                            {analysisDescriptions[analysis].name}
+                        </a></h2>
+                        <p>{analysisDescriptions[analysis].desc}</p>
+                    </div>
+                );
+                analysisDivs.push(div);
+            }
+        });
+
         return (
             <>
                 <Navbar />
                 <div className='page'>
                     <h1 className='pb-2'>All Analysis Results</h1>
-                    {this.state.analysisData.map((analysis) => (
-                        <div key={analysis}>
-                            <h2><a className='analysis-link' href={`/analysis/${analysis}/`}>
-                                {analysisDescriptions[analysis].name}
-                            </a></h2>
-                            <p>{analysisDescriptions[analysis].desc}</p>
-                        </div>
-                    ))}
+                    {analysisDivs}
                 </div>
                 <Footer />
             </>
         );
+
+
     }
 }
