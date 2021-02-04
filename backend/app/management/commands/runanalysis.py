@@ -93,7 +93,7 @@ class Command(BaseCommand):
                     print(print_msg)
                     try:
                         result = analysis_func(model_instance)
-                    except:  # pylint: disable=broad-except
+                    except:  # pylint: disable=bare-except
                         print(f'Photo number {model_instance.number} failed. Skipping.')
 
                 analysis_result = analysis_result_model(
