@@ -76,7 +76,7 @@ export class AllAnalysisView extends React.Component {
 
         const analysisDivs = [];
         this.state.analysisData.forEach((analysis) => {
-            if (analysisDescriptions[analysis].name !== undefined) {
+            if (analysisDescriptions[analysis] !== undefined) {
                 const div = (
                     <div key={analysis}>
                         <h2><a className='analysis-link' href={`/analysis/${analysis}/`}>
