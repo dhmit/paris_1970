@@ -27,6 +27,7 @@ from .serializers import (
     PhotographerSerializer,
     PhotographerSearchSerializer,
     CorpusAnalysisResultsSerializer,
+    PhotoAnalysisResultSerializer
 )
 
 
@@ -137,7 +138,7 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
             sorted_analysis_obj = sorted(
                 analysis_obj, key=lambda instance: instance.parsed_result()
             )
-        elif isinstance(test_obj,dict) and object_name:
+        elif isinstance(test_obj, dict) and object_name:
             relevant_objects = [
                 instance for instance in analysis_obj if object_name in instance.parsed_result()
             ]
@@ -196,6 +197,7 @@ def get_photo_by_similarity(request, map_square_number, photo_number):
     return Response(serializer.data)
 
 
+@api_view(['GET'])
 def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     """
     API endpoint to get clusters of similar photos
@@ -218,6 +220,7 @@ def search(request):
         photographer_num = query['photographerId']
         caption = query['caption'].strip()
         tags = query['tags']
+        analysis = query['analysis']
 
         django_query = Q()
         if photographer_name:
@@ -233,6 +236,8 @@ def search(request):
             for tag in tags:
                 django_query &= Q(photoanalysisresult__name='yolo_model') & \
                                 Q(photoanalysisresult__result__icontains=tag)
+        if analysis:
+            django_query &= Q(photoanalysisresult__name=analysis)
         photo_obj = Photo.objects.filter(django_query)
     else:
         keyword = query['keyword'].strip()
@@ -261,5 +266,13 @@ def get_tags(request):
             tags.append(tag.strip())
             tag = file.readline()
     photographer_obj = Photographer.objects.all()
-    serializer = PhotographerSearchSerializer(photographer_obj, many=True)
-    return Response({'tags': tags, 'photographers': serializer.data})
+    photographer_serializer = PhotographerSearchSerializer(photographer_obj, many=True)
+    photoanalysisresults_obj = PhotoAnalysisResult.objects.all()
+    photoanalysisresults_serializer = PhotoAnalysisResultSerializer(
+        photoanalysisresults_obj, many=True
+    )
+    return Response({
+        'tags': tags,
+        'photographers': photographer_serializer.data,
+        'analyses': photoanalysisresults_serializer.data,
+    })

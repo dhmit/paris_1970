@@ -12,6 +12,7 @@ class SearchForm extends React.Component {
             photographer: '',
             caption: '',
             tags: [],
+            analysisName: '',
         };
     }
 
@@ -34,6 +35,7 @@ class SearchForm extends React.Component {
             method: 'POST',
             body: JSON.stringify(body),
         });
+        console.log('Called handle search');
         const searchData = await searchResponse.json();
         let searchText = searchData.length + ' photographs';
         if (body.keyword) {
@@ -53,6 +55,9 @@ class SearchForm extends React.Component {
         }
         if (body.tags && body.tags.length > 0) {
             searchText += ' with tags [' + body.tags + ']';
+        }
+        if (body.analysis) {
+            searchText += ' with result for [' + body.analysis + ']';
         }
         this.props.updateSearchData({
             data: searchData,
@@ -82,7 +87,7 @@ class SearchForm extends React.Component {
     handleAdvancedSubmit = async (event) => {
         event.preventDefault();
         if (this.state.photographer.trim() || this.state.caption.trim()
-            || this.state.tags.length > 0) {
+            || this.state.tags.length > 0 || this.state.analysisName.trim()) {
             const photographerParts = this.state.photographer.split(',');
             const photographerName = photographerParts[0] ? photographerParts[0] : '';
             const photographerId = photographerParts[1] ? photographerParts[1] : '';
@@ -96,6 +101,7 @@ class SearchForm extends React.Component {
                 caption: this.state.caption,
                 tags: newTags,
                 isAdvanced: true,
+                analysis: this.state.analysisName,
             });
         }
     };
@@ -186,6 +192,16 @@ class SearchForm extends React.Component {
                         />
                     </label>
                     <br/>
+                    <label className='input-div'>
+                        <p className='search-label'>Analysis Name:</p>
+                        <input
+                            className='search-text-input'
+                            type="text"
+                            name="analysisName"
+                            value={this.state.analysisName}
+                            onChange={this.handleChange}
+                        />
+                    </label>
                     <input type="submit" value="Search" />
                 </form>
             </div>
@@ -208,6 +224,7 @@ export class Search extends React.Component {
             searchedText: '',
             tagData: null,
             photographerData: null,
+            analysisData: null,
         };
     }
 
@@ -219,7 +236,7 @@ export class Search extends React.Component {
         try {
             const searchTagResponse = await fetch('/api/get_tags/');
             const searchTags = await searchTagResponse.json();
-            const { tags, photographers } = searchTags;
+            const { tags, photographers, analyses } = searchTags;
             // Sort by name and then by number, if the photographers have one
             photographers.sort((a, b) => {
                 const aName = a.name;
@@ -244,7 +261,12 @@ export class Search extends React.Component {
                 }
                 return 0;
             });
-            this.setState({ photographerData: photographers, tagData: tags, loading: false });
+            this.setState({
+                photographerData: photographers,
+                tagData: tags,
+                analysisData: analyses,
+                loading: false,
+            });
         } catch (e) {
             console.log(e);
         }
@@ -252,7 +274,7 @@ export class Search extends React.Component {
 
     // This follows the full text + advanced search model here: http://photogrammar.yale.edu/search/
     render() {
-        if (!this.state.tagData || !this.state.photographerData) {
+        if (!this.state.tagData || !this.state.photographerData || !this.state.analysisData) {
             return (<LoadingPage/>);
         }
         return (
@@ -265,6 +287,7 @@ export class Search extends React.Component {
                             updateSearchData={this.updateSearchData}
                             tagData={this.state.tagData}
                             photographerData={this.state.photographerData}
+                            analysisData={this.state.analysisData}
                         />
                     </div>
                     <div className='col-sm-12 col-lg-8'>
