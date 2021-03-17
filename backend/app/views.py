@@ -137,7 +137,7 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
             sorted_analysis_obj = sorted(
                 analysis_obj, key=lambda instance: instance.parsed_result()
             )
-        elif isinstance(test_obj,dict) and object_name:
+        elif isinstance(test_obj, dict) and object_name:
             relevant_objects = [
                 instance for instance in analysis_obj if object_name in instance.parsed_result()
             ]
@@ -175,7 +175,7 @@ def get_photo_by_similarity(request, map_square_number, photo_number):
 
     photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
     analysis_obj_list = PhotoAnalysisResult.objects.filter(
-        name="resnet18_cosine_similarity",
+        name="photo_similarity.resnet18_cosine_similarity",
         photo=photo_obj,
     )
 
@@ -183,7 +183,7 @@ def get_photo_by_similarity(request, map_square_number, photo_number):
     if analysis_obj_list:
         analysis_obj = analysis_obj_list[0]
         # splices the list of similar photos to get top 10 photos
-        similarity_list = ast.literal_eval(analysis_obj.result)[:10]
+        similarity_list = ast.literal_eval(analysis_obj.result)[::-1][:10]
 
         for simPhoto in similarity_list:
             map_square = simPhoto[0]
@@ -196,6 +196,7 @@ def get_photo_by_similarity(request, map_square_number, photo_number):
     return Response(serializer.data)
 
 
+@api_view(['GET'])
 def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     """
     API endpoint to get clusters of similar photos
