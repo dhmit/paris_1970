@@ -9,6 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from django.db.models import Q
+from django.conf import settings
 
 from config.settings.base import YOLO_DIR
 from .models import (
@@ -220,7 +221,7 @@ def search(request):
         photographer_num = query['photographerId']
         caption = query['caption'].strip()
         tags = query['tags']
-        analysis = query['analysis']
+        analysis_tags = query['analysisTags']
 
         django_query = Q()
         if photographer_name:
@@ -236,8 +237,9 @@ def search(request):
             for tag in tags:
                 django_query &= Q(photoanalysisresult__name='yolo_model') & \
                                 Q(photoanalysisresult__result__icontains=tag)
-        if analysis:
-            django_query &= Q(photoanalysisresult__name=analysis)
+        if analysis_tags:
+            for analysis_tag in analysis_tags:
+                django_query &= Q(photoanalysisresult__name=analysis_tag)
         photo_obj = Photo.objects.filter(django_query)
     else:
         keyword = query['keyword'].strip()
@@ -252,6 +254,30 @@ def search(request):
 
     serializer = PhotoSerializer(photo_obj, many=True)
     return Response(serializer.data)
+
+
+def get_analysis_tags(directory=None):
+    exclude = [
+        '__init__.py',
+        '__pycache__',
+        'analysis_results',
+        'yolo_files',
+        'tests.py',
+        'resnet18_feature_vectors.py',
+        'similarity_utils.py',
+    ]
+    if directory is None:
+        directory = settings.ANALYSIS_DIR
+    analysis_tags = []
+    for file in os.scandir(directory):
+        if file.name in exclude:
+            continue
+        if file.is_dir():
+            analysis_tags += get_analysis_tags(file)
+        else:
+            tag_name = file.name.split('.')[0]
+            analysis_tags.append(tag_name)
+    return analysis_tags
 
 
 @api_view(['GET'])
@@ -274,5 +300,5 @@ def get_tags(request):
     return Response({
         'tags': tags,
         'photographers': photographer_serializer.data,
-        'analyses': photoanalysisresults_serializer.data,
+        'analysisTags': get_analysis_tags(),
     })

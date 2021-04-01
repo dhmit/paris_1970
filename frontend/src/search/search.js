@@ -12,7 +12,7 @@ class SearchForm extends React.Component {
             photographer: '',
             caption: '',
             tags: [],
-            analysisName: '',
+            analysisTags: [],
         };
     }
 
@@ -27,6 +27,13 @@ class SearchForm extends React.Component {
         this.setState({
             ...this.state,
             tags: selectedOptions,
+        });
+    }
+
+    handleAnalysisSelectDropdownChange = (selectedOptions) => {
+        this.setState({
+            ...this.state,
+            analysisTags: selectedOptions,
         });
     }
 
@@ -56,8 +63,8 @@ class SearchForm extends React.Component {
         if (body.tags && body.tags.length > 0) {
             searchText += ' with tags [' + body.tags + ']';
         }
-        if (body.analysis) {
-            searchText += ' with result for [' + body.analysis + ']';
+        if (body.analysisTags && body.analysisTags.length > 0) {
+            searchText += ' with result for [' + body.analysisTags + ']';
         }
         this.props.updateSearchData({
             data: searchData,
@@ -87,13 +94,24 @@ class SearchForm extends React.Component {
     handleAdvancedSubmit = async (event) => {
         event.preventDefault();
         if (this.state.photographer.trim() || this.state.caption.trim()
-            || this.state.tags.length > 0 || this.state.analysisName.trim()) {
+            || (this.state.tags && this.state.tags.length > 0)
+            || (this.state.analysisTags && this.state.analysisTags.length > 0)) {
             const photographerParts = this.state.photographer.split(',');
             const photographerName = photographerParts[0] ? photographerParts[0] : '';
             const photographerId = photographerParts[1] ? photographerParts[1] : '';
             const newTags = [];
-            for (const tag of this.state.tags) {
-                newTags.push(tag.value);
+            const newAnalysisTags = [];
+            console.log(this.state.tags);
+            if (this.state.tags) {
+                for (const tag of this.state.tags) {
+                    newTags.push(tag.value);
+                }
+            }
+            console.log(this.state.analysisTags);
+            if (this.state.analysisTags) {
+                for (const atag of this.state.analysisTags) {
+                    newAnalysisTags.push(atag.value);
+                }
             }
             await this.handleSearch({
                 photographerName,
@@ -101,13 +119,14 @@ class SearchForm extends React.Component {
                 caption: this.state.caption,
                 tags: newTags,
                 isAdvanced: true,
-                analysis: this.state.analysisName,
+                analysisTags: newAnalysisTags,
             });
         }
     };
 
     render() {
         const tagOptions = this.props.tagData.map((tag) => ({ value: tag, label: tag }));
+        const analysisTagOptions = this.props.analysisTagData.map((tag) => ({ value: tag, label: tag }));
 
         const photographerData = this.props.photographerData;
 
@@ -193,13 +212,15 @@ class SearchForm extends React.Component {
                     </label>
                     <br/>
                     <label className='input-div'>
-                        <p className='search-label'>Analysis Name:</p>
-                        <input
-                            className='search-text-input'
-                            type="text"
-                            name="analysisName"
-                            value={this.state.analysisName}
-                            onChange={this.handleChange}
+                        <p className='search-label'>Analysis Names:</p>
+                        <Select
+                            defaultValue={this.state.analysisTags}
+                            isMulti
+                            name="analysisTags"
+                            options={analysisTagOptions}
+                            onChange={this.handleAnalysisSelectDropdownChange}
+                            menuPlacement="auto"
+                            menuPosition="fixed"
                         />
                     </label>
                     <input type="submit" value="Search" />
@@ -212,6 +233,7 @@ SearchForm.propTypes = {
     updateSearchData: PropTypes.func,
     tagData: PropTypes.array,
     photographerData: PropTypes.array,
+    analysisTagData: PropTypes.array
 };
 
 export class Search extends React.Component {
@@ -224,7 +246,7 @@ export class Search extends React.Component {
             searchedText: '',
             tagData: null,
             photographerData: null,
-            analysisData: null,
+            analysisTagData: null,
         };
     }
 
@@ -236,7 +258,7 @@ export class Search extends React.Component {
         try {
             const searchTagResponse = await fetch('/api/get_tags/');
             const searchTags = await searchTagResponse.json();
-            const { tags, photographers, analyses } = searchTags;
+            const { tags, photographers, analysisTags } = searchTags;
             // Sort by name and then by number, if the photographers have one
             photographers.sort((a, b) => {
                 const aName = a.name;
@@ -264,7 +286,7 @@ export class Search extends React.Component {
             this.setState({
                 photographerData: photographers,
                 tagData: tags,
-                analysisData: analyses,
+                analysisTagData: analysisTags,
                 loading: false,
             });
         } catch (e) {
@@ -274,7 +296,7 @@ export class Search extends React.Component {
 
     // This follows the full text + advanced search model here: http://photogrammar.yale.edu/search/
     render() {
-        if (!this.state.tagData || !this.state.photographerData || !this.state.analysisData) {
+        if (!this.state.tagData || !this.state.photographerData || !this.state.analysisTagData) {
             return (<LoadingPage/>);
         }
         return (
@@ -287,7 +309,7 @@ export class Search extends React.Component {
                             updateSearchData={this.updateSearchData}
                             tagData={this.state.tagData}
                             photographerData={this.state.photographerData}
-                            analysisData={this.state.analysisData}
+                            analysisTagData={this.state.analysisTagData}
                         />
                     </div>
                     <div className='col-sm-12 col-lg-8'>
