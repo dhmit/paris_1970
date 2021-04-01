@@ -25,7 +25,8 @@ export class SimilarityView extends React.Component {
     async componentDidMount() {
         try {
             const apiURL = '/api/similar_photos/'
-            + `${this.props.mapSquareNumber}/${this.props.photoNumber}/`;
+            + `${this.props.mapSquareNumber}/${this.props.photoNumber}/`
+            + `${this.props.numSimilarPhotos}/`;
             const response = await fetch(apiURL);
             if (!response.ok) {
                 this.setState({ loading: false });
@@ -99,4 +100,5 @@ export class SimilarityView extends React.Component {
 SimilarityView.propTypes = {
     photoNumber: PropTypes.number,
     mapSquareNumber: PropTypes.number,
+    numSimilarPhotos: PropTypes.number,
 };

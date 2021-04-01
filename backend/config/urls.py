@@ -54,7 +54,8 @@ urlpatterns = [
     # API endpoints
     path('api/photo/<int:map_square_number>/<int:photo_number>/', photo),
     path('api/prev_next_photos/<int:map_square_number>/<int:photo_number>/', previous_next_photos),
-    path('api/similar_photos/<int:map_square_number>/<int:photo_number>/', get_photo_by_similarity),
+    path('api/similar_photos/<int:map_square_number>/<int:photo_number>/<int:num_similar_photos>/',
+         get_photo_by_similarity),
     path('api/photographer/<int:photographer_number>/', get_photographer),
     path('api/map_square/<int:map_square_number>/', get_map_square),
     path('api/corpus_analysis/', get_corpus_analysis_results),
@@ -72,8 +73,8 @@ urlpatterns = [
 
     react_view_path('', 'IndexView'),
     react_view_path('photo/<int:mapSquareNumber>/<int:photoNumber>/', 'PhotoView'),
-    react_view_path('similar_photos/<int:mapSquareNumber>/<int:photoNumber>/',
-                    'SimilarityView'),
+    react_view_path('similar_photos/<int:mapSquareNumber>/<int:photoNumber>/'
+                    '<int:numSimilarPhotos>/', 'SimilarityView'),
     react_view_path('photographer/<int:photographerNumber>/', 'PhotographerView'),
     react_view_path('map_square/<int:mapSquareNumber>/', 'MapSquareView'),
     react_view_path('about/', 'About'),

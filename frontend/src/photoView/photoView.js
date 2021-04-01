@@ -251,6 +251,7 @@ const ANALYSIS_CONFIGS = {
     },
 };
 
+
 export class PhotoView extends React.Component {
     constructor(props) {
         super(props);
@@ -522,19 +523,29 @@ export class PhotoView extends React.Component {
                                 return (
                                     <React.Fragment>
                                         <h5>Similar Photos (% Similiarity)</h5>
-                                        <ul>
-                                            {parsedValue.map((photo, i) => (
+                                        <h6>
+                                            <a href={`/similar_photos/${this.props.mapSquareNumber}/`
+                                              + `${this.props.photoNumber}/10/`}>
+                                                View Top 10 Similar Photos
+                                            </a>
+                                        </h6>
+                                        <div
+                                            className="col pb-scroll"
+                                            id="scrolling"
+                                            style={{ maxHeight: 200, overflow: 'auto' }}
+                                        >
+                                            {(parsedValue.map((photo, i) => (
                                                 (photo[0] !== mapSquareNumber
                                                     || photo[1] !== photoNumber)
-                                                    ? <li key={i}>
+                                                    ? <div key={i}>
                                                         <a href={`/photo/${photo[0]}/${photo[1]}/`}>
                                                             Map Square {photo[0]},
                                                             Photo {photo[1]} </a>
                                                         ({formatPercentageValue(photo[2] * 100)})
-                                                    </li>
+                                                    </div>
                                                     : null
-                                            ))}
-                                        </ul>
+                                            ))).reverse()}
+                                        </div>
                                     </React.Fragment>
                                 );
                             }
