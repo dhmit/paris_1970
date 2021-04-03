@@ -8,6 +8,7 @@ import {
     ZoomControl,
 } from 'react-leaflet';
 
+
 import {
     Modal,
     Button,
@@ -23,11 +24,14 @@ class Map extends React.Component {
         minZoom: 12,
     }
 
+
     render() {
         // Sorts the map squares by number of photos (ascending order)
         const sortedMapData = Object.values(this.props.mapData)
             .sort((a, b) => a.num_photos - b.num_photos);
-
+        // Gets the max number of photos in a single square out of all squares to form buckets later
+        const maxNumberOfPhotos = sortedMapData[sortedMapData.length - 1].num_photos;
+        console.log(maxNumberOfPhotos);
         return (
             <div id="map-container">
                 <Instructions />
@@ -63,7 +67,6 @@ class Map extends React.Component {
                             const index = mapSquareData.number;
                             const coords = mapSquareData.topLeftCoords;
                             const numberOfPhotos = mapSquareData.num_photos;
-
                             // Width and height of map squares
                             const lngDiff = 0.00340325568;
                             const latDiff = 0.0022358;
@@ -73,7 +76,27 @@ class Map extends React.Component {
                                 [coords.lat - latDiff, coords.lng - lngDiff],
                             ];
                             const link = '/map_square/' + index;
+                            let mapSquareBucket = '';
+                            // set of conditionals to to calculate photo density for heat map
+                            if (numberOfPhotos > 0 && numberOfPhotos <= maxNumberOfPhotos * 0.2) {
+                                mapSquareBucket = 'map-square-box-one';
+                            }
 
+                            if (numberOfPhotos > maxNumberOfPhotos * 0.2 && numberOfPhotos <= maxNumberOfPhotos * 0.4) {
+                                mapSquareBucket = 'map-square-box-two';
+                            }
+
+                            if (numberOfPhotos > maxNumberOfPhotos * 0.4 && numberOfPhotos <= maxNumberOfPhotos * 0.6) {
+                                mapSquareBucket = 'map-square-box-three';
+                            }
+
+                            if (numberOfPhotos > maxNumberOfPhotos * 0.6 && numberOfPhotos <= maxNumberOfPhotos * 0.8) {
+                                mapSquareBucket = 'map-square-box-four';
+                            }
+
+                            if (numberOfPhotos > maxNumberOfPhotos * 0.8 && numberOfPhotos <= maxNumberOfPhotos) {
+                                mapSquareBucket = 'map-square-box-five';
+                            }
                             // Greys out squares without photos in them
                             if (numberOfPhotos === 0) {
                                 return (
@@ -88,17 +111,18 @@ class Map extends React.Component {
                                     </Rectangle>
                                 );
                             }
+
                             return (
-                                <Rectangle className="map-square-box"
-                                    key={index}
-                                    bounds={mapSquareBounds}
+                                <Rectangle className={mapSquareBucket}
+                                           key={index}
+                                           bounds={mapSquareBounds}
                                 >
                                     <Popup>
-                                        Map Square {index} <br/>
-                                        <a href={link}>{numberOfPhotos} photos to show</a>
+                                            Map Square {index} <br />
+                                            <a href={link}>{numberOfPhotos} photos to show</a>
                                     </Popup>
                                 </Rectangle>
-                            );
+                                );
                         })
                     }
                 </LeafletMap>
