@@ -37,7 +37,6 @@ class Map extends React.Component {
         const sixtyPctMax = 0.6 * maxNumberOfPhotos;
         const eightyPctMax = 0.8 * maxNumberOfPhotos;
 
-        console.log(maxNumberOfPhotos);
         return (
             <div id="map-container">
                 <Instructions />
@@ -85,23 +84,15 @@ class Map extends React.Component {
                             let mapSquareBucket = '';
                             // set of conditionals to to calculate photo density for heat map
                             if (numberOfPhotos > 0 && numberOfPhotos <= twentyPctMax) {
-                                mapSquareBucket = 'map-square-box-one';
-                            }
-
-                            if (numberOfPhotos > twentyPctMax && numberOfPhotos <= fortyPctMax) {
-                                mapSquareBucket = 'map-square-box-two';
-                            }
-
-                            if (numberOfPhotos > fortyPctMax && numberOfPhotos <= sixtyPctMax) {
-                                mapSquareBucket = 'map-square-box-three';
-                            }
-
-                            if (numberOfPhotos > sixtyPctMax && numberOfPhotos <= eightyPctMax) {
-                                mapSquareBucket = 'map-square-box-four';
-                            }
-
-                            if (numberOfPhotos > eightyPctMax) {
-                                mapSquareBucket = 'map-square-box-five';
+                                mapSquareBucket = 'map-square box-one';
+                            } else if (numberOfPhotos <= fortyPctMax) {
+                                mapSquareBucket = 'map-square box-two';
+                            } else if (numberOfPhotos <= sixtyPctMax) {
+                                mapSquareBucket = 'map-square box-three';
+                            } else if (numberOfPhotos <= eightyPctMax) {
+                                mapSquareBucket = 'map-square box-four';
+                            } else if (numberOfPhotos <= maxNumberOfPhotos) {
+                                mapSquareBucket = 'map-square box-five';
                             }
                             // Greys out squares without photos in them
                             if (numberOfPhotos === 0) {
@@ -237,7 +228,7 @@ export class IndexView extends React.Component {
 
         return (<React.Fragment className="landing-page">
             <Navbar />
-            <Map mapData={this.state.mapData} />
+            <Map mapData={this.state.mapData}/>
             <Footer />
         </React.Fragment>);
     }
