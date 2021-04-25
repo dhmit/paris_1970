@@ -26,7 +26,7 @@ class Legend extends MapControl {
         const legend = L.control({ position: 'topright' });
 
         legend.onAdd = () => {
-            const div = L.DomUtil.create('div', 'info legend');
+            const div = L.DomUtil.create('div', 'heat-map-info heat-map-legend');
             const grades = this.props.buckets;
             const labels = [];
             let d = 0;

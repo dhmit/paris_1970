@@ -1,8 +1,4 @@
-body {
-  margin: 0px;
-}
-
-.info {
+.heat-map-info {
   padding: 6px 8px;
   font: 14px/16px Arial, Helvetica, sans-serif;
   background: white;
@@ -11,22 +7,22 @@ body {
   border-radius: 5px;
 }
 
-.info h4 {
+.heat-map-info h4 {
   margin: 0 0 5px;
   color: #777;
 }
 
-.info h6 {
+.heat-map-info h6 {
     margin: 0;
 }
 
-.legend {
+.heat-map-legend {
   text-align: left;
   line-height: 18px;
   color: #555;
 }
 
-.legend i {
+.heat-map-legend i {
   width: 18px;
   height: 18px;
   float: left;
