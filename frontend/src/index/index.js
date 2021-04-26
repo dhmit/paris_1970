@@ -14,6 +14,8 @@ import {
 } from 'react-bootstrap';
 import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 
+import Legend from '../legend/legend.js';
+
 class Map extends React.Component {
     state = {
         lat: 48.858859,
@@ -23,10 +25,22 @@ class Map extends React.Component {
         minZoom: 12,
     }
 
+
     render() {
         // Sorts the map squares by number of photos (ascending order)
         const sortedMapData = Object.values(this.props.mapData)
             .sort((a, b) => a.num_photos - b.num_photos);
+        // Gets the max number of photos in a single square out of all squares to form buckets later
+        const maxNumOfPhotos = sortedMapData[sortedMapData.length - 1].num_photos;
+        // Creating 5 buckets based on lowest to highest number of photos per square
+        const twentyPctMax = Math.round(0.2 * maxNumOfPhotos);
+        const fortyPctMax = Math.round(0.4 * maxNumOfPhotos);
+        const sixtyPctMax = Math.round(0.6 * maxNumOfPhotos);
+        const eightyPctMax = Math.round(0.8 * maxNumOfPhotos);
+        const buckets = [0, twentyPctMax, twentyPctMax + 1,
+            fortyPctMax, fortyPctMax + 1,
+            sixtyPctMax, sixtyPctMax + 1,
+            eightyPctMax, eightyPctMax + 1, maxNumOfPhotos];
 
         return (
             <div id="map-container">
@@ -43,6 +57,7 @@ class Map extends React.Component {
                     zoomControl={false}
                 >
                     <ZoomControl position="bottomleft"/>
+                    <Legend buckets={buckets}/>
                     <TileLayer
                         // Sets Map Boundaries - Keeps user from leaving Paris
                         maxBoundsViscosity={1.0}
@@ -63,7 +78,6 @@ class Map extends React.Component {
                             const index = mapSquareData.number;
                             const coords = mapSquareData.topLeftCoords;
                             const numberOfPhotos = mapSquareData.num_photos;
-
                             // Width and height of map squares
                             const lngDiff = 0.00340325568;
                             const latDiff = 0.0022358;
@@ -73,7 +87,19 @@ class Map extends React.Component {
                                 [coords.lat - latDiff, coords.lng - lngDiff],
                             ];
                             const link = '/map_square/' + index;
-
+                            let mapSquareBucket = '';
+                            // set of conditionals to to calculate photo density for heat map
+                            if (numberOfPhotos > 0 && numberOfPhotos <= twentyPctMax) {
+                                mapSquareBucket = 'map-square box-one';
+                            } else if (numberOfPhotos <= fortyPctMax) {
+                                mapSquareBucket = 'map-square box-two';
+                            } else if (numberOfPhotos <= sixtyPctMax) {
+                                mapSquareBucket = 'map-square box-three';
+                            } else if (numberOfPhotos <= eightyPctMax) {
+                                mapSquareBucket = 'map-square box-four';
+                            } else if (numberOfPhotos <= maxNumOfPhotos) {
+                                mapSquareBucket = 'map-square box-five';
+                            }
                             // Greys out squares without photos in them
                             if (numberOfPhotos === 0) {
                                 return (
@@ -88,13 +114,14 @@ class Map extends React.Component {
                                     </Rectangle>
                                 );
                             }
+
                             return (
-                                <Rectangle className="map-square-box"
+                                <Rectangle className={mapSquareBucket}
                                     key={index}
                                     bounds={mapSquareBounds}
                                 >
                                     <Popup>
-                                        Map Square {index} <br/>
+                                        Map Square {index} <br />
                                         <a href={link}>{numberOfPhotos} photos to show</a>
                                     </Popup>
                                 </Rectangle>
@@ -106,6 +133,7 @@ class Map extends React.Component {
         );
     }
 }
+
 Map.propTypes = {
     mapData: PropTypes.array,
 };
