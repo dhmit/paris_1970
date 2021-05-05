@@ -17,9 +17,11 @@ from pdfminer.pdfparser import PDFParser
 import dataframe_image as dfi
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from django.conf import settings
+import os
 
 pd.set_option('display.max_colwidth', None)
-PDF = './19A_demographics.pdf'
+PDF = os.path.join(settings.ANALYSIS_DIR, '19A_demographics.pdf')
 pdf_img = convert_from_path(PDF, dpi=300)[0]
 
 plt.figure(figsize=(15, 10))
@@ -70,8 +72,8 @@ camelot_df = (camelot
                         flavor="stream",
                         suppress_stdout=True,
                         pages="all")
-              [0].df)
-
+              )
+print(camelot_df)
 fig, ax = plt.subplots(2, 1, figsize=(10, 15))
 titles = ['tabula 2.2.0', 'camelot 0.8.2']
 for i, img in enumerate(map(make_df_image, [tabula_df, camelot_df])):
