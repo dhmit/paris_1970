@@ -60,25 +60,27 @@ def make_lines_image(lines,
         y = y0 + n * line_height
         draw.text((x, y), line, text_color, monospace)
     return image
+def tabula_table():
+    tabula_df = (tabula
+                 .read_pdf(PDF,
+                           stream=True,
+                           pages="all"))
+    return tabula_df
 
-tabula_df = (tabula
-             .read_pdf(PDF,
-                       stream=True,
-                       pages="all"))
+def camelot_table():
+    camelot_df = (camelot
+                  .read_pdf(PDF,
+                            flavor="stream",
+                            suppress_stdout=True,
+                            pages="all")
+                  [0].df)
+    return camelot_df
 
-
-camelot_df = (camelot
-              .read_pdf(PDF,
-                        flavor="stream",
-                        suppress_stdout=True,
-                        pages="all")
-              )
-print(camelot_df)
-fig, ax = plt.subplots(2, 1, figsize=(10, 15))
-titles = ['tabula 2.2.0', 'camelot 0.8.2']
-for i, img in enumerate(map(make_df_image, [tabula_df, camelot_df])):
-    ax[i].axis("off")
-    ax[i].set_adjustable("box")
-    ax[i].title.set_text(titles[i])
-    ax[i].imshow(img)
-fig.tight_layout()
+#fig, ax = plt.subplots(2, 1, figsize=(10, 15))
+#titles = ['tabula 2.2.0', 'camelot 0.8.2']
+#for i, img in enumerate(map(make_df_image, [tabula_df, camelot_df])):
+#    ax[i].axis("off")
+#    ax[i].set_adjustable("box")
+#    ax[i].title.set_text(titles[i])
+#    ax[i].imshow(img)
+#fig.tight_layout()
