@@ -21,7 +21,7 @@ from django.conf import settings
 import os
 
 pd.set_option('display.max_colwidth', None)
-PDF = os.path.join(settings.ANALYSIS_DIR, '19A_demographics.pdf')
+PDF = os.path.join(settings.ANALYSIS_DIR, 'A_09.pdf')
 pdf_img = convert_from_path(PDF, dpi=300)[0]
 
 plt.figure(figsize=(15, 10))
@@ -60,20 +60,14 @@ def make_lines_image(lines,
         y = y0 + n * line_height
         draw.text((x, y), line, text_color, monospace)
     return image
-def tabula_table():
-    tabula_df = (tabula
-                 .read_pdf(PDF,
-                           stream=True,
-                           pages="all"))
-    return tabula_df
 
 def camelot_table():
     camelot_df = (camelot
                   .read_pdf(PDF,
                             flavor="stream",
                             suppress_stdout=True,
-                            pages="all")
-                  [0].df)
+                            pages="7-48")
+                  )
     return camelot_df
 
 #fig, ax = plt.subplots(2, 1, figsize=(10, 15))
