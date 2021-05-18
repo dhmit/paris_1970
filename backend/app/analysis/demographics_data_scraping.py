@@ -1,7 +1,6 @@
 import tempfile
 from io import StringIO
 import jovian
-import tabula
 import camelot
 import pandas as pd
 import numpy as np
@@ -70,11 +69,3 @@ def camelot_table():
                   )
     return camelot_df
 
-#fig, ax = plt.subplots(2, 1, figsize=(10, 15))
-#titles = ['tabula 2.2.0', 'camelot 0.8.2']
-#for i, img in enumerate(map(make_df_image, [tabula_df, camelot_df])):
-#    ax[i].axis("off")
-#    ax[i].set_adjustable("box")
-#    ax[i].title.set_text(titles[i])
-#    ax[i].imshow(img)
-#fig.tight_layout()
