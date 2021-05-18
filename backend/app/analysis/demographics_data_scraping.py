@@ -21,7 +21,7 @@ from django.conf import settings
 import os
 
 pd.set_option('display.max_colwidth', None)
-PDF = os.path.join(settings.ANALYSIS_DIR, 'A_09.pdf')
+PDF = os.path.join(settings.ANALYSIS_DIR, 'A.pdf')
 pdf_img = convert_from_path(PDF, dpi=300)[0]
 
 plt.figure(figsize=(15, 10))
