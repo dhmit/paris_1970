@@ -30,8 +30,7 @@ def analyze(photo: Photo):
     border_percentage = 0.05 #top and bottom 0.5% of photo
     border_num = int(border_percentage * min(len(normalized_grayscale_image[0]), #length
                                              len(normalized_grayscale_image))) #width
-    if border_num < 1:
-        border_num = 1
+    border_num = max(border_num, 1)
 
     # Using half of highest pixel as threshold
     max_pixel = 0
