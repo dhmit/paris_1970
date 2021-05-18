@@ -267,6 +267,7 @@ def search(request):
     """
     API endpoint to search for photos that match the search query
     """
+    # pylint: disable=too-many-locals
     query = json.loads(request.body)
     is_advanced = query['isAdvanced']
 
@@ -291,10 +292,9 @@ def search(request):
             django_query &= Q(photographer_caption__icontains=caption) | \
                             Q(librarian_caption__icontains=caption)
 
-        if tags:
-            for tag in tags:
-                django_query &= Q(photoanalysisresult__name='yolo_model') & \
-                             Q(photoanalysisresult__result__icontains=tag)
+        for tag in tags:
+            django_query &= Q(photoanalysisresult__name='yolo_model') & \
+                         Q(photoanalysisresult__result__icontains=tag)
 
         for analysis_tag in analysis_tags:
             photo_obj = photo_obj.filter(Q(photoanalysisresult__name=analysis_tag)).distinct()
@@ -302,11 +302,11 @@ def search(request):
                 min_value, max_value = slider_search_values[analysis_tag]
                 print(f'Searching between {min_value} and {max_value} for {analysis_tag}')
                 # Save the analysis results casted as float values to a new 'parsed_result' field
-                parsed_result_photos = photo_obj.annotate(
+                photo_obj = photo_obj.annotate(
                     parsed_result=Cast('photoanalysisresult__result', FloatField())
                 )
                 # Filter for photos that have a result in the specified range
-                photo_obj = parsed_result_photos.filter(
+                photo_obj = photo_obj.filter(
                     Q(parsed_result__gte=min_value) &
                     Q(parsed_result__lte=max_value)
                 )
