@@ -524,8 +524,9 @@ export class PhotoView extends React.Component {
                                     <React.Fragment>
                                         <h5>Similar Photos (% Similiarity)</h5>
                                         <h6>
-                                            <a href={`/similar_photos/${this.props.mapSquareNumber}/`
-                                              + `${this.props.photoNumber}/10/`}>
+                                            <a href={'/similar_photos/'
+                                                + `${this.props.mapSquareNumber}/`
+                                                + `${this.props.photoNumber}/10/`}>
                                                 View Top 10 Similar Photos
                                             </a>
                                         </h6>

@@ -1,7 +1,6 @@
 import React from 'react';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
@@ -9,88 +8,76 @@ import Input from '@material-ui/core/Input';
 import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 import { getSource } from '../analysisView/analysisView';
 
-const useStyles = makeStyles({
-  root: {
-    width: 250,
-  },
-  input: {
-    width: 42,
-  },
-});
 
-function AnalysisSlider(props) {
-        const classes = useStyles();
-        const [value, setValue] = React.useState(30);
+function analysisSliderInput(
+    analysisName, value, bound, defaultRange, inputChangeFunc, sliderBlurFunc,
+) {
+    const [minValue, maxValue] = defaultRange;
 
-        const handleSliderChange = (event, newValue) => {
-            setValue(newValue);
-        };
+    return (
+        <Input
+            value={value}
+            margin="dense"
+            onChange={(e) => inputChangeFunc(e, analysisName, bound)}
+            onBlur={() => sliderBlurFunc(analysisName)}
+            inputProps={{
+                'step': 1,
+                'min': minValue,
+                'max': maxValue,
+                'type': 'number',
+                'aria-labelledby': 'input-slider',
+            }}
+        />
+    );
+}
 
-        const handleInputChange = (event) => {
-            setValue(event.target.value === '' ? '' : Number(event.target.value));
-        };
 
-        const handleBlur = () => {
-            if (value < 0) {
-                setValue(0);
-            } else if (value > 100) {
-                setValue(100);
-            }
-        };
+function analysisSlider(
+    analysisName, currentRange, defaultRange, sliderChangeFunc, inputChangeFunc, sliderBlurFunc,
+) {
+    const [minValue, maxValue] = defaultRange;
 
-        return (
-            <div className={classes.root}>
-                <Typography id="input-slider" gutterBottom>
-                    {props.analysisName}
-                </Typography>
-                <Grid container spacing={2} alignItems="center">
-                    <Grid item xs>
-                        <Slider
-                            value={typeof value === 'number' ? value : 0}
-                            onChange={handleSliderChange}
-                            aria-labelledby="input-slider"
-                        />
-                    </Grid>
-                    <Grid item>
-                        <Input
-                            className={classes.input}
-                            value={value}
-                            margin="dense"
-                            onChange={handleInputChange}
-                            onBlur={handleBlur}
-                            inputProps={{
-                                'step': 1,
-                                'min': 0,
-                                'max': 100,
-                                'type': 'number',
-                                'aria-labelledby': 'input-slider',
-                            }}
-                        />
-                    </Grid>
+    return (
+        <div key={analysisName}>
+            <Typography id="range-slider" gutterBottom>
+                {analysisName}
+            </Typography>
+            <Grid container spacing={2} alignItems="center">
+                <Grid item>
+                    {analysisSliderInput(
+                        analysisName,
+                        currentRange[0],
+                        'lower',
+                        defaultRange,
+                        inputChangeFunc,
+                        sliderBlurFunc,
+                    )}
                 </Grid>
-            </div>
-        );
-    }
+                <Grid item xs>
+                    <Slider
+                        value={typeof currentRange === 'object' ? currentRange : defaultRange}
+                        onChange={(e, v) => sliderChangeFunc(e, v, analysisName)}
+                        min={minValue}
+                        max={maxValue}
+                        valueLabelDisplay="auto"
+                        aria-labelledby="range-slider"
+                    />
+                </Grid>
+                <Grid item>
+                    {analysisSliderInput(
+                        analysisName,
+                        currentRange[1],
+                        'upper',
+                        defaultRange,
+                        inputChangeFunc,
+                        sliderBlurFunc,
+                    )}
+                </Grid>
+            </Grid>
+        </div>
+    );
+}
 
-AnalysisSlider.propTypes = {
-    analysisName: PropTypes.string,
-};
-
-// function AnalysisSliders(props) {
-//     console.log('hello its me');
-//     console.log(props.analysisNames);
-//     const sliders = [];
-//     for (let i = 0; i < props.analysisNames.length; i++) {
-//         sliders.push(<AnalysisSlider key={i} analysisName={props.analysisNames[i]}/>);
-//     }
-//     console.log('i am a slider');
-//     console.log(sliders);
-//     return sliders;
-// }
-
-// AnalysisSliders.propTypes = {
-//     analysisNames: PropTypes.arrayOf(PropTypes.string),
-// };
 
 class SearchForm extends React.Component {
     constructor(props) {
@@ -193,12 +180,6 @@ class SearchForm extends React.Component {
 
     setSliderValue(analysisName, newLowerBound, newUpperBound) {
         const newSliderValues = this.state.sliderValues;
-        if (newLowerBound === null) {
-            newLowerBound = this.state.sliderValues[0];
-        }
-        if (newUpperBound === null) {
-            newUpperBound = this.state.sliderValues[1];
-        }
         newSliderValues[analysisName] = [newLowerBound, newUpperBound];
         this.setState({
             ...this.state,
@@ -207,27 +188,37 @@ class SearchForm extends React.Component {
     }
 
     handleSliderChange = (event, value, analysisName) => {
-        console.log(value);
         const [newLowerBound, newUpperBound] = value;
         this.setSliderValue(analysisName, newLowerBound, newUpperBound);
     }
 
     handleSliderInputChange = (event, analysisName, bound) => {
+        const [currentLowerValue, currentUpperValue] = this.state.sliderValues[analysisName];
         const [minValue, maxValue] = this.props.analysisValueRanges[analysisName];
         const newSliderValues = this.state.sliderValues;
-        if (event.target.value !== '' && bound === 'lower' && Number(event.target.value) >= minValue) {
-            let newValue = Number(event.target.value);
-            if (newValue > this.state.sliderValues[analysisName][1]) {
-                newValue = this.state.sliderValues[analysisName][1];
-            }
-            newSliderValues[analysisName] = [newValue, this.state.sliderValues[analysisName][1]];
-        } else if (event.target.value !== '' && bound === 'upper' && Number(event.target.value) <= maxValue) {
-            let newValue = Number(event.target.value);
-            if (newValue < this.state.sliderValues[analysisName][0]) {
-                newValue = this.state.sliderValues[analysisName][0];
-            }
-            newSliderValues[analysisName] = [this.state.sliderValues[analysisName][0], newValue];
+
+        // Do nothing if the slider input is blank
+        if (event.target.value === '') {
+            return;
         }
+
+        let newValue = Number(event.target.value);
+        if (bound === 'lower') {
+            if (newValue > currentUpperValue) {
+                newValue = currentUpperValue;
+            } else if (newValue < minValue) {
+                newValue = minValue;
+            }
+            newSliderValues[analysisName] = [newValue, currentUpperValue];
+        } else if (bound === 'upper') {
+            if (newValue < currentLowerValue) {
+                newValue = currentLowerValue;
+            } else if (newValue > maxValue) {
+                newValue = maxValue;
+            }
+            newSliderValues[analysisName] = [currentLowerValue, newValue];
+        }
+
         this.setState({
             ...this.state,
             sliderValues: newSliderValues,
@@ -235,17 +226,19 @@ class SearchForm extends React.Component {
     };
 
     handleSliderBlur = (analysisName) => {
+        // Used when slider changed by dragging after changing inputs
+        // Needed if inputs are not bounded by the slider's maximum and minimum values
+        const [currentLowerValue, currentUpperValue] = this.state.sliderValues[analysisName];
         const [minValue, maxValue] = this.props.analysisValueRanges[analysisName];
-        if (this.state.sliderValues[analysisName][0] < minValue) {
-            this.setSliderValue(analysisName, minValue, null);
-        } else if (this.state.sliderValues[analysisName][1] > maxValue) {
-            this.setSliderValue(analysisName, null, maxValue);
+        if (currentLowerValue < minValue) {
+            this.setSliderValue(analysisName, minValue, currentUpperValue);
+        } else if (currentUpperValue > maxValue) {
+            this.setSliderValue(analysisName, currentLowerValue, maxValue);
         }
     };
 
     getTagValues(selectedOptions) {
         const newTags = [];
-        // console.log(selectedOptions);
         if (selectedOptions) {
             for (const tag of selectedOptions) {
                 newTags.push(tag.value);
@@ -260,7 +253,6 @@ class SearchForm extends React.Component {
 
     getAnalysisTagValues() {
         const newAnalysisTags = [];
-        // console.log(this.state.analysisTags);
         if (this.state.analysisTags) {
             for (const atag of this.state.analysisTags) {
                 newAnalysisTags.push(this.props.analysisTagMap[atag.value]);
@@ -282,7 +274,9 @@ class SearchForm extends React.Component {
             const sliderSearchValues = {};
             for (const atag in this.state.sliderValues) {
                 if (this.state.sliderValues) {
-                    sliderSearchValues[this.props.analysisTagMap[atag]] = this.state.sliderValues[atag];
+                    const internalName = this.props.analysisTagMap[atag];
+                    const searchRange = this.state.sliderValues[atag];
+                    sliderSearchValues[internalName] = searchRange;
                 }
             }
             await this.handleSearch({
@@ -299,70 +293,30 @@ class SearchForm extends React.Component {
 
     render() {
         const tagOptions = this.props.tagData.map((tag) => ({ value: tag, label: tag }));
-        const analysisTagOptions = this.props.analysisTagData.map((tag) => ({ value: tag, label: tag }));
+        const analysisTagOptions = this.props.analysisTagData.map(
+            (tag) => ({ value: tag, label: tag }),
+        );
 
         const photographerData = this.props.photographerData;
 
         const sliders = [];
         if (this.state.analysisTags) {
-            console.log(this.props.analysisValueRanges);
-            // console.log(Object.values(this.state.analysisTags));
             const currentAnalysisTags = this.getTagValues(this.state.analysisTags);
             for (let i = 0; i < currentAnalysisTags.length; i++) {
                 if (currentAnalysisTags[i] in this.props.analysisValueRanges) {
                     const analysisName = currentAnalysisTags[i];
-                    const sliderValue = this.state.sliderValues[analysisName];
-                    const [minValue, maxValue] = this.props.analysisValueRanges[analysisName];
-                    // console.log(this.state.sliderValues);
+                    const currentSliderRange = this.state.sliderValues[analysisName];
+                    const defaultSliderRange = this.props.analysisValueRanges[analysisName];
                     sliders.push(
-                        <div key={analysisName}>
-                            <Typography id="range-slider" gutterBottom>
-                                {analysisName}
-                            </Typography>
-                            <Grid container spacing={2} alignItems="center">
-                                <Grid item>
-                                    <Input
-                                        value={sliderValue[0]}
-                                        margin="dense"
-                                        onChange={(e) => this.handleSliderInputChange(e, analysisName, 'lower')}
-                                        onBlur={() => this.handleSliderBlur(analysisName)}
-                                        inputProps={{
-                                            'step': 1,
-                                            'min': minValue,
-                                            'max': maxValue,
-                                            'type': 'number',
-                                            'aria-labelledby': 'input-slider',
-                                        }}
-                                    />
-                                </Grid>
-                                <Grid item xs>
-                                    <Slider
-                                        value={typeof sliderValue === 'object' ? sliderValue : [minValue, maxValue]}
-                                        onChange={(e, v) => this.handleSliderChange(e, v, analysisName)}
-                                        min={minValue}
-                                        max={maxValue}
-                                        valueLabelDisplay="auto"
-                                        aria-labelledby="range-slider"
-                                    />
-                                </Grid>
-                                <Grid item>
-                                    <Input
-                                        value={sliderValue[1]}
-                                        margin="dense"
-                                        onChange={(e) => this.handleSliderInputChange(e, analysisName, 'upper')}
-                                        onBlur={() => this.handleSliderBlur(analysisName)}
-                                        inputProps={{
-                                            'step': 1,
-                                            'min': minValue,
-                                            'max': maxValue,
-                                            'type': 'number',
-                                            'aria-labelledby': 'input-slider',
-                                        }}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </div>
-                        );
+                        analysisSlider(
+                            analysisName,
+                            currentSliderRange,
+                            defaultSliderRange,
+                            this.handleSliderChange,
+                            this.handleSliderInputChange,
+                            this.handleSliderBlur,
+                        ),
+                    );
                 }
             }
         }
@@ -473,7 +427,7 @@ SearchForm.propTypes = {
     photographerData: PropTypes.array,
     analysisTagData: PropTypes.array,
     analysisTagMap: PropTypes.object,
-    analysisValueRanges: PropTypes.array,
+    analysisValueRanges: PropTypes.object,
 };
 
 export class Search extends React.Component {
@@ -500,7 +454,7 @@ export class Search extends React.Component {
             const searchTagResponse = await fetch('/api/get_tags/');
             const searchTags = await searchTagResponse.json();
             const {
-                tags, photographers, analysisTags, valueRanges
+                tags, photographers, analysisTags, valueRanges,
             } = searchTags;
             // Sort by name and then by number, if the photographers have one
             photographers.sort((a, b) => {

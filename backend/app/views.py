@@ -11,7 +11,6 @@ from rest_framework.response import Response
 
 from django.db.models import Q, FloatField
 from django.db.models.functions import Cast
-from django.conf import settings
 
 from config.settings.base import YOLO_DIR
 from .models import (
@@ -29,19 +28,30 @@ from .serializers import (
     MapSquareSerializerWithoutPhotos,
     PhotographerSerializer,
     PhotographerSearchSerializer,
-    CorpusAnalysisResultsSerializer,
-    PhotoAnalysisResultSerializer
+    CorpusAnalysisResultsSerializer
 )
 
-EXCLUDE_FILENAMES = [
-    '__init__.py',
-    '__pycache__',
-    'analysis_results',
-    'yolo_files',
-    'tests.py',
-    'resnet18_feature_vectors.py',
-    'similarity_utils.py',
-]
+ANALYSIS_TAGS = {
+    'detail_fft2': 'detail_fft2',
+    'find_vanishing_point': 'find_vanishing_point',
+    'foreground_percentage': 'foreground_percentage',
+    'combined_indoor': 'indoor_analysis.combined_indoor',
+    'courtyard_frame': 'indoor_analysis.courtyard_frame',
+    'find_windows': 'indoor_analysis.find_windows',
+    'gradient_analysis': 'indoor_analysis.gradient_analysis',
+    'local_variance': 'local_variance',
+    'mean_detail': 'mean_detail',
+    'photographer_caption_length': 'photographer_caption_length',
+    'resnet18_cosine_similarity': 'photo_similarity.resnet18_cosine_similarity',
+    'resnet18_mean_squares_similarity': 'photo_similarity.resnet18_mean_squares_similarity',
+    'resnet18_pairwise_similarity': 'photo_similarity.resnet18_pairwise_similarity',
+    'pop_density_detection': 'pop_density_detection',
+    'portrait_detection': 'portrait_detection',
+    'stdev': 'stdev',
+    'text_ocr': 'text_ocr',
+    'whitespace_percentage': 'whitespace_percentage',
+    'yolo_model': 'yolo_model'
+}
 
 
 @api_view(['GET'])
@@ -196,7 +206,7 @@ def get_photo_by_similarity(request, map_square_number, photo_number, num_simila
     similar_photos = []
     if analysis_obj_list:
         analysis_obj = analysis_obj_list[0]
-        # splices the list of similar photos to get top 10 photos
+        # splices the list of similar photos to get top 'num_similar_photos' photos
         similarity_list = ast.literal_eval(analysis_obj.result)[::-1][:num_similar_photos]
 
         for simPhoto in similarity_list:
@@ -221,10 +231,18 @@ def get_photos_by_cluster(request, number_of_clusters, cluster_number):
 
 
 def get_analysis_value_ranges(analysis_names):
+    """
+    Function used to get the value ranges for the analysis search on the search page
+    :return: Dictionary of 2-value lists representing the minimum and maximum values respectively,
+    of the analysis.
+    """
     value_ranges = {}
     all_results = PhotoAnalysisResult.objects.all()
     for analysis_name in analysis_names:
         analysis_results = all_results.filter(name=analysis_name)
+
+        # Try sorting the values of the results and ignore the analysis name if the results
+        # cannot be sorted (results of type dict or varying types)
         try:
             sorted_results = sorted(
                 analysis_results, key=lambda instance: instance.parsed_result()
@@ -233,11 +251,14 @@ def get_analysis_value_ranges(analysis_names):
             continue
         if not sorted_results:
             continue
+
         min_value = sorted_results[0].parsed_result()
         max_value = sorted_results[-1].parsed_result()
+
+        # TODO: Add support for categorical values
         if type(min_value) in [int, float] and type(max_value) in [int, float]:
             value_ranges[analysis_name] = [math.floor(min_value), math.ceil(max_value)]
-    print(value_ranges)
+
     return value_ranges
 
 
@@ -269,25 +290,27 @@ def search(request):
         if caption:
             django_query &= Q(photographer_caption__icontains=caption) | \
                             Q(librarian_caption__icontains=caption)
+
         if tags:
             for tag in tags:
                 django_query &= Q(photoanalysisresult__name='yolo_model') & \
                              Q(photoanalysisresult__result__icontains=tag)
+
         for analysis_tag in analysis_tags:
+            photo_obj = photo_obj.filter(Q(photoanalysisresult__name=analysis_tag)).distinct()
             if slider_search_values.get(analysis_tag):
                 min_value, max_value = slider_search_values[analysis_tag]
-                print(f'search between {min_value} and {max_value} for {analysis_tag}')
-                photo_obj = photo_obj.filter(Q(photoanalysisresult__name=analysis_tag)).distinct()
+                print(f'Searching between {min_value} and {max_value} for {analysis_tag}')
+                # Save the analysis results casted as float values to a new 'parsed_result' field
                 parsed_result_photos = photo_obj.annotate(
                     parsed_result=Cast('photoanalysisresult__result', FloatField())
-                ).distinct()
+                )
+                # Filter for photos that have a result in the specified range
                 photo_obj = parsed_result_photos.filter(
-                    Q(photoanalysisresult__name=analysis_tag) &
                     Q(parsed_result__gte=min_value) &
                     Q(parsed_result__lte=max_value)
-                ).distinct()
-            else:
-                photo_obj = photo_obj.filter(Q(photoanalysisresult__name=analysis_tag)).distinct()
+                )
+
         photo_obj = photo_obj.filter(django_query).distinct()
     else:
         keyword = query['keyword'].strip()
@@ -296,31 +319,12 @@ def search(request):
                                          Q(photographer_caption__icontains=keyword) |
                                          Q(librarian_caption__icontains=keyword) |
                                          (Q(photoanalysisresult__name='yolo_model') &
-                                          Q(photoanalysisresult__result__icontains=keyword)))\
-            .distinct()
+                                          Q(photoanalysisresult__result__icontains=keyword))
+                                         ).distinct()
         # distinct is to prevent duplicates
 
     serializer = PhotoSerializer(photo_obj, many=True)
     return Response(serializer.data)
-
-
-def get_analysis_tags(directory=None):
-    """
-    Function to get analysis name tags for search
-    """
-    if directory is None:
-        directory = settings.ANALYSIS_DIR
-    analysis_tags = {}
-    for file in os.scandir(directory):
-        if file.name in EXCLUDE_FILENAMES:
-            continue
-        if file.is_dir():
-            folder_tags = get_analysis_tags(file)
-            analysis_tags.update({tag: f'{file.name}.{folder_tags[tag]}' for tag in folder_tags})
-        else:
-            tag_name = file.name.split('.')[0]
-            analysis_tags[tag_name] = tag_name
-    return analysis_tags
 
 
 @api_view(['GET'])
@@ -336,10 +340,9 @@ def get_tags(request):
             tag = file.readline()
     photographer_obj = Photographer.objects.all()
     photographer_serializer = PhotographerSearchSerializer(photographer_obj, many=True)
-    analysis_tags = get_analysis_tags()
     return Response({
         'tags': tags,
         'photographers': photographer_serializer.data,
-        'analysisTags': analysis_tags,
-        'valueRanges': get_analysis_value_ranges(analysis_tags.keys())
+        'analysisTags': ANALYSIS_TAGS,
+        'valueRanges': get_analysis_value_ranges(ANALYSIS_TAGS.keys())
     })
