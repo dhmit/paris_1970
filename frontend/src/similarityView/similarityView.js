@@ -39,14 +39,15 @@ export class SimilarityView extends React.Component {
         }
     }
 
-    getSource(photoData) {
+    getSource = (photoData) => {
         const availableSides = Object.values(SIDES).filter(
             (side) => photoData[`${side}_src`] !== null,
         );
         const displaySide = availableSides.length > 0 ? availableSides[0] : '';
         const source = photoData[`${displaySide}_src`];
-        return source;
-    }
+        const fileId = source.split('=')[1];
+        return `https://drive.google.com/thumbnail?authuser=0&sz=w100&id=${fileId}`;
+    };
 
     render() {
         if (this.state.loading) {

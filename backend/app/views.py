@@ -4,11 +4,13 @@ These view functions and classes implement API endpoints
 import ast
 import json
 import os
+import math
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from django.db.models import Q
+from django.db.models import Q, FloatField
+from django.db.models.functions import Cast
 from django.conf import settings
 
 from config.settings.base import YOLO_DIR
@@ -30,6 +32,16 @@ from .serializers import (
     CorpusAnalysisResultsSerializer,
     PhotoAnalysisResultSerializer
 )
+
+EXCLUDE_FILENAMES = [
+    '__init__.py',
+    '__pycache__',
+    'analysis_results',
+    'yolo_files',
+    'tests.py',
+    'resnet18_feature_vectors.py',
+    'similarity_utils.py',
+]
 
 
 @api_view(['GET'])
@@ -208,6 +220,27 @@ def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     return Response(serializer.data)
 
 
+def get_analysis_value_ranges(analysis_names):
+    value_ranges = {}
+    all_results = PhotoAnalysisResult.objects.all()
+    for analysis_name in analysis_names:
+        analysis_results = all_results.filter(name=analysis_name)
+        try:
+            sorted_results = sorted(
+                analysis_results, key=lambda instance: instance.parsed_result()
+            )
+        except TypeError:
+            continue
+        if not sorted_results:
+            continue
+        min_value = sorted_results[0].parsed_result()
+        max_value = sorted_results[-1].parsed_result()
+        if type(min_value) in [int, float] and type(max_value) in [int, float]:
+            value_ranges[analysis_name] = [math.floor(min_value), math.ceil(max_value)]
+    print(value_ranges)
+    return value_ranges
+
+
 @api_view(['POST'])
 def search(request):
     """
@@ -222,8 +255,11 @@ def search(request):
         caption = query['caption'].strip()
         tags = query['tags']
         analysis_tags = query['analysisTags']
+        slider_search_values = query['sliderSearchValues']
+        print(slider_search_values)
 
         django_query = Q()
+        photo_obj = Photo.objects.all()
         if photographer_name:
             django_query &= Q(photographer__name=photographer_name)
 
@@ -236,11 +272,23 @@ def search(request):
         if tags:
             for tag in tags:
                 django_query &= Q(photoanalysisresult__name='yolo_model') & \
-                                Q(photoanalysisresult__result__icontains=tag)
-        if analysis_tags:
-            for analysis_tag in analysis_tags:
-                django_query &= Q(photoanalysisresult__name=analysis_tag)
-        photo_obj = Photo.objects.filter(django_query)
+                             Q(photoanalysisresult__result__icontains=tag)
+        for analysis_tag in analysis_tags:
+            if slider_search_values.get(analysis_tag):
+                min_value, max_value = slider_search_values[analysis_tag]
+                print(f'search between {min_value} and {max_value} for {analysis_tag}')
+                photo_obj = photo_obj.filter(Q(photoanalysisresult__name=analysis_tag)).distinct()
+                parsed_result_photos = photo_obj.annotate(
+                    parsed_result=Cast('photoanalysisresult__result', FloatField())
+                ).distinct()
+                photo_obj = parsed_result_photos.filter(
+                    Q(photoanalysisresult__name=analysis_tag) &
+                    Q(parsed_result__gte=min_value) &
+                    Q(parsed_result__lte=max_value)
+                ).distinct()
+            else:
+                photo_obj = photo_obj.filter(Q(photoanalysisresult__name=analysis_tag)).distinct()
+        photo_obj = photo_obj.filter(django_query).distinct()
     else:
         keyword = query['keyword'].strip()
         photo_obj = Photo.objects.filter(Q(photographer__name__icontains=keyword) |
@@ -257,33 +305,28 @@ def search(request):
 
 
 def get_analysis_tags(directory=None):
-    exclude = [
-        '__init__.py',
-        '__pycache__',
-        'analysis_results',
-        'yolo_files',
-        'tests.py',
-        'resnet18_feature_vectors.py',
-        'similarity_utils.py',
-    ]
+    """
+    Function to get analysis name tags for search
+    """
     if directory is None:
         directory = settings.ANALYSIS_DIR
-    analysis_tags = []
+    analysis_tags = {}
     for file in os.scandir(directory):
-        if file.name in exclude:
+        if file.name in EXCLUDE_FILENAMES:
             continue
         if file.is_dir():
-            analysis_tags += get_analysis_tags(file)
+            folder_tags = get_analysis_tags(file)
+            analysis_tags.update({tag: f'{file.name}.{folder_tags[tag]}' for tag in folder_tags})
         else:
             tag_name = file.name.split('.')[0]
-            analysis_tags.append(tag_name)
+            analysis_tags[tag_name] = tag_name
     return analysis_tags
 
 
 @api_view(['GET'])
 def get_tags(request):
     """
-    API endpoint to get YOLO model tags and photographer data for search
+    API endpoint to get YOLO model tags, photographer data, and analysis tags for search
     """
     tags = []
     with open(os.path.join(YOLO_DIR, 'coco.names'), 'r') as file:
@@ -293,12 +336,10 @@ def get_tags(request):
             tag = file.readline()
     photographer_obj = Photographer.objects.all()
     photographer_serializer = PhotographerSearchSerializer(photographer_obj, many=True)
-    photoanalysisresults_obj = PhotoAnalysisResult.objects.all()
-    photoanalysisresults_serializer = PhotoAnalysisResultSerializer(
-        photoanalysisresults_obj, many=True
-    )
+    analysis_tags = get_analysis_tags()
     return Response({
         'tags': tags,
         'photographers': photographer_serializer.data,
-        'analysisTags': get_analysis_tags(),
+        'analysisTags': analysis_tags,
+        'valueRanges': get_analysis_value_ranges(analysis_tags.keys())
     })
