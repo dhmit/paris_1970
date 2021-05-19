@@ -252,13 +252,7 @@ class SearchForm extends React.Component {
     }
 
     getAnalysisTagValues() {
-        const newAnalysisTags = [];
-        if (this.state.analysisTags) {
-            for (const atag of this.state.analysisTags) {
-                newAnalysisTags.push(this.props.analysisTagMap[atag.value]);
-            }
-        }
-        return newAnalysisTags;
+        return this.getTagValues(this.state.analysisTags);
     }
 
     handleAdvancedSubmit = async (event) => {
@@ -271,14 +265,6 @@ class SearchForm extends React.Component {
             const photographerId = photographerParts[1] ? photographerParts[1] : '';
             const newTags = this.getPhotoTagValues();
             const newAnalysisTags = this.getAnalysisTagValues();
-            const sliderSearchValues = {};
-            for (const atag in this.state.sliderValues) {
-                if (this.state.sliderValues) {
-                    const internalName = this.props.analysisTagMap[atag];
-                    const searchRange = this.state.sliderValues[atag];
-                    sliderSearchValues[internalName] = searchRange;
-                }
-            }
             await this.handleSearch({
                 photographerName,
                 photographerId,
@@ -286,7 +272,7 @@ class SearchForm extends React.Component {
                 tags: newTags,
                 isAdvanced: true,
                 analysisTags: newAnalysisTags,
-                sliderSearchValues: sliderSearchValues,
+                sliderSearchValues: this.state.sliderValues,
             });
         }
     };
@@ -426,7 +412,6 @@ SearchForm.propTypes = {
     tagData: PropTypes.array,
     photographerData: PropTypes.array,
     analysisTagData: PropTypes.array,
-    analysisTagMap: PropTypes.object,
     analysisValueRanges: PropTypes.object,
 };
 
@@ -507,8 +492,7 @@ export class Search extends React.Component {
                             updateSearchData={this.updateSearchData}
                             tagData={this.state.tagData}
                             photographerData={this.state.photographerData}
-                            analysisTagData={Object.keys(this.state.analysisTagData)}
-                            analysisTagMap={this.state.analysisTagData}
+                            analysisTagData={this.state.analysisTagData}
                             analysisValueRanges={this.state.valueRanges}
                         />
                     </div>

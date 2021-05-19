@@ -297,7 +297,10 @@ def search(request):
                          Q(photoanalysisresult__result__icontains=tag)
 
         for analysis_tag in analysis_tags:
-            photo_obj = photo_obj.filter(Q(photoanalysisresult__name=analysis_tag)).distinct()
+            photo_obj = photo_obj.filter(
+                # Map display name to internal name and search for photos with matching analysis
+                Q(photoanalysisresult__name=ANALYSIS_TAGS[analysis_tag])
+            ).distinct()
             if slider_search_values.get(analysis_tag):
                 min_value, max_value = slider_search_values[analysis_tag]
                 print(f'Searching between {min_value} and {max_value} for {analysis_tag}')
@@ -338,11 +341,12 @@ def get_tags(request):
         while tag:
             tags.append(tag.strip())
             tag = file.readline()
+    analysis_tags = list(ANALYSIS_TAGS.keys())
     photographer_obj = Photographer.objects.all()
     photographer_serializer = PhotographerSearchSerializer(photographer_obj, many=True)
     return Response({
         'tags': tags,
         'photographers': photographer_serializer.data,
-        'analysisTags': ANALYSIS_TAGS,
-        'valueRanges': get_analysis_value_ranges(ANALYSIS_TAGS.keys())
+        'analysisTags': analysis_tags,
+        'valueRanges': get_analysis_value_ranges(analysis_tags)
     })
