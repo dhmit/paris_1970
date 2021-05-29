@@ -16,6 +16,9 @@ export const getSource = (photoData) => {
     );
     const displaySide = availableSides.length > 0 ? availableSides[0] : '';
     const source = photoData[`${displaySide}_src`];
+    if (source === undefined) {
+        return '';
+    }
     const fileId = source.split('=')[1];
     return `https://drive.google.com/thumbnail?authuser=0&sz=w100&id=${fileId}`;
 };
