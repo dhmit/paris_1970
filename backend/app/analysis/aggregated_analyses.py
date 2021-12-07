@@ -4,8 +4,8 @@ Module to aggregate analysis results for photos
 
 import os
 
-from functools import reduce
 from app.models import PhotoAnalysisResult
+from app.analysis.yolo_pop_density import object_density
 
 from django.conf import settings
 
@@ -128,11 +128,4 @@ def max_object_density(object_name):
     def run(yolo_dicts):
         densities = [object_density(object_name, yolo_dict) for yolo_dict in yolo_dicts]
         return max(densities)
-
     return run
-
-
-def person_density_calc(photo):
-    return object_density("person", PhotoAnalysisResult.objects.filter(
-        name="yolo_model", photo=photo
-    ).first().parsed_result())
