@@ -1,8 +1,83 @@
 import React from 'react';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import Slider from '@material-ui/core/Slider';
+import Input from '@material-ui/core/Input';
 import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 import { getSource } from '../analysisView/analysisView';
+
+
+function analysisSliderInput(
+    analysisName, value, bound, defaultRange, inputChangeFunc, sliderBlurFunc,
+) {
+    const [minValue, maxValue] = defaultRange;
+
+    return (
+        <Input
+            value={value}
+            margin="dense"
+            onChange={(e) => inputChangeFunc(e, analysisName, bound)}
+            onBlur={() => sliderBlurFunc(analysisName)}
+            inputProps={{
+                'step': 1,
+                'min': minValue,
+                'max': maxValue,
+                'type': 'number',
+                'aria-labelledby': 'input-slider',
+            }}
+        />
+    );
+}
+
+
+function analysisSlider(
+    analysisName, currentRange, defaultRange, sliderChangeFunc, inputChangeFunc, sliderBlurFunc,
+) {
+    const [minValue, maxValue] = defaultRange;
+
+    return (
+        <div key={analysisName}>
+            <Typography id="range-slider" gutterBottom>
+                {analysisName}
+            </Typography>
+            <Grid container spacing={2} alignItems="center">
+                <Grid item>
+                    {analysisSliderInput(
+                        analysisName,
+                        currentRange[0],
+                        'lower',
+                        defaultRange,
+                        inputChangeFunc,
+                        sliderBlurFunc,
+                    )}
+                </Grid>
+                <Grid item xs>
+                    <Slider
+                        value={typeof currentRange === 'object' ? currentRange : defaultRange}
+                        onChange={(e, v) => sliderChangeFunc(e, v, analysisName)}
+                        min={minValue}
+                        max={maxValue}
+                        valueLabelDisplay="auto"
+                        aria-labelledby="range-slider"
+                    />
+                </Grid>
+                <Grid item>
+                    {analysisSliderInput(
+                        analysisName,
+                        currentRange[1],
+                        'upper',
+                        defaultRange,
+                        inputChangeFunc,
+                        sliderBlurFunc,
+                    )}
+                </Grid>
+            </Grid>
+        </div>
+    );
+}
+
 
 class SearchForm extends React.Component {
     constructor(props) {
@@ -12,6 +87,8 @@ class SearchForm extends React.Component {
             photographer: '',
             caption: '',
             tags: [],
+            analysisTags: [],
+            sliderValues: {},
         };
     }
 
@@ -29,11 +106,30 @@ class SearchForm extends React.Component {
         });
     }
 
+    handleAnalysisSelectDropdownChange = (selectedOptions) => {
+        const newSliderValues = {};
+        const analysisTagValues = this.getTagValues(selectedOptions);
+        for (const analysisName of analysisTagValues) {
+            if (analysisName in this.state.sliderValues) {
+                newSliderValues[analysisName] = this.state.sliderValues[analysisName];
+            } else if (analysisName in this.props.analysisValueRanges) {
+                const [minValue, maxValue] = this.props.analysisValueRanges[analysisName];
+                newSliderValues[analysisName] = [minValue, maxValue];
+            }
+        }
+        this.setState({
+            ...this.state,
+            analysisTags: selectedOptions,
+            sliderValues: newSliderValues,
+        });
+    }
+
     handleSearch = async (body) => {
         const searchResponse = await fetch('/api/search/', {
             method: 'POST',
             body: JSON.stringify(body),
         });
+        console.log('Called handle search');
         const searchData = await searchResponse.json();
         let searchText = searchData.length + ' photographs';
         if (body.keyword) {
@@ -53,6 +149,9 @@ class SearchForm extends React.Component {
         }
         if (body.tags && body.tags.length > 0) {
             searchText += ' with tags [' + body.tags + ']';
+        }
+        if (body.analysisTags && body.analysisTags.length > 0) {
+            searchText += ' with result for [' + body.analysisTags + ']';
         }
         this.props.updateSearchData({
             data: searchData,
@@ -79,31 +178,134 @@ class SearchForm extends React.Component {
         }
     };
 
+    setSliderValue(analysisName, newLowerBound, newUpperBound) {
+        const newSliderValues = this.state.sliderValues;
+        newSliderValues[analysisName] = [newLowerBound, newUpperBound];
+        this.setState({
+            ...this.state,
+            sliderValues: newSliderValues,
+        });
+    }
+
+    handleSliderChange = (event, value, analysisName) => {
+        const [newLowerBound, newUpperBound] = value;
+        this.setSliderValue(analysisName, newLowerBound, newUpperBound);
+    }
+
+    handleSliderInputChange = (event, analysisName, bound) => {
+        const [currentLowerValue, currentUpperValue] = this.state.sliderValues[analysisName];
+        const [minValue, maxValue] = this.props.analysisValueRanges[analysisName];
+        const newSliderValues = this.state.sliderValues;
+
+        // Do nothing if the slider input is blank
+        if (event.target.value === '') {
+            return;
+        }
+
+        let newValue = Number(event.target.value);
+        if (bound === 'lower') {
+            if (newValue > currentUpperValue) {
+                newValue = currentUpperValue;
+            } else if (newValue < minValue) {
+                newValue = minValue;
+            }
+            newSliderValues[analysisName] = [newValue, currentUpperValue];
+        } else if (bound === 'upper') {
+            if (newValue < currentLowerValue) {
+                newValue = currentLowerValue;
+            } else if (newValue > maxValue) {
+                newValue = maxValue;
+            }
+            newSliderValues[analysisName] = [currentLowerValue, newValue];
+        }
+
+        this.setState({
+            ...this.state,
+            sliderValues: newSliderValues,
+        });
+    };
+
+    handleSliderBlur = (analysisName) => {
+        // Used when slider changed by dragging after changing inputs
+        // Needed if inputs are not bounded by the slider's maximum and minimum values
+        const [currentLowerValue, currentUpperValue] = this.state.sliderValues[analysisName];
+        const [minValue, maxValue] = this.props.analysisValueRanges[analysisName];
+        if (currentLowerValue < minValue) {
+            this.setSliderValue(analysisName, minValue, currentUpperValue);
+        } else if (currentUpperValue > maxValue) {
+            this.setSliderValue(analysisName, currentLowerValue, maxValue);
+        }
+    };
+
+    getTagValues(selectedOptions) {
+        const newTags = [];
+        if (selectedOptions) {
+            for (const tag of selectedOptions) {
+                newTags.push(tag.value);
+            }
+        }
+        return newTags;
+    }
+
+    getPhotoTagValues() {
+        return this.getTagValues(this.state.tags);
+    }
+
+    getAnalysisTagValues() {
+        return this.getTagValues(this.state.analysisTags);
+    }
+
     handleAdvancedSubmit = async (event) => {
         event.preventDefault();
         if (this.state.photographer.trim() || this.state.caption.trim()
-            || this.state.tags.length > 0) {
+            || (this.state.tags && this.state.tags.length > 0)
+            || (this.state.analysisTags && this.state.analysisTags.length > 0)) {
             const photographerParts = this.state.photographer.split(',');
             const photographerName = photographerParts[0] ? photographerParts[0] : '';
             const photographerId = photographerParts[1] ? photographerParts[1] : '';
-            const newTags = [];
-            for (const tag of this.state.tags) {
-                newTags.push(tag.value);
-            }
+            const newTags = this.getPhotoTagValues();
+            const newAnalysisTags = this.getAnalysisTagValues();
             await this.handleSearch({
                 photographerName,
                 photographerId,
                 caption: this.state.caption,
                 tags: newTags,
                 isAdvanced: true,
+                analysisTags: newAnalysisTags,
+                sliderSearchValues: this.state.sliderValues,
             });
         }
     };
 
     render() {
         const tagOptions = this.props.tagData.map((tag) => ({ value: tag, label: tag }));
+        const analysisTagOptions = this.props.analysisTagData.map(
+            (tag) => ({ value: tag, label: tag }),
+        );
 
         const photographerData = this.props.photographerData;
+
+        const sliders = [];
+        if (this.state.analysisTags) {
+            const currentAnalysisTags = this.getTagValues(this.state.analysisTags);
+            for (let i = 0; i < currentAnalysisTags.length; i++) {
+                if (currentAnalysisTags[i] in this.props.analysisValueRanges) {
+                    const analysisName = currentAnalysisTags[i];
+                    const currentSliderRange = this.state.sliderValues[analysisName];
+                    const defaultSliderRange = this.props.analysisValueRanges[analysisName];
+                    sliders.push(
+                        analysisSlider(
+                            analysisName,
+                            currentSliderRange,
+                            defaultSliderRange,
+                            this.handleSliderChange,
+                            this.handleSliderInputChange,
+                            this.handleSliderBlur,
+                        ),
+                    );
+                }
+            }
+        }
 
         return (
             <div>
@@ -186,6 +388,19 @@ class SearchForm extends React.Component {
                         />
                     </label>
                     <br/>
+                    <label className='input-div'>
+                        <p className='search-label'>Analysis Names:</p>
+                        <Select
+                            defaultValue={this.state.analysisTags}
+                            isMulti
+                            name="analysisTags"
+                            options={analysisTagOptions}
+                            onChange={this.handleAnalysisSelectDropdownChange}
+                            menuPlacement="auto"
+                            menuPosition="fixed"
+                        />
+                    </label>
+                    {sliders}
                     <input type="submit" value="Search" />
                 </form>
             </div>
@@ -196,6 +411,8 @@ SearchForm.propTypes = {
     updateSearchData: PropTypes.func,
     tagData: PropTypes.array,
     photographerData: PropTypes.array,
+    analysisTagData: PropTypes.array,
+    analysisValueRanges: PropTypes.object,
 };
 
 export class Search extends React.Component {
@@ -208,6 +425,8 @@ export class Search extends React.Component {
             searchedText: '',
             tagData: null,
             photographerData: null,
+            analysisTagData: null,
+            valueRanges: null,
         };
     }
 
@@ -219,7 +438,9 @@ export class Search extends React.Component {
         try {
             const searchTagResponse = await fetch('/api/get_tags/');
             const searchTags = await searchTagResponse.json();
-            const { tags, photographers } = searchTags;
+            const {
+                tags, photographers, analysisTags, valueRanges,
+            } = searchTags;
             // Sort by name and then by number, if the photographers have one
             photographers.sort((a, b) => {
                 const aName = a.name;
@@ -244,7 +465,13 @@ export class Search extends React.Component {
                 }
                 return 0;
             });
-            this.setState({ photographerData: photographers, tagData: tags, loading: false });
+            this.setState({
+                photographerData: photographers,
+                tagData: tags,
+                analysisTagData: analysisTags,
+                valueRanges: valueRanges,
+                loading: false,
+            });
         } catch (e) {
             console.log(e);
         }
@@ -252,7 +479,7 @@ export class Search extends React.Component {
 
     // This follows the full text + advanced search model here: http://photogrammar.yale.edu/search/
     render() {
-        if (!this.state.tagData || !this.state.photographerData) {
+        if (!this.state.tagData || !this.state.photographerData || !this.state.analysisTagData) {
             return (<LoadingPage/>);
         }
         return (
@@ -265,6 +492,8 @@ export class Search extends React.Component {
                             updateSearchData={this.updateSearchData}
                             tagData={this.state.tagData}
                             photographerData={this.state.photographerData}
+                            analysisTagData={this.state.analysisTagData}
+                            analysisValueRanges={this.state.valueRanges}
                         />
                     </div>
                     <div className='col-sm-12 col-lg-8'>

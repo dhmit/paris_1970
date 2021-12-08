@@ -4,11 +4,13 @@ These view functions and classes implement API endpoints
 import ast
 import json
 import os
+import math
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from django.db.models import Q
+from django.db.models import Q, FloatField
+from django.db.models.functions import Cast
 
 from config.settings.base import YOLO_DIR
 from .models import (
@@ -26,8 +28,30 @@ from .serializers import (
     MapSquareSerializerWithoutPhotos,
     PhotographerSerializer,
     PhotographerSearchSerializer,
-    CorpusAnalysisResultsSerializer,
+    CorpusAnalysisResultsSerializer
 )
+
+ANALYSIS_TAGS = {
+    'detail_fft2': 'detail_fft2',
+    'find_vanishing_point': 'find_vanishing_point',
+    'foreground_percentage': 'foreground_percentage',
+    'combined_indoor': 'indoor_analysis.combined_indoor',
+    'courtyard_frame': 'indoor_analysis.courtyard_frame',
+    'find_windows': 'indoor_analysis.find_windows',
+    'gradient_analysis': 'indoor_analysis.gradient_analysis',
+    'local_variance': 'local_variance',
+    'mean_detail': 'mean_detail',
+    'photographer_caption_length': 'photographer_caption_length',
+    'resnet18_cosine_similarity': 'photo_similarity.resnet18_cosine_similarity',
+    'resnet18_mean_squares_similarity': 'photo_similarity.resnet18_mean_squares_similarity',
+    'resnet18_pairwise_similarity': 'photo_similarity.resnet18_pairwise_similarity',
+    'pop_density_detection': 'pop_density_detection',
+    'portrait_detection': 'portrait_detection',
+    'stdev': 'stdev',
+    'text_ocr': 'text_ocr',
+    'whitespace_percentage': 'whitespace_percentage',
+    'yolo_model': 'yolo_model'
+}
 
 
 @api_view(['GET'])
@@ -137,7 +161,7 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
             sorted_analysis_obj = sorted(
                 analysis_obj, key=lambda instance: instance.parsed_result()
             )
-        elif isinstance(test_obj,dict) and object_name:
+        elif isinstance(test_obj, dict) and object_name:
             relevant_objects = [
                 instance for instance in analysis_obj if object_name in instance.parsed_result()
             ]
@@ -168,22 +192,22 @@ def get_all_photos_in_order(request):
 
 
 @api_view(['GET'])
-def get_photo_by_similarity(request, map_square_number, photo_number):
+def get_photo_by_similarity(request, map_square_number, photo_number, num_similar_photos):
     """
     API endpoint to get top 10 similar photos of a specific photo
     """
 
     photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
     analysis_obj_list = PhotoAnalysisResult.objects.filter(
-        name="resnet18_cosine_similarity",
+        name="photo_similarity.resnet18_cosine_similarity",
         photo=photo_obj,
     )
 
     similar_photos = []
     if analysis_obj_list:
         analysis_obj = analysis_obj_list[0]
-        # splices the list of similar photos to get top 10 photos
-        similarity_list = ast.literal_eval(analysis_obj.result)[:10]
+        # splices the list of similar photos to get top 'num_similar_photos' photos
+        similarity_list = ast.literal_eval(analysis_obj.result)[::-1][:num_similar_photos]
 
         for simPhoto in similarity_list:
             map_square = simPhoto[0]
@@ -196,6 +220,7 @@ def get_photo_by_similarity(request, map_square_number, photo_number):
     return Response(serializer.data)
 
 
+@api_view(['GET'])
 def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     """
     API endpoint to get clusters of similar photos
@@ -205,11 +230,44 @@ def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     return Response(serializer.data)
 
 
+def get_analysis_value_ranges(analysis_names):
+    """
+    Function used to get the value ranges for the analysis search on the search page
+    :return: Dictionary of 2-value lists representing the minimum and maximum values respectively,
+    of the analysis.
+    """
+    value_ranges = {}
+    all_results = PhotoAnalysisResult.objects.all()
+    for analysis_name in analysis_names:
+        analysis_results = all_results.filter(name=analysis_name)
+
+        # Try sorting the values of the results and ignore the analysis name if the results
+        # cannot be sorted (results of type dict or varying types)
+        try:
+            sorted_results = sorted(
+                analysis_results, key=lambda instance: instance.parsed_result()
+            )
+        except TypeError:
+            continue
+        if not sorted_results:
+            continue
+
+        min_value = sorted_results[0].parsed_result()
+        max_value = sorted_results[-1].parsed_result()
+
+        # TODO: Add support for categorical values
+        if type(min_value) in [int, float] and type(max_value) in [int, float]:
+            value_ranges[analysis_name] = [math.floor(min_value), math.ceil(max_value)]
+
+    return value_ranges
+
+
 @api_view(['POST'])
 def search(request):
     """
     API endpoint to search for photos that match the search query
     """
+    # pylint: disable=too-many-locals
     query = json.loads(request.body)
     is_advanced = query['isAdvanced']
 
@@ -218,8 +276,12 @@ def search(request):
         photographer_num = query['photographerId']
         caption = query['caption'].strip()
         tags = query['tags']
+        analysis_tags = query['analysisTags']
+        slider_search_values = query['sliderSearchValues']
+        print(slider_search_values)
 
         django_query = Q()
+        photo_obj = Photo.objects.all()
         if photographer_name:
             django_query &= Q(photographer__name=photographer_name)
 
@@ -229,11 +291,30 @@ def search(request):
         if caption:
             django_query &= Q(photographer_caption__icontains=caption) | \
                             Q(librarian_caption__icontains=caption)
-        if tags:
-            for tag in tags:
-                django_query &= Q(photoanalysisresult__name='yolo_model') & \
-                                Q(photoanalysisresult__result__icontains=tag)
-        photo_obj = Photo.objects.filter(django_query)
+
+        for tag in tags:
+            django_query &= Q(photoanalysisresult__name='yolo_model') & \
+                         Q(photoanalysisresult__result__icontains=tag)
+
+        for analysis_tag in analysis_tags:
+            photo_obj = photo_obj.filter(
+                # Map display name to internal name and search for photos with matching analysis
+                Q(photoanalysisresult__name=ANALYSIS_TAGS[analysis_tag])
+            ).distinct()
+            if slider_search_values.get(analysis_tag):
+                min_value, max_value = slider_search_values[analysis_tag]
+                print(f'Searching between {min_value} and {max_value} for {analysis_tag}')
+                # Save the analysis results casted as float values to a new 'parsed_result' field
+                photo_obj = photo_obj.annotate(
+                    parsed_result=Cast('photoanalysisresult__result', FloatField())
+                )
+                # Filter for photos that have a result in the specified range
+                photo_obj = photo_obj.filter(
+                    Q(parsed_result__gte=min_value) &
+                    Q(parsed_result__lte=max_value)
+                )
+
+        photo_obj = photo_obj.filter(django_query).distinct()
     else:
         keyword = query['keyword'].strip()
         photo_obj = Photo.objects.filter(Q(photographer__name__icontains=keyword) |
@@ -241,8 +322,8 @@ def search(request):
                                          Q(photographer_caption__icontains=keyword) |
                                          Q(librarian_caption__icontains=keyword) |
                                          (Q(photoanalysisresult__name='yolo_model') &
-                                          Q(photoanalysisresult__result__icontains=keyword)))\
-            .distinct()
+                                          Q(photoanalysisresult__result__icontains=keyword))
+                                         ).distinct()
         # distinct is to prevent duplicates
 
     serializer = PhotoSerializer(photo_obj, many=True)
@@ -252,14 +333,21 @@ def search(request):
 @api_view(['GET'])
 def get_tags(request):
     """
-    API endpoint to get YOLO model tags and photographer data for search
+    API endpoint to get YOLO model tags, photographer data, and analysis tags for search
     """
     tags = []
-    with open(os.path.join(YOLO_DIR, 'coco.names'), 'r') as file:
+    coco_dir = os.path.join(YOLO_DIR, 'coco.names')
+    with open(coco_dir, encoding='utf-8') as file:
         tag = file.readline()
         while tag:
             tags.append(tag.strip())
             tag = file.readline()
+    analysis_tags = list(ANALYSIS_TAGS.keys())
     photographer_obj = Photographer.objects.all()
-    serializer = PhotographerSearchSerializer(photographer_obj, many=True)
-    return Response({'tags': tags, 'photographers': serializer.data})
+    photographer_serializer = PhotographerSearchSerializer(photographer_obj, many=True)
+    return Response({
+        'tags': tags,
+        'photographers': photographer_serializer.data,
+        'analysisTags': analysis_tags,
+        'valueRanges': get_analysis_value_ranges(analysis_tags)
+    })

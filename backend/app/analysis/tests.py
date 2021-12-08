@@ -258,10 +258,10 @@ class AnalysisTestBase(TestCase):
                            '100x100_500px-white_500px-black': 0,
                            '100x100-HalfSquare_4': 125}
 
-        for image in expected_values:
+        for image, expected_value in expected_values.items():
             result = stdev.analyze(self.add_photo(image))
             print(f'StDev performed on {image}. Result: {result}')
-            self.assertEqual(expected_values[image], int(result))
+            self.assertEqual(expected_value, int(result))
 
     def test_local_variance(self):
         """
@@ -279,10 +279,10 @@ class AnalysisTestBase(TestCase):
                            '100x100_500px-white_500px-black': 1300,
                            '100x100-HalfSquare_4': 1305}
 
-        for image in expected_values:
+        for image, expected_value in expected_values.items():
             result = local_variance.analyze(self.add_photo(image))
             print(f'Local Variance performed on {image}. Result: {result}')
-            self.assertEqual(expected_values[image], int(result))
+            self.assertEqual(expected_value, int(result))
 
     def test_detail_fft2(self):
         """
@@ -299,10 +299,10 @@ class AnalysisTestBase(TestCase):
                            '100x100_500px-white_500px-black': 0,
                            '100x100-HalfSquare_4': 0}
 
-        for image in expected_values:
+        for image, expected_value in expected_values.items():
             result = detail_fft2.analyze(self.add_photo(image))
             print(f'FFT performed on {image}. Result: {result}')
-            self.assertEqual(expected_values[image], int(result))
+            self.assertEqual(expected_value, int(result))
 
     def test_mean_detail(self):
         """
@@ -313,10 +313,10 @@ class AnalysisTestBase(TestCase):
                            '100x100-GreySquare': 0, '100x100-WhiteSquare': 0,
                            '100x76-CheckeredRectangle_1': 1073, '100x76-CheckeredRectangle_2': 1073}
 
-        for image in expected_values:
+        for image, expected_value in expected_values.items():
             result = mean_detail.analyze(self.add_photo(image))
             print(f'Mean Detail performed on {image}. Result: {result}')
-            self.assertEqual(expected_values[image], int(result))
+            self.assertEqual(expected_value, int(result))
 
     def test_find_vanishing_point(self):
         """

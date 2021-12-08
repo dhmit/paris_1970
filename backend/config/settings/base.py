@@ -19,12 +19,13 @@ DB_PATH = os.path.join(BACKEND_DIR, 'db.sqlite3')
 PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
 BACKEND_DATA_DIR = os.path.join(BACKEND_DIR, 'data')
 GOOGLE_TOKEN_FILE = os.path.join(BACKEND_DIR, 'token.pickle')
-ANALYSIS_PICKLE_PATH = Path(BACKEND_DIR, 'app', 'analysis', 'analysis_results')
+ANALYSIS_DIR = Path(PROJECT_ROOT, 'backend', 'app', 'analysis')
+ANALYSIS_PICKLE_PATH = Path(BACKEND_DIR, ANALYSIS_DIR, 'analysis_results')
 LOCAL_PHOTOS_DIR = Path(PROJECT_ROOT, 'backend', 'data', 'local_photos')
 TEST_PHOTOS_DIR = Path(PROJECT_ROOT, 'backend', 'data', 'test_photos')
 TESSDATA_DIR = Path(PROJECT_ROOT, 'backend', 'data', 'tessdata')
 TEXT_DETECTION_PATH = Path(BACKEND_DATA_DIR, 'frozen_east_text_detection.pb')
-YOLO_DIR = Path(PROJECT_ROOT, 'backend', 'app', 'analysis', 'yolo_files')
+YOLO_DIR = Path(ANALYSIS_DIR, 'yolo_files')
 
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 

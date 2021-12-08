@@ -3,7 +3,6 @@ import React from 'react';
 import { getSource } from '../analysisView/analysisView';
 import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 
-// TODO: fix similarityView, photos don't show
 
 export class AllPhotosView extends React.Component {
     constructor(props) {
@@ -62,7 +61,8 @@ export class AllPhotosView extends React.Component {
                         key={k}
                         title={`Map Square: ${photo['map_square_number']},`
                                + `\nPhoto: ${photo['number']}`}
-                        href={`/similar_photos/${photo['map_square_number']}/${photo['number']}/`}
+                        href={`/similar_photos/${photo['map_square_number']}/`
+                            + `${photo['number']}/10/`}
                     >
                         <img
                             alt={photo.alt}
