@@ -67,10 +67,7 @@ class Map extends React.Component {
 
                         // HOT option
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
-                        url="https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
-
-
-
+                        url="https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
                     />
 
                     {
@@ -233,11 +230,11 @@ export class IndexView extends React.Component {
             return (<LoadingPage/>);
         }
 
-        return (<React.Fragment className="landing-page">
+        return (<>
             <Navbar />
             <Map mapData={this.state.mapData} />
             <Footer />
-        </React.Fragment>);
+        </>);
     }
 }
 export default IndexView;
