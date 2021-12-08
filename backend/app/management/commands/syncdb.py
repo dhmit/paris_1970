@@ -342,7 +342,7 @@ def populate_database(
         # model. If they aren't there, it sets the coordinates into the default
         # values: '0.0, 0.0'
         if len(model_kwargs) != 0 and model_name == 'MapSquare':
-            if model_kwargs['number'] in mp_coords_dict.keys():
+            if model_kwargs['number'] in mp_coords_dict:
                 model_kwargs['coordinates'] = mp_coords_dict[model_kwargs['number']]
             else:
                 model_kwargs['coordinates'] = '0.0, 0.0'
