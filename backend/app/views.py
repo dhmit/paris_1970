@@ -336,7 +336,8 @@ def get_tags(request):
     API endpoint to get YOLO model tags, photographer data, and analysis tags for search
     """
     tags = []
-    with open(os.path.join(YOLO_DIR, 'coco.names'), 'r') as file:
+    coco_dir = os.path.join(YOLO_DIR, 'coco.names')
+    with open(coco_dir, encoding='utf-8') as file:
         tag = file.readline()
         while tag:
             tags.append(tag.strip())
