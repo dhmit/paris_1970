@@ -75,7 +75,9 @@ def object_density(object_name, yolo_dict, photo_dim=(10000, 10000)):
     :return: A number representing how densely the specified object type is packed
     in an image. More overlapping objects corresponds to higher density.
     """
-    boxes = *filter(lambda box: box['label'] == object_name, yolo_dict.get("boxes", {})),
+    yolo_boxes = yolo_dict.get("boxes", {})
+    boxes = [box for box in yolo_boxes if box['label'] == object_name]
+
     if len(boxes) == 1:
         photo_width, photo_height = photo_dim
         rect1 = box_to_rect(boxes[0])
@@ -85,17 +87,20 @@ def object_density(object_name, yolo_dict, photo_dim=(10000, 10000)):
             boxes[0]['width'],
             boxes[0]['height']
         )
+        # pylint: disable=arguments-out-of-order
         return overlap_2d(rect1, rect2) + overlap_2d(rect2, rect1)
+
     density = 0
-    for i in range(len(boxes)):
+    for i, box_i in enumerate(boxes):
         density_i = 0
-        for j in range(len(boxes)):
+        for j, box_j in enumerate(boxes):
             if i == j:
                 continue
             density_i += overlap_2d(
-                box_to_rect(boxes[i]), box_to_rect(boxes[j])
+                box_to_rect(box_i), box_to_rect(box_j)
             )
         density += density_i / (len(boxes) - 1)
+
     return density
 
 
@@ -104,5 +109,5 @@ def analyze(photo: Photo):
         name="yolo_model", photo=photo
     ).first().parsed_result()
     image = photo.get_image_data()
-    photo_dim = image.shape[:2][::-1] if image else (10000, 10000)
+    photo_dim = image.shape[:2][::-1] if image is not None else (10000, 10000)
     return object_density("person", yolo_dict, photo_dim)

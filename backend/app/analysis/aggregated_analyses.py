@@ -10,13 +10,12 @@ from app.analysis.yolo_pop_density import object_density
 from django.conf import settings
 
 CLASS_NAMES_DIR = os.path.join(settings.YOLO_DIR, 'coco.names')
-with open(CLASS_NAMES_DIR, "r") as file:
+with open(CLASS_NAMES_DIR, encoding='utf-8') as file:
     CLASS_NAMES = [line.strip() for line in file.readlines()]
 
 
 def statistics_analysis(analysis_name, stat_func, photo_filter=lambda i, photo: True):
     """
-
     :param analysis_name:
     :param stat_func:
     :param photo_filter:
@@ -102,8 +101,7 @@ def objects_in_common():
 
 
 def object_percentage(object_labels, any_objects=True):
-
-    if type(object_labels) is str:
+    if isinstance(object_labels, str):
         object_labels = [object_labels]
 
     def run(yolo_dicts):
