@@ -68,13 +68,13 @@ class Command(BaseCommand):
                 model_instances = model.objects.all()
 
             num_computed = 0
-            save_threshold = 20 # Number of analyses that need to be done before pickling
+            save_threshold = 20  # Number of analyses that need to be done before pickling
 
             for model_instance in model_instances:
                 # NOTE: These identifiers assume that the photo number and map square number are
                 #       not None
-                print_msg = f'Running {analysis_name} on {model} {model_instance.id} '\
-                            f'(Photo number: {model_instance.number}, '\
+                print_msg = f'Running {analysis_name} on {model} {model_instance.id} ' \
+                            f'(Photo number: {model_instance.number}, ' \
                             f'Map square: {model_instance.map_square.number})'
                 instance_identifier = f'photo_{model_instance.number}_' \
                                       f'{model_instance.map_square.number}'
@@ -82,7 +82,7 @@ class Command(BaseCommand):
                 should_run_analysis = True
                 if use_pickled:
                     if instance_identifier in stored_results:
-                        print(f'Using stored results on (Photo number: {model_instance.number}, '\
+                        print(f'Using stored results on (Photo number: {model_instance.number}, '
                               f'Map square: {model_instance.map_square.number})')
                         result = stored_results[instance_identifier]
                         should_run_analysis = False

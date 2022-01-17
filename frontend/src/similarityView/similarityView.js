@@ -1,17 +1,11 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
 
+import { getSource } from '../analysisView/analysisView';
 import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 
-const SIDES = {
-    CLEANED: 'cleaned',
-    FRONT: 'front',
-    BACK: 'back',
-    BINDER: 'binder',
-};
-
 /*
-Creates a view to show the top 10 similar photos for a photo given url
+Creates a view to show the most similar photos for a photo given url with a number of photos
  */
 export class SimilarityView extends React.Component {
     constructor(props) {
@@ -25,7 +19,8 @@ export class SimilarityView extends React.Component {
     async componentDidMount() {
         try {
             const apiURL = '/api/similar_photos/'
-            + `${this.props.mapSquareNumber}/${this.props.photoNumber}/`;
+            + `${this.props.mapSquareNumber}/${this.props.photoNumber}/`
+            + `${this.props.numSimilarPhotos}/`;
             const response = await fetch(apiURL);
             if (!response.ok) {
                 this.setState({ loading: false });
@@ -36,15 +31,6 @@ export class SimilarityView extends React.Component {
         } catch (e) {
             console.log(e);
         }
-    }
-
-    getSource(photoData) {
-        const availableSides = Object.values(SIDES).filter(
-            (side) => photoData[`${side}_src`] !== null,
-        );
-        const displaySide = availableSides.length > 0 ? availableSides[0] : '';
-        const source = photoData[`${displaySide}_src`];
-        return source;
     }
 
     render() {
@@ -77,18 +63,16 @@ export class SimilarityView extends React.Component {
                         alt={photo.alt}
                         height={200}
                         width={200}
-                        src={this.getSource(photo)}
+                        src={getSource(photo)}
                     />
                 </a>
             );
         });
 
-
-
         return (<>
             <Navbar />
             <div className="page row">
-                <div className='image-info col-12 col-lg-8'>
+                <div className='display-box analysis-page'>
                     {photos}
                 </div>
             </div>
@@ -99,4 +83,5 @@ export class SimilarityView extends React.Component {
 SimilarityView.propTypes = {
     photoNumber: PropTypes.number,
     mapSquareNumber: PropTypes.number,
+    numSimilarPhotos: PropTypes.number,
 };
