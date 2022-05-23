@@ -42,7 +42,7 @@ def load_yolo():
         sys.exit(1)
 
     net = cv2.dnn.readNet(WEIGHTS, CONFIG)
-    with open(CLASS_NAMES, "r") as file:
+    with open(CLASS_NAMES, encoding='utf-8') as file:
         classes = [line.strip() for line in file.readlines()]
     layers_names = net.getLayerNames()
     output_layers = [layers_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]

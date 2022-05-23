@@ -4,8 +4,8 @@ resnet18_feature_vectors.py
 from pathlib import Path
 
 import torch
-import torchvision.models as models
-import torchvision.transforms as transforms
+from torchvision import models
+from torchvision import transforms
 from torch.autograd import Variable
 
 from django.conf import settings

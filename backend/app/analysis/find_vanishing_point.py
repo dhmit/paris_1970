@@ -104,13 +104,13 @@ def find_van_coord_intersections(lines):
             intersection = find_intersection_between_two_lines((lines[i], lines[j]))
             if intersection is not None:
                 found = False
-                for coord in intersections:
+                for coord, current_intersection in intersections.items():
                     # finds distance between current intersection and past intersections
                     distance = ((intersection[0] - coord[0]) ** 2 + (intersection[1] - coord[1]) **
                                 2) ** (1
                                                                                                 / 2)
                     if distance < distance_tolerance:
-                        intersections[coord].append(intersection)
+                        current_intersection.append(intersection)
                         found = True
                 if not found:
                     intersections[intersection] = [intersection]
@@ -118,10 +118,10 @@ def find_van_coord_intersections(lines):
     van_point_list = []
 
     # finds the largest cluster of intersections
-    for coord in intersections:
-        if len(intersections[coord]) > max_frequency:
-            max_frequency = len(intersections[coord])
-            van_point_list = intersections[coord]
+    for coord, intersection in intersections.items():
+        if len(intersection) > max_frequency:
+            max_frequency = len(intersection)
+            van_point_list = intersection
 
     if max_frequency == 0:
         return None
