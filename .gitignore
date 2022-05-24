@@ -125,9 +125,10 @@ dmypy.json
 .idea/usage.statistics.xml
 .idea/tasks.xml
 .idea/runConfigurations
+.idea/misc.xml
 
 # dependencies
-frontend/node_modules
+node_modules
 /.pnp
 .pnp.js
 
