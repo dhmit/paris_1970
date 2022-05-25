@@ -14,7 +14,7 @@ import {
 } from 'react-bootstrap';
 import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
 
-import Legend from '../legend/legend.js';
+// import Legend from '../legend/legend.js';
 
 class Map extends React.Component {
     state = {
@@ -23,13 +23,13 @@ class Map extends React.Component {
         zoom: 13,
         bounds: [[48.8030, 2.1330], [48.9608, 2.6193]],
         minZoom: 12,
-    }
+    };
 
 
     render() {
         // Sorts the map squares by number of photos (ascending order)
         const sortedMapData = Object.values(this.props.mapData)
-            .sort((a, b) => a.num_photos - b.num_photos);
+        .sort((a, b) => a.num_photos - b.num_photos);
         // Gets the max number of photos in a single square out of all squares to form buckets later
         const maxNumOfPhotos = sortedMapData[sortedMapData.length - 1].num_photos;
         // Creating 5 buckets based on lowest to highest number of photos per square
@@ -44,12 +44,15 @@ class Map extends React.Component {
 
         return (
             <div id="map-container">
-                <Instructions />
+                <Instructions/>
                 <LeafletMap
                     // Initial state of Map
                     center={[this.state.lat, this.state.lng]}
                     zoom={this.state.zoom}
-                    style={{ width: '100%', height: '100%' }}
+                    style={{
+                        width: '100%',
+                        height: '100%'
+                    }}
                     // Sets Map Boundaries - Keeps user from leaving Paris
                     maxBoundsViscosity={1.0}
                     maxBounds={this.state.bounds}
@@ -57,7 +60,7 @@ class Map extends React.Component {
                     zoomControl={false}
                 >
                     <ZoomControl position="bottomleft"/>
-                    <Legend buckets={buckets}/>
+                    {/* <Legend buckets={buckets}/> */}
                     <TileLayer
                         // Sets Map Boundaries - Keeps user from leaving Paris
                         maxBoundsViscosity={1.0}
@@ -101,11 +104,11 @@ class Map extends React.Component {
                             if (numberOfPhotos === 0) {
                                 return (
                                     <Rectangle className="map-grid"
-                                        key={index}
-                                        bounds={mapSquareBounds}
+                                               key={index}
+                                               bounds={mapSquareBounds}
                                     >
                                         <Popup>
-                                            Map Square {index} <br />
+                                            Map Square {index} <br/>
                                             <a href={link}>{numberOfPhotos} photos to show</a>
                                         </Popup>
                                     </Rectangle>
@@ -114,11 +117,11 @@ class Map extends React.Component {
 
                             return (
                                 <Rectangle className={mapSquareBucket}
-                                    key={index}
-                                    bounds={mapSquareBounds}
+                                           key={index}
+                                           bounds={mapSquareBounds}
                                 >
                                     <Popup>
-                                        Map Square {index} <br />
+                                        Map Square {index} <br/>
                                         <a href={link}>{numberOfPhotos} photos to show</a>
                                     </Popup>
                                 </Rectangle>
@@ -179,7 +182,6 @@ function Instructions() {
 }
 
 
-
 export class IndexView extends React.Component {
     constructor(props) {
         super(props);
@@ -208,11 +210,17 @@ export class IndexView extends React.Component {
                     const roughCoordsList = roughCoords.split(', ');
                     const lat = parseFloat(roughCoordsList[0]);
                     const lng = parseFloat(roughCoordsList[1]);
-                    mapSquare.topLeftCoords = { lat, lng };
+                    mapSquare.topLeftCoords = {
+                        lat,
+                        lng
+                    };
                 } else {
                     const lat = 0.0;
                     const lng = 0.0;
-                    mapSquare.topLeftCoords = { lat, lng };
+                    mapSquare.topLeftCoords = {
+                        lat,
+                        lng
+                    };
                 }
             }
 
@@ -231,10 +239,11 @@ export class IndexView extends React.Component {
         }
 
         return (<>
-            <Navbar />
-            <Map mapData={this.state.mapData} />
-            <Footer />
+            <Navbar/>
+            <Map mapData={this.state.mapData}/>
+            <Footer/>
         </>);
     }
 }
+
 export default IndexView;

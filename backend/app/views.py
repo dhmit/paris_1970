@@ -9,6 +9,7 @@ import math
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from django.shortcuts import render
 from django.db.models import Q, FloatField
 from django.db.models.functions import Cast
 
@@ -294,7 +295,7 @@ def search(request):
 
         for tag in tags:
             django_query &= Q(photoanalysisresult__name='yolo_model') & \
-                         Q(photoanalysisresult__result__icontains=tag)
+                            Q(photoanalysisresult__result__icontains=tag)
 
         for analysis_tag in analysis_tags:
             photo_obj = photo_obj.filter(
@@ -351,3 +352,19 @@ def get_tags(request):
         'analysisTags': analysis_tags,
         'valueRanges': get_analysis_value_ranges(analysis_tags)
     })
+
+
+# app views
+def index(request):
+    """
+    Home page
+    """
+
+    context = {
+        'page_metadata': {
+            'title': 'Home page'
+        },
+        'component_name': 'IndexView'
+    }
+
+    return render(request, 'index.html', context)
