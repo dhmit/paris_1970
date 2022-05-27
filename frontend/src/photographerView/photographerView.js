@@ -1,43 +1,43 @@
-import React from 'react';
-import * as PropTypes from 'prop-types';
+import React from "react";
+import * as PropTypes from "prop-types";
 
-import { getSource } from '../analysisView/analysisView';
-import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
+import {getSource} from "../analysisView/analysisView";
+import {Navbar, Footer, LoadingPage} from "../UILibrary/components";
 
-const percentFormat = (x) => Math.floor(x) + '%';
+const percentFormat = (x) => Math.floor(x) + "%";
 const numberFormat = (x) => Math.floor(x);
 
 const ANALYSIS = {
     whitespace_percentage: {
-        displayName: 'Average Whitespace Percentage',
-        analysisType: 'average',
-        displayFormat: percentFormat,
+        displayName: "Average Whitespace Percentage",
+        analysisType: "average",
+        displayFormat: percentFormat
     },
     portrait_detection: {
-        displayName: 'Percentage of Portraits',
-        analysisType: 'count',
-        displayFormat: percentFormat,
+        displayName: "Percentage of Portraits",
+        analysisType: "count",
+        displayFormat: percentFormat
     },
     mean_detail: {
-        displayName: 'Average Mean Detail',
-        analysisType: 'average',
-        displayFormat: numberFormat,
+        displayName: "Average Mean Detail",
+        analysisType: "average",
+        displayFormat: numberFormat
     },
     photographer_caption_length: {
-        displayName: 'Average Photographer Caption Length',
-        analysisType: 'none',
-        displayFormat: numberFormat,
+        displayName: "Average Photographer Caption Length",
+        analysisType: "none",
+        displayFormat: numberFormat
     },
     yolo_model: {
-        displayName: 'Yolo Model',
-        analysisType: 'none',
-        displayFormat: numberFormat,
+        displayName: "Yolo Model",
+        analysisType: "none",
+        displayFormat: numberFormat
     },
     text_ocr: {
-        displayName: 'text_ocr',
-        analysisType: 'none',
-        displayFormat: numberFormat,
-    },
+        displayName: "text_ocr",
+        analysisType: "none",
+        displayFormat: numberFormat
+    }
 };
 
 export class PhotographerView extends React.Component {
@@ -45,7 +45,7 @@ export class PhotographerView extends React.Component {
         super(props);
         this.state = {
             loading: true,
-            photographerData: null,
+            photographerData: null
         };
     }
 
@@ -53,12 +53,12 @@ export class PhotographerView extends React.Component {
         try {
             const response = await fetch(`/api/photographer/${this.props.photographerNumber}/`);
             if (!response.ok) {
-                this.setState({ loading: false });
+                this.setState({loading: false});
             } else {
                 const photographerData = await response.json();
                 this.setState({
                     photographerData,
-                    loading: false,
+                    loading: false
                 });
             }
         } catch (e) {
@@ -68,29 +68,31 @@ export class PhotographerView extends React.Component {
 
     getAggregatePhotoAnalysis = (photos) => {
         const analysisAcc = {};
-        Object.keys(ANALYSIS).forEach((analysisName) => {
+        Object.keys(ANALYSIS)
+        .forEach((analysisName) => {
             analysisAcc[analysisName] = 0;
         });
         photos.forEach((photo) => {
-            photo['analyses'].forEach((analysis) => {
+            photo["analyses"].forEach((analysis) => {
                 const analysisName = analysis.name;
                 const result = analysis.result;
                 const analysisType = ANALYSIS[analysisName].analysisType;
-                if (analysisType === 'average') {
+                if (analysisType === "average") {
                     analysisAcc[analysisName] += parseFloat(result);
-                } else if (analysisType === 'count') {
+                } else if (analysisType === "count") {
                     analysisAcc[analysisName] += 1;
                 }
             });
         });
 
         const results = {};
-        Object.keys(analysisAcc).forEach((analysisName) => {
+        Object.keys(analysisAcc)
+        .forEach((analysisName) => {
             const analysisType = ANALYSIS[analysisName].analysisType;
             let result;
-            if (analysisType === 'average') {
+            if (analysisType === "average") {
                 result = analysisAcc[analysisName] / photos.length;
-            } else if (analysisType === 'count') {
+            } else if (analysisType === "count") {
                 result = analysisAcc[analysisName];
             }
             results[analysisName] = ANALYSIS[analysisName].displayFormat(result);
@@ -111,22 +113,23 @@ export class PhotographerView extends React.Component {
             name,
             map_square: mapSquare,  // n.b. here we rename while doing the object destructuring
             number,
-            photos,
+            photos
         } = this.state.photographerData;
 
         const photographerAnalysis = this.getAggregatePhotoAnalysis(photos);
         return (<>
             <Navbar/>
-            <div className='page row'>
-                <div className='col-6'>
+            <div className="page row">
+                <div className="col-6">
                     <h1>{name} (ID: {number})</h1>
                     <h2 className="h3">Assigned to:</h2>
                     <h3 className="h5">Map Square {mapSquare.number}</h3>
                 </div>
-                <div className='col-6'>
+                <div className="col-6">
                     <h2 className="h3">Analysis Results</h2>
-                    {Object.keys(photographerAnalysis).map((analysis) => {
-                        if (ANALYSIS[analysis].analysisType !== 'none') {
+                    {Object.keys(photographerAnalysis)
+                    .map((analysis) => {
+                        if (ANALYSIS[analysis].analysisType !== "none") {
                             return (
                                 <div key={analysis}>
                                     <h3 className="h5">{ANALYSIS[analysis].displayName}:</h3>
@@ -134,22 +137,21 @@ export class PhotographerView extends React.Component {
                                 </div>
                             );
                         }
-                        return '';
+                        return "";
                     })}
                 </div>
                 <h2 className="h3">Photos Gallery:</h2>
-                <div className='photo_gallery'>
+                <div className="photo_gallery">
                     {photos.map((photo, k) => {
                         if (photo.binder_src || photo.front_src || photo.cleaned_src) {
                             return (
                                 <div className="photo" key={k}>
                                     <a
                                         key={k}
-                                        title={`Map Square: ${photo['map_square_number']}`
-                                        + `, Number: ${photo['number']}`}
-                                        href={`/photo/${photo['map_square_number']}`
-                                        + `/${photo['number']}/`}
-                                    >
+                                        title={`Map Square: ${photo["map_square_number"]}` +
+                                        `, Number: ${photo["number"]}`}
+                                        href={`/photo/${photo["map_square_number"]}` +
+                                        `/${photo["number"]}/`}>
                                         <img
                                             alt={photo.alt}
                                             height={150}
@@ -160,7 +162,7 @@ export class PhotographerView extends React.Component {
                                 </div>
                             );
                         }
-                        return '';
+                        return "";
                     })}
                 </div>
             </div>
@@ -168,6 +170,7 @@ export class PhotographerView extends React.Component {
         </>);
     }
 }
+
 PhotographerView.propTypes = {
-    photographerNumber: PropTypes.number,
+    photographerNumber: PropTypes.number
 };

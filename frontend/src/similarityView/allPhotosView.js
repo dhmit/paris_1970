@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
-import { getSource } from '../analysisView/analysisView';
-import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
+import {getSource} from "../analysisView/analysisView";
+import {Navbar, Footer, LoadingPage} from "../UILibrary/components";
 
 
 export class AllPhotosView extends React.Component {
@@ -10,21 +10,21 @@ export class AllPhotosView extends React.Component {
         this.state = {
             loading: true,
             photoData: null,
-            displayOrder: 'Ascending',
+            displayOrder: "Ascending"
         };
     }
 
     async componentDidMount() {
         try {
-            const apiURL = '/api/all_photos';
+            const apiURL = "/api/all_photos";
             const response = await fetch(apiURL);
             if (!response.ok) {
-                this.setState({ loading: false });
+                this.setState({loading: false});
             } else {
                 const photoData = await response.json();
                 this.setState({
                     photoData,
-                    loading: false,
+                    loading: false
                 });
             }
         } catch (e) {
@@ -34,15 +34,15 @@ export class AllPhotosView extends React.Component {
 
     reverseOrder = () => {
         let newOrder;
-        if (this.state.displayOrder === 'Descending') {
-            newOrder = 'Ascending';
+        if (this.state.displayOrder === "Descending") {
+            newOrder = "Ascending";
         } else {
-            newOrder = 'Descending';
+            newOrder = "Descending";
         }
         const newPhotoData = this.state.photoData.reverse();
         this.setState({
             photoData: newPhotoData,
-            displayOrder: newOrder,
+            displayOrder: newOrder
         });
     };
 
@@ -59,11 +59,10 @@ export class AllPhotosView extends React.Component {
                 return (
                     <a
                         key={k}
-                        title={`Map Square: ${photo['map_square_number']},`
-                               + `\nPhoto: ${photo['number']}`}
-                        href={`/similar_photos/${photo['map_square_number']}/`
-                            + `${photo['number']}/10/`}
-                    >
+                        title={`Map Square: ${photo["map_square_number"]},` +
+                        `\nPhoto: ${photo["number"]}`}
+                        href={`/similar_photos/${photo["map_square_number"]}/` +
+                        `${photo["number"]}/10/`}>
                         <img
                             alt={photo.alt}
                             height={100}
@@ -73,27 +72,27 @@ export class AllPhotosView extends React.Component {
                     </a>
                 );
             }
-            return '';
+            return "";
         });
 
         const options = this.state.photoData.length === 0 ? (
             <p>
-                {'There are no photos that have an analysis result for resnet18_cosine_similarity'
-                + ' or the analysis does not exist.'}
-            </p>) : (<div className='options'>
+                {"There are no photos that have an analysis result for resnet18_cosine_similarity" +
+                " or the analysis does not exist."}
+            </p>) : (<div className="options">
             <p>Click on a photo to see the 10 most similar matches!</p></div>);
 
         return (<>
-            <Navbar />
-            <div className='display-box page'>
-                <h3 className='text-capitalize'>{
-                    'resnet18_cosine_similarity'
-                }</h3>
+            <Navbar/>
+            <div className="display-box page">
+                <h3 className="text-capitalize">
+                    {"resnet18_cosine_similarity"}
+                </h3>
                 {options}
                 <br/>
                 {photos}
             </div>
-            <Footer />
+            <Footer/>
         </>);
     }
 }

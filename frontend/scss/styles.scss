@@ -1,0 +1,82 @@
+/*
+ * Import all styles. This file is imported in frontend/index.js.
+ */
+
+// Global CSS variables first, so they're available to stylesheets imported below
+$side-padding: 100px;
+$side-padding-mobile: 20px;
+$header-height: 100px;
+$footer-height: 150px;
+
+// Individual imports
+@import '../../node_modules/bootstrap/scss/functions';
+@import '../../node_modules/bootstrap/scss/variables';
+@import '../../node_modules/bootstrap/scss/mixins';
+@import '../../node_modules/bootstrap/scss/utilities';
+@import '../../node_modules/bootstrap/scss/grid';
+
+@import '../src/index/index';
+@import '../src/about/about';
+@import '../src/photoView/photoView';
+@import '../src/photographerView/photographerView';
+@import '../src/mapSquareView/mapSquareView';
+@import '../src/clusterView/clusterView';
+@import '../src/analysisView/analysisView';
+@import '../src/search/search';
+
+html {
+    position: relative;
+    height: 100% !important;
+}
+
+body {
+    height: 100% !important;
+    background-color: blue;
+}
+
+#app_root {
+    height: 100% !important;
+    @extend .d-flex !optional;
+    @extend .flex-column !optional;
+}
+
+/**
+ * Footer Styles
+ */
+
+footer {
+    position: fixed;
+    background-color: pink !important;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 101;
+    flex-shrink: 0;
+}
+
+.footer-img {
+    height: 80px;
+    max-height: 10vh;
+    max-width: 20vw;
+    object-fit: contain;
+    padding-bottom: 10px;
+}
+
+
+/**
+ * Navbar styles
+ */
+
+.navbar-brand {
+    font-size: 1.50rem;
+}
+
+
+.nav-link {
+    font-size: 1.25rem;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}

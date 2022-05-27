@@ -52,5 +52,5 @@ import './legend.scss';
 //     }
 // }
 
-// export default withLeaflet(Legend);
+// export default Legend;
 

@@ -1,107 +1,177 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Navbar, Footer } from '../UILibrary/components';
+import React from "react";
+import PropTypes from "prop-types";
+import {Navbar, Footer} from "../UILibrary/components";
 
 const staffMembers = [
     {
-        name: 'Stephanie Frampton',
-        title: 'Faculty Director & Associate Professor of Literature',
-        photoSrc: 'Frampton_Stephanie.png',
+        name: "Stephanie Frampton",
+        title: "Faculty Director & Associate Professor of Literature",
+        photoSrc: "Frampton_Stephanie.png"
     },
     {
-        name: 'Ryaan Ahmed',
-        title: 'Technical Director & Senior Research Engineer',
-        photoSrc: 'Ahmed_Ryaan.jpg',
+        name: "Ryaan Ahmed",
+        title: "Technical Director & Senior Research Engineer",
+        photoSrc: "Ahmed_Ryaan.jpg"
     },
     {
-        name: 'Erica Zimmer',
-        title: 'Research Associate',
-        photoSrc: 'Zimmer_Erica.jpg',
+        name: "Erica Zimmer",
+        title: "Research Associate",
+        photoSrc: "Zimmer_Erica.jpg"
     },
     {
-        name: 'Cole Fountain',
-        title: 'Administrative Assistant II',
-        photoSrc: 'Fountain_Cole.jpg',
-    },
+        name: "Cole Fountain",
+        title: "Administrative Assistant II",
+        photoSrc: "Fountain_Cole.jpg"
+    }
 ];
 
 const studentMembers = [
-    { name: 'Adanna Abraham-Igwe', photoSrc: 'Abraham-Igwe_Adanna.png' },
-    { name: 'Tolulope Akinbo', photoSrc: 'Akinbo_Tolulope.jpg' },
-    { name: 'Eesha Banerjee', photoSrc: 'Banerjee_Eesha.jpeg' },
-    { name: 'Joshua Feliciano', photoSrc: 'Feliciano_Joshua.jpeg' },
-    { name: 'Raquel Garcia', photoSrc: 'Garcia_Raquel.jpg' },
-    { name: 'Montse Garza', photoSrc: 'Garza_Montse.jpg' },
-    { name: 'Michelle He', photoSrc: 'He_Michelle.jpg' },
-    { name: 'Peihua Huang', photoSrc: 'Huang_Peihua.jpg' },
-    { name: 'Nicole Khaimov', photoSrc: 'Khaimov_Nicole.jpg' },
-    { name: 'Ning-Er Lei', photoSrc: 'Lei_Ning-Er.jpg' },
-    { name: 'Felix Li', photoSrc: 'Li_Felix.jpg' },
-    { name: 'Jackie Lin', photoSrc: 'Lin_Jackie.jpeg' },
-    { name: 'Jason Lin', photoSrc: 'Lin_Jason.jpg' },
-    { name: 'Radha Patel', photoSrc: 'Patel_Radha.jpg' },
-    { name: 'Lydia Patterson', photoSrc: 'Patterson_Lydia.jpeg' },
-    { name: 'Sabrina Romero', photoSrc: 'Romero_Sabrina.jpg' },
-    { name: 'Justice Vidal', photoSrc: 'Vidal_Justice.jpg' },
-    { name: 'Rona Wang', photoSrc: 'Wang_Rona.png' },
-    { name: 'Yifan Wang', photoSrc: 'Wang_Yifan.jpg' },
-    { name: 'Dylan Weber', photoSrc: 'Weber_Dylan.jpg' },
-    { name: 'Funing Yang', photoSrc: 'Yang_Funing.jpg' },
-    { name: 'Hilary Zen', photoSrc: 'Zen_Hilary.jpg' },
-    { name: 'Vicky Zheng', photoSrc: 'Zheng_Vicky.jpg' },
+    {
+        name: "Adanna Abraham-Igwe",
+        photoSrc: "Abraham-Igwe_Adanna.png"
+    },
+    {
+        name: "Tolulope Akinbo",
+        photoSrc: "Akinbo_Tolulope.jpg"
+    },
+    {
+        name: "Eesha Banerjee",
+        photoSrc: "Banerjee_Eesha.jpeg"
+    },
+    {
+        name: "Joshua Feliciano",
+        photoSrc: "Feliciano_Joshua.jpeg"
+    },
+    {
+        name: "Raquel Garcia",
+        photoSrc: "Garcia_Raquel.jpg"
+    },
+    {
+        name: "Montse Garza",
+        photoSrc: "Garza_Montse.jpg"
+    },
+    {
+        name: "Michelle He",
+        photoSrc: "He_Michelle.jpg"
+    },
+    {
+        name: "Peihua Huang",
+        photoSrc: "Huang_Peihua.jpg"
+    },
+    {
+        name: "Nicole Khaimov",
+        photoSrc: "Khaimov_Nicole.jpg"
+    },
+    {
+        name: "Ning-Er Lei",
+        photoSrc: "Lei_Ning-Er.jpg"
+    },
+    {
+        name: "Felix Li",
+        photoSrc: "Li_Felix.jpg"
+    },
+    {
+        name: "Jackie Lin",
+        photoSrc: "Lin_Jackie.jpeg"
+    },
+    {
+        name: "Jason Lin",
+        photoSrc: "Lin_Jason.jpg"
+    },
+    {
+        name: "Radha Patel",
+        photoSrc: "Patel_Radha.jpg"
+    },
+    {
+        name: "Lydia Patterson",
+        photoSrc: "Patterson_Lydia.jpeg"
+    },
+    {
+        name: "Sabrina Romero",
+        photoSrc: "Romero_Sabrina.jpg"
+    },
+    {
+        name: "Justice Vidal",
+        photoSrc: "Vidal_Justice.jpg"
+    },
+    {
+        name: "Rona Wang",
+        photoSrc: "Wang_Rona.png"
+    },
+    {
+        name: "Yifan Wang",
+        photoSrc: "Wang_Yifan.jpg"
+    },
+    {
+        name: "Dylan Weber",
+        photoSrc: "Weber_Dylan.jpg"
+    },
+    {
+        name: "Funing Yang",
+        photoSrc: "Yang_Funing.jpg"
+    },
+    {
+        name: "Hilary Zen",
+        photoSrc: "Zen_Hilary.jpg"
+    },
+    {
+        name: "Vicky Zheng",
+        photoSrc: "Zheng_Vicky.jpg"
+    }
 ];
 
 function TeamMember(props) {
     const className = props.isUROP
-        ? 'student-member col-12 col-sm-6 col-md-4 col-lg-3'
-        : 'staff-member col-12 col-md-6';
+        ? "student-member col-12 col-sm-6 col-md-4 col-lg-3"
+        : "staff-member col-12 col-md-6";
 
-    const imgClassName = props.isUROP ? 'student-img' : 'staff-img';
-    const nameClassName = props.isUROP ? 'student-name' : 'staff-name';
+    const imgClassName = props.isUROP ? "student-img" : "staff-img";
+    const nameClassName = props.isUROP ? "student-name" : "staff-name";
     return (
-        <div className={className} >
+        <div className={className}>
             <img
                 className={imgClassName}
-                src={'/static/img/team/' + props.photoSrc}
+                src={"/static/img/team/" + props.photoSrc}
                 alt={props.name}
             />
             <div className={nameClassName}>
                 {props.name}
             </div>
-            {!props.isUROP
-                && <div className='job-title'>
-                    {props.title}
-                </div>
+            {!props.isUROP &&
+            <div className="job-title">
+                {props.title}
+            </div>
             }
         </div>
     );
 }
+
 TeamMember.propTypes = {
     isUROP: PropTypes.bool,
     name: PropTypes.string,
     title: PropTypes.string,
-    photoSrc: PropTypes.string,
+    photoSrc: PropTypes.string
 };
 
 
 class About extends React.Component {
     render() {
         return (<>
-            <Navbar />
-            <div className='page'>
-                <div className='about-title'>
+            <Navbar/>
+            <div className="page">
+                <div className="about-title">
                     About This Project
                 </div>
-                <div className='about-text'>
-                    <div className='prof-img-div text-wrap col-xs-2 col-sm-5 col-md-5 col-lg-3'>
+                <div className="about-text">
+                    <div className="prof-img-div text-wrap col-xs-2 col-sm-5 col-md-5 col-lg-3">
                         <figure className="figure text-center">
                             <img
-                                className='prof-img'
-                                src={'/static/img/team/Clark_Catherine.jpg'}
-                                alt='Catherine Clark'
-                                align='left'
+                                className="prof-img"
+                                src={"/static/img/team/Clark_Catherine.jpg"}
+                                alt="Catherine Clark"
+                                align="left"
                             />
-                            <div className='staff-name'>Catherine Clark</div>
+                            <div className="staff-name">Catherine Clark</div>
                             <figcaption className="figure-caption text-center">
                                 Associate Professor of History and French Studies
                             </figcaption>
@@ -148,9 +218,9 @@ class About extends React.Component {
                         </p>
                     </div>
                 </div>
-                <div className='team'>
-                    <div className='about-title'>Staff</div>
-                    <div className='staff row'>
+                <div className="team">
+                    <div className="about-title">Staff</div>
+                    <div className="staff row">
                         {staffMembers.map((member, k) => (
                             <TeamMember
                                 key={k}
@@ -161,8 +231,8 @@ class About extends React.Component {
                             />
                         ))}
                     </div>
-                    <div className='about-title'>UROP Members</div>
-                    <div className='students row'>
+                    <div className="about-title">UROP Members</div>
+                    <div className="students row">
                         {studentMembers.map((member, k) => (
                             <TeamMember
                                 key={k}
@@ -175,7 +245,7 @@ class About extends React.Component {
                     </div>
                 </div>
             </div>
-            <Footer />
+            <Footer/>
         </>);
     }
 }
