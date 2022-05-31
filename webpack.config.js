@@ -16,7 +16,7 @@ module.exports = {
     plugins: [
         new BundleTracker({filename: "./webpack-stats.json"}),
         new MiniCssExtractPlugin({filename: "[name].bundle.css"}),
-        new ESLintPlugin(),
+        new ESLintPlugin()
     ],
     module: {
         rules: [
@@ -25,19 +25,29 @@ module.exports = {
                 test: /\.(scss|css)$/,
                 use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]
             },
-            {test: /\.js|.jsx$/, exclude: /node_modules/, use: "babel-loader"},
-            {test: /\.(png|jpe?g|gif)$/i, use: [{loader: "file-loader"}]},
+            {
+                test: /\.js|.jsx$/,
+                exclude: /node_modules/,
+                use: "babel-loader"
+            },
+            {
+                test: /\.(png|jpe?g|gif)$/i,
+                use: [{loader: "file-loader"}]
+            },
             {
                 test: /\.mp4$/,
-                use: 'file-loader?name=videos/[name].[ext]',
+                use: "file-loader?name=videos/[name].[ext]"
             },
 
             {
                 test: /\.svg$/i,
                 issuer: /\.[jt]sx?$/,
-                use: ['@svgr/webpack'],
+                use: ["@svgr/webpack"]
             },
-            {test: /\.(woff|woff2|eot|ttf)$/, use: "url-loader"},
+            {
+                test: /\.(woff|woff2|eot|ttf)$/,
+                use: "url-loader"
+            }
         ]
     }
 };

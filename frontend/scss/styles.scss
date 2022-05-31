@@ -30,8 +30,7 @@ html {
 }
 
 body {
-    height: 100% !important;
-    background-color: blue;
+    height: 100%;
 }
 
 #app_root {
@@ -46,7 +45,6 @@ body {
 
 footer {
     position: fixed;
-    background-color: pink !important;
     bottom: 0;
     left: 0;
     width: 100%;

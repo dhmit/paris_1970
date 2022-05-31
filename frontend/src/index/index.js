@@ -13,9 +13,10 @@ import {
     Modal,
     Button
 } from "react-bootstrap";
-import {Navbar, Footer, LoadingPage} from "../UILibrary/components";
+// import {Navbar, Footer, LoadingPage} from "../UILibrary/components";
+import {Navbar, LoadingPage} from "../UILibrary/components";
 
-// import Legend from '../legend/legend.js';
+// import Legend from "../legend/legend.js";
 
 class Map extends React.Component {
     state = {
@@ -40,10 +41,10 @@ class Map extends React.Component {
         const fortyPctMax = Math.round(0.4 * maxNumOfPhotos);
         const sixtyPctMax = Math.round(0.6 * maxNumOfPhotos);
         const eightyPctMax = Math.round(0.8 * maxNumOfPhotos);
-        // const buckets = [0, twentyPctMax, twentyPctMax + 1,
-        //     fortyPctMax, fortyPctMax + 1,
-        //     sixtyPctMax, sixtyPctMax + 1,
-        //     eightyPctMax, eightyPctMax + 1, maxNumOfPhotos];
+        const buckets = [0, twentyPctMax, twentyPctMax + 1,
+            fortyPctMax, fortyPctMax + 1,
+            sixtyPctMax, sixtyPctMax + 1,
+            eightyPctMax, eightyPctMax + 1, maxNumOfPhotos];
         console.log("index.js technically here??");
         return (
             <div id="map-container">
@@ -54,7 +55,7 @@ class Map extends React.Component {
                     zoom={this.state.zoom}
                     style={{
                         width: "100%",
-                        height: "200px"
+                        height: "500px"
                     }}
                     // Sets Map Boundaries - Keeps user from leaving Paris
                     maxBoundsViscosity={1.0}
@@ -62,7 +63,7 @@ class Map extends React.Component {
                     minZoom={this.state.minZoom}
                     zoomControl={false}>
                     <ZoomControl position="bottomleft"/>
-                    {/* <Legend buckets={buckets}/> */}
+                    {/*<Legend buckets={buckets}/>*/}
                     <TileLayer
                         // Sets Map Boundaries - Keeps user from leaving Paris
                         maxBoundsViscosity={1.0}
@@ -240,7 +241,7 @@ export class IndexView extends React.Component {
         return (<>
             <Navbar/>
             <Map mapData={this.state.mapData}/>
-            <Footer/>
+            {/*<Footer/>*/}
         </>);
     }
 }
