@@ -1,122 +1,154 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {Navbar, Footer} from "../UILibrary/components";
+import {Navbar} from "../UILibrary/components";
+import Footer from "../components/Footer";
+
+// Images
+import Clark_Catherine from "../../images/team/Clark_Catherine.jpg";
+import Frampton_Stephanie from "../../images/team/Frampton_Stephanie.png";
+import Ahmed_Ryaan from "../../images/team/Ahmed_Ryaan.jpg";
+import Zimmer_Erica from "../../images/team/Zimmer_Erica.jpg";
+import Fountain_Cole from "../../images/team/Fountain_Cole.jpg";
+import Abraham_Igwe_Adanna from "../../images/team/Abraham-Igwe_Adanna.png";
+import Akinbo_Tolulope from "../../images/team/Akinbo_Tolulope.jpg";
+import Banerjee_Eesha from "../../images/team/Banerjee_Eesha.jpeg";
+import Feliciano_Joshua from "../../images/team/Feliciano_Joshua.jpeg";
+import Garcia_Raquel from "../../images/team/Garcia_Raquel.jpg";
+import Garza_Montse from "../../images/team/Garza_Montse.jpg";
+import He_Michelle from "../../images/team/He_Michelle.jpg";
+import Huang_Peihua from "../../images/team/Huang_Peihua.jpg";
+import Khaimov_Nicole from "../../images/team/Khaimov_Nicole.jpg";
+import Lei_Ning_Er from "../../images/team/Lei_Ning-Er.jpg";
+import Li_Felix from "../../images/team/Li_Felix.jpg";
+import Lin_Jackie from "../../images/team/Lin_Jackie.jpeg";
+import Lin_Jason from "../../images/team/Lin_Jason.jpg";
+import Patel_Radha from "../../images/team/Patel_Radha.jpg";
+import Patterson_Lydia from "../../images/team/Patterson_Lydia.jpeg";
+import Romero_Sabrina from "../../images/team/Romero_Sabrina.jpg";
+import Vidal_Justice from "../../images/team/Vidal_Justice.jpg";
+import Wang_Rona from "../../images/team/Wang_Rona.png";
+import Wang_Yifan from "../../images/team/Wang_Yifan.jpg";
+import Weber_Dylan from "../../images/team/Weber_Dylan.jpg";
+import Yang_Funing from "../../images/team/Yang_Funing.jpg";
+import Zen_Hilary from "../../images/team/Zen_Hilary.jpg";
+import Zheng_Vicky from "../../images/team/Zheng_Vicky.jpg";
+
 
 const staffMembers = [
     {
         name: "Stephanie Frampton",
         title: "Faculty Director & Associate Professor of Literature",
-        photoSrc: "Frampton_Stephanie.png"
+        photoSrc: Frampton_Stephanie
     },
     {
         name: "Ryaan Ahmed",
         title: "Technical Director & Senior Research Engineer",
-        photoSrc: "Ahmed_Ryaan.jpg"
+        photoSrc: Ahmed_Ryaan
     },
     {
         name: "Erica Zimmer",
         title: "Research Associate",
-        photoSrc: "Zimmer_Erica.jpg"
+        photoSrc: Zimmer_Erica
     },
     {
         name: "Cole Fountain",
         title: "Administrative Assistant II",
-        photoSrc: "Fountain_Cole.jpg"
+        photoSrc: Fountain_Cole
     }
 ];
 
 const studentMembers = [
     {
         name: "Adanna Abraham-Igwe",
-        photoSrc: "Abraham-Igwe_Adanna.png"
+        photoSrc: Abraham_Igwe_Adanna
     },
     {
         name: "Tolulope Akinbo",
-        photoSrc: "Akinbo_Tolulope.jpg"
+        photoSrc: Akinbo_Tolulope
     },
     {
         name: "Eesha Banerjee",
-        photoSrc: "Banerjee_Eesha.jpeg"
+        photoSrc: Banerjee_Eesha
     },
     {
         name: "Joshua Feliciano",
-        photoSrc: "Feliciano_Joshua.jpeg"
+        photoSrc: Feliciano_Joshua
     },
     {
         name: "Raquel Garcia",
-        photoSrc: "Garcia_Raquel.jpg"
+        photoSrc: Garcia_Raquel
     },
     {
         name: "Montse Garza",
-        photoSrc: "Garza_Montse.jpg"
+        photoSrc: Garza_Montse
     },
     {
         name: "Michelle He",
-        photoSrc: "He_Michelle.jpg"
+        photoSrc: He_Michelle
     },
     {
         name: "Peihua Huang",
-        photoSrc: "Huang_Peihua.jpg"
+        photoSrc: Huang_Peihua
     },
     {
         name: "Nicole Khaimov",
-        photoSrc: "Khaimov_Nicole.jpg"
+        photoSrc: Khaimov_Nicole
     },
     {
         name: "Ning-Er Lei",
-        photoSrc: "Lei_Ning-Er.jpg"
+        photoSrc: Lei_Ning_Er
     },
     {
         name: "Felix Li",
-        photoSrc: "Li_Felix.jpg"
+        photoSrc: Li_Felix
     },
     {
         name: "Jackie Lin",
-        photoSrc: "Lin_Jackie.jpeg"
+        photoSrc: Lin_Jackie
     },
     {
         name: "Jason Lin",
-        photoSrc: "Lin_Jason.jpg"
+        photoSrc: Lin_Jason
     },
     {
         name: "Radha Patel",
-        photoSrc: "Patel_Radha.jpg"
+        photoSrc: Patel_Radha
     },
     {
         name: "Lydia Patterson",
-        photoSrc: "Patterson_Lydia.jpeg"
+        photoSrc: Patterson_Lydia
     },
     {
         name: "Sabrina Romero",
-        photoSrc: "Romero_Sabrina.jpg"
+        photoSrc: Romero_Sabrina
     },
     {
         name: "Justice Vidal",
-        photoSrc: "Vidal_Justice.jpg"
+        photoSrc: Vidal_Justice
     },
     {
         name: "Rona Wang",
-        photoSrc: "Wang_Rona.png"
+        photoSrc: Wang_Rona
     },
     {
         name: "Yifan Wang",
-        photoSrc: "Wang_Yifan.jpg"
+        photoSrc: Wang_Yifan
     },
     {
         name: "Dylan Weber",
-        photoSrc: "Weber_Dylan.jpg"
+        photoSrc: Weber_Dylan
     },
     {
         name: "Funing Yang",
-        photoSrc: "Yang_Funing.jpg"
+        photoSrc: Yang_Funing
     },
     {
         name: "Hilary Zen",
-        photoSrc: "Zen_Hilary.jpg"
+        photoSrc: Zen_Hilary
     },
     {
         name: "Vicky Zheng",
-        photoSrc: "Zheng_Vicky.jpg"
+        photoSrc: Zheng_Vicky
     }
 ];
 
@@ -131,7 +163,7 @@ function TeamMember(props) {
         <div className={className}>
             <img
                 className={imgClassName}
-                src={"/static/img/team/" + props.photoSrc}
+                src={props.photoSrc}
                 alt={props.name}
             />
             <div className={nameClassName}>
@@ -167,7 +199,7 @@ class About extends React.Component {
                         <figure className="figure text-center">
                             <img
                                 className="prof-img"
-                                src={"/static/img/team/Clark_Catherine.jpg"}
+                                src={Clark_Catherine}
                                 alt="Catherine Clark"
                                 align="left"
                             />
