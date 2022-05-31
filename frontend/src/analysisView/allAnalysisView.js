@@ -1,5 +1,6 @@
 import React from "react";
-import {Navbar, Footer} from "../UILibrary/components";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export const analysisDescriptions = {
     whitespace_percentage: {

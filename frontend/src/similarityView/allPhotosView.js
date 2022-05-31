@@ -1,7 +1,10 @@
 import React from "react";
 
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import LoadingPage from "../components/LoadingPage";
+
 import {getSource} from "../analysisView/analysisView";
-import {Navbar, Footer, LoadingPage} from "../UILibrary/components";
 
 
 export class AllPhotosView extends React.Component {

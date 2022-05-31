@@ -2,7 +2,10 @@ import React from "react";
 import * as PropTypes from "prop-types";
 
 import {getSource} from "../analysisView/analysisView";
-import {Navbar, Footer, LoadingPage} from "../UILibrary/components";
+
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import LoadingPage from "../components/LoadingPage";
 
 const percentFormat = (x) => Math.floor(x) + "%";
 const numberFormat = (x) => Math.floor(x);

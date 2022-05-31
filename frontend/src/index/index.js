@@ -13,8 +13,10 @@ import {
     Modal,
     Button
 } from "react-bootstrap";
-// import {Navbar, Footer, LoadingPage} from "../UILibrary/components";
-import {Navbar, LoadingPage} from "../UILibrary/components";
+
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import LoadingPage from "../components/LoadingPage";
 
 // import Legend from "../legend/legend.js";
 
@@ -241,7 +243,7 @@ export class IndexView extends React.Component {
         return (<>
             <Navbar/>
             <Map mapData={this.state.mapData}/>
-            {/*<Footer/>*/}
+            <Footer/>
         </>);
     }
 }

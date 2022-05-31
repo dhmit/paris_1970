@@ -1,8 +1,11 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import LoadingPage from "../components/LoadingPage";
+
 import {getSource} from "../analysisView/analysisView";
-import {Navbar, Footer, LoadingPage} from "../UILibrary/components";
 
 /*
 Creates a view to show the most similar photos for a photo given url with a number of photos
