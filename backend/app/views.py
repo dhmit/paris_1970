@@ -368,3 +368,35 @@ def index(request):
     }
 
     return render(request, 'index.html', context)
+
+
+def about(request):
+    context = {
+        'page_metadata': {
+            'title': 'About'
+        },
+        'component_name': 'About'
+    }
+
+    return render(request, 'index.html', context)
+
+
+def search(request):
+    context = {
+        'page_metadata': {
+            'title': 'Search'
+        },
+        'component_name': 'Search'
+    }
+
+    return render(request, 'index.html', context)
+
+def similarity(request):
+    context = {
+        'page_metadata': {
+            'title': 'All Photo View'
+        },
+        'component_name': 'AllPhotosView'
+    }
+
+    return render(request, 'index.html', context)
