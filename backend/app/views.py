@@ -13,7 +13,8 @@ from django.shortcuts import render
 from django.db.models import Q, FloatField
 from django.db.models.functions import Cast
 
-from config.settings.base import YOLO_DIR
+from config import settings
+
 from .models import (
     Photo,
     MapSquare,
@@ -337,7 +338,7 @@ def get_tags(request):
     API endpoint to get YOLO model tags, photographer data, and analysis tags for search
     """
     tags = []
-    coco_dir = os.path.join(YOLO_DIR, 'coco.names')
+    coco_dir = os.path.join(settings.YOLO_DIR, 'coco.names')
     with open(coco_dir, encoding='utf-8') as file:
         tag = file.readline()
         while tag:
@@ -391,6 +392,7 @@ def search(request):
 
     return render(request, 'index.html', context)
 
+
 def similarity(request):
     context = {
         'page_metadata': {
@@ -400,3 +402,85 @@ def similarity(request):
     }
 
     return render(request, 'index.html', context)
+
+
+def map_square_view(request, map_square_num):
+    context = {
+        'page_metadata': {
+            'title': 'Map Square View'
+        },
+        'component_name': 'MapSquareView',
+        'component_props': {
+            'photo_dir': str(settings.LOCAL_PHOTOS_DIR),
+            'mapSquareNumber': map_square_num
+        }
+    }
+    return render(request, 'index.html', context)
+
+
+def photographer_view(request, photographer_num):
+    context = {
+        'page_metadata': {
+            'title': 'Photographer View'
+        },
+        'component_name': 'PhotographerView',
+        'component_props': {
+            'photo_dir': str(settings.LOCAL_PHOTOS_DIR),
+            'photographerNumber': photographer_num
+        }
+    }
+    return render(request, 'index.html', context)
+
+
+def photo_view(request, map_square_num, photo_num):
+    context = {
+        'page_metadata': {
+            'title': 'Photo View'
+        },
+        'component_name': 'PhotoView',
+        'component_props': {
+            'photo_dir': str(settings.LOCAL_PHOTOS_DIR),
+            'mapSquareNumber': map_square_num,
+            'photoNumber': photo_num
+        }
+    }
+    return render(request, 'index.html', context)
+
+
+import re
+
+
+def path_parts(path):
+    return re.sub("\\\\", " ", path).split(" ")
+
+
+def fix_local_paths():
+    photos = Photo.objects.all()
+    for photo in photos:
+        if photo.cleaned_local_path:
+            parts = path_parts(photo.cleaned_local_path)
+            photo.cleaned_local_path = "/" + "/".join(parts[-2:])
+        if photo.front_local_path:
+            parts = path_parts(photo.front_local_path)
+            photo.front_local_path = "/" + "/".join(parts[-2:])
+        if photo.back_local_path:
+            parts = path_parts(photo.back_local_path)
+            photo.back_local_path = "/" + "/".join(parts[-2:])
+        if photo.binder_local_path:
+            parts = path_parts(photo.binder_local_path)
+            photo.binder_local_path = "/" + "/".join(parts[-2:])
+        photo.save()
+
+
+def clear_first_slash():
+    photos = Photo.objects.all()
+    for img in photos:
+        if img.cleaned_local_path:
+            img.cleaned_local_path = img.cleaned_local_path[2:]
+        if img.front_local_path:
+            img.front_local_path = img.front_local_path[2:]
+        if img.back_local_path:
+            img.back_local_path = img.back_local_path[2:]
+        if img.binder_local_path:
+            img.binder_local_path = img.binder_local_path[2:]
+        img.save()

@@ -8,20 +8,20 @@ import LoadingPage from "../components/LoadingPage";
 const SIDES = {
     CLEANED: "cleaned",
     FRONT: "front",
-    BACK: "back",
-    BINDER: "binder"
+    BACK: "back"
 };
 
-export const getSource = (photoData) => {
-    const availableSides = Object.values(SIDES)
-    .filter(
-        (side) => photoData[`${side}_src`] !== null
-    );
-    const displaySide = availableSides.length > 0 ? availableSides[0] : "";
-    const source = photoData[`${displaySide}_src`];
-    const fileId = source.split("=")[1];
-    return `https://drive.google.com/thumbnail?authuser=0&sz=w100&id=${fileId}`;
+export const getSource = (photoData, photoDir, displaySide = false) => {
+    if (!displaySide) {
+        const availableSides = Object.values(SIDES)
+        .filter(
+            (side) => photoData[`${side}_src`]
+        );
+        displaySide = availableSides.length > 0 ? availableSides[0] : "";
+    }
+    return `${photoDir}/${photoData.map_square_number}/${photoData.number}_${displaySide}.jpg`;
 };
+
 
 export class AnalysisView extends React.Component {
     constructor(props) {
@@ -77,11 +77,9 @@ export class AnalysisView extends React.Component {
             )[0];
             if (photo.cleaned_src || photo.front_src) {
                 return (
-                    <a
-                        key={k}
-                        title={currentAnalysis.result}
-                        href={`/photo/${photo["map_square_number"]}/${photo["number"]}/`}
-                    >
+                    <a key={k}
+                       title={currentAnalysis.result}
+                       href={`/photo/${photo["map_square_number"]}/${photo["number"]}/`}>
                         <img
                             alt={photo.alt}
                             height={100}

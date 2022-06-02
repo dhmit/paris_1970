@@ -27,7 +27,7 @@ export class MapSquareView extends React.Component {
                     mapSquareData,
                     loading: false
                 });
-                console.log(mapSquareData);
+                console.log("mapSquareData", mapSquareData);
             }
         } catch (e) {
             console.log(e);
@@ -50,18 +50,17 @@ export class MapSquareView extends React.Component {
 
         const photoListItem = (photo, k) => {
             const photoId = `${photo["map_square_number"]}/${photo["number"]}`;
+            console.log("photoId", photoId);
             return (
-                <a
-                    key={k}
-                    title={`Map Square: ${photo["map_square_number"]}` +
-                    `, Number: ${photo["number"]}`}
-                    href={"/photo/" + photoId + "/"}
-                >
+                <a key={k}
+                   title={`Map Square: ${photo["map_square_number"]}` +
+                   `, Number: ${photo["number"]}`}
+                   href={"/photo/" + photoId + "/"}>
                     <img
                         alt={photo.alt}
                         height={120}
                         width={120}
-                        src={getSource(photo)}
+                        src={getSource(photo, this.props.photo_dir)}
                     />
                 </a>
             );
@@ -82,5 +81,6 @@ export class MapSquareView extends React.Component {
 }
 
 MapSquareView.propTypes = {
-    mapSquareNumber: PropTypes.number
+    mapSquareNumber: PropTypes.number,
+    photo_dir: PropTypes.string
 };

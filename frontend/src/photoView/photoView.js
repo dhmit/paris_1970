@@ -5,11 +5,12 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import LoadingPage from "../components/LoadingPage";
 
+import {getSource} from "../analysisView/analysisView";
+
 const SIDES = {
     CLEANED: "cleaned",
     FRONT: "front",
-    BACK: "back",
-    BINDER: "binder"
+    BACK: "back"
 };
 
 export class FindVanishingPointDisplayWidget extends React.Component {
@@ -38,7 +39,7 @@ export class FindVanishingPointDisplayWidget extends React.Component {
         return (
             <div>
                 <svg
-                    className="analysis-overlay positionTopLeft"
+                    className="analysis-overlay position-top-left"
                     height={this.props.height}
                     width={this.props.width}>
                     {items}
@@ -89,7 +90,7 @@ export class ForegroundPercentageDisplayWidget extends React.Component {
         return (
             <div>
                 <svg
-                    className="analysis-overlay positionTopLeft"
+                    className="analysis-overlay position-top-left"
                     height={this.props.height}
                     width={this.props.width}
                 >
@@ -162,7 +163,7 @@ export class YoloModelDisplayWidget extends React.Component {
         return (
             <div>
                 <svg
-                    className="analysis-overlay positionTopLeft"
+                    className="analysis-overlay position-top-left"
                     height={this.props.height}
                     width={this.props.width}
                 >
@@ -392,12 +393,11 @@ export class PhotoView extends React.Component {
                     <div className="image-view col-12 col-lg-6">
                         <div>
                             <img
-                                className="image-photo positionTopLeft"
-                                src={this.state.photoData[`${this.state.displaySide}_src`]}
+                                className="image-photo position-top-left"
+                                src={getSource(this.state.photoData, this.props.photo_dir, this.state.displaySide)}
                                 alt={alt}
                                 onLoad={this.onImgLoad}
-                                ref={this.photoRef}
-                            />
+                                ref={this.photoRef}/>
 
                             {analyses.map((analysisResult) => {
                                 const parsedValue = JSON.parse(analysisResult.result);
@@ -463,8 +463,7 @@ export class PhotoView extends React.Component {
                                         id="toggleSelect"
                                         className="custom-select"
                                         onChange={this.toggleStatus}
-                                        value={this.state.view}
-                                    >
+                                        value={this.state.view}>
                                         <option value="0">None selected</option>
                                         <option value="1">Perspective Lines</option>
                                         <option value="2">Foreground Mask</option>
@@ -476,7 +475,7 @@ export class PhotoView extends React.Component {
                                     ? <p className={"px-3 my-0"}>
                                         <i>Hover over the boxes to see the name of the object.</i>
                                     </p>
-                                    : <span></span>
+                                    : <></>
                                 }
                             </div>
                         </div>
@@ -596,5 +595,6 @@ export class PhotoView extends React.Component {
 
 PhotoView.propTypes = {
     photoNumber: PropTypes.number,
-    mapSquareNumber: PropTypes.number
+    mapSquareNumber: PropTypes.number,
+    photo_dir: PropTypes.string
 };

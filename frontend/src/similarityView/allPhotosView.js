@@ -60,8 +60,7 @@ export class AllPhotosView extends React.Component {
             )[0]; */
             if (photo.front_src || photo.cleaned_src) {
                 return (
-                    <a
-                        key={k}
+                    <a key={k}
                         title={`Map Square: ${photo["map_square_number"]},` +
                         `\nPhoto: ${photo["number"]}`}
                         href={`/similar_photos/${photo["map_square_number"]}/` +

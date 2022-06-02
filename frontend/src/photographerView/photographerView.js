@@ -119,7 +119,8 @@ export class PhotographerView extends React.Component {
             photos
         } = this.state.photographerData;
 
-        const photographerAnalysis = this.getAggregatePhotoAnalysis(photos);
+        // const photographerAnalysis = this.getAggregatePhotoAnalysis(photos);
+        const photographerAnalysis = [];
         return (<>
             <Navbar/>
             <div className="page row">
@@ -146,7 +147,7 @@ export class PhotographerView extends React.Component {
                 <h2 className="h3">Photos Gallery:</h2>
                 <div className="photo_gallery">
                     {photos.map((photo, k) => {
-                        if (photo.binder_src || photo.front_src || photo.cleaned_src) {
+                        if (photo.front_src || photo.cleaned_src) {
                             return (
                                 <div className="photo" key={k}>
                                     <a
@@ -159,7 +160,7 @@ export class PhotographerView extends React.Component {
                                             alt={photo.alt}
                                             height={150}
                                             width={150}
-                                            src={getSource(photo)}
+                                            src={getSource(photo, this.props.photo_dir)}
                                         />
                                     </a>
                                 </div>
@@ -175,5 +176,6 @@ export class PhotographerView extends React.Component {
 }
 
 PhotographerView.propTypes = {
-    photographerNumber: PropTypes.number
+    photographerNumber: PropTypes.number,
+    photo_dir: PropTypes.string
 };

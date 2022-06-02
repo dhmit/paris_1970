@@ -9,7 +9,7 @@ export class Footer extends React.Component {
             <div className="row text-center footer">
                 <div className="col-4 py-3">
                     <a href="https://digitalhumanities.mit.edu/">
-                        <DHLogo/>
+                        <DHLogo height={"200px"} width={"100px"}/>
                     </a>
                 </div>
                 <div className="col-4 py-3">
