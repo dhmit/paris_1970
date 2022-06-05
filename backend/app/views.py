@@ -445,3 +445,75 @@ def photo_view(request, map_square_num, photo_num):
         }
     }
     return render(request, 'index.html', context)
+
+
+def similarity_view(request, map_square_num, photo_num, num_similar_photos):
+    context = {
+        'page_metadata': {
+            'title': 'Similarity View'
+        },
+        'component_name': 'SimilarityView',
+        'component_props': {
+            'mapSquareNumber': map_square_num,
+            'photoNumber': photo_num,
+            'numSimilarPhotos': num_similar_photos
+        }
+    }
+    return render(request, 'index.html', context)
+
+
+def analysis_name_view(request, analysis_name):
+    context = {
+        'page_metadata': {
+            'title': 'Analysis View'
+        },
+        'component_name': 'AnalysisView',
+        'component_props': {
+            'analysisName': analysis_name
+        }
+    }
+    return render(request, 'index.html', context)
+
+
+def analysis_view(request, analysis_name, object_name=None):
+    context = {
+        'page_metadata': {
+            'title': 'Analysis View'
+        },
+        'component_name': 'AnalysisView',
+        'component_props': {
+            'analysisName': analysis_name
+        }
+    }
+
+    if object_name:
+        context['component_props']['objectName'] = object_name
+
+    return render(request, 'index.html', context)
+
+
+def all_analysis_view(request):
+    context = {
+        'page_metadata': {
+            'title': 'All Analysis View'
+        },
+        'component_name': 'AllAnalysisView',
+        'component_props': {}
+    }
+
+    return render(request, 'index.html', context)
+
+
+def cluster_view(request, num_of_clusters, cluster_num):
+    context = {
+        'page_metadata': {
+            'title': 'Cluster View'
+        },
+        'component_name': 'ClusterView',
+        'component_props': {
+            'numberOfClusters': num_of_clusters,
+            'clusterNum': cluster_num
+        }
+    }
+
+    return render(request, 'index.html', context)

@@ -64,11 +64,10 @@ urlpatterns = [
     path('map_square/<int:map_square_num>/', views.map_square_view),
     path('photographer/<int:photographer_num>/', views.photographer_view),
     path('photo/<int:map_square_num>/<int:photo_num>/', views.photo_view),
-
-    react_view_path('similar_photos/<int:mapSquareNumber>/<int:photoNumber>/'
-                    '<int:numSimilarPhotos>/', 'SimilarityView'),
-    react_view_path('analysis/<str:analysisName>/', 'AnalysisView'),
-    react_view_path('analysis/<str:analysisName>/<str:objectName>', 'AnalysisView'),
-    react_view_path('all_analysis/', 'AllAnalysisView'),
-    react_view_path('clustering/<int:numberOfClusters>/<int:clusterNumber>/', 'ClusterView'),
+    path('similar_photos/<int:map_square_num>/<int:photo_num>/'
+         '<int:num_similar_photos>/', views.similarity_view),
+    path('analysis/<str:analysis_name>/', views.analysis_view),
+    path('analysis/<str:analysis_name>/<str:object_name>', views.analysis_view),
+    path('all_analysis/', views.all_analysis_view),
+    path('clustering/<int:num_of_clusters>/<int:cluster_num>/', views.cluster_view),
 ]

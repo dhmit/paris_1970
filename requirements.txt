@@ -10,6 +10,7 @@ Cython==0.29.21
 decorator==4.4.2
 Django==3.1.5
 django-cors-headers==3.4.0
+django-extensions==3.1.5
 django-webpack-loader==1.0.0
 djangorestframework==3.12.2
 google-api-core==1.22.0
