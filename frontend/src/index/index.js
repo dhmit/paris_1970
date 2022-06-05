@@ -18,7 +18,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import LoadingPage from "../components/LoadingPage";
 
-// import Legend from "../legend/legend.js";
+import Legend from "../legend/legend.js";
 
 class Map extends React.Component {
     state = {
@@ -65,7 +65,7 @@ class Map extends React.Component {
                     minZoom={this.state.minZoom}
                     zoomControl={false}>
                     <ZoomControl position="bottomleft"/>
-                    {/*<Legend buckets={buckets}/>*/}
+                    <Legend buckets={buckets}/>
                     <TileLayer
                         // Sets Map Boundaries - Keeps user from leaving Paris
                         maxBoundsViscosity={1.0}
