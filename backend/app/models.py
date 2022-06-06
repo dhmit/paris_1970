@@ -27,16 +27,10 @@ class Photo(models.Model):
     map_square = models.ForeignKey('MapSquare', on_delete=models.CASCADE, null=True)
     photographer = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
 
-    # These are computed and set by syncdb: could be null if a photo is missing a side
-    cleaned_src = models.CharField(max_length=252, null=True)
-    front_src = models.CharField(max_length=252, null=True)
-    back_src = models.CharField(max_length=252, null=True)
-    binder_src = models.CharField(max_length=252, null=True)
-    thumbnail_src = models.CharField(max_length=252, null=True)
-    cleaned_local_path = models.CharField(max_length=252, null=True)
-    front_local_path = models.CharField(max_length=252, null=True)
-    back_local_path = models.CharField(max_length=252, null=True)
-    binder_local_path = models.CharField(max_length=252, null=True)
+    cleaned_src = models.BooleanField(default=False)
+    front_src = models.BooleanField(default=False)
+    back_src = models.BooleanField(default=False)
+    thumbnail_src = models.BooleanField(default=False)
 
     # We transcribe this metadata in the Google Sheet
     shelfmark = models.CharField(max_length=252)
@@ -46,12 +40,8 @@ class Photo(models.Model):
     photographer_caption = models.CharField(max_length=252)
 
     def has_valid_source(self):
-        return (self.cleaned_local_path or
-                self.front_local_path or
-                self.binder_local_path or
-                self.cleaned_src or
-                self.front_src or
-                self.binder_src)
+        return (self.cleaned_src or
+                self.front_src)
 
     def get_image_data(self, as_gray=False, use_pillow=False):
         """
@@ -65,18 +55,10 @@ class Photo(models.Model):
 
         TODO: implement as_gray for use_pillow
         """
-        if self.cleaned_local_path:
-            source = self.cleaned_local_path
-        elif self.front_local_path:
-            source = self.front_local_path
-        elif self.binder_local_path:
-            source = self.binder_local_path
-        elif self.cleaned_src:
+        if self.cleaned_src:
             source = self.cleaned_src
         elif self.front_src:
             source = self.front_src
-        elif self.binder_src:
-            source = self.binder_src
         else:
             print(f'{self} has no front or binder src')
             return None

@@ -1,42 +1,41 @@
+{% load webpack_loader %}
 {% load render_bundle from webpack_loader %}
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>This was Paris in 1970</title>
-        <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#000000" />
-        <link
-            rel="stylesheet"
-            href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-            integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-            crossorigin=""
-        />
-    </head>
-    <body>
-        <noscript>You need to enable JavaScript to run this app.</noscript>
-        <div id="root"></div>
-        {% render_bundle 'undefined' %}
-        {% render_bundle 'runtime~main' %}
-        {% render_bundle 'main' %}
-        <script>
-            // NOTE(ra): what follows is a use of the Django templating engine
-            //           to inject variable names into JavaScript. This confuses PyCharm,
-            //           which thinks this is a plain HTML/JS file.
-            const ReactDOM = window.app_modules.ReactDOM;
-            const React = window.app_modules.React;
-            const {{ component_name }} = window.app_modules.{{ component_name }};
-            const react_el = React.createElement(
-                {{ component_name }},
-                {{ props|safe }},
-            );
-            ReactDOM.render(
-                react_el,
-                document.getElementById('root')
-            );
-        </script>
-    </body>
+<head>
+    <meta charset="utf-8"/>
+    <title>This was Paris in 1970</title>
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="theme-color" content="#000000"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+          crossorigin="anonymous">
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""></script>
+
+    {% render_bundle "index" "css" %}
+
+</head>
+
+<body>
+<noscript>You need to enable JavaScript to run this app.</noscript>
+<div id="app_root"></div>
+
+{{ component_props|json_script:"component_props" }}
+{{ component_name|json_script:"component_name" }}
+{% render_bundle "index" "js" %}
+
+</body>
 </html>
 

@@ -93,27 +93,30 @@ class Command(BaseCommand):
                     print(print_msg)
                     try:
                         result = analysis_func(model_instance)
+                        analysis_result = analysis_result_model(
+                            name=analysis_name,
+                            result=json.dumps(result),
+                            photo=model_instance,
+                        )
+                        analysis_result.save()
+
+                        # Store the result
+                        stored_results[instance_identifier] = result
+                        num_computed += 1
+
+                        # Quick save the analysis results so far in case of failure
+                        if num_computed == save_threshold:
+                            num_computed = 0
+                            with open(result_path, 'wb+') as analysis_pickle:
+                                pickle.dump(stored_results, analysis_pickle)
                     except:  # pylint: disable=bare-except
                         print(f'Photo number {model_instance.number} failed. Skipping.')
 
-                analysis_result = analysis_result_model(
-                    name=analysis_name,
-                    result=json.dumps(result),
-                    photo=model_instance,
-                )
-                analysis_result.save()
-
-                # Store the result
-                stored_results[instance_identifier] = result
-                num_computed += 1
-
-                # Quick save the analysis results so far in case of failure
-                if num_computed == save_threshold:
-                    num_computed = 0
-                    with open(result_path, 'wb') as analysis_pickle:
-                        pickle.dump(stored_results, analysis_pickle)
 
             # Save the analysis stored_results
             # TODO: handle case where analysis fails (this won't pickle if something fails)
-            with open(result_path, 'wb') as analysis_pickle:
-                pickle.dump(stored_results, analysis_pickle)
+            try:
+                with open(result_path, 'wb+') as analysis_pickle:
+                    pickle.dump(stored_results, analysis_pickle)
+            except:
+                pass

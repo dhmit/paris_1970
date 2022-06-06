@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
-import * as PropTypes from 'prop-types';
+import React, {useState} from "react";
+
+import * as PropTypes from "prop-types";
 import {
-    Map as LeafletMap,
+    MapContainer,
     TileLayer,
     Popup,
     Rectangle,
-    ZoomControl,
-} from 'react-leaflet';
+    ZoomControl
+} from "react-leaflet";
 
 import {
     Modal,
-    Button,
-} from 'react-bootstrap';
-import { Navbar, Footer, LoadingPage } from '../UILibrary/components';
+    Button
+} from "react-bootstrap";
 
-import Legend from '../legend/legend.js';
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import LoadingPage from "../components/LoadingPage";
+
+import Legend from "../legend/legend.js";
 
 class Map extends React.Component {
     state = {
@@ -22,16 +26,18 @@ class Map extends React.Component {
         lng: 2.3470599,
         zoom: 13,
         bounds: [[48.8030, 2.1330], [48.9608, 2.6193]],
-        minZoom: 12,
-    }
-
+        minZoom: 12
+    };
 
     render() {
+        console.log("MAP STATE", this.state);
         // Sorts the map squares by number of photos (ascending order)
         const sortedMapData = Object.values(this.props.mapData)
-            .sort((a, b) => a.num_photos - b.num_photos);
+        .sort((a, b) => a.num_photos - b.num_photos);
         // Gets the max number of photos in a single square out of all squares to form buckets later
-        const maxNumOfPhotos = sortedMapData[sortedMapData.length - 1].num_photos;
+        const maxNumOfPhotos = sortedMapData && sortedMapData.length
+            ? sortedMapData[sortedMapData.length - 1].num_photos
+            : 0;
         // Creating 5 buckets based on lowest to highest number of photos per square
         const twentyPctMax = Math.round(0.2 * maxNumOfPhotos);
         const fortyPctMax = Math.round(0.4 * maxNumOfPhotos);
@@ -41,21 +47,23 @@ class Map extends React.Component {
             fortyPctMax, fortyPctMax + 1,
             sixtyPctMax, sixtyPctMax + 1,
             eightyPctMax, eightyPctMax + 1, maxNumOfPhotos];
-
+        console.log("index.js technically here??");
         return (
             <div id="map-container">
-                <Instructions />
-                <LeafletMap
+                <Instructions/>
+                <MapContainer
                     // Initial state of Map
                     center={[this.state.lat, this.state.lng]}
                     zoom={this.state.zoom}
-                    style={{ width: '100%', height: '100%' }}
+                    style={{
+                        width: "100%",
+                        height: "500px"
+                    }}
                     // Sets Map Boundaries - Keeps user from leaving Paris
                     maxBoundsViscosity={1.0}
                     maxBounds={this.state.bounds}
                     minZoom={this.state.minZoom}
-                    zoomControl={false}
-                >
+                    zoomControl={false}>
                     <ZoomControl position="bottomleft"/>
                     <Legend buckets={buckets}/>
                     <TileLayer
@@ -81,31 +89,30 @@ class Map extends React.Component {
 
                             const mapSquareBounds = [
                                 [coords.lat, coords.lng],
-                                [coords.lat - latDiff, coords.lng - lngDiff],
+                                [coords.lat - latDiff, coords.lng - lngDiff]
                             ];
-                            const link = '/map_square/' + index;
-                            let mapSquareBucket = '';
+                            const link = "/map_square/" + index;
+                            let mapSquareBucket = "";
                             // set of conditionals to to calculate photo density for heat map
                             if (numberOfPhotos > 0 && numberOfPhotos <= twentyPctMax) {
-                                mapSquareBucket = 'map-square box-one';
+                                mapSquareBucket = "map-square box-one";
                             } else if (numberOfPhotos <= fortyPctMax) {
-                                mapSquareBucket = 'map-square box-two';
+                                mapSquareBucket = "map-square box-two";
                             } else if (numberOfPhotos <= sixtyPctMax) {
-                                mapSquareBucket = 'map-square box-three';
+                                mapSquareBucket = "map-square box-three";
                             } else if (numberOfPhotos <= eightyPctMax) {
-                                mapSquareBucket = 'map-square box-four';
+                                mapSquareBucket = "map-square box-four";
                             } else if (numberOfPhotos <= maxNumOfPhotos) {
-                                mapSquareBucket = 'map-square box-five';
+                                mapSquareBucket = "map-square box-five";
                             }
                             // Greys out squares without photos in them
                             if (numberOfPhotos === 0) {
                                 return (
                                     <Rectangle className="map-grid"
-                                        key={index}
-                                        bounds={mapSquareBounds}
-                                    >
+                                               key={index}
+                                               bounds={mapSquareBounds}>
                                         <Popup>
-                                            Map Square {index} <br />
+                                            Map Square {index} <br/>
                                             <a href={link}>{numberOfPhotos} photos to show</a>
                                         </Popup>
                                     </Rectangle>
@@ -114,25 +121,24 @@ class Map extends React.Component {
 
                             return (
                                 <Rectangle className={mapSquareBucket}
-                                    key={index}
-                                    bounds={mapSquareBounds}
-                                >
+                                           key={index}
+                                           bounds={mapSquareBounds}>
                                     <Popup>
-                                        Map Square {index} <br />
+                                        Map Square {index} <br/>
                                         <a href={link}>{numberOfPhotos} photos to show</a>
                                     </Popup>
                                 </Rectangle>
                             );
                         })
                     }
-                </LeafletMap>
+                </MapContainer>
             </div>
         );
     }
 }
 
 Map.propTypes = {
-    mapData: PropTypes.array,
+    mapData: PropTypes.array
 };
 
 
@@ -153,8 +159,7 @@ function Instructions() {
                 keyboard={false}
                 size="lg"
                 aria-labelledby="contained-modal-title-vcenter"
-                centered
-            >
+                centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Welcome</Modal.Title>
                 </Modal.Header>
@@ -179,18 +184,17 @@ function Instructions() {
 }
 
 
-
 export class IndexView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            mapData: null,
+            mapData: null
         };
     }
 
     async componentDidMount() {
         try {
-            const mapResponse = await fetch('/api/all_map_squares/');
+            const mapResponse = await fetch("/api/all_map_squares/");
             const mapData = await mapResponse.json();
 
 
@@ -205,20 +209,26 @@ export class IndexView extends React.Component {
                 // If the map square does not have the coordinates it sets them to (0, 0)
                 // NOTE(ra): this no longer happens, so we can probably remove this safety check
                 if (roughCoords) {
-                    const roughCoordsList = roughCoords.split(', ');
+                    const roughCoordsList = roughCoords.split(", ");
                     const lat = parseFloat(roughCoordsList[0]);
                     const lng = parseFloat(roughCoordsList[1]);
-                    mapSquare.topLeftCoords = { lat, lng };
+                    mapSquare.topLeftCoords = {
+                        lat,
+                        lng
+                    };
                 } else {
                     const lat = 0.0;
                     const lng = 0.0;
-                    mapSquare.topLeftCoords = { lat, lng };
+                    mapSquare.topLeftCoords = {
+                        lat,
+                        lng
+                    };
                 }
             }
 
             this.setState({
                 mapData,
-                loading: false,
+                loading: false
             });
         } catch (e) {
             console.log(e);
@@ -231,10 +241,11 @@ export class IndexView extends React.Component {
         }
 
         return (<>
-            <Navbar />
-            <Map mapData={this.state.mapData} />
-            <Footer />
+            <Navbar/>
+            <Map mapData={this.state.mapData}/>
+            <Footer/>
         </>);
     }
 }
+
 export default IndexView;

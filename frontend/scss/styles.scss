@@ -1,7 +1,6 @@
 /*
- * Import all styles. This file is imported in app.js.
+ * Import all styles. This file is imported in frontend/index.js.
  */
-
 
 // Global CSS variables first, so they're available to stylesheets imported below
 $side-padding: 100px;
@@ -10,15 +9,20 @@ $header-height: 100px;
 $footer-height: 150px;
 
 // Individual imports
-@import "../../node_modules/bootstrap/scss/bootstrap";
-@import '../about/about';
-@import '../index/index';
-@import '../photoView/photoView';
-@import '../photographerView/photographerView';
-@import '../mapSquareView/mapSquareView';
-@import '../clusterView/clusterView';
-@import '../analysisView/analysisView';
-@import '../search/search';
+@import '../../node_modules/bootstrap/scss/functions';
+@import '../../node_modules/bootstrap/scss/variables';
+@import '../../node_modules/bootstrap/scss/mixins';
+@import '../../node_modules/bootstrap/scss/utilities';
+@import '../../node_modules/bootstrap/scss/grid';
+
+@import '../src/index/index';
+@import '../src/about/about';
+@import '../src/photoView/photoView';
+@import '../src/photographerView/photographerView';
+@import '../src/mapSquareView/mapSquareView';
+@import '../src/clusterView/clusterView';
+@import '../src/analysisView/analysisView';
+@import '../src/search/search';
 
 html {
     position: relative;
@@ -26,13 +30,13 @@ html {
 }
 
 body {
-    height: 100% !important;
+    height: 100%;
 }
 
-#root {
+#app_root {
     height: 100% !important;
-    @extend .d-flex;
-    @extend .flex-column;
+    @extend .d-flex !optional;
+    @extend .flex-column !optional;
 }
 
 /**

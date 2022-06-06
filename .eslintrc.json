@@ -1,14 +1,14 @@
 {
+    "parser": "babel-eslint",
+
     "env": {
         "browser": true
     },
 
     "extends": [
-        "airbnb-base",
         "plugin:react/recommended"
     ],
 
-    "parser": "babel-eslint",
 
     "plugins": [
         "react"
@@ -22,10 +22,10 @@
         "eqeqeq": ["error", "always"],
         "import/extensions": ["off"],
         "import/prefer-default-export": ["off"],
-        "indent": ["warn", 4],
+        "indent": ["off"],
         "linebreak-style": ["off"],
         "max-classes-per-file": ["off"],
-        "max-len": ["warn", { "code": 100, "ignoreUrls": true }],
+        "max-len": ["warn", { "code": 120, "ignoreUrls": true }],
         "no-console": ["off"],
         "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
         "no-multiple-empty-lines": ["off"],
@@ -40,6 +40,7 @@
         "prefer-destructuring": ["off"],
         "prefer-template": ["off"],
         "quote-props": ["error", "consistent"],
+        "quotes": ["warn"],
         "radix": ["off"],
         "react/no-unescaped-entities": [ "error", { "forbid": [">", "}"] }],
         "semi": ["error", "always"]
@@ -58,4 +59,3 @@
         }
     ]
 }
-

@@ -9,10 +9,12 @@ import math
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from django.shortcuts import render
 from django.db.models import Q, FloatField
 from django.db.models.functions import Cast
 
-from config.settings.base import YOLO_DIR
+from config import settings
+
 from .models import (
     Photo,
     MapSquare,
@@ -294,7 +296,7 @@ def search(request):
 
         for tag in tags:
             django_query &= Q(photoanalysisresult__name='yolo_model') & \
-                         Q(photoanalysisresult__result__icontains=tag)
+                            Q(photoanalysisresult__result__icontains=tag)
 
         for analysis_tag in analysis_tags:
             photo_obj = photo_obj.filter(
@@ -336,7 +338,7 @@ def get_tags(request):
     API endpoint to get YOLO model tags, photographer data, and analysis tags for search
     """
     tags = []
-    coco_dir = os.path.join(YOLO_DIR, 'coco.names')
+    coco_dir = os.path.join(settings.YOLO_DIR, 'coco.names')
     with open(coco_dir, encoding='utf-8') as file:
         tag = file.readline()
         while tag:
@@ -351,3 +353,167 @@ def get_tags(request):
         'analysisTags': analysis_tags,
         'valueRanges': get_analysis_value_ranges(analysis_tags)
     })
+
+
+# app views
+def index(request):
+    """
+    Home page
+    """
+
+    context = {
+        'page_metadata': {
+            'title': 'Home page'
+        },
+        'component_name': 'IndexView'
+    }
+
+    return render(request, 'index.html', context)
+
+
+def about(request):
+    context = {
+        'page_metadata': {
+            'title': 'About'
+        },
+        'component_name': 'About'
+    }
+
+    return render(request, 'index.html', context)
+
+
+def search(request):
+    context = {
+        'page_metadata': {
+            'title': 'Search'
+        },
+        'component_name': 'Search'
+    }
+
+    return render(request, 'index.html', context)
+
+
+def similarity(request):
+    context = {
+        'page_metadata': {
+            'title': 'All Photo View'
+        },
+        'component_name': 'AllPhotosView'
+    }
+
+    return render(request, 'index.html', context)
+
+
+def map_square_view(request, map_square_num):
+    context = {
+        'page_metadata': {
+            'title': 'Map Square View'
+        },
+        'component_name': 'MapSquareView',
+        'component_props': {
+            'photo_dir': str(settings.LOCAL_PHOTOS_DIR),
+            'mapSquareNumber': map_square_num
+        }
+    }
+    return render(request, 'index.html', context)
+
+
+def photographer_view(request, photographer_num):
+    context = {
+        'page_metadata': {
+            'title': 'Photographer View'
+        },
+        'component_name': 'PhotographerView',
+        'component_props': {
+            'photo_dir': str(settings.LOCAL_PHOTOS_DIR),
+            'photographerNumber': photographer_num
+        }
+    }
+    return render(request, 'index.html', context)
+
+
+def photo_view(request, map_square_num, photo_num):
+    context = {
+        'page_metadata': {
+            'title': 'Photo View'
+        },
+        'component_name': 'PhotoView',
+        'component_props': {
+            'photo_dir': str(settings.LOCAL_PHOTOS_DIR),
+            'mapSquareNumber': map_square_num,
+            'photoNumber': photo_num
+        }
+    }
+    return render(request, 'index.html', context)
+
+
+def similarity_view(request, map_square_num, photo_num, num_similar_photos):
+    context = {
+        'page_metadata': {
+            'title': 'Similarity View'
+        },
+        'component_name': 'SimilarityView',
+        'component_props': {
+            'mapSquareNumber': map_square_num,
+            'photoNumber': photo_num,
+            'numSimilarPhotos': num_similar_photos
+        }
+    }
+    return render(request, 'index.html', context)
+
+
+def analysis_name_view(request, analysis_name):
+    context = {
+        'page_metadata': {
+            'title': 'Analysis View'
+        },
+        'component_name': 'AnalysisView',
+        'component_props': {
+            'analysisName': analysis_name
+        }
+    }
+    return render(request, 'index.html', context)
+
+
+def analysis_view(request, analysis_name, object_name=None):
+    context = {
+        'page_metadata': {
+            'title': 'Analysis View'
+        },
+        'component_name': 'AnalysisView',
+        'component_props': {
+            'analysisName': analysis_name
+        }
+    }
+
+    if object_name:
+        context['component_props']['objectName'] = object_name
+
+    return render(request, 'index.html', context)
+
+
+def all_analysis_view(request):
+    context = {
+        'page_metadata': {
+            'title': 'All Analysis View'
+        },
+        'component_name': 'AllAnalysisView',
+        'component_props': {}
+    }
+
+    return render(request, 'index.html', context)
+
+
+def cluster_view(request, num_of_clusters, cluster_num):
+    context = {
+        'page_metadata': {
+            'title': 'Cluster View'
+        },
+        'component_name': 'ClusterView',
+        'component_props': {
+            'numberOfClusters': num_of_clusters,
+            'clusterNum': cluster_num
+        }
+    }
+
+    return render(request, 'index.html', context)

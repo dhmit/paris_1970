@@ -21,7 +21,7 @@ BACKEND_DATA_DIR = os.path.join(BACKEND_DIR, 'data')
 GOOGLE_TOKEN_FILE = os.path.join(BACKEND_DIR, 'token.pickle')
 ANALYSIS_DIR = Path(PROJECT_ROOT, 'backend', 'app', 'analysis')
 ANALYSIS_PICKLE_PATH = Path(BACKEND_DIR, ANALYSIS_DIR, 'analysis_results')
-LOCAL_PHOTOS_DIR = Path(PROJECT_ROOT, 'backend', 'data', 'local_photos')
+LOCAL_PHOTOS_DIR = "/static/images/photos"
 TEST_PHOTOS_DIR = Path(PROJECT_ROOT, 'backend', 'data', 'test_photos')
 TESSDATA_DIR = Path(PROJECT_ROOT, 'backend', 'data', 'tessdata')
 TEXT_DETECTION_PATH = Path(BACKEND_DATA_DIR, 'frozen_east_text_detection.pb')
@@ -31,7 +31,6 @@ YOLO_DIR = Path(ANALYSIS_DIR, 'yolo_files')
 
 
 ALLOWED_HOSTS = []  # For production, add domains
-
 
 # Application definition
 
@@ -48,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'webpack_loader',
+    'django_extensions',
 
     # our application code
     'app',
@@ -87,7 +87,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -97,7 +96,6 @@ DATABASES = {
         'NAME': os.path.join(BACKEND_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -117,7 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -130,7 +127,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -148,9 +144,11 @@ STATICFILES_DIRS = (
 )
 
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
-    ]
+    ],
+
 }
 
 CORS_ORIGIN_WHITELIST = [
@@ -159,11 +157,12 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:8080',
 ]
 
-
 # Django webpack loader settings
 WEBPACK_LOADER = {
     'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'bundles/',
+        'BUNDLE_DIR_NAME': './assets/bundles/',
         'STATS_FILE': os.path.join(PROJECT_ROOT, 'webpack-stats.json'),
     }
 }
+
+DEBUG = True
