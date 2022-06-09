@@ -1,11 +1,11 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import LoadingPage from "../components/LoadingPage";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import LoadingPage from "../LoadingPage";
 
-import {getSource} from "../analysisView/analysisView";
+import {getSource} from "./AnalysisView";
 
 const SIDES = {
     CLEANED: "cleaned",
