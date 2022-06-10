@@ -51,6 +51,18 @@ INSTALLED_APPS = [
 
     # our application code
     'app',
+
+    # cms
+    'djangocms_admin_style',
+    'django.contrib.sites',
+    'cms',
+    'menus',
+    'treebeard',
+    'sekizai',
+    'filer',
+    'easy_thumbnails',
+    'mptt',
+    'djangocms_text_ckeditor'
 ]
 
 MIDDLEWARE = [
@@ -63,6 +75,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # cms
+    'cms.middleware.utils.ApphookReloadMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'cms.middleware.user.CurrentUserMiddleware',
+    'cms.middleware.page.CurrentPageMiddleware',
+    'cms.middleware.toolbar.ToolbarMiddleware',
+    'cms.middleware.language.LanguageCookieMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -80,6 +100,11 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                # cms
+                'sekizai.context_processors.sekizai',
+                'cms.context_processors.cms_settings',
+                'django.template.context_processors.i18n'
             ],
         },
     },
@@ -118,7 +143,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 
 TIME_ZONE = 'UTC'
 
@@ -136,6 +161,12 @@ STATIC_URL = '/static/'
 
 # where collectstatic puts static files for production
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+
+# the url where we'll look for media files
+MEDIA_URL = "/media/"
+
+# where uploaded files are stored
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, "media")
 
 # where collectstatic looks for static files
 STATICFILES_DIRS = (
