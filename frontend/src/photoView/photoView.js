@@ -4,14 +4,8 @@ import * as PropTypes from "prop-types";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import LoadingPage from "../components/LoadingPage";
+import {PhotoViewer, SIDES} from "../components/PhotoViewer";
 
-import {getSource} from "../analysisView/analysisView";
-
-const SIDES = {
-    CLEANED: "cleaned",
-    FRONT: "front",
-    BACK: "back"
-};
 
 export class FindVanishingPointDisplayWidget extends React.Component {
     render() {
@@ -39,7 +33,7 @@ export class FindVanishingPointDisplayWidget extends React.Component {
         return (
             <div>
                 <svg
-                    className="analysis-overlay position-top-left"
+                    className="analysis-overlay"
                     height={this.props.height}
                     width={this.props.width}>
                     {items}
@@ -90,7 +84,7 @@ export class ForegroundPercentageDisplayWidget extends React.Component {
         return (
             <div>
                 <svg
-                    className="analysis-overlay position-top-left"
+                    className="analysis-overlay"
                     height={this.props.height}
                     width={this.props.width}
                 >
@@ -163,7 +157,7 @@ export class YoloModelDisplayWidget extends React.Component {
         return (
             <div>
                 <svg
-                    className="analysis-overlay position-top-left"
+                    className="analysis-overlay"
                     height={this.props.height}
                     width={this.props.width}
                 >
@@ -254,7 +248,7 @@ const ANALYSIS_CONFIGS = {
 };
 
 
-export class PhotoView extends React.Component {
+export class PhotoView extends PhotoViewer {
     constructor(props) {
         super(props);
         this.state = {
@@ -391,10 +385,10 @@ export class PhotoView extends React.Component {
                 <br/>
                 <div className="page row">
                     <div className="image-view col-12 col-lg-6">
-                        <div>
+                        <div className="image-box">
                             <img
                                 className="image-photo position-top-left"
-                                src={getSource(this.state.photoData, this.props.photo_dir, this.state.displaySide)}
+                                src={this.getSource(this.state.photoData, this.state.displaySide)}
                                 alt={alt}
                                 onLoad={this.onImgLoad}
                                 ref={this.photoRef}/>
@@ -419,10 +413,6 @@ export class PhotoView extends React.Component {
                                 // handled in a different div
                                 return null;
                             })}
-                            <svg
-                                height={this.state.height}
-                                width={this.state.width}>
-                            </svg>
                         </div>
                         <br/>
                         <div className={"centerBtn"}>
@@ -516,6 +506,13 @@ export class PhotoView extends React.Component {
                                         <React.Fragment>
                                             <h5>Similar Photos</h5>
                                             <p>None</p>
+                                        </React.Fragment>
+                                    );
+                                } else if (parsedValue === null) {
+                                    return (
+                                        <React.Fragment>
+                                            <h5>Similar Photos</h5>
+                                            <p>Similarity analysis not run.</p>
                                         </React.Fragment>
                                     );
                                 }

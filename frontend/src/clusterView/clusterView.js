@@ -4,16 +4,10 @@ import * as PropTypes from "prop-types";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import LoadingPage from "../components/LoadingPage";
-
-const SIDES = {
-    CLEANED: "cleaned",
-    FRONT: "front",
-    BACK: "back",
-    BINDER: "binder"
-};
+import {PhotoViewer} from "../components/PhotoViewer";
 
 
-export class ClusterView extends React.Component {
+export class ClusterView extends PhotoViewer {
     constructor(props) {
         super(props);
         this.state = {
@@ -42,40 +36,15 @@ export class ClusterView extends React.Component {
         }
     }
 
-    getSource(photoData) {
-        const availableSides = Object.values(SIDES)
-        .filter(
-            (side) => photoData[`${side}_src`] !== null
-        );
-        const displaySide = availableSides.length > 0 ? availableSides[0] : "";
-        const source = photoData[`${displaySide}_src`];
-        const fileId = source.split("=")[1];
-        const thumbnail = `https://drive.google.com/thumbnail?authuser=0&sz=w100&id=${fileId}`;
-        return thumbnail;
-    }
-
     render() {
         if (this.state.loading) {
             return (<LoadingPage/>);
         }
 
         console.log(this.state.photoData);
-        const photos = this.state.photoData.map((photo, k) => {
-            return (
-                <a
-                    key={k}
-                    href={`/photo/${photo["map_square_number"]}/${photo["number"]}/`}>
-                    <img
-                        alt={photo.alt}
-                        height={100}
-                        width={100}
-                        src={this.getSource(photo)}
-                    />
-                </a>
-            );
-        });
+        const photos = this.getPhotoGrid(this.state.photoData);
 
-        const prevButton = this.props.clusterNumber - 1 >= 0 ? (
+        const prevButton = this.props.clusterNumber - 1 > 0 ? (
             <a
                 title="prev"
                 href={`/clustering/${this.props.numberOfClusters}/${this.props.clusterNumber - 1}/`}
@@ -85,7 +54,7 @@ export class ClusterView extends React.Component {
                 </button>
             </a>) : (<></>);
 
-        const nextButton = this.props.clusterNumber + 1 < this.props.numberOfClusters ? (
+        const nextButton = this.props.clusterNumber + 1 <= this.props.numberOfClusters ? (
             <a
                 title="next"
                 href={`/clustering/${this.props.numberOfClusters}/${this.props.clusterNumber + 1}/`}

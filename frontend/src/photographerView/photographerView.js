@@ -1,11 +1,10 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import {getSource} from "../analysisView/analysisView";
-
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import LoadingPage from "../components/LoadingPage";
+import {PhotoViewer} from "../components/PhotoViewer";
 
 const percentFormat = (x) => Math.floor(x) + "%";
 const numberFormat = (x) => Math.floor(x);
@@ -43,7 +42,7 @@ const ANALYSIS = {
     }
 };
 
-export class PhotographerView extends React.Component {
+export class PhotographerView extends PhotoViewer {
     constructor(props) {
         super(props);
         this.state = {
@@ -146,28 +145,9 @@ export class PhotographerView extends React.Component {
                 </div>
                 <h2 className="h3">Photos Gallery:</h2>
                 <div className="photo_gallery">
-                    {photos.map((photo, k) => {
-                        if (photo.front_src || photo.cleaned_src) {
-                            return (
-                                <div className="photo" key={k}>
-                                    <a
-                                        key={k}
-                                        title={`Map Square: ${photo["map_square_number"]}` +
-                                        `, Number: ${photo["number"]}`}
-                                        href={`/photo/${photo["map_square_number"]}` +
-                                        `/${photo["number"]}/`}>
-                                        <img
-                                            alt={photo.alt}
-                                            height={150}
-                                            width={150}
-                                            src={getSource(photo, this.props.photo_dir)}
-                                        />
-                                    </a>
-                                </div>
-                            );
-                        }
-                        return "";
-                    })}
+                    {this.getPhotoGrid(
+                        photos, {"className": "photo", "photoSize": [150, 150]}
+                    )}
                 </div>
             </div>
             <Footer/>

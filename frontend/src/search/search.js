@@ -9,8 +9,7 @@ import Input from "@material-ui/core/Input";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import LoadingPage from "../components/LoadingPage";
-
-import {getSource} from "../analysisView/analysisView";
+import {PhotoViewer} from "../components/PhotoViewer";
 
 
 function analysisSliderInput(
@@ -426,7 +425,7 @@ SearchForm.propTypes = {
     analysisValueRanges: PropTypes.object
 };
 
-export class Search extends React.Component {
+export class Search extends PhotoViewer {
     constructor(props) {
         super(props);
         this.state = {
@@ -521,29 +520,9 @@ export class Search extends React.Component {
                                 </h2>
                                 <p>{this.state.searchText}</p>
                                 <div className="search-results">
-                                    {this.state.data.map((photo, k) => {
-                                        const photoId = `${photo["map_square_number"]}` +
-                                            `/${photo["number"]}`;
-                                        if (photo.cleaned_src || photo.front_src ||
-                                            photo.binder_src) {
-                                            return (
-                                                <a
-                                                    key={k}
-                                                    title={"Map Square: " +
-                                                    photo["map_square_number"] +
-                                                    ", Number: " + photo["number"]}
-                                                    href={"/photo/" + photoId + "/"}>
-                                                    <img
-                                                        alt={photo.alt}
-                                                        height={120}
-                                                        width={120}
-                                                        src={getSource(photo)}
-                                                    />
-                                                </a>
-                                            );
-                                        }
-                                        return "";
-                                    })}
+                                    {this.getPhotoGrid(
+                                        this.state.data, {"photoSize": [120, 120]}
+                                    )}
                                 </div>
                             </div>
                         }
