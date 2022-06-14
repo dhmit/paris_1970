@@ -36,12 +36,14 @@ ALLOWED_HOSTS = []  # For production, add domains
 
 INSTALLED_APPS = [
     # django
+    'djangocms_admin_style',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # 3rd party
     'rest_framework',
@@ -51,10 +53,9 @@ INSTALLED_APPS = [
 
     # our application code
     'app',
+    'cms_app',
 
     # cms
-    'djangocms_admin_style',
-    'django.contrib.sites',
     'cms',
     'menus',
     'treebeard',
