@@ -20,7 +20,6 @@ from django.conf import settings
 from ..models import Photo
 
 MODEL = Photo
-CONFIDENCE_THRESHOLD = 0.4  # Threshold arbitrarily set
 
 
 # Yolo weights, yolo config, and coco names file
@@ -79,8 +78,7 @@ def analyze(photo: Photo):
     # Loop over the indexes we are keeping
     for obj_data in output.xywh[0]:
         c_x, c_y, width, height, confidence, class_idx = obj_data.numpy()
-        if confidence < CONFIDENCE_THRESHOLD:
-            continue
+
         # Get coordinates of top left corner of the object
         x = int(round(c_x - (width / 2)))
         y = int(round(c_y - (height / 2)))
@@ -95,6 +93,7 @@ def analyze(photo: Photo):
             "y_coord": y,
             "width": int(round(width)),
             "height": int(round(height)),
+            "confidence": int(confidence * 100)
         })
 
     return {

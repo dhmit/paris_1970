@@ -296,6 +296,27 @@ def search(request):
             django_query &= Q(photographer_caption__icontains=caption) | \
                             Q(librarian_caption__icontains=caption)
 
+        # Check confidences
+        range_matches = set()
+        min_confidence, max_confidence = slider_search_values['Object Detection Confidence']
+        for p in photo_obj.all():
+            analysis_result = PhotoAnalysisResult.objects.filter(
+                name='yolo_model',
+                photo_id=p.id,
+            ).first()
+            if not analysis_result:
+                continue
+            yolo_dict = analysis_result.parsed_result()
+            has_confidence_in_range = any(
+                min_confidence <= box["confidence"] <= max_confidence
+                for box in yolo_dict['boxes']
+                if box['label'] in tags
+            )
+            if has_confidence_in_range:
+                range_matches.add(p.id)
+
+        django_query &= Q(id__in=range_matches)
+
         for tag in tags:
             django_query &= Q(photoanalysisresult__name='yolo_model') & \
                             Q(photoanalysisresult__result__icontains=tag)

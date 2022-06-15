@@ -91,20 +91,18 @@ class SearchForm extends React.Component {
             caption: "",
             tags: [],
             analysisTags: [],
-            sliderValues: {}
+            sliderValues: {"Object Detection Confidence": [0, 100]}
         };
     }
 
     handleChange = (event) => {
         this.setState({
-            ...this.state,
             [event.target.name]: event.target.value
         });
     };
 
     handleSelectDropdownChange = (selectedOptions) => {
         this.setState({
-            ...this.state,
             tags: selectedOptions
         });
     };
@@ -121,7 +119,6 @@ class SearchForm extends React.Component {
             }
         }
         this.setState({
-            ...this.state,
             analysisTags: selectedOptions,
             sliderValues: newSliderValues
         });
@@ -166,7 +163,6 @@ class SearchForm extends React.Component {
     handleMultiSelectChange = (event) => {
         const value = Array.from(event.target.selectedOptions, (option) => option.value);
         this.setState({
-            ...this.state,
             [event.target.name]: value
         });
     };
@@ -185,7 +181,6 @@ class SearchForm extends React.Component {
         const newSliderValues = this.state.sliderValues;
         newSliderValues[analysisName] = [newLowerBound, newUpperBound];
         this.setState({
-            ...this.state,
             sliderValues: newSliderValues
         });
     }
@@ -223,7 +218,6 @@ class SearchForm extends React.Component {
         }
 
         this.setState({
-            ...this.state,
             sliderValues: newSliderValues
         });
     };
@@ -285,6 +279,7 @@ class SearchForm extends React.Component {
             value: tag,
             label: tag
         }));
+
         const analysisTagOptions = this.props.analysisTagData.map(
             (tag) => ({
                 value: tag,
@@ -396,6 +391,14 @@ class SearchForm extends React.Component {
                             menuPosition="fixed"
                         />
                     </label>
+                    {analysisSlider(
+                        "Object Detection Confidence",
+                        this.state.sliderValues["Object Detection Confidence"],
+                        [0, 100],
+                        this.handleSliderChange,
+                        this.handleSliderInputChange,
+                        this.handleSliderBlur
+                    )}
                     <br/>
                     <label className="input-div">
                         <p className="search-label">Analysis Names:</p>
