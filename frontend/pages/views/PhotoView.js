@@ -7,6 +7,8 @@ import LoadingPage from "../LoadingPage";
 
 import {getSource} from "./AnalysisView";
 
+let tagList = ["Construction", "People", "Building"];
+
 export class FindVanishingPointDisplayWidget extends React.Component {
     render() {
         const items = [];
@@ -447,9 +449,12 @@ export class PhotoView extends React.Component {
                         <p>{photographerCaption || "None"}</p>
 
                         <p>Let's put some tags here.</p>
-                        <button className="tag-button">
-                            Construction
-                        </button>
+
+                        {tagList.map((word) => (
+                            <button className="tag-button" key={word.id}>
+                                {word}
+                            </button>
+                        ))}
 
                         <h5>Visual Analysis</h5>
                         <div className="row">
