@@ -2,10 +2,10 @@
     "name": "paris_1970",
     "version": "0.2.0",
     "private": true,
-    "main": "index.js",
+    "main": "frontend/index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "webpack serve --mode development --config webpack.config.dev.js",
+        "start": "node_modules/.bin/webpack serve --mode development --config webpack.config.dev.js",
         "build": "NODE_ENV=production webpack --progress --bail"
     },
     "dependencies": {
