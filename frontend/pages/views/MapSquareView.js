@@ -3,11 +3,11 @@ import * as PropTypes from "prop-types";
 
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
 
-import {getSource} from "./AnalysisView";
 
-export class MapSquareView extends React.Component {
+export class MapSquareView extends PhotoViewer {
     constructor(props) {
         super(props);
         this.state = {
@@ -48,30 +48,14 @@ export class MapSquareView extends React.Component {
             photos
         } = this.state.mapSquareData;
 
-        const photoListItem = (photo, k) => {
-            const photoId = `${photo["map_square_number"]}/${photo["number"]}`;
-            console.log("photoId", photoId);
-            return (
-                <a key={k}
-                   title={`Map Square: ${photo["map_square_number"]}` +
-                   `, Number: ${photo["number"]}`}
-                   href={"/photo/" + photoId + "/"}>
-                    <img
-                        alt={photo.alt}
-                        height={120}
-                        width={120}
-                        src={getSource(photo, this.props.photo_dir)}
-                    />
-                </a>
-            );
-        };
-
         return (<>
             <Navbar/>
             <div className="page">
                 <h1>Map Square {number}</h1>
                 {photos.length
-                    ? (<>{photos.map((photo, k) => photoListItem(photo, k))}</>)
+                    ? (<>{
+                        this.getPhotoGrid(photos, {"photoSize": [120, 120]})
+                    }</>)
                     : "No metadata has been transcribed for these photos."
                 }
             </div>
@@ -81,6 +65,5 @@ export class MapSquareView extends React.Component {
 }
 
 MapSquareView.propTypes = {
-    mapSquareNumber: PropTypes.number,
-    photo_dir: PropTypes.string
+    mapSquareNumber: PropTypes.number
 };

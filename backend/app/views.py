@@ -123,12 +123,15 @@ def all_map_squares(request):
 
 
 @api_view(['GET'])
-def get_photographer(request, photographer_number):
+def get_photographer(request, photographer_number=None):
     """
     API endpoint to get a photographer based on the photographer_id
     """
-    photographer_obj = Photographer.objects.get(number=photographer_number)
-    serializer = PhotographerSerializer(photographer_obj)
+    if photographer_number:
+        photographer_obj = Photographer.objects.get(number=photographer_number)
+    else:
+        photographer_obj = Photographer.objects.all()
+    serializer = PhotographerSerializer(photographer_obj, many=photographer_number is None)
     return Response(serializer.data)
 
 
@@ -157,6 +160,7 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
     API endpoint to get photos sorted by analysis
     """
     analysis_obj = PhotoAnalysisResult.objects.filter(name=analysis_name)
+    sorted_analysis_obj = analysis_obj
     if len(analysis_obj) > 0:
         test_obj = analysis_obj[0].parsed_result()
         if type(test_obj) in [int, float, bool]:
@@ -174,8 +178,6 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
             sorted_analysis_obj = sorted(
                 analysis_obj, key=lambda instance: len(instance.parsed_result())
             )
-    else:
-        sorted_analysis_obj = analysis_obj
     sorted_photo_obj = [instance.photo for instance in sorted_analysis_obj]
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
     return Response(serializer.data)
@@ -294,6 +296,27 @@ def search(request):
             django_query &= Q(photographer_caption__icontains=caption) | \
                             Q(librarian_caption__icontains=caption)
 
+        # Check confidences
+        range_matches = set()
+        min_confidence, max_confidence = slider_search_values['Object Detection Confidence']
+        for p in photo_obj.all():
+            analysis_result = PhotoAnalysisResult.objects.filter(
+                name='yolo_model',
+                photo_id=p.id,
+            ).first()
+            if not analysis_result:
+                continue
+            yolo_dict = analysis_result.parsed_result()
+            has_confidence_in_range = any(
+                min_confidence <= box["confidence"] <= max_confidence
+                for box in yolo_dict['boxes']
+                if box['label'] in tags
+            )
+            if has_confidence_in_range:
+                range_matches.add(p.id)
+
+        django_query &= Q(id__in=range_matches)
+
         for tag in tags:
             django_query &= Q(photoanalysisresult__name='yolo_model') & \
                             Q(photoanalysisresult__result__icontains=tag)
@@ -356,6 +379,12 @@ def get_tags(request):
 
 
 # app views
+def render_view(request, context):
+    context.setdefault('component_props', {})
+    context['component_props']['photoDir'] = str(settings.LOCAL_PHOTOS_DIR)
+    return render(request, 'index.html', context)
+
+
 def index(request):
     """
     Home page
@@ -368,7 +397,7 @@ def index(request):
         'component_name': 'HomePage'
     }
 
-    return render(request, 'index.html', context)
+    return render_view(request, context)
 
 
 def about(request):
@@ -379,10 +408,10 @@ def about(request):
         'component_name': 'About'
     }
 
-    return render(request, 'index.html', context)
+    return render_view(request, context)
 
 
-def search(request):
+def search_view(request):
     context = {
         'page_metadata': {
             'title': 'Search'
@@ -390,7 +419,7 @@ def search(request):
         'component_name': 'Search'
     }
 
-    return render(request, 'index.html', context)
+    return render_view(request, context)
 
 
 def similarity(request):
@@ -401,7 +430,7 @@ def similarity(request):
         'component_name': 'AllPhotosView'
     }
 
-    return render(request, 'index.html', context)
+    return render_view(request, context)
 
 
 def map_square_view(request, map_square_num):
@@ -411,11 +440,10 @@ def map_square_view(request, map_square_num):
         },
         'component_name': 'MapSquareView',
         'component_props': {
-            'photo_dir': str(settings.LOCAL_PHOTOS_DIR),
             'mapSquareNumber': map_square_num
         }
     }
-    return render(request, 'index.html', context)
+    return render_view(request, context)
 
 
 def photographer_view(request, photographer_num):
@@ -425,11 +453,10 @@ def photographer_view(request, photographer_num):
         },
         'component_name': 'PhotographerView',
         'component_props': {
-            'photo_dir': str(settings.LOCAL_PHOTOS_DIR),
             'photographerNumber': photographer_num
         }
     }
-    return render(request, 'index.html', context)
+    return render_view(request, context)
 
 
 def photo_view(request, map_square_num, photo_num):
@@ -439,12 +466,11 @@ def photo_view(request, map_square_num, photo_num):
         },
         'component_name': 'PhotoView',
         'component_props': {
-            'photo_dir': str(settings.LOCAL_PHOTOS_DIR),
             'mapSquareNumber': map_square_num,
             'photoNumber': photo_num
         }
     }
-    return render(request, 'index.html', context)
+    return render_view(request, context)
 
 
 def similarity_view(request, map_square_num, photo_num, num_similar_photos):
@@ -459,7 +485,7 @@ def similarity_view(request, map_square_num, photo_num, num_similar_photos):
             'numSimilarPhotos': num_similar_photos
         }
     }
-    return render(request, 'index.html', context)
+    return render_view(request, context)
 
 
 def analysis_name_view(request, analysis_name):
@@ -472,7 +498,7 @@ def analysis_name_view(request, analysis_name):
             'analysisName': analysis_name
         }
     }
-    return render(request, 'index.html', context)
+    return render_view(request, context)
 
 
 def analysis_view(request, analysis_name, object_name=None):
@@ -489,7 +515,7 @@ def analysis_view(request, analysis_name, object_name=None):
     if object_name:
         context['component_props']['objectName'] = object_name
 
-    return render(request, 'index.html', context)
+    return render_view(request, context)
 
 
 def all_analysis_view(request):
@@ -501,7 +527,7 @@ def all_analysis_view(request):
         'component_props': {}
     }
 
-    return render(request, 'index.html', context)
+    return render_view(request, context)
 
 
 def cluster_view(request, num_of_clusters, cluster_num):
@@ -512,8 +538,8 @@ def cluster_view(request, num_of_clusters, cluster_num):
         'component_name': 'ClusterView',
         'component_props': {
             'numberOfClusters': num_of_clusters,
-            'clusterNum': cluster_num
+            'clusterNumber': cluster_num
         }
     }
 
-    return render(request, 'index.html', context)
+    return render_view(request, context)
