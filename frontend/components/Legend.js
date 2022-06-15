@@ -1,6 +1,6 @@
 import React from "react";
 import * as PropTypes from "prop-types";
-import "./legend.scss";
+import "../scss/legend.scss";
 
 export class Legend extends React.Component {
     constructor(props) {

@@ -1,7 +1,7 @@
 import React from "react";
-import NavBar from "./Navbar";
-import Loading from "./Loading";
-import Footer from "./Footer";
+import NavBar from "../components/Navbar";
+import Loading from "../components/Loading";
+import Footer from "../components/Footer";
 
 export class LoadingPage extends React.Component {
     render() {

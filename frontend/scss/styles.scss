@@ -15,14 +15,14 @@ $footer-height: 150px;
 @import '../../node_modules/bootstrap/scss/utilities';
 @import '../../node_modules/bootstrap/scss/grid';
 
-@import '../src/index/index';
-@import '../src/about/about';
-@import '../src/photoView/photoView';
-@import '../src/photographerView/photographerView';
-@import '../src/mapSquareView/mapSquareView';
-@import '../src/clusterView/clusterView';
-@import '../src/analysisView/analysisView';
-@import '../src/search/search';
+@import './home';
+@import './about';
+@import './photoView';
+@import './photographerView';
+@import './mapSquareView';
+@import './clusterView';
+@import './analysisView';
+@import './search';
 
 html {
     position: relative;

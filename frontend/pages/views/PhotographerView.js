@@ -1,11 +1,11 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import {getSource} from "../analysisView/analysisView";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import LoadingPage from "../LoadingPage";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import LoadingPage from "../components/LoadingPage";
+import {getSource} from "./AnalysisView";
 
 const percentFormat = (x) => Math.floor(x) + "%";
 const numberFormat = (x) => Math.floor(x);
