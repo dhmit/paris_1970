@@ -15,5 +15,4 @@ Base.propTypes = {
     children: PropTypes.object
 };
 
-
 export default Base;

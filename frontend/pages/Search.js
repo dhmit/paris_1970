@@ -8,9 +8,9 @@ import Input from "@material-ui/core/Input";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import LoadingPage from "../components/LoadingPage";
+import LoadingPage from "./LoadingPage";
 
-import {getSource} from "../analysisView/analysisView";
+import {getSource} from "./views/AnalysisView";
 
 
 function analysisSliderInput(

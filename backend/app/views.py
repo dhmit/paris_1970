@@ -365,7 +365,7 @@ def index(request):
         'page_metadata': {
             'title': 'Home page'
         },
-        'component_name': 'IndexView'
+        'component_name': 'HomePage'
     }
 
     return render(request, 'index.html', context)

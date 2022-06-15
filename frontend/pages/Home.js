@@ -16,9 +16,9 @@ import {
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import LoadingPage from "../components/LoadingPage";
+import LoadingPage from "./LoadingPage";
 
-import Legend from "../legend/legend.js";
+import Legend from "../components/Legend.js";
 
 class Map extends React.Component {
     state = {
@@ -184,7 +184,7 @@ function Instructions() {
 }
 
 
-export class IndexView extends React.Component {
+export class HomePage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -248,4 +248,4 @@ export class IndexView extends React.Component {
     }
 }
 
-export default IndexView;
+export default HomePage;

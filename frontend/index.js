@@ -5,20 +5,20 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import Base from "./src/Base";
-import ErrorNotFoundComponent from "./src/components/ErrorNotFoundComponent";
+import Base from "./Base";
+import ErrorNotFoundComponent from "./components/ErrorNotFoundComponent";
 
-import {IndexView} from "./src/index";
-import {PhotoView} from "./src/photoView/photoView";
-import {SimilarityView} from "./src/similarityView/similarityView";
-import {PhotographerView} from "./src/photographerView/photographerView";
-import {MapSquareView} from "./src/mapSquareView/mapSquareView";
-import {AnalysisView} from "./src/analysisView/analysisView";
-import {AllAnalysisView} from "./src/analysisView/allAnalysisView";
-import {AllPhotosView} from "./src/similarityView/allPhotosView";
-import {ClusterView} from "./src/clusterView/clusterView";
-import {Search} from "./src/search/search";
-import About from "./src/about/about";
+import {HomePage} from "./pages/Home";
+import {PhotoView} from "./pages/views/PhotoView";
+import {SimilarityView} from "./pages/views/SimilarityView";
+import {PhotographerView} from "./pages/views/PhotographerView";
+import {MapSquareView} from "./pages/views/MapSquareView";
+import {AnalysisView} from "./pages/views/AnalysisView";
+import {AllAnalysisView} from "./pages/views/AllAnalysisView";
+import {AllPhotosView} from "./pages/views/AllPhotosView";
+import {ClusterView} from "./pages/views/ClusterView";
+import {Search} from "./pages/Search";
+import About from "./pages/About";
 
 // Import all styles
 import "./scss/styles.scss";
@@ -29,7 +29,7 @@ const COMPONENT_PROPS = JSON.parse(COMPONENT_PROPS_RAW);
 const COMPONENT_NAME = JSON.parse(COMPONENT_NAME_RAW);
 const COMPONENTS = {
     ErrorNotFoundComponent,
-    IndexView,
+    HomePage,
     About,
     Search,
     PhotoView,
