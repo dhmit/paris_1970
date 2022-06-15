@@ -13,73 +13,44 @@ links:
 import os
 import sys
 
-import numpy as np
-import cv2
+import torch
+import pickle
 
 from django.conf import settings
 from ..models import Photo
 
 MODEL = Photo
-CONFIDENCE = 0.5
-THRESHOLD = 0.3
+
 
 # Yolo weights, yolo config, and coco names file
-WEIGHTS = os.path.join(settings.YOLO_DIR, 'yolov3.weights')
-CONFIG = os.path.join(settings.YOLO_DIR, 'yolov3.cfg')
-CLASS_NAMES = os.path.join(settings.YOLO_DIR, 'coco.names')
+WEIGHTS_PATH = os.path.join(settings.YOLO_DIR, 'yolov5x6.pt')
+MODEL_PATH = os.path.join(settings.YOLO_DIR, 'model.pkl')
 
 
 def load_yolo():
     """
     Loads yolo model to analyze photo.
     """
-    if not os.path.exists(WEIGHTS):
+    if not os.path.exists(WEIGHTS_PATH):
         print(
-            'Please download the YLOLOv3-608 weights file at '
-            'https://pjreddie.com/media/files/yolov3.weights '
+            'Please download the YOLOv5x6 weights file at '
+            'https://github.com/ultralytics/yolov5/releases/download/v6.1/yolov5x6.pt '
             'and place it in the yolo_files directory before running this analysis.'
         )
         sys.exit(1)
+    try:
+        # Try to load pickled model
+        with open(MODEL_PATH, 'rb') as model_file:
+            model = pickle.load(model_file)
+    except (FileNotFoundError, ModuleNotFoundError):
+        # Model loading options and their configurations can be found at
+        # https://github.com/ultralytics/yolov5/blob/master/hubconf.py
+        model = torch.hub.load('ultralytics/yolov5', 'custom', path=WEIGHTS_PATH).eval()
 
-    net = cv2.dnn.readNet(WEIGHTS, CONFIG)
-    with open(CLASS_NAMES, encoding='utf-8') as file:
-        classes = [line.strip() for line in file.readlines()]
-    layers_names = net.getLayerNames()
-    output_layers = [layers_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
-    colors = np.random.uniform(0, 255, size=(len(classes), 3))
-    return net, classes, colors, output_layers
-
-
-def create_box(detection, image_dimensions):
-    """
-    Creates box around detected objects.
-    """
-    image_height, image_width = image_dimensions
-    box = detection[0:4] * np.array([image_width, image_height, image_width, image_height])
-    center_x, center_y, box_width, box_height = box.astype("int")
-
-    # Reformat box coordinates to top-left based from center based
-    x_coordinate = int(center_x - (box_width / 2))
-    y_coordinate = int(center_y - (box_height / 2))
-
-    return [x_coordinate, y_coordinate, int(box_width), int(box_height)]
-
-
-def yolo_setup(input_image, net):
-    """
-    Generates the output layers used to extract class IDs and
-    confidence values of the object detections in the input image
-    """
-    # Determine only the *output* layer names that we need from YOLO
-    layer_names = [net.getLayerNames()[i[0] - 1] for i in net.getUnconnectedOutLayers()]
-
-    # Construct a blob from the input image
-    blob = cv2.dnn.blobFromImage(input_image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
-    net.setInput(blob)
-
-    # Perform a forward pass of the YOLO object detector to get bounding boxes and their
-    # associated probabilities
-    return net.forward(layer_names)
+        # Pickle model for faster subsequent load times
+        with open(MODEL_PATH, 'wb+') as model_file:
+            pickle.dump(model, model_file)
+    return model
 
 
 def analyze(photo: Photo):
@@ -90,10 +61,6 @@ def analyze(photo: Photo):
     """
     # pylint: disable=too-many-locals
 
-    yolo_model = load_yolo()
-    net = yolo_model[0]
-    labels = yolo_model[1]
-
     # Get image and image dimensions
     input_image = photo.get_image_data()
     if input_image is None:
@@ -102,58 +69,34 @@ def analyze(photo: Photo):
             "labels": [],
         }
 
-    image_dimensions = input_image.shape[:2]
-    layer_outputs = yolo_setup(input_image, net)
-
-    boxes = []
-    confidences = []
-    class_ids = []
-
-    # Loop over each of the layer outputs
-    for output in layer_outputs:
-        # Loop over each detection in the output
-        for detection in output:
-            # Extract the class ID and confidence (probability) of the current object detection
-            scores = detection[5:]
-            class_id = np.argmax(scores)
-            confidence = scores[class_id]
-            # Filter out predictions with a probability less than CONFIDENCE (minimum probability)
-            if confidence > CONFIDENCE:
-                new_box = create_box(detection, image_dimensions)
-                boxes.append(new_box)
-                confidences.append(float(confidence))
-                class_ids.append(class_id)
-
-    # Apply non-maxima suppression to suppress weak, overlapping bounding boxes
-    indexes = cv2.dnn.NMSBoxes(boxes, confidences, CONFIDENCE, THRESHOLD)
-    if indexes is None or len(indexes) == 0:
-        return {}
-
+    yolo_model = load_yolo()
+    output = yolo_model(input_image)
     # Get quantity of detected objects in the image based on indexes
     classes = {}
-    result = []
+    boxes = []
 
     # Loop over the indexes we are keeping
-    for i in indexes.flatten():
-        object_class = labels[class_ids[i]]
-        rect_coord = boxes[i]
+    for obj_data in output.xywh[0]:
+        c_x, c_y, width, height, confidence, class_idx = obj_data.numpy()
 
-        if object_class in classes:
-            classes[object_class] += 1
-        else:
-            classes[object_class] = 1
+        # Get coordinates of top left corner of the object
+        x = int(round(c_x - (width / 2)))
+        y = int(round(c_y - (height / 2)))
 
-        result.append(
-            {
-                "label": object_class,
-                "x_coord": rect_coord[0],
-                "y_coord": rect_coord[1],
-                "width": rect_coord[2],
-                "height": rect_coord[3],
-            }
-        )
+        object_class = output.names[int(class_idx)]
+        classes.setdefault(object_class, 0)
+        classes[object_class] += 1
+
+        boxes.append({
+            "label": object_class,
+            "x_coord": x,
+            "y_coord": y,
+            "width": int(round(width)),
+            "height": int(round(height)),
+            "confidence": int(confidence * 100)
+        })
 
     return {
-        "boxes": result,
+        "boxes": boxes,
         "labels": classes,
     }
