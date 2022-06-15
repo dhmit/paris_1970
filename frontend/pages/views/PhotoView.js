@@ -446,6 +446,11 @@ export class PhotoView extends React.Component {
                         <h5 className="caption">Photographer Caption</h5>
                         <p>{photographerCaption || "None"}</p>
 
+                        <p>Let's put some tags here.</p>
+                        <button className="tag-button">
+                            Construction
+                        </button>
+
                         <h5>Visual Analysis</h5>
                         <div className="row">
                             <div className="col-6">
@@ -572,10 +577,6 @@ export class PhotoView extends React.Component {
                                 </React.Fragment>
                             );
                         })}
-                    </div>
-                    <div className="center">
-                        <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
-                        <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
                     </div>
                 </div>
             </div>
