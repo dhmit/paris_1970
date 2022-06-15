@@ -7,12 +7,6 @@ import LoadingPage from "../LoadingPage";
 
 import {getSource} from "./AnalysisView";
 
-const SIDES = {
-    CLEANED: "cleaned",
-    FRONT: "front",
-    BACK: "back"
-};
-
 export class FindVanishingPointDisplayWidget extends React.Component {
     render() {
         const items = [];
@@ -260,7 +254,7 @@ export class PhotoView extends React.Component {
         this.state = {
             loading: true,
             photoData: null,
-            displaySide: "",
+            displaySide: "front",
             availableSides: [],
             view: 0,
             width: null,
@@ -285,13 +279,8 @@ export class PhotoView extends React.Component {
                 this.setState({loading: false});
             } else {
                 const photoData = await response.json();
-                const availableSides = Object.values(SIDES)
-                .filter((side) => photoData[`${side}_src`] !== null);
-                const displaySide = availableSides.length > 0 ? availableSides[0] : "";
                 this.setState({
                     photoData,
-                    availableSides,
-                    displaySide,
                     loading: false
                 });
             }
@@ -419,21 +408,23 @@ export class PhotoView extends React.Component {
                                 // handled in a different div
                                 return null;
                             })}
-                            <svg
-                                height={this.state.height}
-                                width={this.state.width}>
-                            </svg>
+                            {/*<svg*/}
+                            {/*    height={this.state.height}*/}
+                            {/*    width={this.state.width}>*/}
+                            {/*</svg>*/}
                         </div>
                         <br/>
                         <div className={"centerBtn"}>
-                            {this.state.availableSides.map((side, k) => (
-                                <button
-                                    className="btn btn-outline-dark mx-1"
-                                    key={k}
-                                    onClick={() => this.changeSide(side)}>
-                                    {side[0].toUpperCase() + side.slice(1)} Side
-                                </button>
-                            ))}
+                            <button
+                                className={"btn btn-outline-dark mx-1"}
+                                onClick={() => this.changeSide("front")}>
+                                Front View
+                            </button>
+                            <button
+                                className={"btn btn-outline-dark mx-1"}
+                                onClick={() => this.changeSide("back")}>
+                                Slide View
+                            </button>
                         </div>
                     </div>
                     <div className="image-info col-12 col-lg-6">
