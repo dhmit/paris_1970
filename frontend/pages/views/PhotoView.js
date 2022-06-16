@@ -6,6 +6,8 @@ import Footer from "../../components/Footer";
 import LoadingPage from "../LoadingPage";
 
 import {getSource} from "./AnalysisView";
+import {Dropdown} from "react-bootstrap";
+
 
 let tagList = ["Construction", "People", "Building"];
 
@@ -457,6 +459,19 @@ export class PhotoView extends React.Component {
                         ))}
 
                         <h5>Visual Analysis</h5>
+
+                        <Dropdown className="photo-sort-dropdown">
+                            <Dropdown.Toggle className="photo-sort-dropdown-button" align="start">
+                                Sort By...
+                            </Dropdown.Toggle>
+
+                            <Dropdown.Menu>
+                                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+                                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+                                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
+
                         <div className="row">
                             <div className="col-6">
                                 {(this.state.displaySide === "cleaned")
