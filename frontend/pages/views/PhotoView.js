@@ -6,6 +6,8 @@ import Footer from "../../components/Footer";
 import LoadingPage from "../LoadingPage";
 
 import {getSource} from "./AnalysisView";
+import {Dropdown} from "react-bootstrap";
+
 
 let tagList = ["Construction", "People", "Building"];
 
@@ -445,18 +447,20 @@ export class PhotoView extends React.Component {
                             </button>
                         ))}
 
-                        <br></br><br></br>
-                        <h6>CAPTION</h6>
-                        <p>{photographerCaption || "None"}</p>
-                        <br></br>
+                        <h5>Visual Analysis</h5>
 
-                        <h6>LOCATION</h6>
-                        <p>Map Square:
-                            <a href={`/map_square/${mapSquareNumber}`}>{mapSquareNumber}</a>
-                        </p>
-                        <p>Photo: {photoNumber}</p>
+                        <Dropdown className="photo-sort-dropdown">
+                            <Dropdown.Toggle className="photo-sort-dropdown-button" align="start">
+                                Sort By...
+                            </Dropdown.Toggle>
 
-                        <h6>ANALYSIS</h6>
+                            <Dropdown.Menu>
+                                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+                                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+                                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
+
                         <div className="row">
                             <div className="col-6">
                                 {(this.state.displaySide === "front")

@@ -122,3 +122,26 @@ rect {
     padding: 25px;
     background-color: black;
 }
+
+
+.photo-sort-dropdown-button {
+    font-size: 16px;
+    border-width: 0px;
+    border-bottom: 2px solid black;
+    padding: 0px 22px 0px 0px;
+    margin: 5px;
+    border-radius: 0px;
+    background-color: white;
+    color: #5E5F5F;
+}
+
+
+.photo-sort-dropdown-menu {
+    font-size: 16px;
+    border-width: 0px;
+    padding: 2px 24px;
+    margin: 5px;
+    border-radius: 15px;
+    background-color: #00B1DB;
+    color: white;
+}
