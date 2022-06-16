@@ -94,12 +94,31 @@ rect {
     padding-left: 10px;
 }
 
+.side-button {
+    font-size: 18px;
+    font-weight: 500;
+    border: 2px solid;
+    padding: 2px 10px;
+    background-color: white;
+}
+
+.side-button:hover {
+    background-color: #20CCD7;
+}
+
 .tag-button {
     font-size: 16px;
-    border-width: 0px;
+    border: 2px solid #FB2F2A;
     padding: 2px 24px;
     margin: 5px;
-    border-radius: 15px;
-    background-color: #00B1DB;
-    color: white;
+    background-color: white;
+}
+
+.tag-button:hover {
+    background-color: #f6afae;
+}
+
+.image-border {
+    padding: 25px;
+    background-color: black;
 }

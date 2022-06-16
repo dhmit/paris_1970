@@ -368,21 +368,10 @@ export class PhotoView extends React.Component {
                     <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
                     <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
                 </div>
-                <div className="row map-square">
-                    <div className="col">
-                        <a className="btn btn-outline-dark" href={`/map_square/${mapSquareNumber}`}>
-                            Back to Map Square</a>
-                    </div>
-                    <div className="col text-center">
-                        <h2>Map Square {mapSquareNumber}, Photo {photoNumber}</h2>
-                    </div>
-                    <div className="col">
-                    </div>
-                </div>
                 <br/>
                 <div className="page row">
                     <div className="image-view col-12 col-lg-6">
-                        <div>
+                        <div className="image-border">
                             <img
                                 className="image-photo position-top-left"
                                 src={getSource(this.state.photoData, this.props.photo_dir, this.state.displaySide)}
@@ -394,7 +383,7 @@ export class PhotoView extends React.Component {
                                 const parsedValue = JSON.parse(analysisResult.result);
 
                                 if (analysisResult.name in VISUAL_ANALYSES &&
-                                    this.state.displaySide === "cleaned") {
+                                    this.state.displaySide === "front") {
                                     if (VISUAL_ANALYSES[analysisResult.name][1] ===
                                         this.state.view) {
                                         return VISUAL_ANALYSES[analysisResult.name][0](
@@ -418,19 +407,21 @@ export class PhotoView extends React.Component {
                         <br/>
                         <div className={"centerBtn"}>
                             <button
-                                className={"btn btn-outline-dark mx-1"}
+                                className={"side-button"}
                                 onClick={() => this.changeSide("front")}>
-                                Front View
+                                PHOTO
                             </button>
                             <button
-                                className={"btn btn-outline-dark mx-1"}
+                                className={"side-button"}
                                 onClick={() => this.changeSide("back")}>
-                                Slide View
+                                SLIDE
                             </button>
                         </div>
                     </div>
                     <div className="image-info col-12 col-lg-6">
-                        <h5>Photographer</h5>
+                        <h4>Photograph Details</h4>
+                        <br></br>
+                        <h6>PHOTOGRAPHER</h6>
                         <p>
                             {photographerName || "Unknown"}
                             {
@@ -445,10 +436,8 @@ export class PhotoView extends React.Component {
                                     : " (Number: Unknown)"
                             }
                         </p>
-                        <h5 className="caption">Photographer Caption</h5>
-                        <p>{photographerCaption || "None"}</p>
-
-                        <p>Let's put some tags here.</p>
+                        <br></br>
+                        <h6>TAGS</h6>
 
                         {tagList.map((word) => (
                             <button className="tag-button" key={word.id}>
@@ -456,10 +445,21 @@ export class PhotoView extends React.Component {
                             </button>
                         ))}
 
-                        <h5>Visual Analysis</h5>
+                        <br></br><br></br>
+                        <h6>CAPTION</h6>
+                        <p>{photographerCaption || "None"}</p>
+                        <br></br>
+
+                        <h6>LOCATION</h6>
+                        <p>Map Square:
+                            <a href={`/map_square/${mapSquareNumber}`}>{mapSquareNumber}</a>
+                        </p>
+                        <p>Photo: {photoNumber}</p>
+
+                        <h6>ANALYSIS</h6>
                         <div className="row">
                             <div className="col-6">
-                                {(this.state.displaySide === "cleaned")
+                                {(this.state.displaySide === "front")
                                     ? <select
                                         id="toggleSelect"
                                         className="custom-select"
@@ -472,7 +472,7 @@ export class PhotoView extends React.Component {
                                     </select>
                                     : <p>Not available</p>
                                 }
-                                {(this.state.view === 3 && this.state.displaySide === "cleaned")
+                                {(this.state.view === 3 && this.state.displaySide === "front")
                                     ? <p className={"px-3 my-0"}>
                                         <i>Hover over the boxes to see the name of the object.</i>
                                     </p>
@@ -482,10 +482,12 @@ export class PhotoView extends React.Component {
                         </div>
 
                         {analyses.map((analysisResult, index) => {
+                            console.log("this is reached!");
                             const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
                             const parsedValue = JSON.parse(analysisResult.result);
 
                             if (analysisResult.name === "yolo_model") {
+                                console.log("reached");
                                 let labels = [];
                                 if ("labels" in parsedValue) {
                                     labels = parsedValue["labels"];
