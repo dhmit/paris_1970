@@ -447,7 +447,18 @@ export class PhotoView extends React.Component {
                             </button>
                         ))}
 
-                        <h5>Visual Analysis</h5>
+                        <br></br><br></br>
+                        <h6>CAPTION</h6>
+                        <p>{photographerCaption || "None"}</p>
+                        <br></br>
+
+                        <h6>LOCATION</h6>
+                        <p>Map Square:
+                            <a href={`/map_square/${mapSquareNumber}`}>{mapSquareNumber}</a>
+                        </p>
+                        <p>Photo: {photoNumber}</p>
+
+                        <h6>ANALYSIS</h6>
 
                         <Dropdown className="photo-sort-dropdown">
                             <Dropdown.Toggle className="photo-sort-dropdown-button" align="start">
