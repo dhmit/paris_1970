@@ -29,6 +29,7 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 CMS_TEMPLATES = [
     ('cms_index.html', 'Home page template'),
+    ('blog_post.html', 'Blog page template')
 ]
 
 THUMBNAIL_HIGH_RESOLUTION = True
@@ -39,3 +40,6 @@ THUMBNAIL_PROCESSORS = (
     'filer.thumbnail_processors.scale_and_crop_with_subject_location',
     'easy_thumbnails.processors.filters'
 )
+
+CMS_PERMISSION = True
+CMS_TOOLBAR_ANONYMOUS_ON = True

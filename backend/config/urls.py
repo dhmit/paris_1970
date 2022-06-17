@@ -78,7 +78,7 @@ urlpatterns = [
 
 cms_urlpatterns = [
     re_path(r'^blog/', include('cms.urls')),
-    path('blog', cms_views.index),
+    path('cms/', cms_views.index),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += cms_urlpatterns
