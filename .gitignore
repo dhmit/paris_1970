@@ -162,6 +162,8 @@ backend/app/analysis/analysis_results/
 
 # YOLO weights (too big)
 backend/app/analysis/yolo_files/yolov3.weights
+backend/app/analysis/yolo_files/yolov5x6.pt
+backend/app/analysis/yolo_files/model.pkl
 
 # Locally cached photos
 backend/data/local_photos/
