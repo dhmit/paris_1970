@@ -3,14 +3,14 @@ import * as PropTypes from "prop-types";
 
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
 
-import {getSource} from "./AnalysisView";
 
 /*
 Creates a view to show the most similar photos for a photo given url with a number of photos
  */
-export class SimilarityView extends React.Component {
+export class SimilarityView extends PhotoViewer {
     constructor(props) {
         super(props);
         this.state = {
@@ -59,20 +59,7 @@ export class SimilarityView extends React.Component {
         /*
         For each photo from get_photo_by_similarity, creates a thumbnail
          */
-        const photos = this.state.photoData.map((photo, k) => {
-            return (
-                <a
-                    key={k}
-                    href={`/photo/${photo["map_square_number"]}/${photo["number"]}/`}>
-                    <img
-                        alt={photo.alt}
-                        height={200}
-                        width={200}
-                        src={getSource(photo)}
-                    />
-                </a>
-            );
-        });
+        const photos = this.getPhotoGrid(this.state.photoData, {"photoSize": [200, 200]});
 
         return (<>
             <Navbar/>
