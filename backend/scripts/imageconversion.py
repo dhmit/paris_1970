@@ -56,6 +56,6 @@ if __name__ == "__main__":
 
 """
 # Example of command-line:
-    python script/imageconversion.py /Users/bob/Desktop/TestImages /Users/bob/Desktop/newtest TIF JPG -thumbnail
-    300x90
+    python scripts/imageconversion.py /Users/bob/Desktop/TestImages /Users/bob/Desktop/newtest
+    TIF JPG -thumbnail 300x90
 """
