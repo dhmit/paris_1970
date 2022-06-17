@@ -3,10 +3,9 @@ import * as PropTypes from "prop-types";
 
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import {PhotoViewer, SIDES} from "../../components/PhotoViewer";
+import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
 
-import {getSource} from "./AnalysisView";
 import {Dropdown} from "react-bootstrap";
 
 let tagList = ["Construction", "People", "Building"];

@@ -118,12 +118,6 @@ rect {
     background-color: #f6afae;
 }
 
-.image-border {
-    padding: 25px;
-    background-color: black;
-}
-
-
 .photo-sort-dropdown-button {
     font-size: 16px;
     border-width: 0px;
@@ -143,6 +137,7 @@ rect {
     border-radius: 15px;
     background-color: #00B1DB;
     color: white;
+}
 
 .analysis-overlay {
     position: absolute;
@@ -150,6 +145,8 @@ rect {
     left: 0;
 }
 
-.image-box{
+.image-box {
     position: relative;
+    padding: 25px;
+    background-color: black;
 }
