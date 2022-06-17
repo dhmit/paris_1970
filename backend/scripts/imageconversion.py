@@ -21,25 +21,23 @@ def convert(old_path, new_path, old_filetype, new_filetype, commands=None):
     """
 
     # creating new directory for output
-    new_dir = new_path
     try:
-        os.mkdir(new_dir)
+        os.mkdir(new_path)
     except FileExistsError:
         pass
 
     # str of commands to apply to images
     command_str = ''
-    print(commands)
     for i in commands:
         command_str += i + ' '
-    print(command_str)
+
     # looping through old directory
     for tif_path in tqdm(os.listdir(old_path), bar_format='{l_bar}{bar:30}{r_bar}{bar:-10b}'):
         old_type = os.path.join(old_path, tif_path)
         if os.path.isfile(old_type) and old_type.endswith(old_filetype):
             # formatting new filename ex. '/square.jpg'
             name = os.path.splitext(tif_path)[0] + "." + new_filetype
-            new_type = os.path.join(new_dir, name)
+            new_type = os.path.join(new_path, name)
 
             # formatting command
             # ex. magick Users/bob/Desktop/ -quality 20% Users/bob/Desktop/new/square.jpg
@@ -58,5 +56,6 @@ if __name__ == "__main__":
 
 """
 # Example of command-line:
-    python /Users/bob/Desktop/TestImages /Users/bob/Desktop/newtest TIF JPG -thumbnail 300x90
+    python script/imageconversion.py /Users/bob/Desktop/TestImages /Users/bob/Desktop/newtest TIF JPG -thumbnail
+    300x90
 """
