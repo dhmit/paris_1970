@@ -1,29 +1,13 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import LoadingPage from "../components/LoadingPage";
-
-const SIDES = {
-    CLEANED: "cleaned",
-    FRONT: "front",
-    BACK: "back"
-};
-
-export const getSource = (photoData, photoDir, displaySide = false) => {
-    if (!displaySide) {
-        const availableSides = Object.values(SIDES)
-        .filter(
-            (side) => photoData[`${side}_src`]
-        );
-        displaySide = availableSides.length > 0 ? availableSides[0] : "";
-    }
-    return `${photoDir}/${photoData.map_square_number}/${photoData.number}_${displaySide}.jpg`;
-};
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import PhotoViewer from "../../components/PhotoViewer";
+import LoadingPage from "../LoadingPage";
 
 
-export class AnalysisView extends React.Component {
+export class AnalysisView extends PhotoViewer {
     constructor(props) {
         super(props);
         this.state = {
@@ -71,26 +55,11 @@ export class AnalysisView extends React.Component {
             return (<LoadingPage/>);
         }
 
-        const photos = this.state.photoData.map((photo, k) => {
-            const currentAnalysis = photo["analyses"].filter(
-                (analysisObject) => analysisObject.name === this.props.analysisName
-            )[0];
-            if (photo.cleaned_src || photo.front_src) {
-                return (
-                    <a key={k}
-                       title={currentAnalysis.result}
-                       href={`/photo/${photo["map_square_number"]}/${photo["number"]}/`}>
-                        <img
-                            alt={photo.alt}
-                            height={100}
-                            width={100}
-                            src={getSource(photo)}
-                        />
-                    </a>
-                );
-            }
-            return "";
-        });
+        const titleFunc = (k, photo) => photo["analyses"].filter(
+            (analysisObject) => analysisObject.name === this.props.analysisName
+        )[0].result;
+
+        const photos = this.getPhotoGrid(this.state.photoData, {"titleFunc": titleFunc});
 
         const options = this.state.photoData.length === 0 ? (
             <p>

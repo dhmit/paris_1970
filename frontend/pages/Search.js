@@ -8,9 +8,8 @@ import Input from "@material-ui/core/Input";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import LoadingPage from "../components/LoadingPage";
-
-import {getSource} from "../analysisView/analysisView";
+import PhotoViewer from "../components/PhotoViewer";
+import LoadingPage from "./LoadingPage";
 
 
 function analysisSliderInput(
@@ -92,20 +91,18 @@ class SearchForm extends React.Component {
             caption: "",
             tags: [],
             analysisTags: [],
-            sliderValues: {}
+            sliderValues: {"Object Detection Confidence": [0, 100]}
         };
     }
 
     handleChange = (event) => {
         this.setState({
-            ...this.state,
             [event.target.name]: event.target.value
         });
     };
 
     handleSelectDropdownChange = (selectedOptions) => {
         this.setState({
-            ...this.state,
             tags: selectedOptions
         });
     };
@@ -122,7 +119,6 @@ class SearchForm extends React.Component {
             }
         }
         this.setState({
-            ...this.state,
             analysisTags: selectedOptions,
             sliderValues: newSliderValues
         });
@@ -167,7 +163,6 @@ class SearchForm extends React.Component {
     handleMultiSelectChange = (event) => {
         const value = Array.from(event.target.selectedOptions, (option) => option.value);
         this.setState({
-            ...this.state,
             [event.target.name]: value
         });
     };
@@ -186,7 +181,6 @@ class SearchForm extends React.Component {
         const newSliderValues = this.state.sliderValues;
         newSliderValues[analysisName] = [newLowerBound, newUpperBound];
         this.setState({
-            ...this.state,
             sliderValues: newSliderValues
         });
     }
@@ -224,7 +218,6 @@ class SearchForm extends React.Component {
         }
 
         this.setState({
-            ...this.state,
             sliderValues: newSliderValues
         });
     };
@@ -286,6 +279,7 @@ class SearchForm extends React.Component {
             value: tag,
             label: tag
         }));
+
         const analysisTagOptions = this.props.analysisTagData.map(
             (tag) => ({
                 value: tag,
@@ -397,6 +391,14 @@ class SearchForm extends React.Component {
                             menuPosition="fixed"
                         />
                     </label>
+                    {analysisSlider(
+                        "Object Detection Confidence",
+                        this.state.sliderValues["Object Detection Confidence"],
+                        [0, 100],
+                        this.handleSliderChange,
+                        this.handleSliderInputChange,
+                        this.handleSliderBlur
+                    )}
                     <br/>
                     <label className="input-div">
                         <p className="search-label">Analysis Names:</p>
@@ -426,7 +428,7 @@ SearchForm.propTypes = {
     analysisValueRanges: PropTypes.object
 };
 
-export class Search extends React.Component {
+export class Search extends PhotoViewer {
     constructor(props) {
         super(props);
         this.state = {
@@ -521,29 +523,9 @@ export class Search extends React.Component {
                                 </h2>
                                 <p>{this.state.searchText}</p>
                                 <div className="search-results">
-                                    {this.state.data.map((photo, k) => {
-                                        const photoId = `${photo["map_square_number"]}` +
-                                            `/${photo["number"]}`;
-                                        if (photo.cleaned_src || photo.front_src ||
-                                            photo.binder_src) {
-                                            return (
-                                                <a
-                                                    key={k}
-                                                    title={"Map Square: " +
-                                                    photo["map_square_number"] +
-                                                    ", Number: " + photo["number"]}
-                                                    href={"/photo/" + photoId + "/"}>
-                                                    <img
-                                                        alt={photo.alt}
-                                                        height={120}
-                                                        width={120}
-                                                        src={getSource(photo)}
-                                                    />
-                                                </a>
-                                            );
-                                        }
-                                        return "";
-                                    })}
+                                    {this.getPhotoGrid(
+                                        this.state.data, {"photoSize": [120, 120]}
+                                    )}
                                 </div>
                             </div>
                         }

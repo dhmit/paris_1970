@@ -1,13 +1,12 @@
 import React from "react";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import LoadingPage from "../components/LoadingPage";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import PhotoViewer from "../../components/PhotoViewer";
+import LoadingPage from "../LoadingPage";
 
-import {getSource} from "../analysisView/analysisView";
 
-
-export class AllPhotosView extends React.Component {
+export class AllPhotosView extends PhotoViewer {
     constructor(props) {
         super(props);
         this.state = {
@@ -54,28 +53,10 @@ export class AllPhotosView extends React.Component {
             return (<LoadingPage/>);
         }
 
-        const photos = this.state.photoData.map((photo, k) => {
-            /* const currentAnalysis = photo['analyses'].filter(
-                (analysisObject) => analysisObject.name === 'resnet18_cosine_similarity',
-            )[0]; */
-            if (photo.front_src || photo.cleaned_src) {
-                return (
-                    <a key={k}
-                        title={`Map Square: ${photo["map_square_number"]},` +
-                        `\nPhoto: ${photo["number"]}`}
-                        href={`/similar_photos/${photo["map_square_number"]}/` +
-                        `${photo["number"]}/10/`}>
-                        <img
-                            alt={photo.alt}
-                            height={100}
-                            width={100}
-                            src={getSource(photo)}
-                        />
-                    </a>
-                );
-            }
-            return "";
-        });
+        const hrefFunc = (k, photo) => `/similar_photos/${photo["map_square_number"]}/` +
+                        `${photo["number"]}/10/`;
+
+        const photos = this.getPhotoGrid(this.state.photoData, {"hrefFunc": hrefFunc});
 
         const options = this.state.photoData.length === 0 ? (
             <p>
