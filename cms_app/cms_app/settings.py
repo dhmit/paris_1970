@@ -156,7 +156,8 @@ LANGUAGES = [
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 CMS_TEMPLATES = (
-    ('home.html', 'Home page template'),
+    ('base.html', 'Base template'),
+    ('other.html', 'Other template'),
 )
 
 MEDIA_URL = "/media/"
