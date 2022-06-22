@@ -13,6 +13,12 @@
     <body>
         {% cms_toolbar %}
         {% placeholder "navbar" %}
+        <h5>Blog Pages</h5>
+        <div class="navbar-light bg-light" role="navigation">
+            <ul class="navbar-nav mr-auto">
+                {% show_menu 0 1 100 100 "posts_list.html" %}
+            </ul>
+        </div>
         {% block content %}
             {% placeholder "feature" %}
             {% placeholder "content" %}
