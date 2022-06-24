@@ -205,50 +205,50 @@ function formatPercentageValue(value) {
     return `${parseInt(value)}%`;
 }
 
-function formatCoordinate(value) {
-    return `(${parseInt(value[0][0])}, ${parseInt(value[0][1])})`;
-}
+// function formatCoordinate(value) {
+//     return `(${parseInt(value[0][0])}, ${parseInt(value[0][1])})`;
+// }
+//
+// function formatMeanDetailValue(value) {
+//     return `${parseInt(value)}`;
+// }
+//
+// const formatBoolean = (value) => {
+//     return value ? "Yes" : "No";
+// };
 
-function formatMeanDetailValue(value) {
-    return `${parseInt(value)}`;
-}
-
-const formatBoolean = (value) => {
-    return value ? "Yes" : "No";
-};
-
-const ANALYSIS_CONFIGS = {
-    "whitespace_percentage": {
-        formatter: formatPercentageValue,
-        displayName: "% Whitespace"
-    },
-    "photographer_caption_length": {
-        displayName: "Length of Photographer Caption"
-    },
-    "foreground_percentage": {
-        formatter: formatPercentageValue,
-        displayName: "% Foreground"
-    },
-    "find_vanishing_point": {
-        formatter: formatCoordinate,
-        displayName: "Vanishing Point Coordinate"
-    },
-    "portrait_detection": {
-        formatter: formatBoolean,
-        displayName: "Is It a Portrait"
-    },
-    "indoor_analysis.combined_indoor": {
-        formatter: formatBoolean,
-        displayName: "Is It Taken Indoors?"
-    },
-    "text_ocr": {
-        displayName: "Text Detected"
-    },
-    "mean_detail": {
-        formatter: formatMeanDetailValue,
-        displayName: "Average Amount of Detail"
-    }
-};
+// const ANALYSIS_CONFIGS = {
+//     "whitespace_percentage": {
+//         formatter: formatPercentageValue,
+//         displayName: "% Whitespace"
+//     },
+//     "photographer_caption_length": {
+//         displayName: "Length of Photographer Caption"
+//     },
+//     "foreground_percentage": {
+//         formatter: formatPercentageValue,
+//         displayName: "% Foreground"
+//     },
+//     "find_vanishing_point": {
+//         formatter: formatCoordinate,
+//         displayName: "Vanishing Point Coordinate"
+//     },
+//     "portrait_detection": {
+//         formatter: formatBoolean,
+//         displayName: "Is It a Portrait"
+//     },
+//     "indoor_analysis.combined_indoor": {
+//         formatter: formatBoolean,
+//         displayName: "Is It Taken Indoors?"
+//     },
+//     "text_ocr": {
+//         displayName: "Text Detected"
+//     },
+//     "mean_detail": {
+//         formatter: formatMeanDetailValue,
+//         displayName: "Average Amount of Detail"
+//     }
+// };
 
 
 export class PhotoView extends PhotoViewer {
@@ -257,7 +257,7 @@ export class PhotoView extends PhotoViewer {
         this.state = {
             loading: true,
             photoData: null,
-            displaySide: "front",
+            displaySide: "photo",
             availableSides: [],
             view: 0,
             width: null,
@@ -398,17 +398,18 @@ export class PhotoView extends PhotoViewer {
                                 ref={this.photoRef}/>
 
                             {visualAnalyses}
+
                         </div>
                         <br/>
                         <div className={"centerBtn"}>
                             <button
                                 className={"side-button"}
-                                onClick={() => this.changeSide("front")}>
+                                onClick={() => this.changeSide("photo")}>
                                 PHOTO
                             </button>
                             <button
                                 className={"side-button"}
-                                onClick={() => this.changeSide("back")}>
+                                onClick={() => this.changeSide("slide")}>
                                 SLIDE
                             </button>
                         </div>
@@ -421,17 +422,19 @@ export class PhotoView extends PhotoViewer {
                                 () => document.getElementById("sim-photos").scrollLeft -=
                                     document.getElementById("sim-photos").clientWidth}
                             >{"<"}</button>
-                            <div id="sim-photos" className="similar-photos">
-                                {this.getPhotoGrid(
-                                    analyses["photo_similarity.resnet18_cosine_similarity"],
-                                    {
-                                        "className": "similar-photo",
-                                        "titleFunc": (k, photo) =>
-                                        `Map Square: ${photo["map_square_number"]}, ` +
-                                        `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
-                                    }
-                                )}
-                            </div>
+
+                            {/*<div id="sim-photos" className="similar-photos">*/}
+                            {/*    {this.getPhotoGrid(*/}
+                            {/*        analyses["photo_similarity.resnet18_cosine_similarity"],*/}
+                            {/*        {*/}
+                            {/*            "className": "similar-photo",*/}
+                            {/*            "titleFunc": (k, photo) =>*/}
+                            {/*            `Map Square: ${photo["map_square_number"]}, ` +*/}
+                            {/*            `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`*/}
+                            {/*        }*/}
+                            {/*    )}*/}
+                            {/*</div>*/}
+
                             <button
                                 type="button"
                                 className="similarity-scroll btn btn-dark"
@@ -495,7 +498,7 @@ export class PhotoView extends PhotoViewer {
 
                         <div className="row">
                             <div className="col-6">
-                                {(this.state.displaySide === "front")
+                                {(this.state.displaySide === "photo")
                                     ? <select
                                         id="toggleSelect"
                                         className="custom-select"
@@ -508,7 +511,7 @@ export class PhotoView extends PhotoViewer {
                                     </select>
                                     : <p>Not available</p>
                                 }
-                                {(this.state.view === 3 && this.state.displaySide === "front")
+                                {(this.state.view === 3 && this.state.displaySide === "photo")
                                     ? <p className={"px-3 my-0"}>
                                         <i>Hover over the boxes to see the name of the object.</i>
                                     </p>
