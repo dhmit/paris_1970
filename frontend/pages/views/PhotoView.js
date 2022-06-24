@@ -362,6 +362,23 @@ export class PhotoView extends PhotoViewer {
         // Resize SVG overlays on viewport resize
         window.addEventListener("resize", () => this.handleResize());
 
+        const visualAnalyses = [];
+        for (const [analysisName, result] of Object.entries(analyses)) {
+            let visualAnalysis = null;
+            if (analysisName in VISUAL_ANALYSES && this.state.displaySide === "front") {
+                if (VISUAL_ANALYSES[analysisName][1] !== this.state.view) continue;
+                visualAnalysis = VISUAL_ANALYSES[analysisName][0](
+                    result,
+                    this.state.height,
+                    this.state.width,
+                    this.state.natHeight,
+                    this.state.natWidth
+                );
+            }
+            // handled in a different div
+            visualAnalyses.push(visualAnalysis);
+        }
+
         return (<>
             <Navbar/>
             <div className="page">
@@ -380,26 +397,7 @@ export class PhotoView extends PhotoViewer {
                                 onLoad={this.onImgLoad}
                                 ref={this.photoRef}/>
 
-                            {analyses.map((analysisResult) => {
-                                const parsedValue = JSON.parse(analysisResult.result);
-
-                                if (analysisResult.name in VISUAL_ANALYSES &&
-                                    this.state.displaySide === "front") {
-                                    if (VISUAL_ANALYSES[analysisResult.name][1] ===
-                                        this.state.view) {
-                                        return VISUAL_ANALYSES[analysisResult.name][0](
-                                            parsedValue,
-                                            this.state.height,
-                                            this.state.width,
-                                            this.state.natHeight,
-                                            this.state.natWidth
-                                        );
-                                    }
-                                    return null;
-                                }
-                                // handled in a different div
-                                return null;
-                            })}
+                            {visualAnalyses}
                         </div>
                         <br/>
                         <div className={"centerBtn"}>
@@ -413,6 +411,34 @@ export class PhotoView extends PhotoViewer {
                                 onClick={() => this.changeSide("back")}>
                                 SLIDE
                             </button>
+                        </div>
+                        {/* TODO: Disable scroll buttons when no more photos to scroll through */}
+                        <div className="similar-photos-box">
+                            <button
+                                type="button"
+                                className="similarity-scroll btn btn-dark"
+                                onClick={
+                                () => document.getElementById("sim-photos").scrollLeft -=
+                                    document.getElementById("sim-photos").clientWidth}
+                            >{"<"}</button>
+                            <div id="sim-photos" className="similar-photos">
+                                {this.getPhotoGrid(
+                                    analyses["photo_similarity.resnet18_cosine_similarity"],
+                                    {
+                                        "className": "similar-photo",
+                                        "titleFunc": (k, photo) =>
+                                        `Map Square: ${photo["map_square_number"]}, ` +
+                                        `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
+                                    }
+                                )}
+                            </div>
+                            <button
+                                type="button"
+                                className="similarity-scroll btn btn-dark"
+                                onClick={
+                                () => document.getElementById("sim-photos").scrollLeft +=
+                                    document.getElementById("sim-photos").clientWidth}
+                            >{">"}</button>
                         </div>
                     </div>
                     <div className="image-info col-12 col-lg-6">
@@ -491,116 +517,60 @@ export class PhotoView extends PhotoViewer {
                             </div>
                         </div>
 
-                        {analyses.map((analysisResult, index) => {
-                            console.log("this is reached!");
-                            const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
-                            const parsedValue = JSON.parse(analysisResult.result);
+                        {"yolo_model" in analyses && "labels" in analyses["yolo_model"]
+                            ? <React.Fragment>
+                                <h5>Objects Detected</h5>
+                                <ul>
+                                    {Object.keys(analyses["yolo_model"]["labels"])
+                                    .map((key, i) => (
+                                        <li key={i}>
+                                            {key}: {analyses["yolo_model"]["labels"][key]}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </React.Fragment>
+                            : <React.Fragment>
+                                <h5>Objects Detected</h5>
+                                <p>None</p>
+                            </React.Fragment>
+                        }
 
-                            if (analysisResult.name === "yolo_model") {
-                                console.log("reached");
-                                let labels = [];
-                                if ("labels" in parsedValue) {
-                                    labels = parsedValue["labels"];
-                                } else {
-                                    return (
-                                        <React.Fragment>
-                                            <h5>Objects Detected</h5>
-                                            <p>None</p>
-                                        </React.Fragment>
-                                    );
-                                }
-                                return (
-                                    <React.Fragment>
-                                        <h5>Objects Detected</h5>
-                                        <ul>
-                                            {Object.keys(labels)
-                                            .map((key, i) => (
-                                                <li key={i}>{key}: {labels[key]}</li>
-                                            ))}
-                                        </ul>
-                                    </React.Fragment>
-                                );
-                            }
-
-                            if (analysisResult.name ===
-                                "photo_similarity.resnet18_cosine_similarity") {
-                                if (parsedValue === []) {
-                                    return (
-                                        <React.Fragment>
-                                            <h5>Similar Photos</h5>
-                                            <p>None</p>
-                                        </React.Fragment>
-                                    );
-                                } else if (parsedValue === null) {
-                                    return (
-                                        <React.Fragment>
-                                            <h5>Similar Photos</h5>
-                                            <p>Similarity analysis not run.</p>
-                                        </React.Fragment>
-                                    );
-                                }
-                                return (
-                                    <React.Fragment>
-                                        <h5>Similar Photos (% Similiarity)</h5>
-                                        <h6>
-                                            <a href={"/similar_photos/" +
-                                            `${this.props.mapSquareNumber}/` +
-                                            `${this.props.photoNumber}/10/`}>
-                                                View Top 10 Similar Photos
-                                            </a>
-                                        </h6>
-                                        <div
-                                            className="col pb-scroll"
-                                            id="scrolling"
-                                            style={{
-                                                maxHeight: 200,
-                                                overflow: "auto"
-                                            }}>
-                                            {(parsedValue.map((photo, i) => (
-                                                (photo[0] !== mapSquareNumber ||
-                                                    photo[1] !== photoNumber)
-                                                    ? <div key={i}>
-                                                        <a href={`/photo/${photo[0]}/${photo[1]}/`}>
-                                                            Map Square {photo[0]},
-                                                            Photo {photo[1]} </a>
-                                                        ({formatPercentageValue(photo[2] * 100)})
-                                                    </div>
-                                                    : null
-                                            ))).reverse()}
-                                        </div>
-                                    </React.Fragment>
-                                );
-                            }
-
-                            // handled in a different div
-                            if (analysisResult.name in VISUAL_ANALYSES ||
-                                analysisResult.name === "photo_similarity.resnet18_feature_vectors") {
-                                return null;
-                            }
-
-                            let analysisDisplayName;
-                            let analysisResultStr = analysisResult.result;
-                            if (!analysisConfig) {
-                                analysisDisplayName = analysisResult.name;
-                            } else {
-                                analysisDisplayName = analysisConfig.displayName;
-                                if (analysisConfig.formatter) {
-                                    analysisResultStr = analysisConfig.formatter(
-                                        analysisResult.result
-                                    );
-                                }
-                            }
-                            if (["null", "\"\""].includes(analysisResultStr)) {
-                                analysisResultStr = "N/A";
-                            }
-
-                            return (
-                                <React.Fragment key={index}>
-                                    <h5>{analysisDisplayName}</h5>
-                                    <p>{analysisResultStr}</p>
-                                </React.Fragment>
-                            );
-                        })}
+                        {("photo_similarity.resnet18_cosine_similarity" in analyses &&
+                        !([[], null].includes(analyses["photo_similarity.resnet18_cosine_similarity"])))
+                            ? <React.Fragment>
+                                <h5>Similar Photos (% Similiarity)</h5>
+                                <h6>
+                                    <a href={"/similar_photos/" +
+                                    `${this.props.mapSquareNumber}/` +
+                                    `${this.props.photoNumber}/10/`}>
+                                        View Top 10 Similar Photos
+                                    </a>
+                                </h6>
+                                <div
+                                    className="col pb-scroll"
+                                    id="scrolling"
+                                    style={{
+                                        maxHeight: 200,
+                                        overflow: "auto"
+                                    }}>
+                                    {(analyses["photo_similarity.resnet18_cosine_similarity"].map((photo, i) => (
+                                        (photo[0] !== mapSquareNumber ||
+                                            photo[1] !== photoNumber)
+                                            ? <div key={i}>
+                                                <a href={`/photo/${photo[0]}/${photo[1]}/`}>
+                                                    Map Square {photo[0]},
+                                                    Photo {photo[1]} </a>
+                                                ({formatPercentageValue(photo[2] * 100)})
+                                            </div>
+                                            : null
+                                    ))).reverse()}
+                                </div>
+                            </React.Fragment>
+                            : <React.Fragment>
+                                <h5>Similar Photos</h5>
+                                <p>None</p>
+                            </React.Fragment>
+                        }
                     </div>
                 </div>
             </div>

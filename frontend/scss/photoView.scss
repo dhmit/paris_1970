@@ -150,3 +150,32 @@ rect {
     padding: 25px;
     background-color: black;
 }
+
+.similar-photo {
+    max-width: 100px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.similar-photos {
+    display: flex;
+    margin: 1em;
+    flex-direction: row;
+    overflow: auto;
+    scroll-behavior: smooth;
+}
+
+.similar-photos-box {
+    display: flex;
+    flex-direction: row;
+    background-color: black;
+}
+
+.similar-photos::-webkit-scrollbar {
+    display: none;
+}
+
+.similarity-scroll {
+    background-color: black !important;
+    color: #70D8F1 !important;
+}
