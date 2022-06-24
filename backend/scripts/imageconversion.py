@@ -6,7 +6,6 @@ import sys
 
 def convert(old_path, new_path, old_filetype, new_filetype, commands=None):
     """
-
     :param old_path: (str) path to directory containing images
             [ex. 'Users/bob/Desktop/']
     :param new_path: (str) path where output is intended to be saved in
@@ -17,7 +16,7 @@ def convert(old_path, new_path, old_filetype, new_filetype, commands=None):
             [ex. 'jpg']
     :param commands: (list) commands to apply to images, default = None
             [ex. ['-quality, '20%']
-    :return: None, output produced in same directory
+    :return: None, output produced in new directory
     """
 
     # creating new directory for output
@@ -40,7 +39,8 @@ def convert(old_path, new_path, old_filetype, new_filetype, commands=None):
             new_type = os.path.join(new_path, name)
 
             # formatting command
-            # ex. magick Users/bob/Desktop/ -quality 20% Users/bob/Desktop/new/square.jpg
+            # ex. magick Users/bob/Desktop/old/square.jpg -quality 20%
+            # Users/bob/Desktop/new/square.jpg
             cmd = f'magick {old_type} {command_str}{new_type}'
             subprocess.run(cmd, shell=True, capture_output=True)
 
