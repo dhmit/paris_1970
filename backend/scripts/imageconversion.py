@@ -6,6 +6,8 @@ import sys
 
 def convert(old_path, new_path, old_filetype, new_filetype, commands=None):
     """
+    Python script for image conversion using Image Magick
+    
     :param old_path: (str) path to directory containing images
             [ex. 'Users/bob/Desktop/']
     :param new_path: (str) path where output is intended to be saved in
@@ -56,6 +58,7 @@ if __name__ == "__main__":
 
 """
 # Example of command-line:
+
     python scripts/imageconversion.py /Users/bob/Desktop/TestImages /Users/bob/Desktop/newtest
     TIF JPG -thumbnail 300x90
 """
