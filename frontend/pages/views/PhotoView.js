@@ -205,52 +205,6 @@ function formatPercentageValue(value) {
     return `${parseInt(value)}%`;
 }
 
-// function formatCoordinate(value) {
-//     return `(${parseInt(value[0][0])}, ${parseInt(value[0][1])})`;
-// }
-//
-// function formatMeanDetailValue(value) {
-//     return `${parseInt(value)}`;
-// }
-//
-// const formatBoolean = (value) => {
-//     return value ? "Yes" : "No";
-// };
-
-// const ANALYSIS_CONFIGS = {
-//     "whitespace_percentage": {
-//         formatter: formatPercentageValue,
-//         displayName: "% Whitespace"
-//     },
-//     "photographer_caption_length": {
-//         displayName: "Length of Photographer Caption"
-//     },
-//     "foreground_percentage": {
-//         formatter: formatPercentageValue,
-//         displayName: "% Foreground"
-//     },
-//     "find_vanishing_point": {
-//         formatter: formatCoordinate,
-//         displayName: "Vanishing Point Coordinate"
-//     },
-//     "portrait_detection": {
-//         formatter: formatBoolean,
-//         displayName: "Is It a Portrait"
-//     },
-//     "indoor_analysis.combined_indoor": {
-//         formatter: formatBoolean,
-//         displayName: "Is It Taken Indoors?"
-//     },
-//     "text_ocr": {
-//         displayName: "Text Detected"
-//     },
-//     "mean_detail": {
-//         formatter: formatMeanDetailValue,
-//         displayName: "Average Amount of Detail"
-//     }
-// };
-
-
 export class PhotoView extends PhotoViewer {
     constructor(props) {
         super(props);
@@ -333,13 +287,6 @@ export class PhotoView extends PhotoViewer {
         });
     }
 
-    setLinks = (prevLink, nextLink) => {
-        this.setState({
-            prevLink: prevLink,
-            nextLink: nextLink
-        });
-    };
-
     render() {
         if (this.state.loading) {
             return (<LoadingPage/>);
@@ -365,7 +312,7 @@ export class PhotoView extends PhotoViewer {
         const visualAnalyses = [];
         for (const [analysisName, result] of Object.entries(analyses)) {
             let visualAnalysis = null;
-            if (analysisName in VISUAL_ANALYSES && this.state.displaySide === "front") {
+            if (analysisName in VISUAL_ANALYSES && this.state.displaySide === "photo") {
                 if (VISUAL_ANALYSES[analysisName][1] !== this.state.view) continue;
                 visualAnalysis = VISUAL_ANALYSES[analysisName][0](
                     result,
@@ -378,6 +325,18 @@ export class PhotoView extends PhotoViewer {
             // handled in a different div
             visualAnalyses.push(visualAnalysis);
         }
+
+        const yoloResult = (
+            "yolo_model" in analyses
+                ? analyses["yolo_model"]
+                : {}
+        );
+
+        const similarPhotos = (
+            "photo_similarity.resnet18_cosine_similarity" in analyses
+                ? analyses["photo_similarity.resnet18_cosine_similarity"]
+                : []
+        );
 
         return (<>
             <Navbar/>
@@ -395,10 +354,9 @@ export class PhotoView extends PhotoViewer {
                                 src={this.getSource(this.state.photoData, this.state.displaySide)}
                                 alt={alt}
                                 onLoad={this.onImgLoad}
-                                ref={this.photoRef}/>
-
+                                ref={this.photoRef}
+                            />
                             {visualAnalyses}
-
                         </div>
                         <br/>
                         <div className={"centerBtn"}>
@@ -423,17 +381,17 @@ export class PhotoView extends PhotoViewer {
                                     document.getElementById("sim-photos").clientWidth}
                             >{"<"}</button>
 
-                            {/*<div id="sim-photos" className="similar-photos">*/}
-                            {/*    {this.getPhotoGrid(*/}
-                            {/*        analyses["photo_similarity.resnet18_cosine_similarity"],*/}
-                            {/*        {*/}
-                            {/*            "className": "similar-photo",*/}
-                            {/*            "titleFunc": (k, photo) =>*/}
-                            {/*            `Map Square: ${photo["map_square_number"]}, ` +*/}
-                            {/*            `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`*/}
-                            {/*        }*/}
-                            {/*    )}*/}
-                            {/*</div>*/}
+                            <div id="sim-photos" className="similar-photos">
+                                {this.getPhotoGrid(
+                                    similarPhotos,
+                                    {
+                                        "className": "similar-photo",
+                                        "titleFunc": (k, photo) =>
+                                        `Map Square: ${photo["map_square_number"]}, ` +
+                                        `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
+                                    }
+                                )}
+                            </div>
 
                             <button
                                 type="button"
@@ -520,14 +478,14 @@ export class PhotoView extends PhotoViewer {
                             </div>
                         </div>
 
-                        {"yolo_model" in analyses && "labels" in analyses["yolo_model"]
+                        {"labels" in yoloResult
                             ? <React.Fragment>
                                 <h5>Objects Detected</h5>
                                 <ul>
-                                    {Object.keys(analyses["yolo_model"]["labels"])
+                                    {Object.keys(yoloResult["labels"])
                                     .map((key, i) => (
                                         <li key={i}>
-                                            {key}: {analyses["yolo_model"]["labels"][key]}
+                                            {key}: {yoloResult["labels"][key]}
                                         </li>
                                     ))}
                                 </ul>
@@ -538,10 +496,9 @@ export class PhotoView extends PhotoViewer {
                             </React.Fragment>
                         }
 
-                        {("photo_similarity.resnet18_cosine_similarity" in analyses &&
-                        !([[], null].includes(analyses["photo_similarity.resnet18_cosine_similarity"])))
+                        {!(similarPhotos in [[], null])
                             ? <React.Fragment>
-                                <h5>Similar Photos (% Similiarity)</h5>
+                                <h5>Similar Photos (% Similarity)</h5>
                                 <h6>
                                     <a href={"/similar_photos/" +
                                     `${this.props.mapSquareNumber}/` +
@@ -556,17 +513,15 @@ export class PhotoView extends PhotoViewer {
                                         maxHeight: 200,
                                         overflow: "auto"
                                     }}>
-                                    {(analyses["photo_similarity.resnet18_cosine_similarity"].map((photo, i) => (
-                                        (photo[0] !== mapSquareNumber ||
-                                            photo[1] !== photoNumber)
-                                            ? <div key={i}>
-                                                <a href={`/photo/${photo[0]}/${photo[1]}/`}>
-                                                    Map Square {photo[0]},
-                                                    Photo {photo[1]} </a>
-                                                ({formatPercentageValue(photo[2] * 100)})
-                                            </div>
-                                            : null
-                                    ))).reverse()}
+                                    {similarPhotos.map((photo, i) => (
+                                        <div key={i}>
+                                            <a href={`/photo/${photo["map_square_number"]}/${photo["number"]}/`}>
+                                                Map Square {photo["map_square_number"]},
+                                                Photo {photo["number"]}
+                                            </a>
+                                            ({formatPercentageValue(photo["similarity"] * 100)})
+                                        </div>
+                                    ))}
                                 </div>
                             </React.Fragment>
                             : <React.Fragment>
