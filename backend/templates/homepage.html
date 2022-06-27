@@ -1,0 +1,51 @@
+{% extends "cms_index.html" %}
+{% load cms_tags sekizai_tags static %}
+
+{% block title %}{% page_attribute "page_title" %}{% endblock %}
+{% block content %}
+
+    <header class="py-sm-1 bg-transparent ">
+        <div class="container">
+            <div class="text-left my-5">
+                {% placeholder "Header" %}
+            </div>
+        </div>
+    </header>
+
+     <div class="container ">
+         <div class="row flex-wrap" >
+            <div class="col-lg-8">
+                 <!-- Featured blog post-->
+                <div class="card mb-4 ">
+                    {% placeholder "Featured Blog Post" %}
+                </div>
+
+                <!-- Other blog posts-->
+                <div class="card  mb-3">
+                      {% placeholder "Blogs" %}
+                </div>
+
+            </div>
+
+
+           <div class="col"  >
+                <!-- Tags-->
+                <div class="card mb-4 border-0">
+                    <div class="container">
+                        {% placeholder "Tags"%}
+                    </div>
+                </div>
+
+                <!-- Post links-->
+               <div class="card mb-4 border-0 ">
+                   {% placeholder "Post List"%}
+               </div>
+
+           </div>
+
+         </div>
+     </div>
+
+
+    {% placeholder "content" %}
+{% endblock content %}
