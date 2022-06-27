@@ -1,4 +1,4 @@
-{% load cms_tags sekizai_tags menu_tags %}
+{% load cms_tags static sekizai_tags menu_tags %}
 <!doctype html>
 <html>
     <head>
@@ -13,7 +13,6 @@
     <body>
         {% cms_toolbar %}
         {% placeholder "navbar" %}
-        {% placeholder "content" %}
         <br>
         <div class="container-fluid">
             <h5>
@@ -32,80 +31,6 @@
                 </ul>
             </div>
         </div>
-        <div class="flex-wrap" style="display: flex; flex-direction: row;">
-            {% for page in website_pages %}
-                {% if page.url != '/blog/' %}
-                <div
-                    class="container-fluid"
-                    style="
-                    display: flex;
-                    flex-direction: column;
-                    margin: 1em;
-                    border-radius: 1em;
-                    background-color: #E6E6E6;
-                    height: 20em;"
-                >
-                    <h3 style="padding-top: .5em; padding-left: .5em;">{{ page.title }}</h3>
-                    <div
-                        class="container-fluid"
-                        style="
-                        margin: 1em auto;
-                        padding: 1em;
-                        border-radius: 1em;
-                        background-color: #F0F0F0;
-                        width: 100%;
-                        height: 70%;"
-                    >
-                        {# Explicitly renders page.content (raw html) #}
-                        {% autoescape off %}
-                            {{ page.content }}
-                        {% endautoescape %}
-                    </div>
-                </div>
-                {% endif %}
-            {%  endfor %}
-        </div>
-        <div
-            class="flex-wrap"
-            style="
-            display: flex;
-            margin: 1em;
-            justify-content: space-evenly;
-            flex-direction: row;"
-        >
-            {% for page in website_pages %}
-                {% if page.url != '/blog/' %}
-                <div
-                    class="card"
-                    style="
-                    background-color: #E6E6E6;
-                    margin: .2em;
-                    width: 18rem;
-                    height: 18rem;"
-                >
-                    <div class="card-body">
-                        <h5 class="card-title">{{ page.title }}</h5>
-                        <div
-                            class="card-text container-fluid"
-                            style="
-                            padding: 1em;
-                            margin: 1em auto;
-                            border-radius: 1em;
-                            background-color: #F0F0F0;
-                            width: 100%;
-                            height: 80%;"
-                        >
-                            {% autoescape off %}
-                                {{ page.content }}
-                            {% endautoescape %}
-                            <a href="{{ page.url }}" class="card-link">Go to page</a>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-            {%  endfor %}
-        </div>
-
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 
