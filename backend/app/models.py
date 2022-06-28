@@ -2,6 +2,7 @@
 Models for the paris_1970 app.
 
 """
+import os
 import json
 
 from urllib.error import HTTPError
@@ -11,6 +12,7 @@ from skimage import io
 from PIL import Image
 
 from django.db import models
+from django.conf import settings
 
 
 class Photo(models.Model):
@@ -56,12 +58,19 @@ class Photo(models.Model):
         TODO: implement as_gray for use_pillow
         """
         if self.cleaned_src:
-            source = self.cleaned_src
+            source_type = 'cleaned'
         elif self.front_src:
-            source = self.front_src
+            source_type = "front"
         else:
             print(f'{self} has no front or binder src')
             return None
+
+        source = os.path.join(
+            settings.LOCAL_SRCS_DIR,
+            str(self.map_square.number),
+            f"{self.number}_{source_type}.jpg"
+        )
+
         try:
             if use_pillow:
                 image = Image.open(source)

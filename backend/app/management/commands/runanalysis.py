@@ -44,6 +44,9 @@ class Command(BaseCommand):
             sys.exit(1)
 
         if analysis_module:
+            # Make sure local "ANALYSIS_PICKLE_PATH" exists before attempting to read or write
+            os.makedirs(settings.ANALYSIS_PICKLE_PATH, exist_ok=True)
+
             result_path = os.path.join(settings.ANALYSIS_PICKLE_PATH, f'{analysis_name}.pickle')
             if os.path.exists(result_path):
                 with open(result_path, 'rb') as analysis_pickle:
@@ -71,6 +74,8 @@ class Command(BaseCommand):
             save_threshold = 20  # Number of analyses that need to be done before pickling
 
             for model_instance in model_instances:
+                if not model_instance.has_valid_source():
+                    continue
                 # NOTE: These identifiers assume that the photo number and map square number are
                 #       not None
                 print_msg = f'Running {analysis_name} on {model} {model_instance.id} ' \
@@ -109,14 +114,14 @@ class Command(BaseCommand):
                             num_computed = 0
                             with open(result_path, 'wb+') as analysis_pickle:
                                 pickle.dump(stored_results, analysis_pickle)
-                    except:  # pylint: disable=bare-except
+                    except Exception as e:  # pylint: disable=bare-except
+                        print('Error:', e)
                         print(f'Photo number {model_instance.number} failed. Skipping.')
-
 
             # Save the analysis stored_results
             # TODO: handle case where analysis fails (this won't pickle if something fails)
             try:
                 with open(result_path, 'wb+') as analysis_pickle:
                     pickle.dump(stored_results, analysis_pickle)
-            except:
+            except:  # pylint: disable=bare-except
                 pass
