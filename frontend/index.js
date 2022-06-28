@@ -19,6 +19,7 @@ import {AllPhotosView} from "./pages/views/AllPhotosView";
 import {ClusterView} from "./pages/views/ClusterView";
 import {Search} from "./pages/Search";
 import About from "./pages/About";
+import Sign_In from "./pages/Sign_In";
 
 // Import all styles
 import "./scss/styles.scss";
@@ -32,6 +33,7 @@ const COMPONENTS = {
     HomePage,
     About,
     Search,
+    Sign_In,
     PhotoView,
     SimilarityView,
     PhotographerView,

@@ -16,6 +16,10 @@ const navbarLinks = [
     {
         name: "About",
         link: "/about/"
+    },
+    {
+        name: "Sign In",
+        link: "/signin/"
     }
 ];
 

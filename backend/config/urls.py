@@ -71,4 +71,6 @@ urlpatterns = [
     path('analysis/<str:analysis_name>/<str:object_name>', views.analysis_view),
     path('all_analysis/', views.all_analysis_view),
     path('clustering/<int:num_of_clusters>/<int:cluster_num>/', views.cluster_view),
+    path('signin/', views.sign_in),
+    path('signintest/', views.sign_in_test),
 ]

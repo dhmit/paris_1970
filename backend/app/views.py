@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from django.shortcuts import render
 from django.db.models import Q, FloatField
 from django.db.models.functions import Cast
+from django.contrib.auth import authenticate
 
 from config import settings
 
@@ -543,3 +544,22 @@ def cluster_view(request, num_of_clusters, cluster_num):
     }
 
     return render_view(request, context)
+
+def sign_in(request):
+    context = {
+        'page_metadata': {
+            'title': 'Sign In'
+        },
+        'component_name': 'Sign_In'
+    }
+
+    return render_view(request, context)
+
+@api_view(['POST'])
+def sign_in_test(request):
+    info = request.data
+    user = authenticate(username=info["username"], password=info["password"])
+    if user is not None:
+        return Response("OK")
+    else:
+        return Response("NO")

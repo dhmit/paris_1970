@@ -192,7 +192,7 @@ class About extends React.Component {
             <Navbar/>
             <div className="page">
                 <div className="about-title">
-                    About This Project
+                    Bababooey
                 </div>
                 <div className="about-text">
                     <div className="prof-img-div text-wrap col-xs-2 col-sm-5 col-md-5 col-lg-3">
