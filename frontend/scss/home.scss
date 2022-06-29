@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
-    font-family: "eina_regular";
+    font-family: $font-family-sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -56,7 +56,7 @@ code {
 }
 
 .map-popup {
-    font-family: "eina_regular";
+    font-family: $font-family-sans-serif;
 }
 
 .map-square:hover {
