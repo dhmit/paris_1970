@@ -4,7 +4,7 @@ from tqdm import tqdm
 import sys
 
 
-def crop_border(old_path, new_path, fuzz_val=20):
+def crop_border(old_path, new_path, fuzz_val='20'):
     """
     Python script for cropping white borders off slides using Image Magick
 
@@ -12,14 +12,14 @@ def crop_border(old_path, new_path, fuzz_val=20):
             [ex. 'Users/bob/Desktop/']
     :param new_path: (str) path where output is intended to be saved in
             [ex. 'Users/bob/Desktop/new/']
-    :param fuzz_val: (int) percentage value for Image Magick fuzz command, default 20
+    :param fuzz_val: (str) percentage value for Image Magick fuzz command, default 20
             [ex. 55]
     :return: None, output produced in new directory
     """
 
-    # creating new directory for output
+    # creating new directory (and all intermediate-level directories) for output
     try:
-        os.mkdir(new_path)
+        os.makedirs(new_path)
     except FileExistsError:
         pass
 
@@ -39,6 +39,13 @@ def crop_border(old_path, new_path, fuzz_val=20):
 
 
 if __name__ == '__main__':
+    """
+    Examples of command-line:
+        python scripts/cropborder.py /Users/bob/Desktop/TestImages /Users/bob/Desktop/newtest
+
+        python scripts/cropborder.py /Users/bob/Desktop/TestImages /Users/bob/Desktop/newtest 55
+    """
+
     script = sys.argv[0]  # python cropborder.py
     old_path_arg = sys.argv[1]  # argument 1 old_path
     new_path_arg = sys.argv[2]  # argument 2 new_path
@@ -52,9 +59,4 @@ if __name__ == '__main__':
         crop_border(old_path_arg, new_path_arg, fuzz_arg)
 
 
-"""
-Examples of command-line:
-    python scripts/cropborder.py /Users/bob/Desktop/TestImages /Users/bob/Desktop/newtest
 
-    python scripts/cropborder.py /Users/bob/Desktop/TestImages /Users/bob/Desktop/newtest 55
-"""
