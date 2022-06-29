@@ -72,9 +72,10 @@ code {
 
 .map-grid {
     stroke: lightslategray;
-    fill: none;
+    fill: #777777;
     stroke-width: 2;
     stroke-opacity: 0.5;
+    fill-opacity: 0.0;
 }
 
 .map-square {
@@ -83,26 +84,31 @@ code {
 }
 
 .box-one {
-    stroke: #E85285;
-    fill: #E85285;
+    stroke: #FFBEBD;
+    fill: #FFBEBD;
 }
 
 .box-two {
-    stroke: #C9458B;
-    fill: #C9458B;
+    stroke: #FF9E9C;
+    fill: #FF9E9C;
 }
 
 .box-three {
-    stroke: #A93790;
-    fill: #A93790;
+    stroke: #FF7E7A;
+    fill: #FF7E7A;
 }
 
 .box-four {
-    stroke: #8A2995;
-    fill: #8A2995;
+    stroke: #FF5D59;
+    fill: #FF5D59;
 }
 
 .box-five {
-    stroke: #6A1B9A;
-    fill: #6A1B9A;
+    stroke: #FF3D3A;
+    fill: #FF3D3A;
+}
+
+.home-map {
+    width: 100%;
+    height: 500px !important;
 }
