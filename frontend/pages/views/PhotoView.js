@@ -3,9 +3,12 @@ import * as PropTypes from "prop-types";
 
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import {PhotoViewer, SIDES} from "../../components/PhotoViewer";
+import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
 
+import {Dropdown} from "react-bootstrap";
+
+let tagList = ["Construction", "People", "Building"];
 
 export class FindVanishingPointDisplayWidget extends React.Component {
     render() {
@@ -202,59 +205,13 @@ function formatPercentageValue(value) {
     return `${parseInt(value)}%`;
 }
 
-function formatCoordinate(value) {
-    return `(${parseInt(value[0][0])}, ${parseInt(value[0][1])})`;
-}
-
-function formatMeanDetailValue(value) {
-    return `${parseInt(value)}`;
-}
-
-const formatBoolean = (value) => {
-    return value ? "Yes" : "No";
-};
-
-const ANALYSIS_CONFIGS = {
-    "whitespace_percentage": {
-        formatter: formatPercentageValue,
-        displayName: "% Whitespace"
-    },
-    "photographer_caption_length": {
-        displayName: "Length of Photographer Caption"
-    },
-    "foreground_percentage": {
-        formatter: formatPercentageValue,
-        displayName: "% Foreground"
-    },
-    "find_vanishing_point": {
-        formatter: formatCoordinate,
-        displayName: "Vanishing Point Coordinate"
-    },
-    "portrait_detection": {
-        formatter: formatBoolean,
-        displayName: "Is It a Portrait"
-    },
-    "indoor_analysis.combined_indoor": {
-        formatter: formatBoolean,
-        displayName: "Is It Taken Indoors?"
-    },
-    "text_ocr": {
-        displayName: "Text Detected"
-    },
-    "mean_detail": {
-        formatter: formatMeanDetailValue,
-        displayName: "Average Amount of Detail"
-    }
-};
-
-
 export class PhotoView extends PhotoViewer {
     constructor(props) {
         super(props);
         this.state = {
             loading: true,
             photoData: null,
-            displaySide: "",
+            displaySide: "photo",
             availableSides: [],
             view: 0,
             width: null,
@@ -279,13 +236,8 @@ export class PhotoView extends PhotoViewer {
                 this.setState({loading: false});
             } else {
                 const photoData = await response.json();
-                const availableSides = Object.values(SIDES)
-                .filter((side) => photoData[`${side}_src`] !== null);
-                const displaySide = availableSides.length > 0 ? availableSides[0] : "";
                 this.setState({
                     photoData,
-                    availableSides,
-                    displaySide,
                     loading: false
                 });
             }
@@ -335,13 +287,6 @@ export class PhotoView extends PhotoViewer {
         });
     }
 
-    setLinks = (prevLink, nextLink) => {
-        this.setState({
-            prevLink: prevLink,
-            nextLink: nextLink
-        });
-    };
-
     render() {
         if (this.state.loading) {
             return (<LoadingPage/>);
@@ -364,23 +309,41 @@ export class PhotoView extends PhotoViewer {
         // Resize SVG overlays on viewport resize
         window.addEventListener("resize", () => this.handleResize());
 
+        const visualAnalyses = [];
+        for (const [analysisName, result] of Object.entries(analyses)) {
+            let visualAnalysis = null;
+            if (analysisName in VISUAL_ANALYSES && this.state.displaySide === "photo") {
+                if (VISUAL_ANALYSES[analysisName][1] !== this.state.view) continue;
+                visualAnalysis = VISUAL_ANALYSES[analysisName][0](
+                    result,
+                    this.state.height,
+                    this.state.width,
+                    this.state.natHeight,
+                    this.state.natWidth
+                );
+            }
+            // handled in a different div
+            visualAnalyses.push(visualAnalysis);
+        }
+
+        const yoloResult = (
+            "yolo_model" in analyses
+                ? analyses["yolo_model"]
+                : {}
+        );
+
+        const similarPhotos = (
+            "photo_similarity.resnet18_cosine_similarity" in analyses
+                ? analyses["photo_similarity.resnet18_cosine_similarity"]
+                : []
+        );
+
         return (<>
             <Navbar/>
             <div className="page">
                 <div className="d-flex justify-content-center">
                     <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
                     <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
-                </div>
-                <div className="row map-square">
-                    <div className="col">
-                        <a className="btn btn-outline-dark" href={`/map_square/${mapSquareNumber}`}>
-                            Back to Map Square</a>
-                    </div>
-                    <div className="col text-center">
-                        <h2>Map Square {mapSquareNumber}, Photo {photoNumber}</h2>
-                    </div>
-                    <div className="col">
-                    </div>
                 </div>
                 <br/>
                 <div className="page row">
@@ -391,43 +354,58 @@ export class PhotoView extends PhotoViewer {
                                 src={this.getSource(this.state.photoData, this.state.displaySide)}
                                 alt={alt}
                                 onLoad={this.onImgLoad}
-                                ref={this.photoRef}/>
-
-                            {analyses.map((analysisResult) => {
-                                const parsedValue = JSON.parse(analysisResult.result);
-
-                                if (analysisResult.name in VISUAL_ANALYSES &&
-                                    this.state.displaySide === "cleaned") {
-                                    if (VISUAL_ANALYSES[analysisResult.name][1] ===
-                                        this.state.view) {
-                                        return VISUAL_ANALYSES[analysisResult.name][0](
-                                            parsedValue,
-                                            this.state.height,
-                                            this.state.width,
-                                            this.state.natHeight,
-                                            this.state.natWidth
-                                        );
-                                    }
-                                    return null;
-                                }
-                                // handled in a different div
-                                return null;
-                            })}
+                                ref={this.photoRef}
+                            />
+                            {visualAnalyses}
                         </div>
                         <br/>
                         <div className={"centerBtn"}>
-                            {this.state.availableSides.map((side, k) => (
-                                <button
-                                    className="btn btn-outline-dark mx-1"
-                                    key={k}
-                                    onClick={() => this.changeSide(side)}>
-                                    {side[0].toUpperCase() + side.slice(1)} Side
-                                </button>
-                            ))}
+                            <button
+                                className={"side-button"}
+                                onClick={() => this.changeSide("photo")}>
+                                PHOTO
+                            </button>
+                            <button
+                                className={"side-button"}
+                                onClick={() => this.changeSide("slide")}>
+                                SLIDE
+                            </button>
+                        </div>
+                        {/* TODO: Disable scroll buttons when no more photos to scroll through */}
+                        <div className="similar-photos-box">
+                            <button
+                                type="button"
+                                className="similarity-scroll btn btn-dark"
+                                onClick={
+                                () => document.getElementById("sim-photos").scrollLeft -=
+                                    document.getElementById("sim-photos").clientWidth}
+                            >{"<"}</button>
+
+                            <div id="sim-photos" className="similar-photos">
+                                {this.getPhotoGrid(
+                                    similarPhotos,
+                                    {
+                                        "className": "similar-photo",
+                                        "titleFunc": (k, photo) =>
+                                        `Map Square: ${photo["map_square_number"]}, ` +
+                                        `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
+                                    }
+                                )}
+                            </div>
+
+                            <button
+                                type="button"
+                                className="similarity-scroll btn btn-dark"
+                                onClick={
+                                () => document.getElementById("sim-photos").scrollLeft +=
+                                    document.getElementById("sim-photos").clientWidth}
+                            >{">"}</button>
                         </div>
                     </div>
                     <div className="image-info col-12 col-lg-6">
-                        <h5>Photographer</h5>
+                        <h4>Photograph Details</h4>
+                        <br></br>
+                        <h6>PHOTOGRAPHER</h6>
                         <p>
                             {photographerName || "Unknown"}
                             {
@@ -442,13 +420,43 @@ export class PhotoView extends PhotoViewer {
                                     : " (Number: Unknown)"
                             }
                         </p>
-                        <h5 className="caption">Photographer Caption</h5>
-                        <p>{photographerCaption || "None"}</p>
+                        <br></br>
+                        <h6>TAGS</h6>
 
-                        <h5>Visual Analysis</h5>
+                        {tagList.map((word) => (
+                            <button className="tag-button" key={word.id}>
+                                {word}
+                            </button>
+                        ))}
+
+                        <br></br><br></br>
+                        <h6>CAPTION</h6>
+                        <p>{photographerCaption || "None"}</p>
+                        <br></br>
+
+                        <h6>LOCATION</h6>
+                        <p>Map Square:
+                            <a href={`/map_square/${mapSquareNumber}`}>{mapSquareNumber}</a>
+                        </p>
+                        <p>Photo: {photoNumber}</p>
+
+                        <h6>ANALYSIS</h6>
+
+                        <Dropdown className="photo-sort-dropdown">
+                            <Dropdown.Toggle className="photo-sort-dropdown-button" align="start">
+                                Sort By...
+                            </Dropdown.Toggle>
+
+                            <Dropdown.Menu>
+                                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+                                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+                                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
+
                         <div className="row">
                             <div className="col-6">
-                                {(this.state.displaySide === "cleaned")
+                                {(this.state.displaySide === "photo")
                                     ? <select
                                         id="toggleSelect"
                                         className="custom-select"
@@ -461,7 +469,7 @@ export class PhotoView extends PhotoViewer {
                                     </select>
                                     : <p>Not available</p>
                                 }
-                                {(this.state.view === 3 && this.state.displaySide === "cleaned")
+                                {(this.state.view === 3 && this.state.displaySide === "photo")
                                     ? <p className={"px-3 my-0"}>
                                         <i>Hover over the boxes to see the name of the object.</i>
                                     </p>
@@ -470,118 +478,57 @@ export class PhotoView extends PhotoViewer {
                             </div>
                         </div>
 
-                        {analyses.map((analysisResult, index) => {
-                            const analysisConfig = ANALYSIS_CONFIGS[analysisResult.name];
-                            const parsedValue = JSON.parse(analysisResult.result);
+                        {"labels" in yoloResult
+                            ? <React.Fragment>
+                                <h5>Objects Detected</h5>
+                                <ul>
+                                    {Object.keys(yoloResult["labels"])
+                                    .map((key, i) => (
+                                        <li key={i}>
+                                            {key}: {yoloResult["labels"][key]}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </React.Fragment>
+                            : <React.Fragment>
+                                <h5>Objects Detected</h5>
+                                <p>None</p>
+                            </React.Fragment>
+                        }
 
-                            if (analysisResult.name === "yolo_model") {
-                                let labels = [];
-                                if ("labels" in parsedValue) {
-                                    labels = parsedValue["labels"];
-                                } else {
-                                    return (
-                                        <React.Fragment>
-                                            <h5>Objects Detected</h5>
-                                            <p>None</p>
-                                        </React.Fragment>
-                                    );
-                                }
-                                return (
-                                    <React.Fragment>
-                                        <h5>Objects Detected</h5>
-                                        <ul>
-                                            {Object.keys(labels)
-                                            .map((key, i) => (
-                                                <li key={i}>{key}: {labels[key]}</li>
-                                            ))}
-                                        </ul>
-                                    </React.Fragment>
-                                );
-                            }
-
-                            if (analysisResult.name ===
-                                "photo_similarity.resnet18_cosine_similarity") {
-                                if (parsedValue === []) {
-                                    return (
-                                        <React.Fragment>
-                                            <h5>Similar Photos</h5>
-                                            <p>None</p>
-                                        </React.Fragment>
-                                    );
-                                } else if (parsedValue === null) {
-                                    return (
-                                        <React.Fragment>
-                                            <h5>Similar Photos</h5>
-                                            <p>Similarity analysis not run.</p>
-                                        </React.Fragment>
-                                    );
-                                }
-                                return (
-                                    <React.Fragment>
-                                        <h5>Similar Photos (% Similiarity)</h5>
-                                        <h6>
-                                            <a href={"/similar_photos/" +
-                                            `${this.props.mapSquareNumber}/` +
-                                            `${this.props.photoNumber}/10/`}>
-                                                View Top 10 Similar Photos
+                        {!(similarPhotos in [[], null])
+                            ? <React.Fragment>
+                                <h5>Similar Photos (% Similarity)</h5>
+                                <h6>
+                                    <a href={"/similar_photos/" +
+                                    `${this.props.mapSquareNumber}/` +
+                                    `${this.props.photoNumber}/10/`}>
+                                        View Top 10 Similar Photos
+                                    </a>
+                                </h6>
+                                <div
+                                    className="col pb-scroll"
+                                    id="scrolling"
+                                    style={{
+                                        maxHeight: 200,
+                                        overflow: "auto"
+                                    }}>
+                                    {similarPhotos.map((photo, i) => (
+                                        <div key={i}>
+                                            <a href={`/photo/${photo["map_square_number"]}/${photo["number"]}/`}>
+                                                Map Square {photo["map_square_number"]},
+                                                Photo {photo["number"]}
                                             </a>
-                                        </h6>
-                                        <div
-                                            className="col pb-scroll"
-                                            id="scrolling"
-                                            style={{
-                                                maxHeight: 200,
-                                                overflow: "auto"
-                                            }}>
-                                            {(parsedValue.map((photo, i) => (
-                                                (photo[0] !== mapSquareNumber ||
-                                                    photo[1] !== photoNumber)
-                                                    ? <div key={i}>
-                                                        <a href={`/photo/${photo[0]}/${photo[1]}/`}>
-                                                            Map Square {photo[0]},
-                                                            Photo {photo[1]} </a>
-                                                        ({formatPercentageValue(photo[2] * 100)})
-                                                    </div>
-                                                    : null
-                                            ))).reverse()}
+                                            ({formatPercentageValue(photo["similarity"] * 100)})
                                         </div>
-                                    </React.Fragment>
-                                );
-                            }
-
-                            // handled in a different div
-                            if (analysisResult.name in VISUAL_ANALYSES ||
-                                analysisResult.name === "photo_similarity.resnet18_feature_vectors") {
-                                return null;
-                            }
-
-                            let analysisDisplayName;
-                            let analysisResultStr = analysisResult.result;
-                            if (!analysisConfig) {
-                                analysisDisplayName = analysisResult.name;
-                            } else {
-                                analysisDisplayName = analysisConfig.displayName;
-                                if (analysisConfig.formatter) {
-                                    analysisResultStr = analysisConfig.formatter(
-                                        analysisResult.result
-                                    );
-                                }
-                            }
-                            if (["null", "\"\""].includes(analysisResultStr)) {
-                                analysisResultStr = "N/A";
-                            }
-
-                            return (
-                                <React.Fragment key={index}>
-                                    <h5>{analysisDisplayName}</h5>
-                                    <p>{analysisResultStr}</p>
-                                </React.Fragment>
-                            );
-                        })}
-                    </div>
-                    <div className="center">
-                        <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
-                        <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
+                                    ))}
+                                </div>
+                            </React.Fragment>
+                            : <React.Fragment>
+                                <h5>Similar Photos</h5>
+                                <p>None</p>
+                            </React.Fragment>
+                        }
                     </div>
                 </div>
             </div>
