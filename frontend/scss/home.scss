@@ -71,11 +71,10 @@ code {
 }
 
 .map-grid {
-    stroke: lightslategray;
-    fill: #777777;
-    stroke-width: 2;
-    stroke-opacity: 0.5;
-    fill-opacity: 0.0;
+    stroke: $color-mid-gray;
+    stroke-width: 1;
+    stroke-opacity: 1;
+    fill-opacity: 0;
 }
 
 .map-square {
