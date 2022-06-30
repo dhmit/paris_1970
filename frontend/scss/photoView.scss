@@ -96,46 +96,47 @@ rect {
 
 .side-button {
     font-size: 18px;
-    font-weight: 500;
-    border: 2px solid;
-    padding: 2px 10px;
+    font-weight: 600;
+    border: 0.17em solid;
+    padding: 0.1em 0.5em;
     background-color: white;
 }
 
 .side-button:hover {
-    background-color: #20CCD7;
+    background-color: $color-turquoise;
 }
 
 .tag-button {
     font-size: 16px;
-    border: 2px solid #FB2F2A;
-    padding: 2px 24px;
-    margin: 5px;
+    border: .125em solid $color-orange;
+    padding: .125em 1.5em;
+    margin: 0.5em;
     background-color: white;
 }
 
 .tag-button:hover {
-    background-color: #f6afae;
+    color: white;
+    background-color: $color-orange;
 }
 
 .photo-sort-dropdown-button {
     font-size: 16px;
-    border-width: 0px;
-    border-bottom: 2px solid black;
-    padding: 0px 22px 0px 0px;
-    margin: 5px;
-    border-radius: 0px;
+    border-width: 0em;
+    border-bottom: 0.125em solid black;
+    padding: 0em 1.38em 0em 0em;
+    margin: 0.31em;
+    border-radius: 0em;
     background-color: white;
     color: #5E5F5F;
 }
 
 .photo-sort-dropdown-menu {
     font-size: 16px;
-    border-width: 0px;
-    padding: 2px 24px;
-    margin: 5px;
-    border-radius: 15px;
-    background-color: #00B1DB;
+    border-width: 0em;
+    padding: 0.125em 1.5em;
+    margin: 0.31em;
+    border-radius: 1em;
+    background-color: $color-turquoise;
     color: white;
 }
 
@@ -153,8 +154,8 @@ rect {
 
 .similar-photo {
     max-width: 100px;
-    margin-left: 5px;
-    margin-right: 5px;
+    margin-left: 0.05px;
+    margin-right: 0.05px;
 }
 
 .similar-photos {
