@@ -20,7 +20,7 @@ import LoadingPage from "./LoadingPage";
 
 import Legend from "../components/Legend.js";
 
-class Map extends React.Component {
+export class Map extends React.Component {
     state = {
         lat: 48.858859,
         lng: 2.3470599,
@@ -28,6 +28,8 @@ class Map extends React.Component {
         bounds: [[48.8030, 2.1330], [48.9608, 2.6193]],
         minZoom: 12
     };
+
+
 
     render() {
         console.log("MAP STATE", this.state);

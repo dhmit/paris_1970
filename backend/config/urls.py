@@ -59,6 +59,7 @@ urlpatterns = [
     # path('api/faster_rcnn_object_detection/<str:object_name>/', views.get_photos_by_object_rcnn),
     # path('api/model/<str:model_name>/<str:object_name>/', views.get_photos_by_object),
     path('', views.index),
+    path('map/', views.map_page),
     path('about/', views.about),
     path('search/', views.search_view),
     path('similarity/', views.similarity),

@@ -1,0 +1,26 @@
+.bottom-right-red-rectangle {
+    display: inline-block;
+    position: absolute;
+    top:19%;
+    left:17%;
+    width: 83%;
+    height: 80%;
+    background: #FF6C6C;
+    opacity: 50%;
+}
+
+.top-left-blue-rectangle {
+    position: absolute;
+    top:0;
+    left:0;
+    display: inline-block;
+    width: 56%;
+    height: 57%;
+    background: #70D8F1;
+    opacity: 50%;
+}
+
+.parent-bounding-box{
+    position: absolute;
+
+}

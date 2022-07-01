@@ -19,6 +19,7 @@ import {AllPhotosView} from "./pages/views/AllPhotosView";
 import {ClusterView} from "./pages/views/ClusterView";
 import {Search} from "./pages/Search";
 import About from "./pages/About";
+import MapPage from "./pages/views/MapPageView";
 
 // Import all styles
 import "./scss/styles.scss";
@@ -39,7 +40,8 @@ const COMPONENTS = {
     AllAnalysisView,
     AnalysisView,
     AllPhotosView,
-    ClusterView
+    ClusterView,
+    MapPage
 };
 
 const PreselectedComponent = COMPONENTS[COMPONENT_NAME || "ErrorNotFoundComponent"];

@@ -411,6 +411,17 @@ def about(request):
     return render_view(request, context)
 
 
+def map_page(request):
+    context = {
+        'page_metadata': {
+            'title': 'Map Page'
+        },
+        'component_name': 'MapPage'
+    }
+
+    return render_view(request, context)
+
+
 def search_view(request):
     context = {
         'page_metadata': {
