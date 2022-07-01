@@ -64,7 +64,27 @@ INSTALLED_APPS = [
     'filer',
     'easy_thumbnails',
     'mptt',
-    'djangocms_text_ckeditor'
+    'djangocms_text_ckeditor',
+
+    # djangocms-bootstrap5
+    'djangocms_icon',
+    'djangocms_link',
+    'djangocms_picture',
+    'djangocms_bootstrap5',
+    'djangocms_bootstrap5.contrib.bootstrap5_alerts',
+    'djangocms_bootstrap5.contrib.bootstrap5_badge',
+    'djangocms_bootstrap5.contrib.bootstrap5_card',
+    'djangocms_bootstrap5.contrib.bootstrap5_carousel',
+    'djangocms_bootstrap5.contrib.bootstrap5_collapse',
+    'djangocms_bootstrap5.contrib.bootstrap5_content',
+    'djangocms_bootstrap5.contrib.bootstrap5_grid',
+    'djangocms_bootstrap5.contrib.bootstrap5_jumbotron',
+    'djangocms_bootstrap5.contrib.bootstrap5_link',
+    'djangocms_bootstrap5.contrib.bootstrap5_listgroup',
+    'djangocms_bootstrap5.contrib.bootstrap5_media',
+    'djangocms_bootstrap5.contrib.bootstrap5_picture',
+    'djangocms_bootstrap5.contrib.bootstrap5_tabs',
+    'djangocms_bootstrap5.contrib.bootstrap5_utilities',
 ]
 
 MIDDLEWARE = [
@@ -160,6 +180,8 @@ USE_TZ = True
 
 # the url where we'll look for static files
 STATIC_URL = '/static/'
+
+# the url where images will be uploaded
 
 # where collectstatic puts static files for production
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
