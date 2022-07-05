@@ -36,7 +36,6 @@ function densityOverlay(mapData) {
             sortedMapData.map((mapSquareData) => {
                 const index = mapSquareData.number;
                 const coords = mapSquareData.topLeftCoords;
-                // console.log(index, coords);
                 const numberOfPhotos = mapSquareData.num_photos;
 
                 const mapSquareBounds = [
@@ -62,8 +61,7 @@ function densityOverlay(mapData) {
                     <Rectangle
                         className={numberOfPhotos === 0 ? "map-grid" : mapSquareBucket}
                         key={index}
-                        bounds={mapSquareBounds}
-                    >
+                        bounds={mapSquareBounds}>
                         <Popup>
                             Map Square {index} <br/>
                             <a href={link}>{numberOfPhotos} photos to show</a>
@@ -203,7 +201,7 @@ export class HomePage extends React.Component {
             <Instructions/>
             <ParisMap
                 className="home-map"
-                zoom={13}
+                zoom={14}
                 layers={{
                     "Photo Density": densityOverlay(this.state.mapData),
                     "Arrondissements": arrondissementsOverlay(this.state.geojsonData)
