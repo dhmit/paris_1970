@@ -1,6 +1,6 @@
 
-@include media-breakpoint-up(md) {
-    .bottom-right-red-rectangle-side-logo {
+@include media-breakpoint-up(lg) {
+    .red-rectangle-side-logo {
         display: inline-block;
         position: absolute;
         top: 19%;
@@ -11,7 +11,7 @@
         opacity: 50%;
     }
 
-    .top-left-blue-rectangle-side-logo {
+    .blue-rectangle-side-logo {
         position: absolute;
         top: 0;
         left: 0;
@@ -23,12 +23,11 @@
     }
 
     .parent-bounding-box-side-logo {
-        position: absolute;
         width: 2.8em;
         height: 2.6em;
     }
 
-    .bottom-right-red-rectangle-title-logo {
+    .red-rectangle-title-logo {
         display: inline-block;
         position: absolute;
         top: 0;
@@ -39,20 +38,19 @@
         mix-blend-mode: multiply;
     }
 
-    .top-left-blue-rectangle-title-logo {
+    .blue-rectangle-title-logo {
         position: absolute;
         top: 15%;
         left: 0;
         display: inline-block;
         width: 92%;
-        height: 84%;
+        height: 100%;
         background: #70D8F1;
         mix-blend-mode: multiply;
     }
 
     .parent-bounding-box-title-logo {
-        position: relative;
-        width: 12em;
-        height: 2em;
+        width: 10.5em;
+        height: 1.8em;
     }
 }

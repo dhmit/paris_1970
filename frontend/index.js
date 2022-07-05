@@ -6,7 +6,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import Base from "./Base";
-import ErrorNotFoundComponent from "./components/ErrorNotFoundComponent";
 
 import {HomePage} from "./pages/Home";
 import {PhotoView} from "./pages/views/PhotoView";
@@ -29,7 +28,6 @@ const COMPONENT_NAME_RAW = document.getElementById("component_name").text;
 const COMPONENT_PROPS = JSON.parse(COMPONENT_PROPS_RAW);
 const COMPONENT_NAME = JSON.parse(COMPONENT_NAME_RAW);
 const COMPONENTS = {
-    ErrorNotFoundComponent,
     HomePage,
     About,
     Search,
