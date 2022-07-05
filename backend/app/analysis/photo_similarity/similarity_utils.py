@@ -64,4 +64,4 @@ def analyze_similarity(photo: Photo, similarity_function, reverse=True):
         })
 
     similarities.sort(key=lambda x: x['similarity'], reverse=reverse)
-    return similarities
+    return similarities[1:]  # First photo will be current photo (100% similarity), remove it
