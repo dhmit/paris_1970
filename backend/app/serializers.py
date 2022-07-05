@@ -52,21 +52,6 @@ class PhotoSerializer(serializers.ModelSerializer):
         for analysis_result in analysis_results:
             name = analysis_result['name']
             result = json.loads(analysis_result['result'])
-            if name == "photo_similarity.resnet18_cosine_similarity":
-                new_result = []
-                for map_square_number, photo_number, similarity in result[1:]:
-                    photo = Photo.objects.get(
-                         map_square__number=map_square_number, number=photo_number
-                    )
-                    new_result.append({
-                        'number': photo.number,
-                        'map_square_number': photo.map_square.number,
-                        'cleaned_src': photo.cleaned_src,
-                        'front_src': photo.front_src,
-                        'alt': photo.alt,
-                        'similarity': similarity
-                    })
-                result = new_result
             analyses_dict[name] = result
         return analyses_dict
 
