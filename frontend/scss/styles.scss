@@ -15,6 +15,8 @@ $footer-height: 150px;
 @import '../../node_modules/bootstrap/scss/utilities';
 @import '../../node_modules/bootstrap/scss/grid';
 
+@import './fonts';
+@import './variables';
 @import './home';
 @import './about';
 @import './photoView';
@@ -25,6 +27,8 @@ $footer-height: 150px;
 @import './search';
 @import './mapPageView';
 @import './logo';
+@import './legend';
+
 
 html {
     position: relative;
