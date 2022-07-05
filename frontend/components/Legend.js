@@ -2,6 +2,7 @@ import React from "react";
 import * as PropTypes from "prop-types";
 import "../scss/legend.scss";
 
+
 export class Legend extends React.Component {
     constructor(props) {
         super(props);
@@ -10,18 +11,18 @@ export class Legend extends React.Component {
             labels: [],
             getColor: (d) => {
                 if (d === 1) {
-                    return "#E85285";
-                }
-                if (d === 2) {
-                    return "#C9458B";
+                    return "#FFBEBD";
                 }
                 if (d === 3) {
-                    return "#A93790";
+                    return "#FF9E9C";
                 }
-                if (d === 4) {
-                    return "#8A2995";
+                if (d === 5) {
+                    return "#FF7E7A";
                 }
-                return "#6A1B9A";
+                if (d === 7) {
+                    return "#FF5D59";
+                }
+                return "#FF3D3A";
             }
         };
     }
@@ -35,7 +36,6 @@ export class Legend extends React.Component {
         this.setState({
             labels: labels
         });
-
     };
 
 
