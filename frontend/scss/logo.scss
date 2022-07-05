@@ -1,26 +1,58 @@
-.bottom-right-red-rectangle {
-    display: inline-block;
-    position: absolute;
-    top:19%;
-    left:17%;
-    width: 83%;
-    height: 80%;
-    background: #FF6C6C;
-    opacity: 50%;
-}
 
-.top-left-blue-rectangle {
-    position: absolute;
-    top:0;
-    left:0;
-    display: inline-block;
-    width: 56%;
-    height: 57%;
-    background: #70D8F1;
-    opacity: 50%;
-}
+@include media-breakpoint-up(md) {
+    .bottom-right-red-rectangle-side-logo {
+        display: inline-block;
+        position: absolute;
+        top: 19%;
+        left: 17%;
+        width: 83%;
+        height: 80%;
+        background: #FF6C6C;
+        opacity: 50%;
+    }
 
-.parent-bounding-box{
-    position: absolute;
+    .top-left-blue-rectangle-side-logo {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: inline-block;
+        width: 56%;
+        height: 57%;
+        background: #70D8F1;
+        opacity: 50%;
+    }
 
+    .parent-bounding-box-side-logo {
+        position: absolute;
+        width: 2.8em;
+        height: 2.6em;
+    }
+
+    .bottom-right-red-rectangle-title-logo {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 89%;
+        width: 1em;
+        height: 1em;
+        background: #FF6C6C;
+        mix-blend-mode: multiply;
+    }
+
+    .top-left-blue-rectangle-title-logo {
+        position: absolute;
+        top: 15%;
+        left: 0;
+        display: inline-block;
+        width: 92%;
+        height: 84%;
+        background: #70D8F1;
+        mix-blend-mode: multiply;
+    }
+
+    .parent-bounding-box-title-logo {
+        position: relative;
+        width: 12em;
+        height: 2em;
+    }
 }

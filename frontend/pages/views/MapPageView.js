@@ -8,7 +8,17 @@ import LoadingPage from "../LoadingPage";
 import Logo from "../../components/Logo";
 
 function MapPageEntryLogo(props){
-    return <h1>Map</h1>;
+    return (<div>
+            <Container>
+                <Row>
+                    <Col>
+                        <Logo id="site-logo" top={36} left={-1} logo_type={"title-logo"}/>
+                        <h1>Map</h1>
+                    </Col>
+                </Row>
+            </Container>
+            </div>
+    );
 }
 
 class MapPage extends React.Component {
@@ -74,12 +84,13 @@ class MapPage extends React.Component {
                         <Col sm={2} md={7} className="m-0 p-0 min-vh-100" id="map-box"><Map mapData={this.state.mapData} /></Col>
                         <Col sm={2} md={5} className="m-0 p-0 min-vh-100" id="info-text">
                             <MapPageEntryLogo/>
+
                             <p>This is a small paragraph about the division of Paris into however many map squares for
                                 this competition + other information about the format of the competition relevant to
                                 interpreting this map. <br/><br/> Click on a square to learn more about it and see all the photos
                                 taken in it!
                             </p>
-                            <Logo id="site-logo" top={0} left={0}/>
+                            <Logo id="site-logo" top={0} left={0} logo_type={"side-logo"}/>
                         </Col>
                     </Row>
                 </Container>

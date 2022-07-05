@@ -9,16 +9,17 @@ export class Logo extends React.Component {
         this.top = props.top;
         this.left = props.left;
         this.position_type = props.position;
+        this.logo_type = props.logo_type;
 
     }
 
     render() {
         return (
-            <div className="parent-bounding-box" style={{top: this.top+"%",
+            <div className={"parent-bounding-box-"+this.logo_type} style={{top: this.top+"%",
                                                          left: this.left+"%",
                                                          position:this.position_type}}>
-                <div className="bottom-right-red-rectangle"/>
-                <div className="top-left-blue-rectangle"/>
+                <div className={"bottom-right-red-rectangle-"+this.logo_type}/>
+                <div className={"top-left-blue-rectangle-"+this.logo_type}/>
             </div>
         );
     }
@@ -27,7 +28,8 @@ export class Logo extends React.Component {
 Logo.propTypes = {
     top: PropTypes.number,
     left: PropTypes.number,
-    position: PropTypes.string
+    position: PropTypes.string,
+    logo_type: PropTypes.string
 };
 
 Logo.defaultProps = {
