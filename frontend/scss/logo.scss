@@ -30,6 +30,35 @@
     .red-rectangle-title-logo {
         display: inline-block;
         position: absolute;
+        top: 2%;
+        left: 88.5%;
+        width: 1em;
+        height: 1em;
+        background: #FF6C6C;
+        mix-blend-mode: multiply;
+    }
+
+    .blue-rectangle-title-logo {
+        position: absolute;
+        top: 20%;
+        left: 0;
+        display: inline-block;
+        width: 92%;
+        height: 100%;
+        background: #70D8F1;
+        mix-blend-mode: multiply;
+    }
+
+    .parent-bounding-box-title-logo {
+        width: 10.5em;
+        height: 1.8em;
+    }
+}
+
+@include media-breakpoint-between(md,lg) {
+    .red-rectangle-title-logo {
+        display: inline-block;
+        position: absolute;
         top: 0;
         left: 89%;
         width: 1em;
@@ -52,5 +81,28 @@
     .parent-bounding-box-title-logo {
         width: 10.5em;
         height: 1.8em;
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .red-rectangle-title-logo {
+        display: none;
+    }
+
+    .blue-rectangle-title-logo {
+        position: absolute;
+        top: 45%;
+        left: 31%;
+        display: inline-block;
+        width: 92%;
+        height: 100%;
+        background: #70D8F1;
+        opacity:80%;
+        mix-blend-mode: multiply;
+    }
+
+    .parent-bounding-box-title-logo {
+        width: 3.2em;
+        height: 1em;
     }
 }

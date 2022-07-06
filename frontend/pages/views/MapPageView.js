@@ -11,9 +11,9 @@ import {GeoJSON, Popup, Rectangle} from "react-leaflet";
 
 function MapPageEntryLogo(props){
     return (<div>
-            <Container className="mt-4 p-0">
-                <Row className="mb-3 p-0">
-                    <Col className="mb-3 p-0">
+            <Container id="map-page-title">
+                <Row>
+                    <Col>
                         <Logo id="site-logo" top={22} left={-1.5} logo_type={"title-logo"}/>
                         <h2 className="page-title">Map</h2>
                     </Col>
@@ -181,7 +181,7 @@ class MapPage extends React.Component {
                             <Container>
                                 <Row>
                                     <Col lg={1}></Col>
-                                    <Col lg={10}>
+                                    <Col lg={9}>
                                         <MapPageEntryLogo/>
 
                                         <p>This is a small paragraph about the division of Paris into however many map squares for
@@ -189,7 +189,10 @@ class MapPage extends React.Component {
                                             interpreting this map. <br/><br/> Click on a square to learn more about it and see all the photos
                                             taken in it!
                                         </p>
-                                        <Logo id="map-page-side-logo" position={"fixed"} top={92} left={94} logo_type={"side-logo"}/>
+
+                                        {//<Logo id="map-page-side-logo" position={"fixed"}
+                                            // top={91} left={95.5} logo_type={"side-logo"}/>
+                                        }
                                     </Col>
                                 </Row>
                             </Container>
