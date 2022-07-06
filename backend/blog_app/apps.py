@@ -7,4 +7,4 @@ from django.apps import AppConfig
 
 class Config(AppConfig):
     # noinspection PyUnresolvedReferences
-    name = 'cms_app'
+    name = 'blog_app'

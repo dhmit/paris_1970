@@ -36,8 +36,8 @@ ALLOWED_HOSTS = []  # For production, add domains
 # Application definition
 
 INSTALLED_APPS = [
-    # django
     'djangocms_admin_style',
+    # django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -54,7 +54,7 @@ INSTALLED_APPS = [
 
     # our application code
     'app',
-    'cms_app',
+    'blog_app',
 
     # cms
     'cms',
@@ -65,26 +65,33 @@ INSTALLED_APPS = [
     'easy_thumbnails',
     'mptt',
     'djangocms_text_ckeditor',
+    'aldryn_apphooks_config',
+    'parler',
+    'taggit',
+    'taggit_autosuggest',
+    'meta',
+    'sortedm2m',
+    'djangocms_blog',
 
     # djangocms-bootstrap5
     'djangocms_icon',
     'djangocms_link',
     'djangocms_picture',
     'djangocms_bootstrap5',
-    'djangocms_bootstrap5.contrib.bootstrap5_alerts',
-    'djangocms_bootstrap5.contrib.bootstrap5_badge',
-    'djangocms_bootstrap5.contrib.bootstrap5_card',
-    'djangocms_bootstrap5.contrib.bootstrap5_carousel',
-    'djangocms_bootstrap5.contrib.bootstrap5_collapse',
-    'djangocms_bootstrap5.contrib.bootstrap5_content',
-    'djangocms_bootstrap5.contrib.bootstrap5_grid',
-    'djangocms_bootstrap5.contrib.bootstrap5_jumbotron',
-    'djangocms_bootstrap5.contrib.bootstrap5_link',
-    'djangocms_bootstrap5.contrib.bootstrap5_listgroup',
-    'djangocms_bootstrap5.contrib.bootstrap5_media',
-    'djangocms_bootstrap5.contrib.bootstrap5_picture',
-    'djangocms_bootstrap5.contrib.bootstrap5_tabs',
-    'djangocms_bootstrap5.contrib.bootstrap5_utilities',
+    # 'djangocms_bootstrap5.contrib.bootstrap5_alerts',
+    # 'djangocms_bootstrap5.contrib.bootstrap5_badge',
+    # 'djangocms_bootstrap5.contrib.bootstrap5_card',
+    # 'djangocms_bootstrap5.contrib.bootstrap5_carousel',
+    # 'djangocms_bootstrap5.contrib.bootstrap5_collapse',
+    # 'djangocms_bootstrap5.contrib.bootstrap5_content',
+    # 'djangocms_bootstrap5.contrib.bootstrap5_grid',
+    # 'djangocms_bootstrap5.contrib.bootstrap5_jumbotron',
+    # 'djangocms_bootstrap5.contrib.bootstrap5_link',
+    # 'djangocms_bootstrap5.contrib.bootstrap5_listgroup',
+    # 'djangocms_bootstrap5.contrib.bootstrap5_media',
+    # 'djangocms_bootstrap5.contrib.bootstrap5_picture',
+    # 'djangocms_bootstrap5.contrib.bootstrap5_tabs',
+    # 'djangocms_bootstrap5.contrib.bootstrap5_utilities',
 ]
 
 MIDDLEWARE = [
@@ -143,6 +150,8 @@ DATABASES = {
         'NAME': os.path.join(BACKEND_DIR, 'db.sqlite3'),
     }
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -219,5 +228,21 @@ WEBPACK_LOADER = {
         'STATS_FILE': os.path.join(PROJECT_ROOT, 'webpack-stats.json'),
     }
 }
+
+THUMBNAIL_PROCESSORS = (
+    'easy_thumbnails.processors.colorspace',
+    'easy_thumbnails.processors.autocrop',
+    'filer.thumbnail_processors.scale_and_crop_with_subject_location',
+    'easy_thumbnails.processors.filters',
+)
+
+META_SITE_PROTOCOL = 'http'  # set 'http' for non ssl enabled websites
+
+META_USE_OG_PROPERTIES = True
+META_USE_TWITTER_PROPERTIES = True
+META_USE_GOOGLEPLUS_PROPERTIES = True  # django-meta 1.x+
+META_USE_SCHEMAORG_PROPERTIES = True  # django-meta 2.x+
+
+META_USE_SITES = True
 
 DEBUG = True

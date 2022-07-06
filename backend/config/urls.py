@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 
 from app.common import render_react_view
 from app import views
-from cms_app import views as cms_views
+from blog_app import views as blog_views
 
 
 def react_view_path(route, component_name):
@@ -77,8 +77,9 @@ urlpatterns = [
 ]
 
 cms_urlpatterns = [
-    re_path(r'^blog/', include('cms.urls')),
-    path('cms/', cms_views.index),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+                      path('blog/', blog_views.index, name="blog_home"),
+                      re_path(r'^blog/', include('cms.urls'), name="blogs"),
+                      re_path(r'^taggit_autosuggest/', include('taggit_autosuggest.urls')),
+                  ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += cms_urlpatterns
