@@ -35,13 +35,15 @@ export class PhotoViewer extends React.Component {
             "hrefFunc",
             (k, photo) => `/photo/${photo["map_square_number"]}/${photo["number"]}/`
         );
+        const onClickFunc = getValue(config, "onClickFunc", (_k, _photo) => () => {});
         return photoData.map((photo, k) => {
             return (
                 <a
                     key={k}
                     className={className}
                     title={titleFunc(k, photo)}
-                    href={hrefFunc(k, photo)}>
+                    href={hrefFunc(k, photo)}
+                    onClick={onClickFunc(k, photo)}>
                     <img
                         alt={photo.alt}
                         width={photoSize[0]}
@@ -51,6 +53,31 @@ export class PhotoViewer extends React.Component {
                 </a>
             );
         });
+    }
+
+    getPhotoSlider(photoData, config={}) {
+        // TODO: Disable scroll buttons when there are no more photos to scroll through
+        return (
+            <div className="photos-box">
+                <button
+                    type="button"
+                    className="slider-scroll-left btn btn-dark"
+                    onClick={
+                    () => document.getElementById("photo-slider").scrollLeft -=
+                        document.getElementById("photo-slider").clientWidth}
+                >{"<"}</button>
+                <div id="photo-slider" className="slider-photos">
+                    {this.getPhotoGrid(photoData, config)}
+                </div>
+                <button
+                    type="button"
+                    className="slider-scroll-right btn btn-dark"
+                    onClick={
+                    () => document.getElementById("photo-slider").scrollLeft +=
+                        document.getElementById("photo-slider").clientWidth}
+                >{">"}</button>
+            </div>
+        );
     }
 }
 
