@@ -1,8 +1,3 @@
-.photo_gallery {
-    display: flex;
-    flex-wrap: wrap;
-}
-
 .photo {
     padding: 3px;
     opacity: 1;
@@ -12,4 +7,21 @@
 
 .photo:hover {
 	opacity: .5;
+}
+
+.photo-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+    background-color: black;
+    height: 50em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.current-photo {
+    max-height: 100%;
+    max-width: 100%;
 }
