@@ -7,6 +7,7 @@ import {
     ZoomControl
 } from "react-leaflet";
 
+// Measurements in Longitude and Latitude distance respectively
 export const MAPSQUARE_WIDTH = 0.00340325568;
 export const MAPSQUARE_HEIGHT = 0.0022358;
 
@@ -16,7 +17,6 @@ export class ParisMap extends React.Component {
         super(props);
 
         let visibleLayers = Object.keys(this.props.layers);
-        console.log(visibleLayers);
         if (this.props.singleLayer) {
             visibleLayers = this.props.layers[Object.keys(this.props.layers)[0]];
         } else if (this.props.visibleLayers) {
@@ -82,22 +82,26 @@ export class ParisMap extends React.Component {
                             ? this.props.layers[layerName]
                             : <></>;
                     })}
-                    {this.props.layerSelectVisible === true ? <div className="card layer-select">
-                        <div className="card-body">
-                            {Object.keys(this.props.layers)
-                            .map((layerName, idx) => (
-                                <div key={idx}>
-                                    <input
-                                        className="form-check-input"
-                                        type="checkbox"
-                                        value={layerName}
-                                        checked={this.state.visibleLayers.includes(layerName)}
-                                        onChange={(e) => this.onLayerChange(e)}
-                                    /> {layerName}
-                                </div>
-                            ))}
+                    {
+                        this.props.layerSelectVisible === true
+                        ? <div className="card layer-select">
+                            <div className="card-body">
+                                {Object.keys(this.props.layers)
+                                .map((layerName, idx) => (
+                                    <div key={idx}>
+                                        <input
+                                            className="form-check-input"
+                                            type="checkbox"
+                                            value={layerName}
+                                            checked={this.state.visibleLayers.includes(layerName)}
+                                            onChange={(e) => this.onLayerChange(e)}
+                                        /> {layerName}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div> : <></>}
+                        : <></>
+                    }
                 </MapContainer>
             </div>
         );
