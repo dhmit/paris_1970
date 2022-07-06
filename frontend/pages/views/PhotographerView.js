@@ -68,7 +68,7 @@ export class PhotographerView extends PhotoViewer {
                 <div className="image-view col-12 col-lg-6">
                     <div className="col-6">
                         <h3 style={{paddingTop: "1em"}}><strong>Photographer Profile</strong></h3>
-                        <h1>{name}</h1>
+                        <h1 className="photographer-name">{name}</h1>
                         <h5><strong>Number:</strong>{" " + number}</h5>
                         <h5><strong>Recorded Sex:</strong></h5>
                         <h5><strong>Address:</strong></h5>
