@@ -5,10 +5,12 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
-
+import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
+import {Rectangle} from "react-leaflet";
 import {Dropdown} from "react-bootstrap";
 
 let tagList = ["Construction", "People", "Building"];
+
 
 export class FindVanishingPointDisplayWidget extends React.Component {
     render() {
@@ -201,9 +203,8 @@ const VISUAL_ANALYSES = {
     "yolo_model": [configAnalysisYoloModel, 3]
 };
 
-function formatPercentageValue(value) {
-    return `${parseInt(value)}%`;
-}
+const TURQUOISE = "#20CCD7";
+
 
 export class PhotoView extends PhotoViewer {
     constructor(props) {
@@ -264,12 +265,6 @@ export class PhotoView extends PhotoViewer {
         this.setState({displaySide: displaySide});
     };
 
-    toggleStatus = (event) => {
-        this.setState({
-            view: parseInt(event.target.value)
-        });
-    };
-
     onImgLoad({target: img}) {
         this.setState({
             width: img.clientWidth,
@@ -298,13 +293,18 @@ export class PhotoView extends PhotoViewer {
         }
         const {
             alt,
-            number: photoNumber,
             map_square_number: mapSquareNumber,
             photographer_name: photographerName,
             photographer_number: photographerNumber,
             photographer_caption: photographerCaption,
-            analyses
+            analyses,
+            map_square_coords: squareCoords
         } = this.state.photoData;
+
+        const mapSquareBounds = [
+            [squareCoords.lat, squareCoords.lng],
+            [squareCoords.lat - MAPSQUARE_HEIGHT, squareCoords.lng - MAPSQUARE_WIDTH]
+        ];
 
         // Resize SVG overlays on viewport resize
         window.addEventListener("resize", () => this.handleResize());
@@ -325,12 +325,6 @@ export class PhotoView extends PhotoViewer {
             // handled in a different div
             visualAnalyses.push(visualAnalysis);
         }
-
-        const yoloResult = (
-            "yolo_model" in analyses
-                ? analyses["yolo_model"]
-                : {}
-        );
 
         const similarPhotos = (
             "photo_similarity.resnet18_cosine_similarity" in analyses
@@ -362,45 +356,45 @@ export class PhotoView extends PhotoViewer {
                         <div className={"centerBtn"}>
                             <button
                                 className={"side-button"}
+                                style={{backgroundColor: this.state.displaySide === "photo" ? TURQUOISE : "white"}}
                                 onClick={() => this.changeSide("photo")}>
                                 PHOTO
                             </button>
                             <button
                                 className={"side-button"}
+                                style={{backgroundColor: this.state.displaySide === "slide" ? TURQUOISE : "white"}}
                                 onClick={() => this.changeSide("slide")}>
                                 SLIDE
                             </button>
                         </div>
-                        {/* TODO: Disable scroll buttons when no more photos to scroll through */}
-                        <div className="similar-photos-box">
-                            <button
-                                type="button"
-                                className="similarity-scroll btn btn-dark"
-                                onClick={
-                                () => document.getElementById("sim-photos").scrollLeft -=
-                                    document.getElementById("sim-photos").clientWidth}
-                            >{"<"}</button>
+                        <div style={{display: "flex", justifyContent: "space-between", paddingTop: "10px"}}>
+                            <h4><strong>Similar Photos (i)</strong></h4>
+                            <Dropdown className="photo-sort-dropdown">
+                                <Dropdown.Toggle className="photo-sort-dropdown-button" align="start">
+                                    Sort By...
+                                </Dropdown.Toggle>
 
-                            <div id="sim-photos" className="similar-photos">
-                                {this.getPhotoGrid(
-                                    similarPhotos,
+                                <Dropdown.Menu>
                                     {
-                                        "className": "similar-photo",
-                                        "titleFunc": (k, photo) =>
-                                        `Map Square: ${photo["map_square_number"]}, ` +
-                                        `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
+                                        Object.keys(analyses).map(
+                                            (analysisName, k) =>
+                                                <Dropdown.Item key={k} href={`#/action-${k}`}>
+                                                    {analysisName}
+                                                </Dropdown.Item>
+                                        )
                                     }
-                                )}
-                            </div>
-
-                            <button
-                                type="button"
-                                className="similarity-scroll btn btn-dark"
-                                onClick={
-                                () => document.getElementById("sim-photos").scrollLeft +=
-                                    document.getElementById("sim-photos").clientWidth}
-                            >{">"}</button>
+                                </Dropdown.Menu>
+                            </Dropdown>
                         </div>
+                        {this.getPhotoSlider(
+                            similarPhotos,
+                            {
+                                "className": "photo slider-photo",
+                                "titleFunc": (k, photo) =>
+                                `Map Square: ${photo["map_square_number"]}, ` +
+                                `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
+                            }
+                        )}
                     </div>
                     <div className="image-info col-12 col-lg-6">
                         <h4>Photograph Details</h4>
@@ -435,100 +429,24 @@ export class PhotoView extends PhotoViewer {
                         <br></br>
 
                         <h6>LOCATION</h6>
+                        <ParisMap
+                            className="single-photo-map"
+                            lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
+                            lng={squareCoords.lng - MAPSQUARE_WIDTH / 2}
+                            zoom={17}
+                            layers={{
+                                mapSquare: <Rectangle
+                                    className="current-map-square"
+                                    key={mapSquareNumber}
+                                    bounds={mapSquareBounds}
+                                />
+                            }}
+                        />
                         <p>Map Square:
                             <a href={`/map_square/${mapSquareNumber}`}>{mapSquareNumber}</a>
                         </p>
-                        <p>Photo: {photoNumber}</p>
+                        <p>Arrondissement: PLACEHOLDER</p>
 
-                        <h6>ANALYSIS</h6>
-
-                        <Dropdown className="photo-sort-dropdown">
-                            <Dropdown.Toggle className="photo-sort-dropdown-button" align="start">
-                                Sort By...
-                            </Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-                                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
-
-                        <div className="row">
-                            <div className="col-6">
-                                {(this.state.displaySide === "photo")
-                                    ? <select
-                                        id="toggleSelect"
-                                        className="custom-select"
-                                        onChange={this.toggleStatus}
-                                        value={this.state.view}>
-                                        <option value="0">None selected</option>
-                                        <option value="1">Perspective Lines</option>
-                                        <option value="2">Foreground Mask</option>
-                                        <option value="3">YOLO Model</option>
-                                    </select>
-                                    : <p>Not available</p>
-                                }
-                                {(this.state.view === 3 && this.state.displaySide === "photo")
-                                    ? <p className={"px-3 my-0"}>
-                                        <i>Hover over the boxes to see the name of the object.</i>
-                                    </p>
-                                    : <></>
-                                }
-                            </div>
-                        </div>
-
-                        {"labels" in yoloResult
-                            ? <React.Fragment>
-                                <h5>Objects Detected</h5>
-                                <ul>
-                                    {Object.keys(yoloResult["labels"])
-                                    .map((key, i) => (
-                                        <li key={i}>
-                                            {key}: {yoloResult["labels"][key]}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </React.Fragment>
-                            : <React.Fragment>
-                                <h5>Objects Detected</h5>
-                                <p>None</p>
-                            </React.Fragment>
-                        }
-
-                        {!(similarPhotos in [[], null])
-                            ? <React.Fragment>
-                                <h5>Similar Photos (% Similarity)</h5>
-                                <h6>
-                                    <a href={"/similar_photos/" +
-                                    `${this.props.mapSquareNumber}/` +
-                                    `${this.props.photoNumber}/10/`}>
-                                        View Top 10 Similar Photos
-                                    </a>
-                                </h6>
-                                <div
-                                    className="col pb-scroll"
-                                    id="scrolling"
-                                    style={{
-                                        maxHeight: 200,
-                                        overflow: "auto"
-                                    }}>
-                                    {similarPhotos.map((photo, i) => (
-                                        <div key={i}>
-                                            <a href={`/photo/${photo["map_square_number"]}/${photo["number"]}/`}>
-                                                Map Square {photo["map_square_number"]},
-                                                Photo {photo["number"]}
-                                            </a>
-                                            ({formatPercentageValue(photo["similarity"] * 100)})
-                                        </div>
-                                    ))}
-                                </div>
-                            </React.Fragment>
-                            : <React.Fragment>
-                                <h5>Similar Photos</h5>
-                                <p>None</p>
-                            </React.Fragment>
-                        }
                     </div>
                 </div>
             </div>

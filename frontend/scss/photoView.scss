@@ -78,10 +78,6 @@ rect {
     margin: auto;
 }
 
-.top-button {
-    position: relative;
-}
-
 .caption {
     display: inline-block;
 }
@@ -152,13 +148,13 @@ rect {
     background-color: black;
 }
 
-.similar-photo {
-    max-width: 100px;
-    margin-left: 0.05px;
-    margin-right: 0.05px;
+.slider-photo {
+    max-width: 110px;
+    margin-left: .1em;
+    margin-right: .1em;
 }
 
-.similar-photos {
+.slider-photos {
     display: flex;
     margin: 1em;
     flex-direction: row;
@@ -166,19 +162,31 @@ rect {
     scroll-behavior: smooth;
 }
 
-.similar-photos-box {
+.photos-box {
     display: flex;
     flex-direction: row;
     background-color: black;
+    position: relative;
 }
 
-.similar-photos::-webkit-scrollbar {
+.slider-photos::-webkit-scrollbar {
     display: none;
 }
 
-.similarity-scroll {
+.slider-scroll {
     background-color: black !important;
     color: #70D8F1 !important;
+}
+
+.slider-scroll-left {
+    @extend .slider-scroll;
+}
+
+.slider-scroll-right {
+    @extend .slider-scroll;
+    right: 0;
+    height: 100%;
+    position: absolute;
 }
 
 .current-map-square {
