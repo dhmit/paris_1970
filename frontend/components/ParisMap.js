@@ -7,7 +7,9 @@ import {
     ZoomControl
 } from "react-leaflet";
 
-// Measurements in Longitude and Latitude distance respectively
+// Measurements in Longitude and Latitude distance respectively.
+// Used for creating a grid of all the map squares along with each map squares' approximate
+// coordinates.
 export const MAPSQUARE_WIDTH = 0.00340325568;
 export const MAPSQUARE_HEIGHT = 0.0022358;
 
