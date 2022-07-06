@@ -23,6 +23,7 @@ class PhotoSerializer(serializers.ModelSerializer):
     photographer_number = serializers.SerializerMethodField()
     map_square_number = serializers.SerializerMethodField()
     analyses = serializers.SerializerMethodField()
+    map_square_coords = serializers.SerializerMethodField()
 
     @staticmethod
     def get_photographer_name(instance):
@@ -55,13 +56,20 @@ class PhotoSerializer(serializers.ModelSerializer):
             analyses_dict[name] = result
         return analyses_dict
 
+    @staticmethod
+    def get_map_square_coords(instance):
+        return {
+            dim: float(c)
+            for dim, c in zip(['lat', 'lng'], instance.map_square.coordinates.split(', '))
+        }
+
     class Meta:
         model = Photo
         fields = [
             'id', 'number', 'cleaned_src', 'front_src', 'back_src',
             'thumbnail_src', 'alt', 'photographer_name', 'photographer_number',
             'map_square_number', 'shelfmark', 'librarian_caption', 'photographer_caption',
-            'contains_sticker', 'analyses',
+            'contains_sticker', 'analyses', 'map_square_coords'
         ]
 
 
