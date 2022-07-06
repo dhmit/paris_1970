@@ -65,7 +65,7 @@ export class PhotoViewer extends React.Component {
                     onClick={
                     () => document.getElementById("photo-slider").scrollLeft -=
                         document.getElementById("photo-slider").clientWidth}
-                >{"<"}</button>
+                >&#8249;</button>
                 <div id="photo-slider" className="slider-photos">
                     {this.getPhotoGrid(photoData, config)}
                 </div>
@@ -75,7 +75,7 @@ export class PhotoViewer extends React.Component {
                     onClick={
                     () => document.getElementById("photo-slider").scrollLeft +=
                         document.getElementById("photo-slider").clientWidth}
-                >{">"}</button>
+                >&#8250;</button>
             </div>
         );
     }
