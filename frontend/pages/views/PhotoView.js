@@ -7,10 +7,11 @@ import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
 import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
 import {Rectangle} from "react-leaflet";
+
 import {Dropdown} from "react-bootstrap";
+import {Popup} from "react-leaflet";
 
 let tagList = ["Construction", "People", "Building"];
-
 
 export class FindVanishingPointDisplayWidget extends React.Component {
     render() {
@@ -341,7 +342,7 @@ export class PhotoView extends PhotoViewer {
                 </div>
                 <br/>
                 <div className="page row">
-                    <div className="image-view col-12 col-lg-6">
+                    <div className="image-view col-12 col-lg-6 col-md-8">
                         <div className="image-box">
                             <img
                                 className="image-photo position-top-left"
@@ -396,23 +397,18 @@ export class PhotoView extends PhotoViewer {
                             }
                         )}
                     </div>
-                    <div className="image-info col-12 col-lg-6">
-                        <h4>Photograph Details</h4>
+                    <div className="image-info col-12 col-lg-6 col-md-4">
+                        <h5>Photograph Details</h5>
                         <br></br>
                         <h6>PHOTOGRAPHER</h6>
                         <p>
-                            {photographerName || "Unknown"}
-                            {
-                                photographerNumber
-                                    ? <span>
-                                        {" (Number: "}
-                                        <a href={`/photographer/${photographerNumber}/`}>
-                                            {photographerNumber}
-                                        </a>
-                                    )
-                                    </span>
-                                    : " (Number: Unknown)"
-                            }
+                            <a href={`/photographer/${photographerNumber}/`} className={"photo-link"}>
+                                Bob Frenchman
+                            </a>
+                            <br></br>
+                            <span><strong>#23</strong></span> out of <span>
+                            <a href={`/photographer/${photographerNumber}/`}
+                                     className={"photo-link"}>72</a></span> in collection
                         </p>
                         <br></br>
                         <h6>TAGS</h6>
@@ -424,16 +420,14 @@ export class PhotoView extends PhotoViewer {
                         ))}
 
                         <br></br><br></br>
-                        <h6>CAPTION</h6>
-                        <p>{photographerCaption || "None"}</p>
-                        <br></br>
 
                         <h6>LOCATION</h6>
+
                         <ParisMap
                             className="single-photo-map"
                             lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
                             lng={squareCoords.lng - MAPSQUARE_WIDTH / 2}
-                            zoom={17}
+                            zoom={15}
                             layers={{
                                 mapSquare: <Rectangle
                                     className="current-map-square"
@@ -442,11 +436,13 @@ export class PhotoView extends PhotoViewer {
                                 />
                             }}
                         />
-                        <p>Map Square:
-                            <a href={`/map_square/${mapSquareNumber}`}>{mapSquareNumber}</a>
-                        </p>
-                        <p>Arrondissement: PLACEHOLDER</p>
-
+                        <br></br>
+                        <b>
+                            Map Square <span><a href={`/map_square/${mapSquareNumber}`}
+                            className={"photo-link"}>{mapSquareNumber}</a></span>
+                            <br></br>
+                            Arrondissement 17
+                        </b>
                     </div>
                 </div>
             </div>
