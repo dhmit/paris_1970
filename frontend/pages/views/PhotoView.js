@@ -9,7 +9,7 @@ import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/Pari
 import {Rectangle} from "react-leaflet";
 
 import {Dropdown} from "react-bootstrap";
-import {Popup} from "react-leaflet";
+import ExpandIcon from "../../images/expand.svg";
 
 let tagList = ["Construction", "People", "Building"];
 
@@ -295,9 +295,7 @@ export class PhotoView extends PhotoViewer {
         const {
             alt,
             map_square_number: mapSquareNumber,
-            photographer_name: photographerName,
             photographer_number: photographerNumber,
-            photographer_caption: photographerCaption,
             analyses,
             map_square_coords: squareCoords
         } = this.state.photoData;
@@ -336,10 +334,6 @@ export class PhotoView extends PhotoViewer {
         return (<>
             <Navbar/>
             <div className="page">
-                <div className="d-flex justify-content-center">
-                    <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
-                    <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
-                </div>
                 <br/>
                 <div className="page row">
                     <div className="image-view col-12 col-lg-6 col-md-8">
@@ -353,8 +347,8 @@ export class PhotoView extends PhotoViewer {
                             />
                             {visualAnalyses}
                         </div>
-                        <br/>
-                        <div className={"centerBtn"}>
+                        <div className={"center-btn"}>
+                            <ExpandIcon className="expand-icon"/>
                             <button
                                 className={"side-button"}
                                 style={{backgroundColor: this.state.displaySide === "photo" ? TURQUOISE : "white"}}

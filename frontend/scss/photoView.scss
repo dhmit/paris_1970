@@ -58,8 +58,9 @@ rect {
     pointer-events: all;
 }
 
-.centerBtn {
+.center-btn {
     text-align: center;
+    position: relative;
 }
 
 .navButton {
@@ -96,6 +97,7 @@ rect {
     border: 0.17em solid;
     padding: 0.1em 0.5em;
     background-color: white;
+    margin-top: .6em;
 }
 
 .side-button:hover {
@@ -207,4 +209,12 @@ rect {
 
 .photo-link:hover {
     color: $color-orange;
+}
+
+.expand-icon {
+    position: absolute;
+    top: -3px;
+    right: 0;
+    margin-top: .5em;
+    margin-bottom: .5em;
 }
