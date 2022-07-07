@@ -1,7 +1,6 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import {PhotoViewer, SIDES} from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
@@ -365,7 +364,6 @@ export class PhotoView extends PhotoViewer {
         window.addEventListener("resize", () => this.handleResize());
 
         return (<>
-            <Navbar/>
             <div className="page">
                 <div className="d-flex justify-content-center">
                     <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>

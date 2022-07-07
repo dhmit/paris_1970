@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 // Images
@@ -189,7 +188,6 @@ TeamMember.propTypes = {
 class About extends React.Component {
     render() {
         return (<>
-            <Navbar/>
             <div className="page">
                 <div className="about-title">
                     About This Project

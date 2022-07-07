@@ -6,7 +6,6 @@ import Typography from "@material-ui/core/Typography";
 import Slider from "@material-ui/core/Slider";
 import Input from "@material-ui/core/Input";
 
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PhotoViewer from "../components/PhotoViewer";
 import LoadingPage from "./LoadingPage";
@@ -500,7 +499,6 @@ export class Search extends PhotoViewer {
         }
         return (
             <>
-                <Navbar/>
                 <div className="search-page page row">
                     <div className="col-sm-12 col-lg-4 search-form">
                         <h1>Search</h1>

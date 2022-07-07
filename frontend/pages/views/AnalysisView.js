@@ -1,7 +1,6 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
@@ -75,7 +74,6 @@ export class AnalysisView extends PhotoViewer {
         const objectName = this.props.objectName ? `key: ${this.props.objectName}` : "";
 
         return (<>
-            <Navbar/>
             <div className="display-box analysis-page">
                 <h3 className="text-capitalize">{
                     this.props.analysisName.split("_")
