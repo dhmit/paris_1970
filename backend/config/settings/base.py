@@ -151,12 +151,6 @@ STATIC_URL = '/static/'
 # where collectstatic puts static files for production
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
-# the url where we'll look for media files
-MEDIA_URL = "/media/"
-
-# where uploaded files are stored
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, "media")
-
 # where collectstatic looks for static files
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'build'),
