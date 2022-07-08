@@ -1,0 +1,15 @@
+{% include "base.html" %}
+{% block content %}
+    <div class="blog" id="app_root">
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-lg-8">
+                    {{ post.content | safe }}
+                </div>
+                <div class="col-lg-4">
+                    {% include "./includes/blog-sidebar.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,30 @@
+<div class="col-lg-4">
+    <!-- Tags widget-->
+    <div class="card mb-4 border-0">
+        <div class="card-body">
+            <div class="card-title mb-1 fw-bold">Tags</div>
+            <div class="container">
+                {% for tag in tags %}
+                    <a class="btn btn-secondary btn-sm mr-md-1 my-1 text-black" href="#"
+                       role="button">{{ tag }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- Post Links-->
+    <div class="card mb-4 border-0">
+        <div class="card-body">
+            <div class="title mb-1 fw-bold">Posts</div>
+            <ul class="list-unstyled mb-0">
+                {% for post in posts %}
+                    {% if post.published %}
+                        <li style="max-width: 479px">
+                            <a class="post-link" href="/blog/{{ post.slug }}" style="color: #3295B8;">
+                                {{ post.title|truncatewords:4 }}
+                            </a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

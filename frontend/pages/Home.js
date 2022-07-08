@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 
 import * as PropTypes from "prop-types";
 import {
@@ -9,12 +9,6 @@ import {
     ZoomControl
 } from "react-leaflet";
 
-import {
-    Modal,
-    Button
-} from "react-bootstrap";
-
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import LoadingPage from "./LoadingPage";
 
@@ -30,7 +24,6 @@ class Map extends React.Component {
     };
 
     render() {
-        console.log("MAP STATE", this.state);
         // Sorts the map squares by number of photos (ascending order)
         const sortedMapData = Object.values(this.props.mapData)
         .sort((a, b) => a.num_photos - b.num_photos);
@@ -47,10 +40,8 @@ class Map extends React.Component {
             fortyPctMax, fortyPctMax + 1,
             sixtyPctMax, sixtyPctMax + 1,
             eightyPctMax, eightyPctMax + 1, maxNumOfPhotos];
-        console.log("index.js technically here??");
         return (
             <div id="map-container">
-                <Instructions/>
                 <MapContainer
                     // Initial state of Map
                     center={[this.state.lat, this.state.lng]}
@@ -142,48 +133,6 @@ Map.propTypes = {
 };
 
 
-function Instructions() {
-    const [show, setShow] = useState(true);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-    return (
-        <>
-            <Button id="instructionButton" variant="primary" onClick={handleShow}>
-                Instructions
-            </Button>
-            <Modal
-                show={show}
-                onHide={handleClose}
-                backdrop="static"
-                keyboard={false}
-                size="lg"
-                aria-labelledby="contained-modal-title-vcenter"
-                centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>Welcome</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Welcome to the map view of Paris in 1970! The images in this archive are from
-                    a photography competition in 1970's Paris hosted to capture Paris before
-                    rapid industrial change altered the city permanently.
-                </Modal.Body>
-                <Modal.Body>
-                    To explore images from specific areas of Paris, click on a highlighted square.
-                    You will see the map square number and how many images are available.
-                    Click on the link to see the images from that area!
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={handleClose}>
-                        Got it!
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </>
-    );
-}
-
-
 export class HomePage extends React.Component {
     constructor(props) {
         super(props);
@@ -241,7 +190,6 @@ export class HomePage extends React.Component {
         }
 
         return (<>
-            <Navbar/>
             <Map mapData={this.state.mapData}/>
             <Footer/>
         </>);

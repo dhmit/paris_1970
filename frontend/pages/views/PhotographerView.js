@@ -1,7 +1,6 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
@@ -122,7 +121,6 @@ export class PhotographerView extends PhotoViewer {
         // const photographerAnalysis = this.getAggregatePhotoAnalysis(photos);
         const photographerAnalysis = [];
         return (<>
-            <Navbar/>
             <div className="page row">
                 <div className="col-6">
                     <h1>{name} (ID: {number})</h1>
