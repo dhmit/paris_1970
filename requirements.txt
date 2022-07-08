@@ -1,5 +1,6 @@
+aldryn-apphooks-config==0.6.0
 appnope==0.1.3
-asgiref==3.3.1
+asgiref==3.5.2
 backcall==0.2.0
 cachetools==4.1.1
 certifi==2020.6.20
@@ -10,7 +11,8 @@ cssselect2==0.6.0
 cycler==0.10.0
 Cython==0.29.21
 decorator==4.4.2
-Django==3.1.5
+Django==3.2.14
+django-appdata==0.3.2
 django-classy-tags==3.0.1
 django-cms==3.10.0
 django-cors-headers==3.4.0
@@ -18,8 +20,16 @@ django-extensions==3.1.5
 django-filer==2.2.1
 django-formtools==2.3
 django-js-asset==2.0.0
+django-meta==2.0.0
 django-mptt==0.13.4
+django-parler==2.3
 django-polymorphic==3.1.0
+django-sortedm2m==3.1.1
+django-taggit==3.0.0
+django-taggit-autosuggest==0.3.8
+django-taggit-templatetags==0.2.5
+django-templatetag-sugar==1.0
+django-tinymce==3.4.0
 django-treebeard==4.4
 django-webpack-loader==1.0.0
 djangorestframework==3.12.2
