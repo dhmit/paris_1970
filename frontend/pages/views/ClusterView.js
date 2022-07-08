@@ -1,7 +1,6 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
@@ -71,7 +70,6 @@ export class ClusterView extends PhotoViewer {
             </p>) : (<div className="state-buttons row">{prevButton}{nextButton}</div>);
 
         return (<>
-            <Navbar/>
             <div className="display-box cluster-page">
                 <h3>
                     Number of clusters: {this.props.numberOfClusters + " "}

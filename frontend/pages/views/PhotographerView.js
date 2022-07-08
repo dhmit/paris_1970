@@ -1,7 +1,6 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
@@ -63,7 +62,6 @@ export class PhotographerView extends PhotoViewer {
         ];
 
         return (<>
-            <Navbar/>
             <div className="page row">
                 <div className="image-view col-12 col-lg-6">
                     <div className="col-6">
