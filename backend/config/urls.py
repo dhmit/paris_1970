@@ -15,10 +15,13 @@ Including another URL configuration
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 from app.common import render_react_view
 from app import views
+from blog import views as blog_views
 
 
 def react_view_path(route, component_name):
@@ -74,4 +77,8 @@ urlpatterns = [
     path('analysis/<str:analysis_name>/<str:object_name>', views.analysis_view),
     path('all_analysis/', views.all_analysis_view),
     path('clustering/<int:num_of_clusters>/<int:cluster_num>/', views.cluster_view),
+    # blog urls
+    path('blog/', blog_views.index, name="blog_home"),
+    path('blog/<str:slug>/', blog_views.blog_post,
+         name='blog-detail')
 ]
