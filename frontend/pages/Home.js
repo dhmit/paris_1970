@@ -1,15 +1,7 @@
 import React from "react";
-import * as PropTypes from "prop-types";
 import {
-    Modal,
-    Button
-} from "react-bootstrap";
-import {
-    MapContainer,
-    TileLayer,
     Popup,
     Rectangle,
-    ZoomControl,
     GeoJSON
 } from "react-leaflet";
 
