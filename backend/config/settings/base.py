@@ -36,7 +36,6 @@ ALLOWED_HOSTS = []  # For production, add domains
 # Application definition
 
 INSTALLED_APPS = [
-    'djangocms_admin_style',
     # django
     'django.contrib.admin',
     'django.contrib.auth',
@@ -54,44 +53,6 @@ INSTALLED_APPS = [
 
     # our application code
     'app',
-    'blog_app',
-
-    # cms
-    'cms',
-    'menus',
-    'treebeard',
-    'sekizai',
-    'filer',
-    'easy_thumbnails',
-    'mptt',
-    'djangocms_text_ckeditor',
-    'aldryn_apphooks_config',
-    'parler',
-    'taggit',
-    'taggit_autosuggest',
-    'meta',
-    'sortedm2m',
-    'djangocms_blog',
-
-    # djangocms-bootstrap5
-    'djangocms_icon',
-    'djangocms_link',
-    'djangocms_picture',
-    'djangocms_bootstrap5',
-    # 'djangocms_bootstrap5.contrib.bootstrap5_alerts',
-    # 'djangocms_bootstrap5.contrib.bootstrap5_badge',
-    # 'djangocms_bootstrap5.contrib.bootstrap5_card',
-    # 'djangocms_bootstrap5.contrib.bootstrap5_carousel',
-    # 'djangocms_bootstrap5.contrib.bootstrap5_collapse',
-    # 'djangocms_bootstrap5.contrib.bootstrap5_content',
-    # 'djangocms_bootstrap5.contrib.bootstrap5_grid',
-    # 'djangocms_bootstrap5.contrib.bootstrap5_jumbotron',
-    # 'djangocms_bootstrap5.contrib.bootstrap5_link',
-    # 'djangocms_bootstrap5.contrib.bootstrap5_listgroup',
-    # 'djangocms_bootstrap5.contrib.bootstrap5_media',
-    # 'djangocms_bootstrap5.contrib.bootstrap5_picture',
-    # 'djangocms_bootstrap5.contrib.bootstrap5_tabs',
-    # 'djangocms_bootstrap5.contrib.bootstrap5_utilities',
 ]
 
 MIDDLEWARE = [
@@ -103,15 +64,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    # cms
-    'cms.middleware.utils.ApphookReloadMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'cms.middleware.user.CurrentUserMiddleware',
-    'cms.middleware.page.CurrentPageMiddleware',
-    'cms.middleware.toolbar.ToolbarMiddleware',
-    'cms.middleware.language.LanguageCookieMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -130,10 +83,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
 
-                # cms
-                'sekizai.context_processors.sekizai',
-                'cms.context_processors.cms_settings',
-                'django.template.context_processors.i18n'
             ],
         },
     },
@@ -228,21 +177,5 @@ WEBPACK_LOADER = {
         'STATS_FILE': os.path.join(PROJECT_ROOT, 'webpack-stats.json'),
     }
 }
-
-THUMBNAIL_PROCESSORS = (
-    'easy_thumbnails.processors.colorspace',
-    'easy_thumbnails.processors.autocrop',
-    'filer.thumbnail_processors.scale_and_crop_with_subject_location',
-    'easy_thumbnails.processors.filters',
-)
-
-META_SITE_PROTOCOL = 'http'  # set 'http' for non ssl enabled websites
-
-META_USE_OG_PROPERTIES = True
-META_USE_TWITTER_PROPERTIES = True
-META_USE_GOOGLEPLUS_PROPERTIES = True  # django-meta 1.x+
-META_USE_SCHEMAORG_PROPERTIES = True  # django-meta 2.x+
-
-META_USE_SITES = True
 
 DEBUG = True

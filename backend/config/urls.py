@@ -76,10 +76,3 @@ urlpatterns = [
     path('clustering/<int:num_of_clusters>/<int:cluster_num>/', views.cluster_view),
 ]
 
-cms_urlpatterns = [
-                      path('blog/', blog_views.index, name="blog_home"),
-                      re_path(r'^blog/', include('cms.urls'), name="blogs"),
-                      re_path(r'^taggit_autosuggest/', include('taggit_autosuggest.urls')),
-                  ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-urlpatterns += cms_urlpatterns
