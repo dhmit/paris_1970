@@ -1,12 +1,6 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-export const SIDES = {
-    CLEANED: "cleaned",
-    FRONT: "front",
-    BACK: "back"
-};
-
 function getValue(dictionary, key, default_val) {
     let result = dictionary[key];
     if (typeof result === "undefined") {
@@ -20,17 +14,10 @@ export class PhotoViewer extends React.Component {
         super(props);
     }
 
-    getSource (photoData, displaySide = false) {
+    getSource (photoData, displaySide="photo") {
         photoData.propTypes = {
             map_square_number: PropTypes.object
         };
-        if (!displaySide) {
-            const availableSides = Object.values(SIDES)
-            .filter(
-                (side) => photoData[`${side}_src`]
-            );
-            displaySide = availableSides.length > 0 ? availableSides[0] : "";
-        }
         return `${this.props.photoDir}/${photoData.map_square_number}/${photoData.number}_${displaySide}.jpg`;
     };
 
@@ -49,27 +36,20 @@ export class PhotoViewer extends React.Component {
             (k, photo) => `/photo/${photo["map_square_number"]}/${photo["number"]}/`
         );
         return photoData.map((photo, k) => {
-            photo.propTypes = {
-                cleaned_src: PropTypes.bool,
-                front_src: PropTypes.bool
-            };
-            if (photo.front_src || photo.cleaned_src) {
-                return (
-                    <a
-                        key={k}
-                        className={className}
-                        title={titleFunc(k, photo)}
-                        href={hrefFunc(k, photo)}>
-                        <img
-                            alt={photo.alt}
-                            width={photoSize[0]}
-                            height={photoSize[1]}
-                            src={this.getSource(photo)}
-                        />
-                    </a>
-                );
-            }
-            return "";
+            return (
+                <a
+                    key={k}
+                    className={className}
+                    title={titleFunc(k, photo)}
+                    href={hrefFunc(k, photo)}>
+                    <img
+                        alt={photo.alt}
+                        width={photoSize[0]}
+                        height={photoSize[1]}
+                        src={this.getSource(photo)}
+                    />
+                </a>
+            );
         });
     }
 }

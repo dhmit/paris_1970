@@ -94,12 +94,89 @@ rect {
     padding-left: 10px;
 }
 
+.side-button {
+    font-size: 18px;
+    font-weight: 600;
+    border: 0.17em solid;
+    padding: 0.1em 0.5em;
+    background-color: white;
+}
+
+.side-button:hover {
+    background-color: $color-turquoise;
+}
+
+.tag-button {
+    font-size: 16px;
+    border: .125em solid $color-orange;
+    padding: .125em 1.5em;
+    margin: 0.5em;
+    background-color: white;
+}
+
+.tag-button:hover {
+    color: white;
+    background-color: $color-orange;
+}
+
+.photo-sort-dropdown-button {
+    font-size: 16px;
+    border-width: 0em;
+    border-bottom: 0.125em solid black;
+    padding: 0em 1.38em 0em 0em;
+    margin: 0.31em;
+    border-radius: 0em;
+    background-color: white;
+    color: #5E5F5F;
+}
+
+.photo-sort-dropdown-menu {
+    font-size: 16px;
+    border-width: 0em;
+    padding: 0.125em 1.5em;
+    margin: 0.31em;
+    border-radius: 1em;
+    background-color: $color-turquoise;
+    color: white;
+}
+
 .analysis-overlay {
     position: absolute;
     top: 0;
     left: 0;
 }
 
-.image-box{
+.image-box {
     position: relative;
+    padding: 25px;
+    background-color: black;
+}
+
+.similar-photo {
+    max-width: 100px;
+    margin-left: 0.05px;
+    margin-right: 0.05px;
+}
+
+.similar-photos {
+    display: flex;
+    margin: 1em;
+    flex-direction: row;
+    overflow: auto;
+    scroll-behavior: smooth;
+}
+
+.similar-photos-box {
+    display: flex;
+    flex-direction: row;
+    background-color: black;
+}
+
+.similar-photos::-webkit-scrollbar {
+    display: none;
+}
+
+.similarity-scroll {
+    background-color: black !important;
+    color: #70D8F1 !important;
 }

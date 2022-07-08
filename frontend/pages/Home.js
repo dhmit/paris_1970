@@ -114,7 +114,7 @@ class Map extends React.Component {
                                 <Rectangle className={mapSquareBucket}
                                            key={index}
                                            bounds={mapSquareBounds}>
-                                    <Popup>
+                                    <Popup className={"map-popup"}>
                                         Map Square {index} <br/>
                                         <a href={link}>{numberOfPhotos} photos to show</a>
                                     </Popup>
