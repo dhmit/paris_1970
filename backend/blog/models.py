@@ -3,17 +3,22 @@ from tinymce import models as tinymce_models
 from django.contrib.flatpages.models import FlatPage
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
+from taggit.managers import TaggableManager
+from django.utils.translation import gettext_lazy as _
 
 
 class BlogPost(models.Model):
     author = models.ForeignKey(User, null=True, on_delete=models.DO_NOTHING)
-    content = tinymce_models.HTMLField()
-    slug = models.SlugField(max_length=100, blank=True, null=True)
     title = models.CharField(max_length=200, null=False, blank=False)
+    subtitle = models.CharField(max_length=1000)
+    slug = models.SlugField(
+        max_length=100, blank=True, null=True, help_text=_("Auto generated from title field.")
+    )
+    content = tinymce_models.HTMLField()
+    tags = TaggableManager()
     published = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
-    date = models.DateTimeField(auto_now_add=True)
-    subtitle = models.CharField(max_length=1000)
+    date = models.DateTimeField(auto_now_add=True)    
 
     # TODO: add tags (taggit). Maybe add related blogposts field?
 

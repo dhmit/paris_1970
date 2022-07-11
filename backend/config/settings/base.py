@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'webpack_loader',
     'django_extensions',
+    'taggit',
     # wysiwyg for blog
     'tinymce',
 
