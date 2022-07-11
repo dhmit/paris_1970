@@ -93,7 +93,7 @@ class Map extends React.Component {
                             ];
                             const link = "/map_square/" + index;
                             let mapSquareBucket = "";
-                            // set of conditionals to to calculate photo density for heat map
+                            // set of conditionals to calculate photo density for heat map
                             if (numberOfPhotos > 0 && numberOfPhotos <= twentyPctMax) {
                                 mapSquareBucket = "map-square box-one";
                             } else if (numberOfPhotos <= fortyPctMax) {
