@@ -1,0 +1,26 @@
+#This script renames photos from BHVP_PH_CetaitParis_DP_1538_01_015 and BHVP_PH_CetaitParis_DP_1538_01_016.jpg to 16_slide.jpg and 16_photo.jpg
+
+import math
+import os
+import csv
+
+folder = r"/Users/ismailassafi/Documents/GitHub/paris_1970/assets/images/photos/1538/"
+count = 1
+
+for file_name in os.listdir(folder):
+    filename_parts = file_name.split('_')  # ["xyz", "039.jpg"]
+    num_of_photo = int(filename_parts[-1].split('.')[0])  # "039" > 39
+    p = math.ceil(num_of_photo / 2)
+
+    if num_of_photo % 2 == 0:
+        type_of_img = "photo"
+    else:
+        type_of_img = "slide"
+
+    source = folder + "/" + file_name
+    destination = folder + "/" + str(p) + "_" + type_of_img + ".jpg"
+    os.rename(source, destination)
+    count += 1
+    with open('dictionary.csv', 'a+') as csvfile:
+        csvwriter = csv.writer(csvfile)
+        csvwriter.writerow([source, destination])
