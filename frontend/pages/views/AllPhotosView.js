@@ -1,6 +1,5 @@
 import React from "react";
 
-import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
@@ -66,7 +65,6 @@ export class AllPhotosView extends PhotoViewer {
             <p>Click on a photo to see the 10 most similar matches!</p></div>);
 
         return (<>
-            <Navbar/>
             <div className="display-box page">
                 <h3 className="text-capitalize">
                     {"resnet18_cosine_similarity"}

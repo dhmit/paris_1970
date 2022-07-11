@@ -1,7 +1,6 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
@@ -49,7 +48,6 @@ export class MapSquareView extends PhotoViewer {
         } = this.state.mapSquareData;
 
         return (<>
-            <Navbar/>
             <div className="page">
                 <h1>Map Square {number}</h1>
                 {photos.length

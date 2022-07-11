@@ -1,0 +1,21 @@
+#blog {
+    .card {
+        background-color: #70D8F112;
+        max-height: 796px
+    }
+
+    .card-title {
+        color: #FB2F2A;
+    }
+}
+
+// single blog post
+#app_root {
+    .post-detail > header {
+        display: none;
+    }
+
+    ul.tags > li > a {
+        background-color: pink !important;
+    }
+}
