@@ -44,7 +44,7 @@ def analyze_similarity(photo: Photo, similarity_function, reverse=True):
     """
     photo_features = deserialize_tensor(photo, verbose=True)
     if photo_features is None:
-        return None
+        return []
 
     similarities = []
     for other_photo in Photo.objects.all():
@@ -54,12 +54,14 @@ def analyze_similarity(photo: Photo, similarity_function, reverse=True):
 
         similarity_value = similarity_function(photo_features, other_photo_features)
 
-        similarities.append(
-            (other_photo.map_square.number, other_photo.number, similarity_value)
-        )
+        similarities.append({
+            'number': other_photo.number,
+            'map_square_number': other_photo.map_square.number,
+            'cleaned_src': other_photo.cleaned_src,
+            'front_src': other_photo.front_src,
+            'alt': other_photo.alt,
+            'similarity': similarity_value
+        })
 
-    if similarities is not None:
-        similarities.sort(key=lambda x: x[2], reverse=reverse)
-        return similarities
-    else:
-        return []
+    similarities.sort(key=lambda x: x['similarity'], reverse=reverse)
+    return similarities[1:]  # First photo will be current photo (100% similarity), remove it

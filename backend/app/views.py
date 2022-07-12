@@ -378,6 +378,30 @@ def get_tags(request):
     })
 
 
+@api_view(['GET'])
+def get_arrondissements_geojson(request, arr_number=None):
+    """
+    API endpoint to get the entries for each tract on the 1940s census
+    :param request:
+    :param arr_number:
+    :return: Response
+    """
+    geojson_path = os.path.join(settings.BACKEND_DATA_DIR, 'arrondissements.geojson')
+    with open(geojson_path, encoding='utf-8') as f:
+        data = json.load(f)
+
+    if arr_number is not None:
+        # Get data for a single unique arrondissement
+        arrondissement = next(filter(
+            lambda el: el['properties']['c_ar'] == arr_number, data['features']
+        ))
+        data['features'] = [arrondissement]
+
+    sorted_features = sorted(data['features'], key=lambda arr: arr['properties']['c_ar'])
+    data['features'] = sorted_features
+    return Response(data)
+
+
 # app views
 def render_view(request, context):
     context.setdefault('component_props', {})

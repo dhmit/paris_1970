@@ -58,8 +58,9 @@ rect {
     pointer-events: all;
 }
 
-.centerBtn {
+.center-btn {
     text-align: center;
+    position: relative;
 }
 
 .navButton {
@@ -76,10 +77,6 @@ rect {
 
 .center {
     margin: auto;
-}
-
-.top-button {
-    position: relative;
 }
 
 .caption {
@@ -100,6 +97,7 @@ rect {
     border: 0.17em solid;
     padding: 0.1em 0.5em;
     background-color: white;
+    margin-top: .6em;
 }
 
 .side-button:hover {
@@ -108,9 +106,9 @@ rect {
 
 .tag-button {
     font-size: 16px;
-    border: .125em solid $color-orange;
-    padding: .125em 1.5em;
-    margin: 0.5em;
+    border: .08em solid $color-orange;
+    padding: .125em 1em;
+    margin: 0.5em 0.75em 1em 0em;
     background-color: white;
 }
 
@@ -148,17 +146,17 @@ rect {
 
 .image-box {
     position: relative;
-    padding: 25px;
+    padding: 1em;
     background-color: black;
 }
 
-.similar-photo {
-    max-width: 100px;
-    margin-left: 0.05px;
-    margin-right: 0.05px;
+.slider-photo {
+    max-width: 110px;
+    margin-left: .1em;
+    margin-right: .1em;
 }
 
-.similar-photos {
+.slider-photos {
     display: flex;
     margin: 1em;
     flex-direction: row;
@@ -166,17 +164,64 @@ rect {
     scroll-behavior: smooth;
 }
 
-.similar-photos-box {
+.photos-box {
     display: flex;
     flex-direction: row;
     background-color: black;
+    position: relative;
 }
 
-.similar-photos::-webkit-scrollbar {
+.slider-photos::-webkit-scrollbar {
     display: none;
 }
 
-.similarity-scroll {
+.slider-scroll {
     background-color: black !important;
-    color: #70D8F1 !important;
+    color: $color-turquoise !important;
+    font-size: 2em;
+}
+
+.slider-scroll-left {
+    @extend .slider-scroll;
+}
+
+.slider-scroll-right {
+    @extend .slider-scroll;
+    right: 0;
+    height: 100%;
+    position: absolute;
+}
+
+.current-map-square {
+    stroke-width: 2.8;
+    fill-opacity: 0.1;
+}
+
+.single-photo-map {
+    width: 24em;
+    height: 12em !important;
+}
+
+.photo-link {
+    color: $color-link;
+    font-weight: 600;
+}
+
+.photo-link:hover {
+    color: $color-orange;
+}
+
+.expand-icon {
+    position: absolute;
+    top: -3px;
+    right: 0;
+    margin-top: .5em;
+    margin-bottom: .5em;
+}
+
+.info-button {
+    background-color: white;
+    border: none;
+    display: inline-flex;
+    align-items: flex-start;
 }
