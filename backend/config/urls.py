@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
 
 from app.common import render_react_view
 from app import views
@@ -77,5 +78,9 @@ urlpatterns = [
     # blog urls
     path('blog/', blog_views.index, name="blog_home"),
     path('blog/<str:slug>/', blog_views.blog_post,
-         name='blog-detail')
+         name='blog-detail'),
+    # sign up urls
+    path('signup/', blog_views.user_register, name='sign up'),
+    path('login/',blog_views.login_request,name='login'),
+    path('logout/',auth_views.LogoutView.as_view(),name='logout')
 ]

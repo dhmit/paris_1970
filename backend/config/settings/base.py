@@ -58,7 +58,11 @@ INSTALLED_APPS = [
     'app',
 
     # our blog
-    'blog'
+    'blog',
+
+    # forms
+    'crispy_forms',
+    'crispy_bootstrap5'
 
 ]
 
@@ -95,7 +99,13 @@ TEMPLATES = [
     },
 ]
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
 WSGI_APPLICATION = 'config.wsgi.application'
+
+LOGOUT_REDIRECT_URL = '/'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
