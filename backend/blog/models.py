@@ -12,7 +12,8 @@ class BlogPost(models.Model):
     title = models.CharField(max_length=200, null=False, blank=False)
     subtitle = models.CharField(max_length=1000)
     slug = models.SlugField(
-        max_length=100, blank=True, null=True, help_text=_("Auto generated from title field.")
+        max_length=100, blank=True, null=True, help_text=_("Auto generated from title field "
+                                                           "if not defined.")
     )
     content = tinymce_models.HTMLField()
     tags = TaggableManager()
@@ -27,5 +28,6 @@ class BlogPost(models.Model):
         return ""
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)
+        if not self.slug:
+            self.slug = slugify(self.title)
         super(BlogPost, self).save(*args, **kwargs)
