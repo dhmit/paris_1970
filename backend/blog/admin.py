@@ -1,8 +1,5 @@
 from django.contrib import admin
-# from django import forms
-from django.contrib.flatpages.admin import FlatPageAdmin
 from .models import BlogPost
-from django.urls import reverse
 from tinymce.widgets import TinyMCE
 
 
