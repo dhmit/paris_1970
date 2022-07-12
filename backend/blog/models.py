@@ -18,9 +18,9 @@ class BlogPost(models.Model):
     tags = TaggableManager()
     published = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
-    date = models.DateTimeField(auto_now_add=True)    
+    date = models.DateTimeField(auto_now_add=True)
 
-    # TODO: add tags (taggit). Maybe add related blogposts field?
+    # TODO: Maybe add related blogposts field?
 
     def get_absolute_url(self):
         # TODO
