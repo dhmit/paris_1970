@@ -1,7 +1,6 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
@@ -62,7 +61,6 @@ export class SimilarityView extends PhotoViewer {
         const photos = this.getPhotoGrid(this.state.photoData, {"photoSize": [200, 200]});
 
         return (<>
-            <Navbar/>
             <div className="page row">
                 <div className="display-box analysis-page">
                     {photos}

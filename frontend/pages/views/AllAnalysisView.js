@@ -1,5 +1,4 @@
 import React from "react";
-import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
 export const analysisDescriptions = {
@@ -92,7 +91,6 @@ export class AllAnalysisView extends React.Component {
 
         return (
             <>
-                <Navbar/>
                 <div className="page">
                     <h1 className="pb-2">All Analysis Results</h1>
                     {analysisDivs}

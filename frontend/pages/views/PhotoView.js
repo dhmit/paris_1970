@@ -1,7 +1,6 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
@@ -333,7 +332,6 @@ export class PhotoView extends PhotoViewer {
         );
 
         return (<>
-            <Navbar/>
             <div className="page">
                 <br/>
                 <div className="page row">

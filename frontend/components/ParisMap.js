@@ -7,6 +7,9 @@ import {
     ZoomControl
 } from "react-leaflet";
 
+// Measurements in Longitude and Latitude distance respectively.
+// Used for creating a grid of all the map squares along with each map squares' approximate
+// coordinates.
 export const MAPSQUARE_WIDTH = 0.00340325568;
 export const MAPSQUARE_HEIGHT = 0.0022358;
 
@@ -16,7 +19,6 @@ export class ParisMap extends React.Component {
         super(props);
 
         let visibleLayers = Object.keys(this.props.layers);
-        console.log(visibleLayers);
         if (this.props.singleLayer) {
             visibleLayers = this.props.layers[Object.keys(this.props.layers)[0]];
         } else if (this.props.visibleLayers) {
@@ -42,14 +44,10 @@ export class ParisMap extends React.Component {
             newVisibleLayers.push(clickedLayer);
         }
         this.setState({visibleLayers: newVisibleLayers});
-        console.log(newVisibleLayers);
     }
 
     render() {
-        console.log("MAP STATE", this.state);
         // Sorts the map squares by number of photos (ascending order)
-
-        console.log("index.js technically here??");
         return (
             <div className={this.props.className} id="map-container">
                 <MapContainer
@@ -67,8 +65,7 @@ export class ParisMap extends React.Component {
                     maxBoundsViscosity={1.0}
                     maxBounds={this.state.bounds}
                     minZoom={this.state.minZoom}
-                    zoomControl={false}
-                >
+                    zoomControl={false}>
                     <ZoomControl position="bottomleft"/>
                     <TileLayer
                         // Sets Map Boundaries - Keeps user from leaving Paris
@@ -78,30 +75,35 @@ export class ParisMap extends React.Component {
                         // Retrieves Map image
 
                         // HOT option
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
-                        url="https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+                        url="http://stamen-tiles-a.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png"
                     />
 
-                    {Object.keys(this.props.layers).map((layerName) => {
+                    {Object.keys(this.props.layers)
+                    .map((layerName) => {
                         return this.state.visibleLayers.includes(layerName)
                             ? this.props.layers[layerName]
                             : <></>;
                     })}
-                    {this.props.layerSelectVisible === true ? <div className="card layer-select">
-                        <div className="card-body">
-                            {Object.keys(this.props.layers).map((layerName, idx) => (
-                                <div key={idx}>
-                                    <input
-                                        className="form-check-input"
-                                        type="checkbox"
-                                        value={layerName}
-                                        checked={this.state.visibleLayers.includes(layerName)}
-                                        onChange={(e) => this.onLayerChange(e)}
-                                    /> {layerName}
-                                </div>
-                            ))}
+                    {
+                        this.props.layerSelectVisible === true
+                        ? <div className="card layer-select">
+                            <div className="card-body">
+                                {Object.keys(this.props.layers)
+                                .map((layerName, idx) => (
+                                    <div key={idx}>
+                                        <input
+                                            className="form-check-input"
+                                            type="checkbox"
+                                            value={layerName}
+                                            checked={this.state.visibleLayers.includes(layerName)}
+                                            onChange={(e) => this.onLayerChange(e)}
+                                        /> {layerName}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div> : <></>}
+                        : <></>
+                    }
                 </MapContainer>
             </div>
         );
