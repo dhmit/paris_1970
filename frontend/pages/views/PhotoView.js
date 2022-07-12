@@ -8,8 +8,9 @@ import LoadingPage from "../LoadingPage";
 import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
 import {Rectangle} from "react-leaflet";
 
-import {Dropdown} from "react-bootstrap";
+import {Dropdown, OverlayTrigger, Popover} from "react-bootstrap";
 import ExpandIcon from "../../images/expand.svg";
+import QuestionIcon from "../../images/question.svg";
 
 let tagList = ["Construction", "People", "Building"];
 
@@ -363,7 +364,24 @@ export class PhotoView extends PhotoViewer {
                             </button>
                         </div>
                         <div style={{display: "flex", justifyContent: "space-between", paddingTop: "10px"}}>
-                            <h4><strong>Similar Photos (i)</strong></h4>
+                            <div style={{display: "flex", justifyContent: "flex-start"}}>
+                                <h4><strong>Similar Photos</strong></h4>
+                                <OverlayTrigger
+                                    trigger="hover"
+                                    placement={"right"}
+                                    overlay={
+                                        <Popover>
+                                            <Popover.Body>
+                                            This is what similar photos are and how we generate them.
+                                            </Popover.Body>
+                                        </Popover>
+                                    }
+                                    >
+                                        <button className={"info-button"}>
+                                            <QuestionIcon/>
+                                        </button>
+                                    </OverlayTrigger>
+                            </div>
                             <Dropdown className="photo-sort-dropdown">
                                 <Dropdown.Toggle className="photo-sort-dropdown-button" align="start">
                                     Sort By...
@@ -404,8 +422,27 @@ export class PhotoView extends PhotoViewer {
                             <a href={`/photographer/${photographerNumber}/`}
                                      className={"photo-link"}>72</a></span> in collection
                         </p>
+
                         <br></br>
-                        <h6>TAGS</h6>
+
+                        <div style={{display: "flex", justifyContent: "flex-start", paddingTop: "10px"}}>
+                            <h6>TAGS</h6>
+                            <OverlayTrigger
+                                trigger="hover"
+                                placement={"right"}
+                                overlay={
+                                    <Popover>
+                                        <Popover.Body>
+                                        This is what a tag is and how we generate them.
+                                        </Popover.Body>
+                                    </Popover>
+                                }
+                                >
+                                    <button className={"info-button"}>
+                                        <QuestionIcon/>
+                                    </button>
+                                </OverlayTrigger>
+                        </div>
 
                         {tagList.map((word) => (
                             <button className="tag-button" key={word.id}>

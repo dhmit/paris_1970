@@ -4,8 +4,7 @@ import * as PropTypes from "prop-types";
 import {
     MapContainer,
     TileLayer,
-    ZoomControl,
-    GeoJSON
+    ZoomControl
 } from "react-leaflet";
 
 export const MAPSQUARE_WIDTH = 0.00340325568;
