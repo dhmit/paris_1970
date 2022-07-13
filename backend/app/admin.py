@@ -2,11 +2,9 @@
 This file controls the administrative interface for paris_1970 app
 """
 from django.conf import settings
-from PIL import Image
 import os
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-from django.urls import reverse
 from .models import (
     CorpusAnalysisResult,
     MapSquare,
@@ -33,8 +31,7 @@ class MapSquareAdmin(admin.ModelAdmin):
         return '(' + obj.coordinates + ')'
     show_coordinates.short_description = 'Coordinates'
 
-    @staticmethod
-    def count_photos(obj):
+    def count_photos(self, obj):
         """
         Returns an integer representing the number taken of that map square
         """
@@ -49,7 +46,7 @@ class MapSquareAdmin(admin.ModelAdmin):
         """
         Displays all images taken at that map square
         """
-        cmd = ''
+        link = ''
         # filter for all photo objects of obj map square
         photo_obj = Photo.objects.filter(map_square__number=obj.number)
         for photo in photo_obj:
@@ -59,9 +56,9 @@ class MapSquareAdmin(admin.ModelAdmin):
 
             # path to photo's admin change page
             photo_path = os.path.join('/admin/app/photo', str(photo.id))
-            cmd += '<a target = "blank" href = "{photo_url}"> <img src="{url}" ' \
-                   'width="90px"></a>'.format(photo_url=photo_path, url=obj_path) + '\n'
-        return mark_safe(cmd)
+            link += '<a target="blank" href="{photo_url}"> <img src="{url}" ' \
+                    'width="90px"></a>'.format(photo_url=photo_path, url=obj_path) + '\n'
+        return mark_safe(link)
 
 
 class PhotoAdmin(admin.ModelAdmin):
