@@ -1,8 +1,6 @@
 import React from "react";
-import PropTypes from "prop-types";
 import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
-import {Container, Row, Col, Image} from "react-bootstrap";
+import {Container, Row, Col} from "react-bootstrap";
 import Map, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
 import LoadingPage from "../LoadingPage";
 import Logo from "../../components/Logo";
@@ -159,6 +157,8 @@ class MapPage extends React.Component {
     }
 
     render() {
+        console.log(this.state.geojsonData);
+        console.log("yay");
         if (!this.state.mapData) {
             return (<LoadingPage/>);
         }
@@ -184,10 +184,11 @@ class MapPage extends React.Component {
                                     <Col lg={9}>
                                         <MapPageEntryLogo/>
 
-                                        <p>This is a small paragraph about the division of Paris into however many map squares for
-                                            this competition + other information about the format of the competition relevant to
-                                            interpreting this map. <br/><br/> Click on a square to learn more about it and see all the photos
-                                            taken in it!
+                                        <p>This is a small paragraph about the division of Paris into however
+                                            many map squares for this competition + other information about
+                                            the format of the competition relevant to interpreting this map.
+                                            <br/><br/> Click on a square to learn more about it and see all the
+                                            photos taken in it!
                                         </p>
 
                                         {//<Logo id="map-page-side-logo" position={"fixed"}

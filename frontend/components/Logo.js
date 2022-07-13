@@ -1,6 +1,5 @@
 import React from "react";
 import * as PropTypes from "prop-types";
-import Legend from "./Legend";
 
 export class Logo extends React.Component {
     constructor(props) {
