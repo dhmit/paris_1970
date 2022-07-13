@@ -16,7 +16,7 @@ class BlogPost(models.Model):
                                                            "if not defined.")
     )
     content = tinymce_models.HTMLField()
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
     published = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
