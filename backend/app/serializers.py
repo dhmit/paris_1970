@@ -23,6 +23,7 @@ class PhotoSerializer(serializers.ModelSerializer):
     photographer_number = serializers.SerializerMethodField()
     map_square_number = serializers.SerializerMethodField()
     analyses = serializers.SerializerMethodField()
+    map_square_coords = serializers.SerializerMethodField()
 
     @staticmethod
     def get_photographer_name(instance):
@@ -52,27 +53,15 @@ class PhotoSerializer(serializers.ModelSerializer):
         for analysis_result in analysis_results:
             name = analysis_result['name']
             result = json.loads(analysis_result['result'])
-            if name == "photo_similarity.resnet18_cosine_similarity":
-                try:
-                    new_result = []
-                    for map_square_number, photo_number, similarity in result[1:]:
-                        photo = Photo.objects.get(
-                            map_square__number=map_square_number, number=photo_number
-                        )
-                        new_result.append({
-                            'number': photo.number,
-                            'map_square_number': photo.map_square.number,
-                            'cleaned_src': photo.cleaned_src,
-                            'front_src': photo.front_src,
-                            'alt': photo.alt,
-                            'similarity': similarity
-                        })
-                    result = new_result
-                except TypeError:
-                    pass
-
             analyses_dict[name] = result
         return analyses_dict
+
+    @staticmethod
+    def get_map_square_coords(instance):
+        return {
+            dim: float(c)
+            for dim, c in zip(['lat', 'lng'], instance.map_square.coordinates.split(', '))
+        }
 
     class Meta:
         model = Photo
@@ -80,7 +69,7 @@ class PhotoSerializer(serializers.ModelSerializer):
             'id', 'number', 'cleaned_src', 'front_src', 'back_src',
             'thumbnail_src', 'alt', 'photographer_name', 'photographer_number',
             'map_square_number', 'shelfmark', 'librarian_caption', 'photographer_caption',
-            'contains_sticker', 'analyses',
+            'contains_sticker', 'analyses', 'map_square_coords'
         ]
 
 

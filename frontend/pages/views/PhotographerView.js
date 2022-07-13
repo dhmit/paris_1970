@@ -1,54 +1,20 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
+import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
+import {Rectangle} from "react-leaflet";
 
-
-const percentFormat = (x) => Math.floor(x) + "%";
-const numberFormat = (x) => Math.floor(x);
-
-const ANALYSIS = {
-    whitespace_percentage: {
-        displayName: "Average Whitespace Percentage",
-        analysisType: "average",
-        displayFormat: percentFormat
-    },
-    portrait_detection: {
-        displayName: "Percentage of Portraits",
-        analysisType: "count",
-        displayFormat: percentFormat
-    },
-    mean_detail: {
-        displayName: "Average Mean Detail",
-        analysisType: "average",
-        displayFormat: numberFormat
-    },
-    photographer_caption_length: {
-        displayName: "Average Photographer Caption Length",
-        analysisType: "none",
-        displayFormat: numberFormat
-    },
-    yolo_model: {
-        displayName: "Yolo Model",
-        analysisType: "none",
-        displayFormat: numberFormat
-    },
-    text_ocr: {
-        displayName: "text_ocr",
-        analysisType: "none",
-        displayFormat: numberFormat
-    }
-};
 
 export class PhotographerView extends PhotoViewer {
     constructor(props) {
         super(props);
         this.state = {
             loading: true,
-            photographerData: null
+            photographerData: null,
+            selectedPhoto: 0
         };
     }
 
@@ -69,39 +35,9 @@ export class PhotographerView extends PhotoViewer {
         }
     }
 
-    getAggregatePhotoAnalysis = (photos) => {
-        const analysisAcc = {};
-        Object.keys(ANALYSIS)
-        .forEach((analysisName) => {
-            analysisAcc[analysisName] = 0;
-        });
-        photos.forEach((photo) => {
-            photo["analyses"].forEach((analysis) => {
-                const analysisName = analysis.name;
-                const result = analysis.result;
-                const analysisType = ANALYSIS[analysisName].analysisType;
-                if (analysisType === "average") {
-                    analysisAcc[analysisName] += parseFloat(result);
-                } else if (analysisType === "count") {
-                    analysisAcc[analysisName] += 1;
-                }
-            });
-        });
-
-        const results = {};
-        Object.keys(analysisAcc)
-        .forEach((analysisName) => {
-            const analysisType = ANALYSIS[analysisName].analysisType;
-            let result;
-            if (analysisType === "average") {
-                result = analysisAcc[analysisName] / photos.length;
-            } else if (analysisType === "count") {
-                result = analysisAcc[analysisName];
-            }
-            results[analysisName] = ANALYSIS[analysisName].displayFormat(result);
-        });
-        return results;
-    };
+    onPhotoClick(photoKey) {
+        this.setState({selectedPhoto: photoKey});
+    }
 
     render() {
         if (this.state.loading) {
@@ -114,40 +50,71 @@ export class PhotographerView extends PhotoViewer {
         }
         const {
             name,
-            map_square: mapSquare,  // n.b. here we rename while doing the object destructuring
             number,
             photos
         } = this.state.photographerData;
 
-        // const photographerAnalysis = this.getAggregatePhotoAnalysis(photos);
-        const photographerAnalysis = [];
+        const currentPhoto = photos[this.state.selectedPhoto];
+        const squareCoords = currentPhoto.map_square_coords;
+        const mapSquareBounds = [
+            [squareCoords.lat, squareCoords.lng],
+            [squareCoords.lat - MAPSQUARE_HEIGHT, squareCoords.lng - MAPSQUARE_WIDTH]
+        ];
+
         return (<>
-            <Navbar/>
             <div className="page row">
-                <div className="col-6">
-                    <h1>{name} (ID: {number})</h1>
-                    <h2 className="h3">Assigned to:</h2>
-                    <h3 className="h5">Map Square {mapSquare.number}</h3>
+                <div className="image-view col-12 col-lg-6">
+                    <div className="col-6">
+                        <h3 style={{paddingTop: "1em"}}><strong>Photographer Profile</strong></h3>
+                        <h1 className="photographer-name">{name}</h1>
+                        <h5><strong>Number:</strong>{" " + number}</h5>
+                        <h5><strong>Recorded Sex:</strong></h5>
+                        <h5><strong>Address:</strong></h5>
+                        <br/>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit, sed do eiusmod tempor incididunt ut labore
+                            et dolore magna aliqua. Ut enim ad minim veniam,
+                            quis nostrud exercitation ullamco laboris nisi
+                            ut aliquip ex ea commodo consequat. Duis aute
+                            irure dolor in reprehenderit in voluptate velit
+                            esse cillum dolore eu fugiat nulla pariatur.
+                            Excepteur sint occaecat cupidatat non proident,
+                            sunt in culpa qui officia deserunt mollit anim id
+                            est laborum.
+                        </p>
+                    </div>
+                    <br/>
+                    <h6>MAP OF ACTIVITY</h6>
+                    <ParisMap
+                        className="single-photo-map"
+                        lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
+                        lng={squareCoords.lng - MAPSQUARE_WIDTH / 2}
+                        zoom={17}
+                        layers={{
+                            mapSquare: <Rectangle
+                                className="current-map-square"
+                                key={currentPhoto.map_square_number}
+                                bounds={mapSquareBounds}
+                            />
+                        }}
+                    />
                 </div>
-                <div className="col-6">
-                    <h2 className="h3">Analysis Results</h2>
-                    {Object.keys(photographerAnalysis)
-                    .map((analysis) => {
-                        if (ANALYSIS[analysis].analysisType !== "none") {
-                            return (
-                                <div key={analysis}>
-                                    <h3 className="h5">{ANALYSIS[analysis].displayName}:</h3>
-                                    {photographerAnalysis[analysis]}
-                                </div>
-                            );
+                <div className="image-info col-12 col-lg-6">
+                    <div className="photo-container">
+                        <img
+                            className="current-photo"
+                            src={this.getSource(currentPhoto, this.state.displaySide)}
+                            alt={currentPhoto.alt}
+                        />
+                    </div>
+                    {this.getPhotoSlider(
+                        photos,
+                        {
+                            "className": "photo slider-photo",
+                            "hrefFunc": (_k, _photo) => "#",
+                            "onClickFunc": (k, _) => () => this.onPhotoClick(k)
                         }
-                        return "";
-                    })}
-                </div>
-                <h2 className="h3">Photos Gallery:</h2>
-                <div className="photo_gallery">
-                    {this.getPhotoGrid(
-                        photos, {"className": "photo", "photoSize": [150, 150]}
                     )}
                 </div>
             </div>

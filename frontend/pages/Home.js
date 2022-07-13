@@ -1,16 +1,14 @@
-import React, {useState} from "react";
-
+import React from "react";
 import {
-    Modal,
-    Button
-} from "react-bootstrap";
+    Popup,
+    Rectangle,
+    GeoJSON
+} from "react-leaflet";
 
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../components/ParisMap";
 import LoadingPage from "./LoadingPage";
 import Legend from "../components/Legend";
-import {GeoJSON, Popup, Rectangle} from "react-leaflet";
 
 
 function densityOverlay(mapData) {
@@ -87,48 +85,6 @@ function arrondissementsOverlay(data) {
 }
 
 
-function Instructions() {
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-    return (
-        <>
-            <Button id="instructionButton" variant="primary" onClick={handleShow}>
-                Instructions
-            </Button>
-            <Modal
-                show={show}
-                onHide={handleClose}
-                backdrop="static"
-                keyboard={false}
-                size="lg"
-                aria-labelledby="contained-modal-title-vcenter"
-                centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>Welcome</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Welcome to the map view of Paris in 1970! The images in this archive are from
-                    a photography competition in 1970's Paris hosted to capture Paris before
-                    rapid industrial change altered the city permanently.
-                </Modal.Body>
-                <Modal.Body>
-                    To explore images from specific areas of Paris, click on a highlighted square.
-                    You will see the map square number and how many images are available.
-                    Click on the link to see the images from that area!
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={handleClose}>
-                        Got it!
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </>
-    );
-}
-
-
 export class HomePage extends React.Component {
     constructor(props) {
         super(props);
@@ -197,8 +153,6 @@ export class HomePage extends React.Component {
         }
 
         return (<>
-            <Navbar/>
-            <Instructions/>
             <ParisMap
                 className="home-map"
                 zoom={14}

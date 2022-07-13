@@ -1,12 +1,15 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
+import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
+import {Rectangle} from "react-leaflet";
 
-import {Dropdown} from "react-bootstrap";
+import {Dropdown, OverlayTrigger, Popover} from "react-bootstrap";
+import ExpandIcon from "../../images/expand.svg";
+import QuestionIcon from "../../images/question.svg";
 
 let tagList = ["Construction", "People", "Building"];
 
@@ -201,9 +204,8 @@ const VISUAL_ANALYSES = {
     "yolo_model": [configAnalysisYoloModel, 3]
 };
 
-function formatPercentageValue(value) {
-    return `${parseInt(value)}%`;
-}
+const TURQUOISE = "#20CCD7";
+
 
 export class PhotoView extends PhotoViewer {
     constructor(props) {
@@ -264,12 +266,6 @@ export class PhotoView extends PhotoViewer {
         this.setState({displaySide: displaySide});
     };
 
-    toggleStatus = (event) => {
-        this.setState({
-            view: parseInt(event.target.value)
-        });
-    };
-
     onImgLoad({target: img}) {
         this.setState({
             width: img.clientWidth,
@@ -298,13 +294,16 @@ export class PhotoView extends PhotoViewer {
         }
         const {
             alt,
-            number: photoNumber,
             map_square_number: mapSquareNumber,
-            photographer_name: photographerName,
             photographer_number: photographerNumber,
-            photographer_caption: photographerCaption,
-            analyses
+            analyses,
+            map_square_coords: squareCoords
         } = this.state.photoData;
+
+        const mapSquareBounds = [
+            [squareCoords.lat, squareCoords.lng],
+            [squareCoords.lat - MAPSQUARE_HEIGHT, squareCoords.lng - MAPSQUARE_WIDTH]
+        ];
 
         // Resize SVG overlays on viewport resize
         window.addEventListener("resize", () => this.handleResize());
@@ -326,12 +325,6 @@ export class PhotoView extends PhotoViewer {
             visualAnalyses.push(visualAnalysis);
         }
 
-        const yoloResult = (
-            "yolo_model" in analyses
-                ? analyses["yolo_model"]
-                : {}
-        );
-
         const similarPhotos = (
             "photo_similarity.resnet18_cosine_similarity" in analyses
                 ? analyses["photo_similarity.resnet18_cosine_similarity"]
@@ -339,15 +332,10 @@ export class PhotoView extends PhotoViewer {
         );
 
         return (<>
-            <Navbar/>
             <div className="page">
-                <div className="d-flex justify-content-center">
-                    <a href={this.state.prevLink} className="navButton mx-4">&#8249;</a>
-                    <a href={this.state.nextLink} className="navButton mx-4">&#8250;</a>
-                </div>
                 <br/>
                 <div className="page row">
-                    <div className="image-view col-12 col-lg-6">
+                    <div className="image-view col-12 col-lg-6 col-md-8">
                         <div className="image-box">
                             <img
                                 className="image-photo position-top-left"
@@ -358,70 +346,101 @@ export class PhotoView extends PhotoViewer {
                             />
                             {visualAnalyses}
                         </div>
-                        <br/>
-                        <div className={"centerBtn"}>
+                        <div className={"center-btn"}>
+                            <ExpandIcon className="expand-icon"/>
                             <button
                                 className={"side-button"}
+                                style={{backgroundColor: this.state.displaySide === "photo" ? TURQUOISE : "white"}}
                                 onClick={() => this.changeSide("photo")}>
                                 PHOTO
                             </button>
                             <button
                                 className={"side-button"}
+                                style={{backgroundColor: this.state.displaySide === "slide" ? TURQUOISE : "white"}}
                                 onClick={() => this.changeSide("slide")}>
                                 SLIDE
                             </button>
                         </div>
-                        {/* TODO: Disable scroll buttons when no more photos to scroll through */}
-                        <div className="similar-photos-box">
-                            <button
-                                type="button"
-                                className="similarity-scroll btn btn-dark"
-                                onClick={
-                                () => document.getElementById("sim-photos").scrollLeft -=
-                                    document.getElementById("sim-photos").clientWidth}
-                            >{"<"}</button>
-
-                            <div id="sim-photos" className="similar-photos">
-                                {this.getPhotoGrid(
-                                    similarPhotos,
-                                    {
-                                        "className": "similar-photo",
-                                        "titleFunc": (k, photo) =>
-                                        `Map Square: ${photo["map_square_number"]}, ` +
-                                        `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
+                        <div style={{display: "flex", justifyContent: "space-between", paddingTop: "10px"}}>
+                            <div style={{display: "flex", justifyContent: "flex-start"}}>
+                                <h4><strong>Similar Photos</strong></h4>
+                                <OverlayTrigger
+                                    trigger="hover"
+                                    placement={"right"}
+                                    overlay={
+                                        <Popover>
+                                            <Popover.Body>
+                                            This is what similar photos are and how we generate them.
+                                            </Popover.Body>
+                                        </Popover>
                                     }
-                                )}
+                                    >
+                                        <button className={"info-button"}>
+                                            <QuestionIcon/>
+                                        </button>
+                                    </OverlayTrigger>
                             </div>
+                            <Dropdown className="photo-sort-dropdown">
+                                <Dropdown.Toggle className="photo-sort-dropdown-button" align="start">
+                                    Sort By...
+                                </Dropdown.Toggle>
 
-                            <button
-                                type="button"
-                                className="similarity-scroll btn btn-dark"
-                                onClick={
-                                () => document.getElementById("sim-photos").scrollLeft +=
-                                    document.getElementById("sim-photos").clientWidth}
-                            >{">"}</button>
+                                <Dropdown.Menu>
+                                    {
+                                        Object.keys(analyses).map(
+                                            (analysisName, k) =>
+                                                <Dropdown.Item key={k} href={`#/action-${k}`}>
+                                                    {analysisName}
+                                                </Dropdown.Item>
+                                        )
+                                    }
+                                </Dropdown.Menu>
+                            </Dropdown>
                         </div>
+                        {this.getPhotoSlider(
+                            similarPhotos,
+                            {
+                                "className": "photo slider-photo",
+                                "titleFunc": (k, photo) =>
+                                `Map Square: ${photo["map_square_number"]}, ` +
+                                `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
+                            }
+                        )}
                     </div>
-                    <div className="image-info col-12 col-lg-6">
-                        <h4>Photograph Details</h4>
+                    <div className="image-info col-12 col-lg-6 col-md-4">
+                        <h5>Photograph Details</h5>
                         <br></br>
                         <h6>PHOTOGRAPHER</h6>
                         <p>
-                            {photographerName || "Unknown"}
-                            {
-                                photographerNumber
-                                    ? <span>
-                                        {" (Number: "}
-                                        <a href={`/photographer/${photographerNumber}/`}>
-                                            {photographerNumber}
-                                        </a>
-                                    )
-                                    </span>
-                                    : " (Number: Unknown)"
-                            }
+                            <a href={`/photographer/${photographerNumber}/`} className={"photo-link"}>
+                                Bob Frenchman
+                            </a>
+                            <br></br>
+                            <span><strong>#23</strong></span> out of <span>
+                            <a href={`/photographer/${photographerNumber}/`}
+                                     className={"photo-link"}>72</a></span> in collection
                         </p>
+
                         <br></br>
-                        <h6>TAGS</h6>
+
+                        <div style={{display: "flex", justifyContent: "flex-start", paddingTop: "10px"}}>
+                            <h6>TAGS</h6>
+                            <OverlayTrigger
+                                trigger="hover"
+                                placement={"right"}
+                                overlay={
+                                    <Popover>
+                                        <Popover.Body>
+                                        This is what a tag is and how we generate them.
+                                        </Popover.Body>
+                                    </Popover>
+                                }
+                                >
+                                    <button className={"info-button"}>
+                                        <QuestionIcon/>
+                                    </button>
+                                </OverlayTrigger>
+                        </div>
 
                         {tagList.map((word) => (
                             <button className="tag-button" key={word.id}>
@@ -430,105 +449,29 @@ export class PhotoView extends PhotoViewer {
                         ))}
 
                         <br></br><br></br>
-                        <h6>CAPTION</h6>
-                        <p>{photographerCaption || "None"}</p>
-                        <br></br>
 
                         <h6>LOCATION</h6>
-                        <p>Map Square:
-                            <a href={`/map_square/${mapSquareNumber}`}>{mapSquareNumber}</a>
-                        </p>
-                        <p>Photo: {photoNumber}</p>
 
-                        <h6>ANALYSIS</h6>
-
-                        <Dropdown className="photo-sort-dropdown">
-                            <Dropdown.Toggle className="photo-sort-dropdown-button" align="start">
-                                Sort By...
-                            </Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-                                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
-
-                        <div className="row">
-                            <div className="col-6">
-                                {(this.state.displaySide === "photo")
-                                    ? <select
-                                        id="toggleSelect"
-                                        className="custom-select"
-                                        onChange={this.toggleStatus}
-                                        value={this.state.view}>
-                                        <option value="0">None selected</option>
-                                        <option value="1">Perspective Lines</option>
-                                        <option value="2">Foreground Mask</option>
-                                        <option value="3">YOLO Model</option>
-                                    </select>
-                                    : <p>Not available</p>
-                                }
-                                {(this.state.view === 3 && this.state.displaySide === "photo")
-                                    ? <p className={"px-3 my-0"}>
-                                        <i>Hover over the boxes to see the name of the object.</i>
-                                    </p>
-                                    : <></>
-                                }
-                            </div>
-                        </div>
-
-                        {"labels" in yoloResult
-                            ? <React.Fragment>
-                                <h5>Objects Detected</h5>
-                                <ul>
-                                    {Object.keys(yoloResult["labels"])
-                                    .map((key, i) => (
-                                        <li key={i}>
-                                            {key}: {yoloResult["labels"][key]}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </React.Fragment>
-                            : <React.Fragment>
-                                <h5>Objects Detected</h5>
-                                <p>None</p>
-                            </React.Fragment>
-                        }
-
-                        {!(similarPhotos in [[], null])
-                            ? <React.Fragment>
-                                <h5>Similar Photos (% Similarity)</h5>
-                                <h6>
-                                    <a href={"/similar_photos/" +
-                                    `${this.props.mapSquareNumber}/` +
-                                    `${this.props.photoNumber}/10/`}>
-                                        View Top 10 Similar Photos
-                                    </a>
-                                </h6>
-                                <div
-                                    className="col pb-scroll"
-                                    id="scrolling"
-                                    style={{
-                                        maxHeight: 200,
-                                        overflow: "auto"
-                                    }}>
-                                    {similarPhotos.map((photo, i) => (
-                                        <div key={i}>
-                                            <a href={`/photo/${photo["map_square_number"]}/${photo["number"]}/`}>
-                                                Map Square {photo["map_square_number"]},
-                                                Photo {photo["number"]}
-                                            </a>
-                                            ({formatPercentageValue(photo["similarity"] * 100)})
-                                        </div>
-                                    ))}
-                                </div>
-                            </React.Fragment>
-                            : <React.Fragment>
-                                <h5>Similar Photos</h5>
-                                <p>None</p>
-                            </React.Fragment>
-                        }
+                        <ParisMap
+                            className="single-photo-map"
+                            lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
+                            lng={squareCoords.lng - MAPSQUARE_WIDTH / 2}
+                            zoom={15}
+                            layers={{
+                                mapSquare: <Rectangle
+                                    className="current-map-square"
+                                    key={mapSquareNumber}
+                                    bounds={mapSquareBounds}
+                                />
+                            }}
+                        />
+                        <br></br>
+                        <b>
+                            Map Square <span><a href={`/map_square/${mapSquareNumber}`}
+                            className={"photo-link"}>{mapSquareNumber}</a></span>
+                            <br></br>
+                            Arrondissement 17
+                        </b>
                     </div>
                 </div>
             </div>
