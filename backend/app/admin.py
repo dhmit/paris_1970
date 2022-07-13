@@ -76,7 +76,7 @@ class PhotoAdmin(admin.ModelAdmin):
         Returns map square number
         """
         link = os.path.join('/admin/app/mapsquare', str(obj.map_square.id))
-        cmd = '<a target = "blank" href = "{url}">{title}</a>'.format(url=link, title= obj.map_square.number)
+        cmd = '<a target="blank" href="{url}">{title}</a>'.format(url=link, title= obj.map_square.number)
         return mark_safe(cmd)
     map_square_number.short_description = 'Map Square'
     map_square_number.admin_order_field = 'map_square__number'
@@ -91,7 +91,7 @@ class PhotoAdmin(admin.ModelAdmin):
             else:
                 title = str(obj.photographer.id) + ' (-)'
             link = os.path.join('/admin/app/photographer', str(obj.photographer.id))
-            cmd = '<a target = "blank" href = "{url}">{title}</a>'.format(url=link, title=title)
+            cmd = '<a target="blank" href="{url}">{title}</a>'.format(url=link, title=title)
             return mark_safe(cmd)
         else:
             return
@@ -105,8 +105,7 @@ class PhotoAdmin(admin.ModelAdmin):
         # taking photos from local dir
         obj_path = os.path.join(settings.LOCAL_PHOTOS_DIR, str(obj.map_square.number),
                                 str(obj.number)+'_photo.jpg')
-        return mark_safe('<a target = "blank" href = "{url}"> <img src="{url}" width="90px" '
-                         '></a>'.format(url=obj_path))
+        return mark_safe('<a target="blank" href="{url}"> <img src="{url}" width="90px"></a>'.format(url=obj_path))
     photo_thumbnail.short_description = 'Photo'
 
     def photo_slide(self, obj):
@@ -117,7 +116,7 @@ class PhotoAdmin(admin.ModelAdmin):
         # taking photos from local dir
         obj_path = os.path.join(settings.LOCAL_PHOTOS_DIR, str(obj.map_square.number),
                                 str(obj.number)+'_slide.jpg')
-        return mark_safe('<a target = "blank" href = "{url}"> <img src="{url}" width="90px" '
+        return mark_safe('<a target="blank" href="{url}"> <img src="{url}" width="90px" '
                          '></a>'.format(url=obj_path))
     photo_slide.short_description = 'Slide'
 
