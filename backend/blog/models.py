@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from taggit.managers import TaggableManager
 from django.utils.translation import gettext_lazy as _
+from config.settings import BLOG_ROOT_URL
 
 
 class BlogPost(models.Model):
@@ -24,8 +25,7 @@ class BlogPost(models.Model):
     # TODO: Maybe add related blogposts field?
 
     def get_absolute_url(self):
-        # TODO
-        return ""
+        return f"/{BLOG_ROOT_URL}/{self.slug}"
 
     def save(self, *args, **kwargs):
         if not self.slug:
