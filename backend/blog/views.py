@@ -3,7 +3,6 @@ These view functions and classes implement API endpoints
 """
 from django.shortcuts import render
 from blog.models import BlogPost
-from django.http import Http404
 
 
 def index(request):
@@ -21,9 +20,9 @@ def blog_post(request, slug):
     """
     Single blog post view
     """
-    post = BlogPost.objects.get(slug=slug)
-    tags = post.tags.names()
-    context = {'post': post, 'tags': tags}
-    if not post.published and request.user != post.author:
-        raise Http404
+    posts = BlogPost.objects.filter(slug=slug)
+    if not posts or (not posts[0].published and request.user != posts[0].author):
+        return render(request, 'blog/blog_404.html')  # Respond with 404 page
+    tags = posts[0].tags.names()
+    context = {'post': posts[0], 'tags': tags}
     return render(request, 'blog/post.html', context)
