@@ -83,7 +83,6 @@ urlpatterns = [
     path('blog/<str:slug>/', blog_views.blog_post,
          name='blog-detail'),
     # sign up urls
-    path('signup/', blog_views.user_register, name='sign up'),
-    path('login/',blog_views.login_request,name='login'),
+    path('login/',auth_views.LoginView.as_view(template_name='admin/login.html'),name='login'),
     path('logout/',auth_views.LogoutView.as_view(),name='logout')
 ]
