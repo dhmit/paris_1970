@@ -58,10 +58,12 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_map_square_coords(instance):
-        return {
-            dim: float(c)
-            for dim, c in zip(['lat', 'lng'], instance.map_square.coordinates.split(', '))
-        }
+        if instance.map_square.coordinates.split(', ') != ['']:
+            return {dim: float(c)
+                for dim, c in zip(['lat', 'lng'], instance.map_square.coordinates.split(', '))
+                }
+        else:
+            return {}
 
     class Meta:
         model = Photo
