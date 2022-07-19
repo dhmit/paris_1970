@@ -58,6 +58,15 @@
                 <li>
                     <a class="nav-link" href="/blog/">Blog</a>
                 </li>
+                {% if user.is_authenticated %}
+                    <li>
+                        <a class="nav-link" href="/logout/">Logout</a>
+                    </li>
+                {% else %}
+                    <li>
+                        <a class="nav-link" href="/login/">Login</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'webpack_loader',
     'django_extensions',
+    'taggit',
     # wysiwyg for blog
     'tinymce',
 
@@ -58,7 +59,7 @@ INSTALLED_APPS = [
     'app',
 
     # our blog
-    'blog'
+    'blog',
 
 ]
 
@@ -95,7 +96,12 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'config.wsgi.application'
+
+LOGOUT_REDIRECT_URL = '/'
+
+LOGIN_REDIRECT_URL = '/admin'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
