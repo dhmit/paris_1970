@@ -1,5 +1,4 @@
 import React from "react";
-import Navbar from "../../components/Navbar";
 import {Container, Row, Col} from "react-bootstrap";
 import Map, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
 import LoadingPage from "../LoadingPage";
@@ -164,7 +163,6 @@ class MapPage extends React.Component {
         }
 
         return (<div>
-                <Navbar/>
                 <Container fluid className="page-style">
                     <Row className="page-body">
                         <Col md={12} lg={7} className="m-0 p-0 min-vh-100" id="map-box">
