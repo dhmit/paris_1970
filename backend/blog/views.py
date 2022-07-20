@@ -21,8 +21,14 @@ def blog_post(request, slug):
     Single blog post view
     """
     posts = BlogPost.objects.filter(slug=slug)
-    if not posts or (not posts[0].published and request.user != posts[0].author):
-        return render(request, 'blog/blog_404.html')  # Respond with 404 page
-    tags = posts[0].tags.names()
-    context = {'post': posts[0], 'tags': tags}
-    return render(request, 'blog/post.html', context)
+    if posts and (
+        posts[0].published
+        or request.user == posts[0].author
+        or request.user.is_staff
+        or request.user.is_superuser
+    ):
+        tags = posts[0].tags.names()
+        context = {'post': posts[0], 'tags': tags}
+        return render(request, 'blog/post.html', context)
+
+    return render(request, 'blog/blog_404.html')  # Respond with 404 page

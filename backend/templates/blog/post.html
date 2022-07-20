@@ -1,6 +1,12 @@
 {% include "base.html" %}
 {% block content %}
     <div class="blog" id="app_root">
+        {% if not post.published %}
+            <h5 style="white-space: pre-wrap">
+                This page is only a preview of the post and is only visible to the author and site admin.
+                To make it visible to anyone, click "published" in the admin panel.
+            </h5>
+        {% endif %}
         <div class="container mt-3">
             <div class="row">
                 <div class="col-lg-8">
