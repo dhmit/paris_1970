@@ -7,12 +7,10 @@ from django.test import TestCase
 from django.conf import settings
 from django.urls import reverse
 
-import shutil
 import os
-import tempfile
-import stat
 
-from app.models import Photo, MapSquare, Photographer
+from app.models import Photo, PhotoAnalysisResult, MapSquare, Photographer
+from app.analysis import yolo_model
 
 
 class MainAPITests(TestCase):
@@ -20,25 +18,31 @@ class MainAPITests(TestCase):
     Backend TestCase. API Calls
     """
 
-    # def setUp(self):
-    #     super().setUp()
-    #     do any setup here
-
     def setUp(self):
+        """
+        Create dummy database entries and corresponding files in TEST_PHOTOS_DIR
+        """
         super().setUp()
         names = ['Bob Frenchman', 'Waddle Dee', 'Kaito KID']
-        os.umask(0)
+
+        # create 3 map squares
         for i in range(3):
             map_square = MapSquare.objects.create(number=i + 1, coordinates='24, 25')
             photographer = Photographer.objects.create(map_square=map_square, number=i + 1,
                                                        name=names[i])
             path = os.path.join(settings.TEST_PHOTOS_DIR, f'{i + 1}')
             os.mkdir(path, mode=0o755)
+            # in each map square, create 4 empty photos
             for j in range(4):
                 photo = Photo.objects.create(number=j + 1, map_square=map_square,
                                              photographer=photographer)
-                with open(os.path.join(path, f'{j + 1}_photo.jpg'), 'w+') as f:
-                    pass
+                if (i, j) == (1, 2):
+                    # later replace with a non-empty test photo
+                    with open(os.path.join(path, f'{j + 1}_front.jpg'), 'w+') as f:
+                        pass
+                else:
+                    with open(os.path.join(path, f'{j + 1}_front.jpg'), 'w+') as f:
+                        pass
 
         assert MapSquare.objects.count() == 3
         assert Photographer.objects.count() == 3
@@ -46,10 +50,13 @@ class MainAPITests(TestCase):
         # print(os.listdir(settings.TEST_PHOTOS_DIR))
 
     def tearDown(self):
+        """
+        Remove TEST_PHOTOS_DIR files.
+        """
         for i in range(3):
             path = os.path.join(settings.TEST_PHOTOS_DIR, f'{i + 1}', "")
             for j in range(len(os.listdir(path))):
-                os.remove(os.path.join(path, f'{j + 1}_photo.jpg'))
+                os.remove(os.path.join(path, f'{j + 1}_front.jpg'))
             os.rmdir(path)
 
     def add_photo(self, map_square, photo_name_or_path):
@@ -64,9 +71,10 @@ class MainAPITests(TestCase):
             photo_number = 0
 
         # create new file in test directory
-        directory = os.path.join(settings.TEST_PHOTOS_DIR, f'{map_square.number + 1}', "")
+        directory = os.path.join(settings.TEST_PHOTOS_DIR, f'{map_square.number}', "")
         current_photos_in_square = len(os.listdir(directory))
-        path = os.path.join(directory, f'{current_photos_in_square + 1}_photo.jpg')
+        path = os.path.join(directory, f'{current_photos_in_square + 1}_front.jpg')
+        print(path)
         with open(path, 'w+') as f:
             pass
 
@@ -81,11 +89,14 @@ class MainAPITests(TestCase):
         photo.save()
         return photo
 
+    # testing database retrieval
+
     def test_photo_functions(self):
         photo = self.add_photo(MapSquare.objects.get(number=1), 'example')
         self.assertEqual(photo.has_valid_source(), True)
 
-        print(photo.get_image_local_filepath(src_dir=settings.TEST_PHOTOS_DIR), 'end')
+        # print(photo.get_image_local_filepath(src_dir=settings.TEST_PHOTOS_DIR), 'end')
+        # print(os.listdir(os.path.join(settings.TEST_PHOTOS_DIR, '1')))
 
     def test_get_all_photos(self):
         response = self.client.get(reverse("all_photos"))
@@ -126,7 +137,6 @@ class MainAPITests(TestCase):
         assert response.status_code == 200
 
         res = response.json()
-        # print('BEGIN', res, 'END')
         assert 'person' and 'bicycle' and 'stop sign' in res['tags']
         assert (name in res['photographers'] for name in names)
 
@@ -139,7 +149,6 @@ class MainAPITests(TestCase):
         resall = responseall.json()
         photographer_names = [entry['name'] for entry in resall]
         assert (name in photographer_names for name in names)
-        # print(responseall.content.decode())
 
         # get one, try 1 2 3
         for i in (1, 2, 3):
@@ -163,6 +172,13 @@ class MainAPITests(TestCase):
 
     # testing similarity/analysis functions
 
+    def test_yolo_analysis(self):
+        # TODO: save analyses in PhotoAnalysisResult/Photo, try analyses on non-empty jpgs
+        # Photo object (id) has no front or binder src, check yolo fxn
+        for photo in Photo.objects.all():
+            analysis = yolo_model.analyze(photo)
+            # print(analysis)
+
     def x_test_all_analyses(self):
         response = self.client.get(reverse('all_analyses'))
         assert response.status_code == 200
@@ -175,10 +191,4 @@ class MainAPITests(TestCase):
 
         res = (response.json())
         assert len(res) == 12
-
-
-
-
-
-
-
+        
