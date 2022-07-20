@@ -24,7 +24,7 @@ def blog_post(request, slug):
     if posts and (
         posts[0].published
         or request.user == posts[0].author
-        or request.user.is_staff
+        or request.user.has_perm('blog.view_blogpost')
         or request.user.is_superuser
     ):
         tags = posts[0].tags.names()
