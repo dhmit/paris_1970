@@ -19,11 +19,13 @@ export class Logo extends React.Component {
         return (
             //All logos can consist of a red square and/or a blue square. They are contained
             //within a parent div/bounding box
-            <div className={"parent-bounding-box-"+this.logo_type} style={{top: this.top+"%",
-                                                         left: this.left+"%",
-                                                         position:this.position_type}}>
-                <div className={"red-rectangle-"+this.logo_type}/>
-                <div className={"blue-rectangle-"+this.logo_type}/>
+            <div className={"parent-bounding-box-" + this.logo_type} style={{
+                top: this.top + "%",
+                left: this.left + "%",
+                position: this.position_type
+            }}>
+                <div className={"red-rectangle-" + this.logo_type}/>
+                <div className={"blue-rectangle-" + this.logo_type}/>
             </div>
         );
     }

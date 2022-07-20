@@ -1,4 +1,3 @@
-
 @include media-breakpoint-up(lg) {
     .red-rectangle-side-logo {
         display: inline-block;
@@ -55,7 +54,7 @@
     }
 }
 
-@include media-breakpoint-between(md,lg) {
+@include media-breakpoint-between(md, lg) {
     .red-rectangle-title-logo {
         display: inline-block;
         position: absolute;
@@ -97,7 +96,7 @@
         width: 92%;
         height: 100%;
         background: #70D8F1;
-        opacity:80%;
+        opacity: 80%;
         mix-blend-mode: multiply;
     }
 

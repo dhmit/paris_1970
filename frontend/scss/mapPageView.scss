@@ -1,8 +1,8 @@
-.page-style{
+.page-style {
     font-family: "eina_regular";
 }
 
-.page-body{
+.page-body {
     background-color: white;
     max-height: 100%;
     background-color: white;
@@ -21,17 +21,17 @@
     line-height: 39px;
 }
 
-.info-text{
+.info-text {
     margin-bottom: 0em;
 }
 
-.info-text-small{
+.info-text-small {
     font-size: 18px;
     margin-top: 0em;
     margin-bottom: 2em;
 }
 
-.info-header-link{
+.info-header-link {
     font-family: "eina_semibold";
     text-decoration: underline;
     color: #3295B8;
@@ -40,7 +40,7 @@
     display: inline;
 }
 
-.info-list-link{
+.info-list-link {
     font-weight: 500;
     text-decoration: underline;
     color: #0096C1;
@@ -58,7 +58,7 @@
     }
 }
 
-@include media-breakpoint-between(md,lg) {
+@include media-breakpoint-between(md, lg) {
     #map-page-title {
         margin-bottom: 1em;
         margin-top: 0.5em;
@@ -76,7 +76,7 @@
     }
 }
 
-#map-box{
+#map-box {
     background-color: blue;
 }
 
