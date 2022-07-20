@@ -225,13 +225,6 @@ rect {
     }
 }
 
-.info-button {
-    background-color: white;
-    border: none;
-    display: inline-flex;
-    align-items: flex-start;
-}
-
 .photo-modal-body {
     display: flex;
     flex-direction: row;
@@ -240,4 +233,18 @@ rect {
 
 .photo-popup {
     height: 100%
+}
+
+.info-button {
+    background-color: white;
+    border: none;
+    display: inline-flex;
+    align-items: flex-start;
+}
+
+.similar-photos-header {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    align-items: center;
 }

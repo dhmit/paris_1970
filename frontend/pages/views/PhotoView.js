@@ -383,23 +383,22 @@ export class PhotoView extends PhotoViewer {
                             </button>
                         </div>
                         <div style={{display: "flex", justifyContent: "space-between", paddingTop: "10px"}}>
-                            <div style={{display: "flex", justifyContent: "flex-start"}}>
+                            <div className="similar-photos-header">
                                 <h4><strong>Similar Photos</strong></h4>
                                 <OverlayTrigger
                                     trigger="hover"
-                                    placement={"right"}
+                                    placement="right"
                                     overlay={
                                         <Popover>
                                             <Popover.Body>
                                             This is what similar photos are and how we generate them.
                                             </Popover.Body>
                                         </Popover>
-                                    }
-                                    >
-                                        <button className={"info-button"}>
-                                            <QuestionIcon/>
-                                        </button>
-                                    </OverlayTrigger>
+                                    }>
+                                    <button className="info-button">
+                                        <QuestionIcon/>
+                                    </button>
+                                </OverlayTrigger>
                             </div>
                             <Dropdown className="photo-sort-dropdown">
                                 <Dropdown.Toggle className="photo-sort-dropdown-button" align="start">
@@ -448,19 +447,18 @@ export class PhotoView extends PhotoViewer {
                             <h6>TAGS</h6>
                             <OverlayTrigger
                                 trigger="hover"
-                                placement={"right"}
+                                placement="right"
                                 overlay={
                                     <Popover>
                                         <Popover.Body>
                                         This is what a tag is and how we generate them.
                                         </Popover.Body>
                                     </Popover>
-                                }
-                                >
-                                    <button className={"info-button"}>
-                                        <QuestionIcon/>
-                                    </button>
-                                </OverlayTrigger>
+                                }>
+                                <button className={"info-button"}>
+                                    <QuestionIcon/>
+                                </button>
+                            </OverlayTrigger>
                         </div>
 
                         {tagList.map((word) => (
