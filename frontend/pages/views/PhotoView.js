@@ -7,7 +7,7 @@ import LoadingPage from "../LoadingPage";
 import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
 import {Rectangle} from "react-leaflet";
 
-import {Dropdown, OverlayTrigger, Popover} from "react-bootstrap";
+import {Dropdown, OverlayTrigger, Popover, Modal} from "react-bootstrap";
 import ExpandIcon from "../../images/expand.svg";
 import QuestionIcon from "../../images/question.svg";
 
@@ -223,7 +223,8 @@ export class PhotoView extends PhotoViewer {
             labels: null,
             mapData: null,
             prevLink: null,
-            nextLink: null
+            nextLink: null,
+            showPhotoModal: false
         };
         this.onImgLoad = this.onImgLoad.bind(this);
         this.photoRef = React.createRef();
@@ -334,6 +335,23 @@ export class PhotoView extends PhotoViewer {
         return (<>
             <div className="page">
                 <br/>
+                <Modal
+                    className="photo-modal"
+                    show={this.state.showPhotoModal}
+                    onHide={() => this.setState({showPhotoModal: false})}
+                    backdrop="static"
+                    keyboard={false}
+                    aria-labelledby="contained-modal-title-vcenter"
+                    fullscreen>
+                    <Modal.Header closeButton/>
+                    <Modal.Body className="photo-modal-body">
+                        <img
+                            className="photo-popup"
+                            alt={this.state.photoData.alt}
+                            src={this.getSource(this.state.photoData)}
+                        />
+                    </Modal.Body>
+                </Modal>
                 <div className="page row">
                     <div className="image-view col-12 col-lg-6 col-md-8">
                         <div className="image-box">
@@ -347,7 +365,10 @@ export class PhotoView extends PhotoViewer {
                             {visualAnalyses}
                         </div>
                         <div className={"center-btn"}>
-                            <ExpandIcon className="expand-icon"/>
+                            <ExpandIcon
+                                className="expand-icon"
+                                onClick={() => this.setState({showPhotoModal: true})}
+                            />
                             <button
                                 className={"side-button"}
                                 style={{backgroundColor: this.state.displaySide === "photo" ? TURQUOISE : "white"}}
