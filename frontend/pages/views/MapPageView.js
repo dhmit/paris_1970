@@ -7,12 +7,12 @@ import Legend from "../../components/Legend";
 import {GeoJSON, Popup, Rectangle} from "react-leaflet";
 import * as PropTypes from "prop-types";
 
-function MapPageEntryLogo() {
+function MapPageEntryDecorator() {
     return (<div>
             <Container id="map-page-title">
                 <Row>
                     <Col>
-                        <TitleDecorator id="site-logo" top={22} left={-1.5} logo_type={"title-logo"}/>
+                        <TitleDecorator id="site-decorator" top={22} left={-1.5} decorator_type={"title-decorator"}/>
                         <h2>Map</h2>
                     </Col>
                 </Row>
@@ -239,7 +239,7 @@ class MapPage extends React.Component {
                                 <Row>
                                     <Col lg={1}/>
                                     <Col lg={9}>
-                                        <MapPageEntryLogo/>
+                                        <MapPageEntryDecorator/>
 
                                         <p>
                                             This is a small paragraph about the division of Paris

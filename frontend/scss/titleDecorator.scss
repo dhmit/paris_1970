@@ -1,5 +1,5 @@
 @include media-breakpoint-up(lg) {
-    .red-rectangle-side-logo {
+    .red-rectangle-side-decorator {
         display: inline-block;
         position: absolute;
         top: 19%;
@@ -10,7 +10,7 @@
         opacity: 50%;
     }
 
-    .blue-rectangle-side-logo {
+    .blue-rectangle-side-decorator {
         position: absolute;
         top: 0;
         left: 0;
@@ -21,12 +21,12 @@
         opacity: 50%;
     }
 
-    .parent-bounding-box-side-logo {
+    .parent-bounding-box-side-decorator {
         width: 2.8em;
         height: 2.6em;
     }
 
-    .red-rectangle-title-logo {
+    .red-rectangle-title-decorator {
         display: inline-block;
         position: absolute;
         top: 2%;
@@ -37,7 +37,7 @@
         mix-blend-mode: multiply;
     }
 
-    .blue-rectangle-title-logo {
+    .blue-rectangle-title-decorator {
         position: absolute;
         top: 20%;
         left: 0;
@@ -48,14 +48,14 @@
         mix-blend-mode: multiply;
     }
 
-    .parent-bounding-box-title-logo {
+    .parent-bounding-box-title-decorator {
         width: 10.5em;
         height: 1.8em;
     }
 }
 
 @include media-breakpoint-between(md, lg) {
-    .red-rectangle-title-logo {
+    .red-rectangle-title-decorator {
         display: inline-block;
         position: absolute;
         top: 0;
@@ -66,7 +66,7 @@
         mix-blend-mode: multiply;
     }
 
-    .blue-rectangle-title-logo {
+    .blue-rectangle-title-decorator {
         position: absolute;
         top: 15%;
         left: 0;
@@ -77,18 +77,18 @@
         mix-blend-mode: multiply;
     }
 
-    .parent-bounding-box-title-logo {
+    .parent-bounding-box-title-decorator {
         width: 10.5em;
         height: 1.8em;
     }
 }
 
 @include media-breakpoint-down(md) {
-    .red-rectangle-title-logo {
+    .red-rectangle-title-decorator {
         display: none;
     }
 
-    .blue-rectangle-title-logo {
+    .blue-rectangle-title-decorator {
         position: absolute;
         top: 45%;
         left: 31%;
@@ -100,7 +100,7 @@
         mix-blend-mode: multiply;
     }
 
-    .parent-bounding-box-title-logo {
+    .parent-bounding-box-title-decorator {
         width: 3.2em;
         height: 1em;
     }
