@@ -3,8 +3,11 @@
 }
 
 .page-body{
-    background-color: #8A2995;
+    background-color: white;
     max-height: 100%;
+    background-color: white;
+    font-size: 20px;
+    line-height: 28px;
 }
 
 .page-map {
@@ -18,12 +21,32 @@
     line-height: 39px;
 }
 
-#info-text{
-    background-color: white;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 20px;
-    line-height: 28px;
+.info-text{
+    margin-bottom: 0em;
+}
+
+.info-text-small{
+    font-size: 18px;
+    margin-top: 0em;
+    margin-bottom: 2em;
+}
+
+.info-header-link{
+    font-family: "eina_semibold";
+    text-decoration: underline;
+    color: #3295B8;
+    margin-top: 0em;
+    margin-bottom: 0em;
+    display: inline;
+}
+
+.info-list-link{
+    font-weight: 500;
+    text-decoration: underline;
+    color: #0096C1;
+    margin-top: 0em;
+    margin-bottom: 0em;
+    display: inline;
 }
 
 @include media-breakpoint-up(lg) {

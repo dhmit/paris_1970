@@ -62,6 +62,8 @@ urlpatterns = [
     path('api/arrondissements_geojson/', views.get_arrondissements_geojson),
     path('api/arrondissements_geojson/<int:arr_number>/',
          views.get_arrondissements_geojson),
+    path('api/arrondissements_map_squares/', views.get_arrondissements_map_squares),
+    path('api/arrondissements_map_squares/<int:arr_number>', views.get_arrondissements_map_squares),
     # path('api/faster_rcnn_object_detection/<str:object_name>/', views.get_photos_by_object_rcnn),
     # path('api/model/<str:model_name>/<str:object_name>/', views.get_photos_by_object),
     path('', views.index),

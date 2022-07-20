@@ -402,6 +402,26 @@ def get_arrondissements_geojson(request, arr_number=None):
     return Response(data)
 
 
+@api_view(['GET'])
+def get_arrondissements_map_squares(request, arr_number=None):
+    """
+    API endpoint to get all of the map square numbers in arrondissements
+    :param request:
+    :param arr_number:
+    :return: Response
+    """
+    json_path = os.path.join(settings.BACKEND_DATA_DIR, 'arrondissements_map_squares.json')
+    with open(json_path, encoding='utf-8') as f:
+        data = json.load(f)
+
+    if arr_number is not None:
+        # Get data for a single unique arrondissement
+        data['arrondissements'] = [data['arrondissements'][arr_number-1]]
+
+    print(data['arrondissements'][0]["map_square_numbers"])
+    return Response(data)
+
+
 # app views
 def render_view(request, context):
     context.setdefault('component_props', {})
