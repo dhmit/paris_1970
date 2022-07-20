@@ -1,7 +1,7 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-export class Logo extends React.Component {
+export class TitleDecorator extends React.Component {
     constructor(props) {
         super(props);
 
@@ -31,19 +31,19 @@ export class Logo extends React.Component {
     }
 }
 
-Logo.propTypes = {
+TitleDecorator.propTypes = {
     top: PropTypes.number,
     left: PropTypes.number,
     position: PropTypes.string,
     logo_type: PropTypes.string
 };
 
-Logo.defaultProps = {
+TitleDecorator.defaultProps = {
     top: 0,
     left: 0,
     position: "relative"
 };
 
-export default Logo;
+export default TitleDecorator;
 
 

@@ -418,7 +418,6 @@ def get_arrondissements_map_squares(request, arr_number=None):
         # Get data for a single unique arrondissement
         data['arrondissements'] = [data['arrondissements'][arr_number-1]]
 
-    print(data['arrondissements'][0]["map_square_numbers"])
     return Response(data)
 
 

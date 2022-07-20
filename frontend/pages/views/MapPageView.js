@@ -2,7 +2,7 @@ import React from "react";
 import {Container, Row, Col} from "react-bootstrap";
 import Map, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
 import LoadingPage from "../LoadingPage";
-import Logo from "../../components/Logo";
+import TitleDecorator from "../../components/TitleDecorator";
 import Legend from "../../components/Legend";
 import {GeoJSON, Popup, Rectangle} from "react-leaflet";
 import * as PropTypes from "prop-types";
@@ -12,8 +12,8 @@ function MapPageEntryLogo() {
             <Container id="map-page-title">
                 <Row>
                     <Col>
-                        <Logo id="site-logo" top={22} left={-1.5} logo_type={"title-logo"}/>
-                        <h2 className="page-title">Map</h2>
+                        <TitleDecorator id="site-logo" top={22} left={-1.5} logo_type={"title-logo"}/>
+                        <h2>Map</h2>
                     </Col>
                 </Row>
             </Container>
@@ -35,13 +35,14 @@ function MapSquareList(props) {
     const displayedMapSquares = mapSquareNumbers.map((map_square_number, i) => {
         const link = "/map_square/" + map_square_number + "/";
         return (<span key={map_square_number}>
-                        <a href={link} className="info-list-link">{map_square_number}</a>
+                        <a href={link} className="link">{map_square_number}</a>
             {mapSquareNumbers[i + 1] ? ", " : ""}
                 </span>);
     });
 
     return (<span>{displayedMapSquares}</span>);
 }
+
 
 function densityOverlay(mapData) {
     const sortedMapData = Object.values(mapData)
@@ -59,7 +60,7 @@ function densityOverlay(mapData) {
         fortyPctMax, fortyPctMax + 1,
         sixtyPctMax, sixtyPctMax + 1,
         eightyPctMax, eightyPctMax + 1, maxNumOfPhotos];
-    const layer = (<>
+    return (<>
         <Legend buckets={buckets}/>
 
         {
@@ -105,7 +106,6 @@ function densityOverlay(mapData) {
             })
         }
     </>);
-    return layer;
 }
 
 
@@ -120,13 +120,19 @@ function arrondissementsOverlay(data) {
     }) : <></>;
 }
 
+
+
 class MapPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             mapData: null,
-            geojsonData: null
+            geojsonData: null,
+            filledMapSquares: null,
+            isLgViewportUp: null
         };
+
+        this.updateViewport = this.updateViewport.bind(this);
     }
 
     async componentDidMount() {
@@ -198,30 +204,40 @@ class MapPage extends React.Component {
         } catch (e) {
             console.log(e);
         }
+
+        this.updateViewport();
+        window.addEventListener("resize", this.updateViewport);
+    }
+
+    updateViewport() {
+        this.setState({isLgViewportUp: window.innerWidth > 992});
     }
 
     render() {
         if (!this.state.mapData || !this.state.arrondissementData || !this.state.filledMapSquares) {
             return (<LoadingPage/>);
         }
+        const isLgViewportUp = !!this.state.isLgViewportUp;
+        const viewportZoom = isLgViewportUp ? 12.5 : 13;
 
         return (<div>
-                <Container fluid className="page-style">
+                <Container fluid>
                     <Row className="page-body">
-                        <Col md={12} lg={7} className="m-0 p-0 min-vh-100" id="map-box">
-                            <Map className="page-map"
-                                 zoom={13}
-                                 layers={{
-                                     "Photo Density": densityOverlay(this.state.mapData),
-                                     "Arrondissements": arrondissementsOverlay(this.state.geojsonData)
-                                 }}
-                                 visibleLayers={["Photo Density"]}
-                                 layerSelectVisible={true}/>
+                        <Col md={12} lg={7} className="page-map">
+                            <Map
+                                zoom={viewportZoom}
+                                layers={{
+                                    "Photo Density": densityOverlay(this.state.mapData),
+                                    "Arrondissements": arrondissementsOverlay(this.state.geojsonData)
+                                }}
+                                visibleLayers={["Photo Density"]}
+                                layerSelectVisible={true}
+                                scrollWheelZoom={isLgViewportUp}/>
                         </Col>
                         <Col md={12} lg={5} className="m-0 p-0 min-vh-100">
                             <Container>
                                 <Row>
-                                    <Col lg={1}></Col>
+                                    <Col lg={1}/>
                                     <Col lg={9}>
                                         <MapPageEntryLogo/>
 
