@@ -53,6 +53,10 @@
 $font-family-sans-serif: "eina_regular", sans-serif !important;
 $font-family-base: "eina_regular", sans-serif !important;
 
-h1, h2 {
+h1, h2, h6 {
     font-family: "eina_semibold", sans-serif;
+}
+
+h5 {
+    font-family: "eina_bold", sans-serif;
 }

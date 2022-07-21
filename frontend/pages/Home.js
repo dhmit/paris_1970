@@ -1,10 +1,14 @@
 import React from "react";
+import {
+    Popup,
+    Rectangle,
+    GeoJSON
+} from "react-leaflet";
 
 import Footer from "../components/Footer";
 import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../components/ParisMap";
 import LoadingPage from "./LoadingPage";
 import Legend from "../components/Legend";
-import {GeoJSON, Popup, Rectangle} from "react-leaflet";
 
 
 function densityOverlay(mapData) {

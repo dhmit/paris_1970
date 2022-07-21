@@ -27,6 +27,7 @@ TEST_PHOTOS_DIR = Path(PROJECT_ROOT, 'backend', 'data', 'test_photos')
 TESSDATA_DIR = Path(PROJECT_ROOT, 'backend', 'data', 'tessdata')
 TEXT_DETECTION_PATH = Path(BACKEND_DATA_DIR, 'frozen_east_text_detection.pb')
 YOLO_DIR = Path(ANALYSIS_DIR, 'yolo_files')
+BLOG_ROOT_URL = "blog"
 
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'webpack_loader',
     'django_extensions',
+    'taggit',
     # wysiwyg for blog
     'tinymce',
 
@@ -58,7 +60,7 @@ INSTALLED_APPS = [
     'app',
 
     # our blog
-    'blog'
+    'blog',
 
 ]
 
@@ -95,7 +97,12 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'config.wsgi.application'
+
+LOGOUT_REDIRECT_URL = '/'
+
+LOGIN_REDIRECT_URL = '/admin'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
