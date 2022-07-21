@@ -1,12 +1,11 @@
 from django.db import models
 from tinymce import models as tinymce_models
 from django.contrib.flatpages.models import FlatPage
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from taggit.managers import TaggableManager
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import Permission
-from django.contrib.contenttypes.models import ContentType
+from config.settings import BLOG_ROOT_URL
 
 
 class BlogPost(models.Model):
@@ -26,19 +25,9 @@ class BlogPost(models.Model):
     # TODO: Maybe add related blogposts field?
 
     def get_absolute_url(self):
-        # TODO
-        return ""
+        return f"/{BLOG_ROOT_URL}/{self.slug}"
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
         super(BlogPost, self).save(*args, **kwargs)
-
-
-# content_type = ContentType.objects.get_for_model(BlogPost)
-#
-# permission = Permission.objects.filter(content_type=content_type)
-#
-# BlogGroup = Group.objects.get_or_create(name="Blog Writer")
-# # permission_list=["add_blogpost","change_blogpost","delete_blogpost","view_blogpost"]
-# BlogGroup.permissions.set(permission)
