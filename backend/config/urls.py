@@ -65,11 +65,16 @@ urlpatterns = [
     path('api/arrondissements_geojson/', views.get_arrondissements_geojson),
     path('api/arrondissements_geojson/<int:arr_number>/',
          views.get_arrondissements_geojson),
+    path('api/arrondissements_map_squares/', views.get_arrondissements_map_squares),
+    path('api/arrondissements_map_squares/<int:arr_number>', views.get_arrondissements_map_squares),
+    # path('api/faster_rcnn_object_detection/<str:object_name>/', views.get_photos_by_object_rcnn),
+    # path('api/model/<str:model_name>/<str:object_name>/', views.get_photos_by_object),
     # path('api/faster_rcnn_object_detection/<str:object_name>/',
     # views.get_photos_by_object_rcnn),
     # path('api/model/<str:model_name>/<str:object_name>/',
     # views.get_photos_by_object),
     path('', views.index),
+    path('map/', views.map_page),
     path('about/', views.about),
     path('search/', views.search_view),
     path('similarity/', views.similarity),
@@ -86,6 +91,7 @@ urlpatterns = [
     path(f'{BLOG_ROOT_URL}/', blog_views.index, name="blog_home"),
     path(f'{BLOG_ROOT_URL}/<str:slug>/', blog_views.blog_post,
          name='blog-detail'),
+
     # log in/out urls
     path('login/', auth_views.LoginView.as_view(template_name='admin/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout')

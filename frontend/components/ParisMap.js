@@ -50,13 +50,15 @@ export class ParisMap extends React.Component {
         // Sorts the map squares by number of photos (ascending order)
         return (
             <div className={this.props.className} id="map-container">
-                <MapContainer
+                <MapContainer key={this.props.scrollWheelZoom}
                     // Initial state of Map
                     center={[
                         this.props.lat ? this.props.lat : 48.858859,
                         this.props.lng ? this.props.lng : 2.3470599
                     ]}
                     zoom={this.props.zoom}
+
+                    scrollWheelZoom={this.props.scrollWheelZoom}
                     style={{
                         width: "100%",
                         height: "100%"
@@ -115,6 +117,7 @@ ParisMap.propTypes = {
     lat: PropTypes.number,
     lng: PropTypes.number,
     zoom: PropTypes.number,
+    scrollWheelZoom: PropTypes.bool,
     layers: PropTypes.object,
     singleLayer: PropTypes.bool,
     layerSelectVisible: PropTypes.bool,
