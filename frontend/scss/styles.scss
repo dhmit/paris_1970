@@ -25,10 +25,13 @@ $footer-height: 150px;
 @import './clusterView';
 @import './analysisView';
 @import './search';
+@import './titleDecorator';
 @import "./blog";
 @import './legend';
 @import './fonts';
 @import './parisMap';
+@import './mapPageView';
+
 
 html {
     position: relative;
