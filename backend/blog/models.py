@@ -33,8 +33,10 @@ class BlogPost(models.Model):
         return ""
 
     def save(self, *args, **kwargs):
-        if not self.slug:
+        if BlogPost.objects.filter(title=self.title).exists():
             date = datetime.datetime.today()
-            self.slug = '%s-%i-%i-%i' % (slugify(self.title), date.year, date.month, date.day)
+            self.slug = '%s-%i-%i-%i' % (slugify(self.title), date.year, date.month,
+                                         date.day)
+        elif not self.slug:
+            self.slug = slugify(self.title)
         super(BlogPost, self).save(*args, **kwargs)
-
