@@ -6,6 +6,7 @@ import TitleDecorator from "../../components/TitleDecorator";
 import Legend from "../../components/Legend";
 import {GeoJSON, Popup, Rectangle} from "react-leaflet";
 import * as PropTypes from "prop-types";
+import {debounce} from "lodash";
 
 function MapPageEntryDecorator() {
     return (<div>
@@ -206,12 +207,17 @@ class MapPage extends React.Component {
         }
 
         this.updateViewport();
-        window.addEventListener("resize", this.updateViewport);
+
+        window.addEventListener("resize",debounce(this.updateViewport(), 300));
+
+
     }
 
     updateViewport() {
         this.setState({isLgViewportUp: window.innerWidth > 992});
     }
+
+
 
     render() {
         if (!this.state.mapData || !this.state.arrondissementData || !this.state.filledMapSquares) {
