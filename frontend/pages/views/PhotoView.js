@@ -443,9 +443,11 @@ export class PhotoView extends PhotoViewer {
                         </div>
 
                         {tagList.map((word) => (
-                            <button className="tag-button" key={word.id}>
-                                {word}
-                            </button>
+                            <a key={"tag"} href={`/tag/${word.toLowerCase()}/`}>
+                                <button className="tag-button" key={word.id}>
+                                    {word}
+                                </button>
+                            </a>
                         ))}
 
                         <br></br><br></br>
