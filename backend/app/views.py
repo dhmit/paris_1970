@@ -126,6 +126,7 @@ def all_map_squares(request):
 def get_photographer(request, photographer_number=None):
     """
     API endpoint to get a photographer based on the photographer_id
+    If given photographer_number, GETs associated photographer, else, returns all
     """
     if photographer_number:
         photographer_obj = Photographer.objects.get(number=photographer_number)
@@ -157,13 +158,15 @@ def all_analyses(request):
 @api_view(['GET'])
 def get_photos_by_analysis(request, analysis_name, object_name=None):
     """
-    API endpoint to get photos sorted by analysis
+    API endpoint to get photos sorted by analysis (specified by analysis_name)
+    Filters photos from analysis by object_name if given
     """
     analysis_obj = PhotoAnalysisResult.objects.filter(name=analysis_name)
     sorted_analysis_obj = analysis_obj
     if len(analysis_obj) > 0:
         test_obj = analysis_obj[0].parsed_result()
         if type(test_obj) in [int, float, bool]:
+            # TODO: is this case possible?
             sorted_analysis_obj = sorted(
                 analysis_obj, key=lambda instance: instance.parsed_result()
             )
@@ -184,9 +187,49 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
 
 
 @api_view(['GET'])
+def get_photos_by_tag(request, tag_name, object_name=None):
+    """
+    TODO: BY CONFIDENCE
+    API endpoint to get all tags associated with a photo (specified by object_name)
+    """
+    # finds yolo_model in PhotoAnalysisResult objects
+    analysis_obj = PhotoAnalysisResult.objects.filter(name='yolo_model')
+    sorted_analysis_obj = analysis_obj
+    if len(analysis_obj) > 0:
+        test_obj = analysis_obj[0].parsed_result()
+        # given tag_name and object_name, both conditions must be met to be a relevant object
+        if isinstance(test_obj, dict) and object_name:
+            relevant_objects = []
+            for instance in analysis_obj:
+                data = instance.parsed_result()
+                if object_name in data and tag_name in data['labels']:
+                    relevant_objects.append(instance)
+            sorted_analysis_obj = sorted(
+                relevant_objects, key=lambda instance: instance.parsed_result()[object_name]
+            )
+        # if not given object_name, return all photo objects with the given tage
+        elif type(test_obj) in [str, list, tuple, dict]:
+            relevant_objects = []
+            for instance in analysis_obj:
+                data = instance.parsed_result()
+                if tag_name in data['labels']:
+                    relevant_objects.append(instance)
+            sorted_analysis_obj = sorted(
+                relevant_objects, key=lambda instance: len(instance.parsed_result())
+            )
+    sorted_photo_obj = [instance.photo for instance in sorted_analysis_obj]
+    serializer = PhotoSerializer(sorted_photo_obj, many=True)
+    return Response(serializer.data)
+
+
+def get_photos_tags(request, map_square_number, photo_number):
+    pass
+
+
+@api_view(['GET'])
 def get_all_photos_in_order(request):
     """
-    API endpoint to get photos sorted by map square
+    API endpoint to get photos sorted by map square, for similarity analysis
     """
     analysis_obj = PhotoAnalysisResult.objects.filter(name="resnet18_cosine_similarity")
     sorted_analysis_obj = sorted(analysis_obj, key=lambda instance: instance.parsed_result())
@@ -198,7 +241,9 @@ def get_all_photos_in_order(request):
 @api_view(['GET'])
 def get_photo_by_similarity(request, map_square_number, photo_number, num_similar_photos):
     """
-    API endpoint to get top 10 similar photos of a specific photo
+    API endpoint to get top similar photos of a specific photo, specified by map_square_number
+    and photo_number
+    Number of similar photos to GET specified by num_similar_photos
     """
 
     photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
@@ -227,6 +272,7 @@ def get_photo_by_similarity(request, map_square_number, photo_number, num_simila
 @api_view(['GET'])
 def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     """
+    TODO: not needed?
     API endpoint to get clusters of similar photos
     """
     cluster = Cluster.objects.get(model_n=number_of_clusters, label=cluster_number)
@@ -270,6 +316,7 @@ def get_analysis_value_ranges(analysis_names):
 def search(request):
     """
     API endpoint to search for photos that match the search query
+    Post request
     """
     # pylint: disable=too-many-locals
     query = json.loads(request.body)
@@ -444,6 +491,9 @@ def index(request):
 
 
 def about(request):
+    """
+    About page
+    """
     context = {
         'page_metadata': {
             'title': 'About'
@@ -466,6 +516,9 @@ def map_page(request):
 
 
 def search_view(request):
+    """
+    Search page
+    """
     context = {
         'page_metadata': {
             'title': 'Search'
@@ -477,6 +530,10 @@ def search_view(request):
 
 
 def similarity(request):
+    """
+    TODO: not needed anymore?
+    Similarity page
+    """
     context = {
         'page_metadata': {
             'title': 'All Photo View'
@@ -488,6 +545,9 @@ def similarity(request):
 
 
 def map_square_view(request, map_square_num):
+    """
+    Map square page, specified by map_square_num
+    """
     context = {
         'page_metadata': {
             'title': 'Map Square View'
@@ -501,6 +561,9 @@ def map_square_view(request, map_square_num):
 
 
 def photographer_view(request, photographer_num):
+    """
+    Photographer page, specified by photographer_num
+    """
     context = {
         'page_metadata': {
             'title': 'Photographer View'
@@ -514,6 +577,9 @@ def photographer_view(request, photographer_num):
 
 
 def photo_view(request, map_square_num, photo_num):
+    """
+    Photo page, specified by map_square_num and photo_num
+    """
     context = {
         'page_metadata': {
             'title': 'Photo View'
@@ -528,6 +594,12 @@ def photo_view(request, map_square_num, photo_num):
 
 
 def similarity_view(request, map_square_num, photo_num, num_similar_photos):
+    """
+    TODO: not needed anymore?
+    Similarity page
+    Returns the top similar photos (number of which specified by num_similar_photos) to
+    the given photo (identified by map_square_num and photo_num)
+    """
     context = {
         'page_metadata': {
             'title': 'Similarity View'
@@ -543,6 +615,10 @@ def similarity_view(request, map_square_num, photo_num, num_similar_photos):
 
 
 def analysis_name_view(request, analysis_name):
+    """
+    TODO: not needed anymore?
+    Analysis page, specified by analysis_name
+    """
     context = {
         'page_metadata': {
             'title': 'Analysis View'
@@ -556,6 +632,11 @@ def analysis_name_view(request, analysis_name):
 
 
 def analysis_view(request, analysis_name, object_name=None):
+    """
+    TODO: not needed anymore?
+    Analysis page, specified by analysis_name
+    If given object_name, analysis will be filtered to match object_name
+    """
     context = {
         'page_metadata': {
             'title': 'Analysis View'
@@ -573,6 +654,10 @@ def analysis_view(request, analysis_name, object_name=None):
 
 
 def all_analysis_view(request):
+    """
+    TODO: not needed anymore?
+    Analysis Page, all analyses
+    """
     context = {
         'page_metadata': {
             'title': 'All Analysis View'
@@ -585,6 +670,9 @@ def all_analysis_view(request):
 
 
 def cluster_view(request, num_of_clusters, cluster_num):
+    """
+    TODO: not needed anymore?
+    """
     context = {
         'page_metadata': {
             'title': 'Cluster View'
@@ -593,6 +681,78 @@ def cluster_view(request, num_of_clusters, cluster_num):
         'component_props': {
             'numberOfClusters': num_of_clusters,
             'clusterNumber': cluster_num
+        }
+    }
+
+    return render_view(request, context)
+
+
+def all_tags_view(request):
+    """
+    Tags Page, all Tags
+    """
+    context = {
+        'page_metadata': {
+            'title': 'All Tags View'
+        },
+        'component_name': 'AllTagsView',
+        'component_props': {}
+    }
+
+    return render_view(request, context)
+
+
+def tag_view(request, tag_name, object_name=None):
+    """
+    Tag page, specified by tag_name
+    If given object_name, tag will be filtered to match object_name
+    """
+    context = {
+        'page_metadata': {
+            'title': 'Tag View'
+        },
+        'component_name': 'TagView',
+        'component_props': {
+            'tagName': tag_name
+        }
+    }
+
+    if object_name:
+        context['component_props']['objectName'] = object_name
+
+    return render_view(request, context)
+
+
+def map_view(request):
+    """
+    Map page
+    """
+
+    context = {
+        'page_metadata': {
+            'title': 'Map View'
+        },
+        'component_name': 'MapView'
+    }
+    return render_view(request, context)
+
+
+def arrondissement_view(request, arron_num=None):
+    """
+    TODO: Decide if needed
+    Arrondissement page, specificed by the given arrondissement number
+    """
+    # all arrondissements
+    if not arron_num:
+        return map_view(request)
+
+    context = {
+        'page_metadata': {
+            'title': 'Arrondissement View'
+        },
+        'component_name': 'ArrondissementView',
+        'component_props': {
+            'arrondissementNumber': arron_num
         }
     }
 
