@@ -166,7 +166,6 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
     if len(analysis_obj) > 0:
         test_obj = analysis_obj[0].parsed_result()
         if type(test_obj) in [int, float, bool]:
-            # TODO: is this case possible?
             sorted_analysis_obj = sorted(
                 analysis_obj, key=lambda instance: instance.parsed_result()
             )
@@ -187,43 +186,48 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
 
 
 @api_view(['GET'])
-def get_photos_by_tag(request, tag_name, object_name=None):
+def get_photos_by_tag(request, tag_name):
     """
-    TODO: BY CONFIDENCE
-    API endpoint to get all tags associated with a photo (specified by object_name)
+    API endpoint to get all photos associated with a tag (specified by tag_name)
     """
     # finds yolo_model in PhotoAnalysisResult objects
     analysis_obj = PhotoAnalysisResult.objects.filter(name='yolo_model')
     sorted_analysis_obj = analysis_obj
     if len(analysis_obj) > 0:
-        test_obj = analysis_obj[0].parsed_result()
-        # given tag_name and object_name, both conditions must be met to be a relevant object
-        if isinstance(test_obj, dict) and object_name:
-            relevant_objects = []
-            for instance in analysis_obj:
-                data = instance.parsed_result()
-                if object_name in data and tag_name in data['labels']:
-                    relevant_objects.append(instance)
-            sorted_analysis_obj = sorted(
-                relevant_objects, key=lambda instance: instance.parsed_result()[object_name]
-            )
-        # if not given object_name, return all photo objects with the given tage
-        elif type(test_obj) in [str, list, tuple, dict]:
-            relevant_objects = []
-            for instance in analysis_obj:
-                data = instance.parsed_result()
-                if tag_name in data['labels']:
-                    relevant_objects.append(instance)
-            sorted_analysis_obj = sorted(
-                relevant_objects, key=lambda instance: len(instance.parsed_result())
-            )
-    sorted_photo_obj = [instance.photo for instance in sorted_analysis_obj]
+        relevant_objects = []
+        for instance in analysis_obj:
+            data = instance.parsed_result()
+            if tag_name in data['labels']:
+                relevant_objects.append(instance)
+        #sort by confidence
+        by_confidence = []
+        for instance in relevant_objects:
+            data = instance.parsed_result()
+            confidence = 0
+            for box in data['boxes']:
+                # an image may have several tag_name in labels, find greatest confidence
+                if box['label'] == tag_name:
+                    confidence = max(confidence, box['confidence'])
+            by_confidence.append((instance, confidence))
+        sorted_analysis_obj = sorted(by_confidence, key=lambda obj: obj[1],
+                                     reverse=True)
+    sorted_photo_obj = [instance[0].photo for instance in sorted_analysis_obj]
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
     return Response(serializer.data)
 
 
+@api_view(['GET'])
 def get_photos_tags(request, map_square_number, photo_number):
-    pass
+    """
+    Given a specific photo, identified by map_square_number and photo_number, outputs the tags
+    identified in that photo
+    """
+    photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
+    analysis_obj = PhotoAnalysisResult.objects.filter(name='yolo_model', photo=photo_obj)
+    if analysis_obj:
+        parsed_obj = analysis_obj[0].parsed_result()
+        tags = [label for label in parsed_obj['labels']]
+        return tags
 
 
 @api_view(['GET'])
@@ -713,7 +717,8 @@ def tag_view(request, tag_name, object_name=None):
         },
         'component_name': 'TagView',
         'component_props': {
-            'tagName': tag_name
+            'tagName': tag_name,
+            'photos': get_photo
         }
     }
 

@@ -33,13 +33,13 @@ const COMPONENTS = {
     About,
     Search,
     PhotoView,
-    SimilarityView,
+    SimilarityView, //NOT NEEDED ANYMORE
     PhotographerView,
     MapSquareView,
-    AllAnalysisView,
-    AnalysisView,
+    AllAnalysisView, //NOT NEEDED ANYMORE
+    AnalysisView, //NOT NEEDED ANYMORE
     AllPhotosView,
-    ClusterView,
+    ClusterView, //NOT NEEDED ANYMORE
     MapPage,
     TagView
 };
