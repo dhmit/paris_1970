@@ -53,7 +53,7 @@ def load_yolo():
     return model
 
 
-def analyze(photo: Photo):
+def analyze(photo: Photo, src_dir=settings.LOCAL_SRCS_DIR):
     """
     Uses yolo model to detect objects within photos
     Returns a dictionary consisting of each object
@@ -62,7 +62,7 @@ def analyze(photo: Photo):
     # pylint: disable=too-many-locals
 
     # Get image and image dimensions
-    input_image = photo.get_image_data()
+    input_image = photo.get_image_data(src_dir=src_dir)
     if input_image is None:
         return {
             "boxes": [],

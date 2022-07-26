@@ -8,9 +8,13 @@ from django.conf import settings
 from django.urls import reverse
 
 import os
+import shutil
+import json
 
-from app.models import Photo, PhotoAnalysisResult, MapSquare, Photographer
+from app.models import Photo, PhotoAnalysisResult, MapSquare, Photographer, Cluster,  \
+    CorpusAnalysisResult
 from app.analysis import yolo_model
+from app.analysis.photo_similarity import resnet18_cosine_similarity, resnet18_feature_vectors
 
 
 class MainAPITests(TestCase):
@@ -23,41 +27,67 @@ class MainAPITests(TestCase):
         Create dummy database entries and corresponding files in TEST_PHOTOS_DIR
         """
         super().setUp()
-        names = ['Bob Frenchman', 'Waddle Dee', 'Kaito KID']
+        names = ["Bob Frenchman", "Waddle Dee", "Kaito KID"]
+
+        # create 2 clusters, 1 CorpusAnalysisResult object
+        Cluster.objects.create(model_n=2, label=0)
+        Cluster.objects.create(model_n=2, label=1)
+        CorpusAnalysisResult.objects.create(name="corpus_analysis_result", result=json.dumps(''))
 
         # create 3 map squares
         for i in range(3):
-            map_square = MapSquare.objects.create(number=i + 1, coordinates='24, 25')
+            map_square = MapSquare.objects.create(number=i + 1, coordinates="24, 25")
             photographer = Photographer.objects.create(map_square=map_square, number=i + 1,
                                                        name=names[i])
-            path = os.path.join(settings.TEST_PHOTOS_DIR, f'{i + 1}')
+            path = os.path.join(settings.TEST_PHOTOS_DIR, f"{i + 1}")
             os.mkdir(path, mode=0o755)
-            # in each map square, create 4 empty photos
+            # in each map square, create 4 empty photos and some PhotoAnalysisResult
+            # objects for each photo, and add photo to either cluster 0 or 1 (photo_number mod 2)
             for j in range(4):
                 photo = Photo.objects.create(number=j + 1, map_square=map_square,
-                                             photographer=photographer)
-                if (i, j) == (1, 2):
-                    # later replace with a non-empty test photo
-                    with open(os.path.join(path, f'{j + 1}_front.jpg'), 'w+') as f:
-                        pass
-                else:
-                    with open(os.path.join(path, f'{j + 1}_front.jpg'), 'w+') as f:
-                        pass
+                                             photographer=photographer, front_src=True)
+                # src_path = os.path.join(settings.TEST_PHOTOS_DIR, "foreground_801_4.jpg")
+                # shutil.copyfile(src_path, os.path.join(path, f"{j + 1}_photo.jpg"))
 
+                with open(os.path.join(path, f"{j + 1}_photo.jpg"), "w+") as f:
+                    pass
+                yolo_result = {"boxes": [{"label": "car", "x_coord": 710, "y_coord": 645,
+                               "width": 135, "height": 82, "confidence": 90}], "labels": {"car": 1}}
+
+                PhotoAnalysisResult.objects.create(name="yolo_model", result=json.dumps(
+                                                   yolo_result), photo=photo)
+                PhotoAnalysisResult.objects.create(name="resnet18_cosine_similarity", result=
+                                                   json.dumps([]),
+                                                   photo=photo)
+                PhotoAnalysisResult.objects.create(name="photo_similarity.resnet18_cosine_"
+                                                        "similarity", result=json.dumps([]),
+                                                        photo=photo)
+                Cluster.objects.get(label=j % 2).photos.add(photo)
         assert MapSquare.objects.count() == 3
         assert Photographer.objects.count() == 3
         assert Photo.objects.count() == 12
-        # print(os.listdir(settings.TEST_PHOTOS_DIR))
 
     def tearDown(self):
         """
         Remove TEST_PHOTOS_DIR files.
         """
         for i in range(3):
-            path = os.path.join(settings.TEST_PHOTOS_DIR, f'{i + 1}', "")
+            path = os.path.join(settings.TEST_PHOTOS_DIR, f"{i + 1}", "")
             for j in range(len(os.listdir(path))):
-                os.remove(os.path.join(path, f'{j + 1}_front.jpg'))
+                os.remove(os.path.join(path, f"{j + 1}_photo.jpg"))
             os.rmdir(path)
+
+    def initTest(self, name, args=[]):
+        """
+        Performs basic GET api call for given parameters and,
+        after checking for success, returns json() version of the response
+        :param name: str
+        :param args: list of arguments for the call
+        :return:
+        """
+        response = self.client.get(reverse(name, args=args))
+        assert response.status_code == 200
+        return response.json()
 
     def add_photo(self, map_square, photo_name_or_path):
         """
@@ -71,124 +101,185 @@ class MainAPITests(TestCase):
             photo_number = 0
 
         # create new file in test directory
-        directory = os.path.join(settings.TEST_PHOTOS_DIR, f'{map_square.number}', "")
+        directory = os.path.join(settings.TEST_PHOTOS_DIR, f"{map_square.number}", "")
         current_photos_in_square = len(os.listdir(directory))
-        path = os.path.join(directory, f'{current_photos_in_square + 1}_front.jpg')
-        print(path)
-        with open(path, 'w+') as f:
+        path = os.path.join(directory, f"{current_photos_in_square + 1}_photo.jpg")
+        with open(path, "w+") as f:
             pass
 
-        # create new entry in database
-        photo = Photo(number=photo_number, map_square=map_square)
-
-        if isinstance(photo_name_or_path, str):
-            photo.front_src = True
-        elif isinstance(photo_name_or_path, Path):
-            photo.front_src = True
-
+        # create new Photo object in database as well as a few PhotoAnalysisResult objects
+        photo = Photo(number=photo_number, map_square=map_square, front_src=True)
         photo.save()
+
+        PhotoAnalysisResult.objects.create(name="yolo_model", result=json.dumps({"boxes": [],
+                                           "labels": {}}), photo=photo)
+        PhotoAnalysisResult.objects.create(name="resnet18_cosine_similarity", result=
+                                           json.dumps([]), photo=photo)
+        PhotoAnalysisResult.objects.create(name="photo_similarity.resnet18_cosine_similarity",
+                                           result=json.dumps([]), photo=photo)
+        Cluster.objects.get(label=photo_number % 2).photos.add(photo)
         return photo
 
     # testing database retrieval
 
     def test_photo_functions(self):
-        photo = self.add_photo(MapSquare.objects.get(number=1), 'example')
+        photo = self.add_photo(MapSquare.objects.get(number=1), "example")
+
         self.assertEqual(photo.has_valid_source(), True)
 
-        # print(photo.get_image_local_filepath(src_dir=settings.TEST_PHOTOS_DIR), 'end')
-        # print(os.listdir(os.path.join(settings.TEST_PHOTOS_DIR, '1')))
+        for photo in Photo.objects.all():
+            self.assertEqual(photo.has_valid_source(), True)
+
+        # print(photo.get_image_local_filepath(src_dir=settings.TEST_PHOTOS_DIR), "end")
+        # (os.listdir(os.path.join(settings.TEST_PHOTOS_DIR, "1")))
 
     def test_get_all_photos(self):
-        response = self.client.get(reverse("all_photos"))
-        assert response.status_code == 200
-
-        res = response.json()
+        res = self.initTest("all_photos")
         assert len(res) == 12
-        assert res[-1]['id'] == 12
+        assert res[-1]["id"] == 12
 
     def test_get_map_squares(self):
         # get all
-        response = self.client.get(reverse('all_map_squares'))
-        assert response.status_code == 200
-
-        res = response.json()
+        res = self.initTest("all_map_squares")
         assert len(res) == 3
-        assert res[-1]['num_photos'] == 4
+        assert res[-1]["num_photos"] == 4
 
         # get one
-        response = self.client.get(reverse('map_square', args=[3]))
-        assert response.status_code
-
-        res2 = response.json()
-        assert {key: res[-1][key] for key in res[-1].keys() if key != 'num_photos'} \
-               == {key: res2[key] for key in res2.keys() if key != 'photos'}
-        assert len(res2['photos']) == 4
+        res2 = self.initTest("map_square", args=[3])
+        assert {key: res[-1][key] for key in res[-1].keys() if key != "num_photos"} \
+               == {key: res2[key] for key in res2.keys() if key != "photos"}
+        assert len(res2["photos"]) == 4
 
     def test_get_one_photo(self):
-        response = self.client.get(reverse("photo", args=[2, 2]))
-        assert response.status_code == 200
-
-        res = response.json()
-        assert res['number'] == 2 and res['map_square_number'] == 2
+        res = self.initTest("photo", args=[2, 2])
+        assert res["number"] == 2 and res["map_square_number"] == 2
 
     def test_get_all_tags(self):
-        names = ['Bob Frenchman', 'Waddle Dee', 'Kaito KID']
-        response = self.client.get(reverse('get_tags'))
-        assert response.status_code == 200
-
-        res = response.json()
-        assert 'person' and 'bicycle' and 'stop sign' in res['tags']
-        assert (name in res['photographers'] for name in names)
+        names = ["Bob Frenchman", "Waddle Dee", "Kaito KID"]
+        res = self.initTest("get_tags")
+        assert "person" and "bicycle" and "stop sign" in res["tags"]
+        assert (name in res["photographers"] for name in names)
 
     def test_get_photographers(self):
-        names = ['Bob Frenchman', 'Waddle Dee', 'Kaito KID']
+        names = ["Bob Frenchman", "Waddle Dee", "Kaito KID"]
         # get all
-        responseall = self.client.get(reverse('all_photographers'))
-        assert responseall.status_code == 200
-
-        resall = responseall.json()
-        photographer_names = [entry['name'] for entry in resall]
+        resall = self.initTest("all_photographers")
+        photographer_names = [entry["name"] for entry in resall]
         assert (name in photographer_names for name in names)
 
         # get one, try 1 2 3
         for i in (1, 2, 3):
-            responseone = self.client.get(reverse('photographer', args=[i]))
-            assert responseone.status_code == 200
-
-            resone = responseone.json()
-            assert len(resone['photos']) == 4
+            resone = self.initTest("photographer", args=[i])
+            assert len(resone["photos"]) == 4
 
     def test_prev_next_photos(self):
         # need to decrease number of tries, currently too many
+        photo = self.add_photo(MapSquare.objects.get(number=1), "example")
+        self.assertEqual(photo.has_valid_source(), True)
+
         for i in range(3):
             for j in range(4):
-                response = self.client.get(reverse('previous_next_photos', args=[i + 1, j + 1]))
-                assert response.status_code == 200
-
-                res = response.json()
+                res = self.initTest("previous_next_photos", args=[i + 1, j + 1])
                 assert len(res) == 2
                 if (i, j) == (0, 0):
-                    assert res[0] == ''
+                    assert res[0] == ""
+
+    def test_get_arrondissement(self):
+        # change num_arrondisements to be the number of arrond in the database as necessary
+        num_arrondissements = 2
+
+        # get all
+        res = self.initTest("get_arrondissement")
+        assert len(res) == num_arrondissements
+
+        # get each
+        for i in range(num_arrondissements):
+            res = self.initTest("get_one_arrondissement", args=[i + 1])
+            assert len(res) == 2
+
+    def test_cluster(self):
+        # test that both clusters return photos that were initially added to to them
+        res = self.initTest("clustering", args=[2, 0])
+        assert len(res) == 6
+        assert (photo['number'] % 2 == 0 for photo in res)
+
+        res = self.initTest("clustering", args=[2, 1])
+        assert len(res) == 6
+        assert (photo['number'] % 2 == 0 for photo in res)
+
+    def test_search(self):
+        def one_search(keyword, isAdvanced=False, data={}):
+            if data == {}:
+                data = {
+                    "keyword": keyword,
+                    "isAdvanced": isAdvanced
+                }
+            response = self.client.post(reverse("search"), json.dumps(data),
+                                content_type="application/json")
+            assert response.status_code == 200
+            return response.json()
+
+        res = one_search(keyword="Bob Frenchman")
+        assert len(res) == 4
+
+        res = one_search(keyword="Waddle Bob")
+        assert len(res) == 0
+
+        res = one_search(keyword="car")
+        assert len(res) == 12
+
+        data = {"photographerName": "Bob Frenchman", 'photographerId': '1', 'caption': '',
+                'tags': ['car'], 'analysisTags': ['yolo_model'], 'sliderSearchValues':
+                {'Object Detection Confidence': (0, 100)}, 'isAdvanced': True}
+        res = one_search(None, True, data)
+        assert len(res) == 4
 
     # testing similarity/analysis functions
 
-    def test_yolo_analysis(self):
-        # TODO: save analyses in PhotoAnalysisResult/Photo, try analyses on non-empty jpgs
-        # Photo object (id) has no front or binder src, check yolo fxn
+    def x_test_yolo_analysis(self):
         for photo in Photo.objects.all():
-            analysis = yolo_model.analyze(photo)
-            # print(analysis)
+            print(photo.number, photo.map_square, photo.photographer)
+            analysis = yolo_model.analyze(photo, src_dir=settings.TEST_PHOTOS_DIR)
+            print(analysis)
+            print(json.dumps(analysis))
 
-    def x_test_all_analyses(self):
-        response = self.client.get(reverse('all_analyses'))
-        assert response.status_code == 200
-        print(response.json())
+    def x_test_resnet18_cos_sim(self):
+        for photo in Photo.objects.all():
+            resnet18_feature_vectors.analyze(photo)
+            analysis = resnet18_cosine_similarity.analyze(photo)
+            print("start", photo, analysis)
 
-    def x_test_similarity(self):
-        # all photos
-        response = self.client.get(reverse('all_photos_in_order'))
-        assert response.status_code == 200
+    def test_all_analyses(self):
+        res = self.initTest("all_analyses")
+        assert all(analysis in res for analysis in ["yolo_model", "resnet18_cosine_similarity",
+                                                    "photo_similarity.resnet18_cosine_similarity"])
 
-        res = (response.json())
+    def test_get_photos_by_analysis(self):
+        # just analysis
+        res = self.initTest("get_photos_by_analysis", args=["yolo_model"])
         assert len(res) == 12
-        
+
+        # analysis and object
+        # TODO: FIGURE OUT IF THIS IS INTENTIONAL OR NOT: when specifiying object in this api
+        #  call, for the yolo model at least, it doesn't take actual objects bc that's one more
+        #  layer into the dictionary, instead takes keys 'boxes' or 'labels'
+        res = self.initTest("get_photos_by_analysis", args=["yolo_model", "boxes"])
+        assert len(res) == 12
+
+    def test_get_corpus_analysis(self):
+        res = self.initTest("get_corpus")
+        assert len(res) == 1
+
+    def test_similarity(self):
+        # all photos by map square, retrieved by resnet18_cosine_similarity
+        res = self.initTest("all_photos_in_order")
+        assert len(res) == 12
+
+    def test_similar_photos(self):
+        # supposed to pull top 10 similar photos from list saved in "photo_similarity
+        # .resnet18_cosine_similarity" PhotoAnalysisObject for given photo. Here, returns an
+        # empty list since aforementioned object is empty
+        res = self.initTest("similar_photos", args=[1, 1, 10])
+        assert res == []
+
+

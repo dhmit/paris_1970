@@ -60,7 +60,6 @@ class Photo(models.Model):
         if not (self.cleaned_src or self.front_src):
             print(f'{self} has no front or binder src')
             return None
-
         source = os.path.join(
             src_dir,
             str(self.map_square.number),
@@ -99,7 +98,7 @@ class Photo(models.Model):
         source = os.path.join(
             src_dir,
             str(self.map_square.number),
-            f"{self.number}_{source_type}.jpg"
+            f"{self.number}_photo.jpg"
         )
         if source:
             return source
