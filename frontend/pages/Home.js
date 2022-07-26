@@ -10,6 +10,7 @@ import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../components/ParisMa
 import LoadingPage from "./LoadingPage";
 import Legend from "../components/Legend";
 
+import from "../../backend/scripts"
 
 function densityOverlay(mapData) {
     const sortedMapData = Object.values(mapData)
@@ -96,8 +97,10 @@ export class HomePage extends React.Component {
 
     async componentDidMount() {
         try {
-            const mapResponse = await fetch("/api/all_map_squares/");
-            const mapData = await mapResponse.json();
+            /*const mapResponse = await fetch("/api/all_map_squares/");
+            const mapData = await mapResponse.json();*/
+
+            const mapData =
 
 
             for (const mapSquare of mapData) {

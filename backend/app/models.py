@@ -15,6 +15,21 @@ from django.db import models
 from django.conf import settings
 
 
+class MapSquare(models.Model):
+    """
+    This model contains data about a specific Map Square, which includes its name,
+    a list of foreign keys to all the Photos that are in this Map Square, and
+    the boundary of this Map Square.
+    """
+    name = models.CharField(max_length=252)
+    number = models.IntegerField(null=True)
+    boundaries = models.CharField(max_length=252)
+    coordinates = models.CharField(max_length=252)
+
+    class Meta:
+        app_label = 'user_app'
+
+
 class Photo(models.Model):
     """
     This model holds the metadata for a single photo, which includes the
@@ -80,18 +95,7 @@ class Photo(models.Model):
 
     class Meta:
         unique_together = ['number', 'map_square']
-
-
-class MapSquare(models.Model):
-    """
-    This model contains data about a specific Map Square, which includes its name,
-    a list of foreign keys to all the Photos that are in this Map Square, and
-    the boundary of this Map Square.
-    """
-    name = models.CharField(max_length=252)
-    number = models.IntegerField(null=True)
-    boundaries = models.CharField(max_length=252)
-    coordinates = models.CharField(max_length=252)
+        app_label = 'user_app'
 
 
 class Photographer(models.Model):
@@ -104,6 +108,9 @@ class Photographer(models.Model):
     map_square = models.ForeignKey(MapSquare, on_delete=models.SET_NULL, null=True)
     type = models.CharField(max_length=252, null=True)
     sentiment = models.CharField(max_length=252, null=True)
+
+    class Meta:
+        app_label = 'user_app'
 
 
 class AnalysisResult(models.Model):
@@ -122,6 +129,7 @@ class AnalysisResult(models.Model):
         # Make this an abstract base class, which means that Django won't create a database
         # table for this model -- it's only here as a base class for classes below
         abstract = True
+        app_label = 'user_app'
 
 
 class CorpusAnalysisResult(AnalysisResult):
@@ -166,3 +174,4 @@ class Cluster(models.Model):
 
     class Meta:
         unique_together = ['model_n', 'label']
+        app_label = 'user_app'

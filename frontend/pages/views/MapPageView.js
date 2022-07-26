@@ -139,6 +139,7 @@ class MapPage extends React.Component {
         try {
             const mapResponse = await fetch("/api/all_map_squares/");
             const mapData = await mapResponse.json();
+            console.log(mapData);
 
 
             for (const mapSquare of mapData) {

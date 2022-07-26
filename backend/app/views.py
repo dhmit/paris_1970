@@ -6,6 +6,9 @@ import json
 import os
 import math
 
+import sys
+#print(sys.path)
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
