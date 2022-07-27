@@ -706,10 +706,9 @@ def all_tags_view(request):
     return render_view(request, context)
 
 
-def tag_view(request, tag_name, object_name=None):
+def tag_view(request, tag_name):
     """
     Tag page, specified by tag_name
-    If given object_name, tag will be filtered to match object_name
     """
     context = {
         'page_metadata': {
@@ -718,12 +717,8 @@ def tag_view(request, tag_name, object_name=None):
         'component_name': 'TagView',
         'component_props': {
             'tagName': tag_name,
-            'photos': get_photo
         }
     }
-
-    if object_name:
-        context['component_props']['objectName'] = object_name
 
     return render_view(request, context)
 
