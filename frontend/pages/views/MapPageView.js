@@ -13,7 +13,8 @@ function MapPageEntryDecorator() {
             <Container id="map-page-title">
                 <Row>
                     <Col>
-                        <TitleDecorator id="site-decorator" top={22} left={-1.5} decorator_type={"title-decorator"}/>
+                        <TitleDecorator id="site-decorator" top={22} left={-1.5}
+                                        decorator_type={"title-decorator"}/>
                         <h2>Map</h2>
                     </Col>
                 </Row>
@@ -122,7 +123,6 @@ function arrondissementsOverlay(data) {
 }
 
 
-
 class MapPage extends React.Component {
     constructor(props) {
         super(props);
@@ -208,7 +208,7 @@ class MapPage extends React.Component {
 
         this.updateViewport();
 
-        window.addEventListener("resize",debounce(this.updateViewport(), 300));
+        window.addEventListener("resize", debounce(this.updateViewport(), 300));
 
 
     }
@@ -216,7 +216,6 @@ class MapPage extends React.Component {
     updateViewport() {
         this.setState({isLgViewportUp: window.innerWidth > 992});
     }
-
 
 
     render() {
