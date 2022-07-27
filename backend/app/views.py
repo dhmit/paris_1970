@@ -716,7 +716,7 @@ def tag_view(request, tag_name):
         },
         'component_name': 'TagView',
         'component_props': {
-            'tagName': tag_name,
+            'tagName': tag_name
         }
     }
 

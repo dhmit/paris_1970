@@ -11,7 +11,7 @@ import {Dropdown, OverlayTrigger, Popover} from "react-bootstrap";
 import ExpandIcon from "../../images/expand.svg";
 import QuestionIcon from "../../images/question.svg";
 
-let tagList = ["Construction", "People", "Building"];
+let tagList = ["Bicycle", "Stop Sign", "Cow"];
 
 export class FindVanishingPointDisplayWidget extends React.Component {
     render() {

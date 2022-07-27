@@ -2,8 +2,9 @@ import React from "react";
 import ParisMap from "../components/ParisMap";
 import LoadingPage from "./LoadingPage";
 import * as PropTypes from "prop-types";
+import PhotoViewer from "../components/PhotoViewer";
 
-class Tags extends React.Component {
+class Tags extends PhotoViewer {
     constructor(props) {
         super(props);
         this.state = {
@@ -29,6 +30,15 @@ class Tags extends React.Component {
         }
     }
 
+    formatTag(tagName) {
+        let array = tagName.split(" ");
+        for (let i = 0; i < array.length; i++) {
+            array[i] = array[i].charAt(0).toUpperCase() + array[i].slice(1);
+        }
+        let result = array.join(" ");
+        return result;
+    }
+
     render() {
         if (this.state.loading) {
             return (<LoadingPage/>);
@@ -40,13 +50,14 @@ class Tags extends React.Component {
             </>);
         }
         const tag = this.props.tagName;
+        const photos = this.state.tagData;
 
         return (<>
             <div className="row">
                 <div className="tag-info col-12 col-lg-5">
                     <p style={{fontSize: "30px", fontWeight: "600"}}>Photographs tagged</p>
-                    <p style={{color: "#FB2F2A",fontSize: "40px", fontWeight: "800"}}>{tag.charAt(0).toUpperCase() +
-                        tag.slice(1)}</p>
+                    <p style={{color: "#FB2F2A",fontSize: "40px", fontWeight: "800"}}>{this.formatTag(tag)}</p>
+                    <>{this.getPhotoGrid(photos, {"photoSize": [120, 120]})}</>
                 </div>
                 <div className="tag-map col-12 col-lg-7">
                     <ParisMap
