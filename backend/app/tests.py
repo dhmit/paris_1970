@@ -11,7 +11,7 @@ import os
 import shutil
 import json
 
-from app.models import Photo, PhotoAnalysisResult, MapSquare, Photographer, Cluster,  \
+from app.models import Photo, PhotoAnalysisResult, MapSquare, Photographer, Cluster, \
     CorpusAnalysisResult
 from app.analysis import yolo_model
 from app.analysis.photo_similarity import resnet18_cosine_similarity, resnet18_feature_vectors
@@ -52,16 +52,17 @@ class MainAPITests(TestCase):
                 with open(os.path.join(path, f"{j + 1}_photo.jpg"), "w+") as f:
                     pass
                 yolo_result = {"boxes": [{"label": "car", "x_coord": 710, "y_coord": 645,
-                               "width": 135, "height": 82, "confidence": 90}], "labels": {"car": 1}}
+                                          "width": 135, "height": 82, "confidence": 90}],
+                               "labels": {"car": 1}}
 
                 PhotoAnalysisResult.objects.create(name="yolo_model", result=json.dumps(
-                                                   yolo_result), photo=photo)
+                    yolo_result), photo=photo)
                 PhotoAnalysisResult.objects.create(name="resnet18_cosine_similarity", result=
-                                                   json.dumps([]),
+                json.dumps([]),
                                                    photo=photo)
                 PhotoAnalysisResult.objects.create(name="photo_similarity.resnet18_cosine_"
                                                         "similarity", result=json.dumps([]),
-                                                        photo=photo)
+                                                   photo=photo)
                 Cluster.objects.get(label=j % 2).photos.add(photo)
         assert MapSquare.objects.count() == 3
         assert Photographer.objects.count() == 3
@@ -112,9 +113,10 @@ class MainAPITests(TestCase):
         photo.save()
 
         PhotoAnalysisResult.objects.create(name="yolo_model", result=json.dumps({"boxes": [],
-                                           "labels": {}}), photo=photo)
+                                                                                 "labels": {}}),
+                                           photo=photo)
         PhotoAnalysisResult.objects.create(name="resnet18_cosine_similarity", result=
-                                           json.dumps([]), photo=photo)
+        json.dumps([]), photo=photo)
         PhotoAnalysisResult.objects.create(name="photo_similarity.resnet18_cosine_similarity",
                                            result=json.dumps([]), photo=photo)
         Cluster.objects.get(label=photo_number % 2).photos.add(photo)
@@ -215,7 +217,7 @@ class MainAPITests(TestCase):
                     "isAdvanced": isAdvanced
                 }
             response = self.client.post(reverse("search"), json.dumps(data),
-                                content_type="application/json")
+                                        content_type="application/json")
             assert response.status_code == 200
             return response.json()
 
@@ -230,7 +232,7 @@ class MainAPITests(TestCase):
 
         data = {"photographerName": "Bob Frenchman", 'photographerId': '1', 'caption': '',
                 'tags': ['car'], 'analysisTags': ['yolo_model'], 'sliderSearchValues':
-                {'Object Detection Confidence': (0, 100)}, 'isAdvanced': True}
+                    {'Object Detection Confidence': (0, 100)}, 'isAdvanced': True}
         res = one_search(None, True, data)
         assert len(res) == 4
 
@@ -281,5 +283,3 @@ class MainAPITests(TestCase):
         # empty list since aforementioned object is empty
         res = self.initTest("similar_photos", args=[1, 1, 10])
         assert res == []
-
-
