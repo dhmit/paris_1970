@@ -1,18 +1,15 @@
-import math
 import os
-import subprocess
 import sys
-from tqdm import tqdm
 import csv
-
-
-# the function should take in a source directory and a destination directory
+import math
+import subprocess
+from tqdm import tqdm
 
 def rename(source_dir, destination_dir, commands=None):
     count = 1
 
     """
-       Python script for file renaming
+    Python script for file renaming
 
        :param source_dir: (str) path to directory containing images
                [ex. 'Users/bob/Desktop/']
