@@ -101,6 +101,7 @@ class Photographer(models.Model):
     """
     name = models.CharField(max_length=252)
     number = models.IntegerField(null=True)
+    approx_loc = models.CharField(max_length=252, null=True, blank=True)
     map_square = models.ForeignKey(MapSquare, on_delete=models.SET_NULL, null=True)
     type = models.CharField(max_length=252, null=True)
     sentiment = models.CharField(max_length=252, null=True)

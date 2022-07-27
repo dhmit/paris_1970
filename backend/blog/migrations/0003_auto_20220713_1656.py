@@ -5,7 +5,6 @@ import taggit.managers
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('taggit', '0005_auto_20220424_2025'),
         ('blog', '0002_alter_blogpost_slug'),
@@ -15,11 +14,15 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='blogpost',
             name='tags',
-            field=taggit.managers.TaggableManager(help_text='A comma-separated list of tags.', through='taggit.TaggedItem', to='taggit.Tag', verbose_name='Tags'),
+            field=taggit.managers.TaggableManager(help_text='A comma-separated list of tags.',
+                                                  through='taggit.TaggedItem', to='taggit.Tag',
+                                                  verbose_name='Tags'),
         ),
         migrations.AlterField(
             model_name='blogpost',
             name='slug',
-            field=models.SlugField(blank=True, help_text='Auto generated from title field if not defined.', max_length=100, null=True),
+            field=models.SlugField(blank=True,
+                                   help_text='Auto generated from title field if not defined.',
+                                   max_length=100, null=True),
         ),
     ]

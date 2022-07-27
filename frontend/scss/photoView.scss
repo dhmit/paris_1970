@@ -217,6 +217,22 @@ rect {
     right: 0;
     margin-top: .5em;
     margin-bottom: .5em;
+    cursor: pointer;
+
+    &:hover {
+        background-color: lightgrey;
+        transition-duration: .2s;
+    }
+}
+
+.photo-modal-body {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.photo-popup {
+    height: 100%
 }
 
 .info-button {
@@ -224,4 +240,11 @@ rect {
     border: none;
     display: inline-flex;
     align-items: flex-start;
+}
+
+.similar-photos-header {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    align-items: center;
 }
