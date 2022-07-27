@@ -8,7 +8,6 @@ from django.conf import settings
 from django.urls import reverse
 
 import os
-import shutil
 import json
 
 from app.models import Photo, PhotoAnalysisResult, MapSquare, Photographer, Cluster, \
@@ -26,7 +25,6 @@ class MainAPITests(TestCase):
         """
         Create dummy database entries and corresponding files in TEST_PHOTOS_DIR
         """
-        super().setUp()
         names = ["Bob Frenchman", "Waddle Dee", "Kaito KID"]
 
         # create 2 clusters, 1 CorpusAnalysisResult object
@@ -46,8 +44,6 @@ class MainAPITests(TestCase):
             for j in range(4):
                 photo = Photo.objects.create(number=j + 1, map_square=map_square,
                                              photographer=photographer, front_src=True)
-                # src_path = os.path.join(settings.TEST_PHOTOS_DIR, "foreground_801_4.jpg")
-                # shutil.copyfile(src_path, os.path.join(path, f"{j + 1}_photo.jpg"))
 
                 with open(os.path.join(path, f"{j + 1}_photo.jpg"), "w+") as f:
                     pass
@@ -131,9 +127,6 @@ class MainAPITests(TestCase):
 
         for photo in Photo.objects.all():
             self.assertEqual(photo.has_valid_source(), True)
-
-        # print(photo.get_image_local_filepath(src_dir=settings.TEST_PHOTOS_DIR), "end")
-        # (os.listdir(os.path.join(settings.TEST_PHOTOS_DIR, "1")))
 
     def test_get_all_photos(self):
         res = self.initTest("all_photos")
@@ -237,19 +230,6 @@ class MainAPITests(TestCase):
         assert len(res) == 4
 
     # testing similarity/analysis functions
-
-    def x_test_yolo_analysis(self):
-        for photo in Photo.objects.all():
-            print(photo.number, photo.map_square, photo.photographer)
-            analysis = yolo_model.analyze(photo, src_dir=settings.TEST_PHOTOS_DIR)
-            print(analysis)
-            print(json.dumps(analysis))
-
-    def x_test_resnet18_cos_sim(self):
-        for photo in Photo.objects.all():
-            resnet18_feature_vectors.analyze(photo)
-            analysis = resnet18_cosine_similarity.analyze(photo)
-            print("start", photo, analysis)
 
     def test_all_analyses(self):
         res = self.initTest("all_analyses")

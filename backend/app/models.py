@@ -57,9 +57,6 @@ class Photo(models.Model):
 
         TODO: implement as_gray for use_pillow
         """
-        if not (self.cleaned_src or self.front_src):
-            print(f'{self} has no front or binder src')
-            return None
         source = os.path.join(
             src_dir,
             str(self.map_square.number),
