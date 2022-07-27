@@ -6,8 +6,6 @@ import subprocess
 from tqdm import tqdm
 
 def rename(source_dir, destination_dir, commands=None):
-    count = 1
-
     """
     Python script for file renaming
 
@@ -18,7 +16,7 @@ def rename(source_dir, destination_dir, commands=None):
        :return: None, output produced in new directory
 
     """
-
+    count = 1
     command_str = ''
     for i in commands:
         command_str += i + ' '
