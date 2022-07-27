@@ -2,7 +2,7 @@
  * Common.js -- miscellaneous routines useful throughout the system
  */
 
-import * as d3 from 'd3';
+import * as d3 from "d3";
 
 
 /**
@@ -12,12 +12,12 @@ import * as d3 from 'd3';
  */
 export function getCookie(name) {
     let cookieValue;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
         for (const rawCookie of cookies) {
             const cookie = rawCookie.trim();
             // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            if (cookie.substring(0, name.length + 1) === (name + "=")) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
             }
@@ -41,8 +41,8 @@ export function projectFeaturesCreateSVGPaths(geoJSON, width = 800, height = 800
             [0, 0],
             [
                 width,
-                height,
-            ],
+                height
+            ]
         ],
         geoJSON);
     const geoGenerator = d3.geoPath().projection(projection);
@@ -51,9 +51,17 @@ export function projectFeaturesCreateSVGPaths(geoJSON, width = 800, height = 800
     for (const feature of geoJSON.features) {
         const svgPath = geoGenerator(feature.geometry);
         const iso = feature.properties.ISO_A3;
-        const { name } = feature.properties;
-        mapData.push({ svg_path: svgPath, name, iso });
+        const {name} = feature.properties;
+        mapData.push({svg_path: svgPath, name, iso});
     }
     return mapData;
+}
+
+export function debounce(func, timeout = 300){
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {func.apply(this, args);}, timeout);
+    };
 }
 

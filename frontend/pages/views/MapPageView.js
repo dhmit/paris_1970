@@ -6,7 +6,7 @@ import TitleDecorator from "../../components/TitleDecorator";
 import Legend from "../../components/Legend";
 import {GeoJSON, Popup, Rectangle} from "react-leaflet";
 import * as PropTypes from "prop-types";
-import {debounce} from "lodash";
+import {debounce} from "../../common";
 
 function MapPageEntryDecorator() {
     return (<div>
@@ -208,7 +208,7 @@ class MapPage extends React.Component {
 
         this.updateViewport();
 
-        window.addEventListener("resize", debounce(this.updateViewport(), 300));
+        window.addEventListener("resize", debounce(this.updateViewport()));
 
 
     }
