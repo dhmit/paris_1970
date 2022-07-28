@@ -1,7 +1,6 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
 import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
@@ -494,7 +493,6 @@ export class PhotoView extends PhotoViewer {
                     </div>
                 </div>
             </div>
-            <Footer/>
         </>);
     }
 }
