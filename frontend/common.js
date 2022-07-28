@@ -35,9 +35,9 @@ export function projectFeaturesCreateSVGPaths(geoJSON, width = 800, height = 800
     const center = [2, 15];
 
     const projection = d3.geoMercator()
-        .center(center)
-        // fitExtent documentation can be found here https://github.com/d3/d3-geo#projection_fitExtent
-        .fitExtent([
+    .center(center)
+    // fitExtent documentation can be found here https://github.com/d3/d3-geo#projection_fitExtent
+    .fitExtent([
             [0, 0],
             [
                 width,
@@ -45,23 +45,30 @@ export function projectFeaturesCreateSVGPaths(geoJSON, width = 800, height = 800
             ]
         ],
         geoJSON);
-    const geoGenerator = d3.geoPath().projection(projection);
+    const geoGenerator = d3.geoPath()
+    .projection(projection);
 
     const mapData = [];
     for (const feature of geoJSON.features) {
         const svgPath = geoGenerator(feature.geometry);
         const iso = feature.properties.ISO_A3;
         const {name} = feature.properties;
-        mapData.push({svg_path: svgPath, name, iso});
+        mapData.push({
+            svg_path: svgPath,
+            name,
+            iso
+        });
     }
     return mapData;
 }
 
-export function debounce(func, timeout = 300){
+export function debounce(func, timeout = 300) {
     let timer;
     return (...args) => {
         clearTimeout(timer);
-        timer = setTimeout(() => {func.apply(this, args);}, timeout);
+        timer = setTimeout(() => {
+            func.apply(this, args);
+        }, timeout);
     };
 }
 

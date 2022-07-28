@@ -208,7 +208,7 @@ class MapPage extends React.Component {
 
         this.updateViewport();
 
-        window.addEventListener("resize", debounce(()=>this.updateViewport(),250));
+        window.addEventListener("resize", debounce(() => this.updateViewport(), 250));
 
 
     }
