@@ -34,19 +34,19 @@ rect {
     font-size: 20px;
 }
 
-.boxGroup {
+.box-gZroup {
     opacity: 0;
 }
 
-.boxGroup rect {
+.box-gZroup rect {
     pointer-events: all;
 }
 
-.boxGroup:hover {
+.box-gZroup:hover {
     opacity: 1;
 }
 
-.boxGroup rect:hover {
+.box-gZroup rect:hover {
     fill: blueviolet !important;
     fill-opacity: 0.25;
 }
@@ -98,6 +98,14 @@ rect {
     padding: 0.1em 0.5em;
     background-color: white;
     margin-top: .6em;
+
+    &:last-child {
+        margin-left: -.2em;
+    }
+
+    &:hover {
+        background-color: $color-turquoise !important;
+    }
 }
 
 .side-button:hover {
@@ -108,7 +116,7 @@ rect {
     font-size: 16px;
     border: .08em solid $color-orange;
     padding: .125em 1em;
-    margin: 0.5em 0.75em 1em 0em;
+    margin: 0.25em;
     background-color: white;
 }
 
@@ -148,6 +156,9 @@ rect {
     position: relative;
     padding: 1em;
     background-color: black;
+    &.slide {
+        background-color: $color-turquoise-light;
+    }
 }
 
 .slider-photo {
@@ -219,7 +230,7 @@ rect {
     margin-bottom: .5em;
     cursor: pointer;
 
-    &:hover {
+    &:hover, &:focus {
         background-color: lightgrey;
         transition-duration: .2s;
     }
