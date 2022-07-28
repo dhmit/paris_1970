@@ -208,18 +208,20 @@ class MapPage extends React.Component {
 
         this.updateViewport();
 
-        window.addEventListener("resize", debounce(this.updateViewport()));
+        window.addEventListener("resize", debounce(()=>this.updateViewport(),250));
 
 
     }
 
     updateViewport() {
         this.setState({isLgViewportUp: window.innerWidth > 992});
+
     }
 
 
     render() {
-        if (!this.state.mapData || !this.state.arrondissementData || !this.state.filledMapSquares) {
+        if (!this.state.mapData || !this.state.arrondissementData || !this.state.filledMapSquares ||
+            this.state.isLgViewportUp === null) {
             return (<LoadingPage/>);
         }
         const isLgViewportUp = !!this.state.isLgViewportUp;
