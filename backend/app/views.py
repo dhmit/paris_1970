@@ -533,21 +533,6 @@ def search_view(request):
     return render_view(request, context)
 
 
-def similarity(request):
-    """
-    TODO: not needed anymore?
-    Similarity page
-    """
-    context = {
-        'page_metadata': {
-            'title': 'All Photo View'
-        },
-        'component_name': 'AllPhotosView'
-    }
-
-    return render_view(request, context)
-
-
 def map_square_view(request, map_square_num):
     """
     Map square page, specified by map_square_num
@@ -597,115 +582,6 @@ def photo_view(request, map_square_num, photo_num):
     return render_view(request, context)
 
 
-def similarity_view(request, map_square_num, photo_num, num_similar_photos):
-    """
-    TODO: not needed anymore?
-    Similarity page
-    Returns the top similar photos (number of which specified by num_similar_photos) to
-    the given photo (identified by map_square_num and photo_num)
-    """
-    context = {
-        'page_metadata': {
-            'title': 'Similarity View'
-        },
-        'component_name': 'SimilarityView',
-        'component_props': {
-            'mapSquareNumber': map_square_num,
-            'photoNumber': photo_num,
-            'numSimilarPhotos': num_similar_photos
-        }
-    }
-    return render_view(request, context)
-
-
-def analysis_name_view(request, analysis_name):
-    """
-    TODO: not needed anymore?
-    Analysis page, specified by analysis_name
-    """
-    context = {
-        'page_metadata': {
-            'title': 'Analysis View'
-        },
-        'component_name': 'AnalysisView',
-        'component_props': {
-            'analysisName': analysis_name
-        }
-    }
-    return render_view(request, context)
-
-
-def analysis_view(request, analysis_name, object_name=None):
-    """
-    TODO: not needed anymore?
-    Analysis page, specified by analysis_name
-    If given object_name, analysis will be filtered to match object_name
-    """
-    context = {
-        'page_metadata': {
-            'title': 'Analysis View'
-        },
-        'component_name': 'AnalysisView',
-        'component_props': {
-            'analysisName': analysis_name
-        }
-    }
-
-    if object_name:
-        context['component_props']['objectName'] = object_name
-
-    return render_view(request, context)
-
-
-def all_analysis_view(request):
-    """
-    TODO: not needed anymore?
-    Analysis Page, all analyses
-    """
-    context = {
-        'page_metadata': {
-            'title': 'All Analysis View'
-        },
-        'component_name': 'AllAnalysisView',
-        'component_props': {}
-    }
-
-    return render_view(request, context)
-
-
-def cluster_view(request, num_of_clusters, cluster_num):
-    """
-    TODO: not needed anymore?
-    """
-    context = {
-        'page_metadata': {
-            'title': 'Cluster View'
-        },
-        'component_name': 'ClusterView',
-        'component_props': {
-            'numberOfClusters': num_of_clusters,
-            'clusterNumber': cluster_num
-        }
-    }
-
-    return render_view(request, context)
-
-
-def all_tags_view(request):
-    """
-    Tags Page, all Tags
-    """
-    context = {
-        'page_metadata': {
-            'title': 'All Tags View'
-        },
-        'component_name': 'AllTagsView',
-        'component_props': {}
-    }
-
-    return render_view(request, context)
-
-
 def tag_view(request, tag_name):
     """
     Tag page, specified by tag_name
@@ -722,38 +598,3 @@ def tag_view(request, tag_name):
 
     return render_view(request, context)
 
-
-def map_view(request):
-    """
-    Map page
-    """
-
-    context = {
-        'page_metadata': {
-            'title': 'Map View'
-        },
-        'component_name': 'MapView'
-    }
-    return render_view(request, context)
-
-
-def arrondissement_view(request, arron_num=None):
-    """
-    TODO: Decide if needed
-    Arrondissement page, specificed by the given arrondissement number
-    """
-    # all arrondissements
-    if not arron_num:
-        return map_view(request)
-
-    context = {
-        'page_metadata': {
-            'title': 'Arrondissement View'
-        },
-        'component_name': 'ArrondissementView',
-        'component_props': {
-            'arrondissementNumber': arron_num
-        }
-    }
-
-    return render_view(request, context)

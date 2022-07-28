@@ -9,13 +9,8 @@ import Base from "./Base";
 
 import {HomePage} from "./pages/Home";
 import {PhotoView} from "./pages/views/PhotoView";
-import {SimilarityView} from "./pages/views/SimilarityView";
 import {PhotographerView} from "./pages/views/PhotographerView";
 import {MapSquareView} from "./pages/views/MapSquareView";
-import {AnalysisView} from "./pages/views/AnalysisView";
-import {AllAnalysisView} from "./pages/views/AllAnalysisView";
-import {AllPhotosView} from "./pages/views/AllPhotosView";
-import {ClusterView} from "./pages/views/ClusterView";
 import {Search} from "./pages/Search";
 import About from "./pages/About";
 import MapPage from "./pages/views/MapPageView";
@@ -33,13 +28,8 @@ const COMPONENTS = {
     About,
     Search,
     PhotoView,
-    SimilarityView, //NOT NEEDED ANYMORE
     PhotographerView,
     MapSquareView,
-    AllAnalysisView, //NOT NEEDED ANYMORE
-    AnalysisView, //NOT NEEDED ANYMORE
-    AllPhotosView,
-    ClusterView, //NOT NEEDED ANYMORE
     MapPage,
     TagView
 };
