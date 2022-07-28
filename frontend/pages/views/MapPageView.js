@@ -6,14 +6,15 @@ import TitleDecorator from "../../components/TitleDecorator";
 import Legend from "../../components/Legend";
 import {GeoJSON, Popup, Rectangle} from "react-leaflet";
 import * as PropTypes from "prop-types";
-import {debounce} from "lodash";
+import {debounce} from "../../common";
 
 function MapPageEntryDecorator() {
     return (<div>
             <Container id="map-page-title">
                 <Row>
                     <Col>
-                        <TitleDecorator id="site-decorator" top={22} left={-1.5} decorator_type={"title-decorator"}/>
+                        <TitleDecorator id="site-decorator" top={22} left={-1.5}
+                                        decorator_type={"title-decorator"}/>
                         <h2>Map</h2>
                     </Col>
                 </Row>
@@ -122,7 +123,6 @@ function arrondissementsOverlay(data) {
 }
 
 
-
 class MapPage extends React.Component {
     constructor(props) {
         super(props);
@@ -208,19 +208,20 @@ class MapPage extends React.Component {
 
         this.updateViewport();
 
-        window.addEventListener("resize",debounce(this.updateViewport(), 300));
+        window.addEventListener("resize", debounce(() => this.updateViewport(), 250));
 
 
     }
 
     updateViewport() {
         this.setState({isLgViewportUp: window.innerWidth > 992});
+
     }
 
 
-
     render() {
-        if (!this.state.mapData || !this.state.arrondissementData || !this.state.filledMapSquares) {
+        if (!this.state.mapData || !this.state.arrondissementData || !this.state.filledMapSquares ||
+            this.state.isLgViewportUp === null) {
             return (<LoadingPage/>);
         }
         const isLgViewportUp = !!this.state.isLgViewportUp;
