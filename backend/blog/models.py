@@ -2,11 +2,11 @@ from django.db import models
 from tinymce import models as tinymce_models
 from django.contrib.flatpages.models import FlatPage
 from django.contrib.auth.models import User, Group
-from django.template.defaultfilters import slugify
 from taggit.managers import TaggableManager
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
+from django import forms
 
 import datetime
 
@@ -16,9 +16,9 @@ class BlogPost(models.Model):
     title = models.CharField(max_length=200, null=False, blank=False)
     subtitle = models.CharField(max_length=1000)
     slug = models.SlugField(
-        max_length=100, blank=True, null=True, unique=True, help_text=_("Auto generated from title "
-                                                                        "field and date "
-                                                                        "if not defined.")
+        max_length=100, blank=True, null=True, help_text=_("Auto generated from title "
+                                                           "field and date "
+                                                           "if not defined.")
     )
     content = tinymce_models.HTMLField()
     tags = TaggableManager(blank=True)
@@ -32,11 +32,25 @@ class BlogPost(models.Model):
         # TODO
         return ""
 
-    def save(self, *args, **kwargs):
-        if BlogPost.objects.filter(title=self.title).exists():
+
+class BlogPostAdminForm(forms.ModelForm):
+    class Meta:
+        model = BlogPost
+        fields = ['author', 'title', 'subtitle', 'slug', 'content', 'tags', 'published',
+                  'featured']
+
+    def clean(self):
+
+        title = self.cleaned_data["title"]
+        slug = self.cleaned_data['slug']
+
+        if BlogPost.objects.filter(title=title).exists():
             date = datetime.datetime.today()
-            self.slug = '%s-%i-%i-%i' % (slugify(self.title), date.year, date.month,
-                                         date.day)
-        elif not self.slug:
-            self.slug = slugify(self.title)
-        super(BlogPost, self).save(*args, **kwargs)
+            self.cleaned_data['slug'] = '%s-%i-%i-%i' % (slug, date.year, date.month,
+                                                         date.day)
+
+        slug = self.cleaned_data['slug']
+        if BlogPost.objects.filter(slug=slug).exists():
+            raise forms.ValidationError({'slug': 'Slug already exists. Enter unique slug'})
+
+        return self.cleaned_data
