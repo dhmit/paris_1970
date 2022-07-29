@@ -53,7 +53,7 @@ def load_yolo():
     return model
 
 
-def analyze(photo: Photo, src_dir=settings.LOCAL_SRCS_DIR):
+def analyze(photo: Photo, src_dir=settings.LOCAL_PHOTOS_DIR):
     """
     Uses yolo model to detect objects within photos
     Returns a dictionary consisting of each object

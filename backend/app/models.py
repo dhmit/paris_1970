@@ -45,7 +45,7 @@ class Photo(models.Model):
         return (self.cleaned_src or
                 self.front_src)
 
-    def get_image_data(self, as_gray=False, use_pillow=False, src_dir=settings.LOCAL_SRCS_DIR):
+    def get_image_data(self, as_gray=False, use_pillow=False, src_dir=settings.LOCAL_PHOTOS_DIR):
         """
         Get the image data via skimage's imread, for use in analyses
 
@@ -77,7 +77,7 @@ class Photo(models.Model):
     class Meta:
         unique_together = ['number', 'map_square']
 
-    def get_image_local_filepath(self, src_dir=settings.LOCAL_SRCS_DIR):
+    def get_image_local_filepath(self, src_dir=settings.LOCAL_PHOTOS_DIR):
         """
         Get the image local filepath if it exists.
 
