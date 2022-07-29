@@ -15,14 +15,13 @@ Including another URL configuration
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path, include
-from django.conf import settings
-from django.conf.urls.static import static
+from django.urls import path
 from django.contrib.auth import views as auth_views
 
-from app.common import render_react_view
 from app import views
+from app.common import render_react_view
 from blog import views as blog_views
+from config.settings import BLOG_ROOT_URL
 
 
 def react_view_path(route, component_name):
@@ -69,7 +68,12 @@ urlpatterns = [
          views.get_arrondissements_geojson, name="get_one_arrondissement"),
     # path('api/faster_rcnn_object_detection/<str:object_name>/', views.get_photos_by_object_rcnn),
     # path('api/model/<str:model_name>/<str:object_name>/', views.get_photos_by_object),
+    # path('api/faster_rcnn_object_detection/<str:object_name>/',
+    # views.get_photos_by_object_rcnn),
+    # path('api/model/<str:model_name>/<str:object_name>/',
+    # views.get_photos_by_object),
     path('', views.index),
+    path('map/', views.map_page),
     path('about/', views.about),
     path('search/', views.search_view),
     path('similarity/', views.similarity),
@@ -83,10 +87,11 @@ urlpatterns = [
     path('all_analysis/', views.all_analysis_view),
     path('clustering/<int:num_of_clusters>/<int:cluster_num>/', views.cluster_view),
     # blog urls
-    path('blog/', blog_views.index, name="blog_home"),
-    path('blog/<str:slug>/', blog_views.blog_post,
+    path(f'{BLOG_ROOT_URL}/', blog_views.index, name="blog_home"),
+    path(f'{BLOG_ROOT_URL}/<str:slug>/', blog_views.blog_post,
          name='blog-detail'),
-    # sign up urls
-    path('login/',auth_views.LoginView.as_view(template_name='admin/login.html'),name='login'),
-    path('logout/',auth_views.LogoutView.as_view(),name='logout')
+
+    # log in/out urls
+    path('login/', auth_views.LoginView.as_view(template_name='admin/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout')
 ]
