@@ -2,10 +2,12 @@ $color-turquoise: #20CCD7;
 $color-orange: #FB2F2A;
 $color-mid-gray: #5E5F5F;
 $color-link: #3295B8;
+$color-turquoise-light: #EBF3F4;
 
-.link{
+.link {
     font-weight: 500;
     text-decoration: underline;
     color: $color-link;
     display: inline;
 }
+

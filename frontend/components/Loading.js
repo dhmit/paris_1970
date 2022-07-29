@@ -5,7 +5,7 @@ export class Loading extends React.Component {
         return (
             <div className="text-center">
                 <div className="spinner-border" role="status">
-                    <span className="sr-only">Loading...</span>
+                    <span className="visually-hidden-focusable">Loading...</span>
                 </div>
             </div>
         );
