@@ -1,7 +1,6 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
 import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
@@ -141,7 +140,7 @@ export class YoloModelDisplayWidget extends React.Component {
                     height={box["height"] * ratio}
                     width={box["width"] * ratio}
                 />,
-                <g className={"boxGroup"}>
+                <g className={"box-group"}>
                     <text
                         className="label"
                         x={box["x_coord"] * ratio}
@@ -362,7 +361,7 @@ export class PhotoView extends PhotoViewer {
                 </Modal>
                 <div className="page row">
                     <div className="image-view col-12 col-lg-6 col-md-8">
-                        <div className="image-box">
+                        <div className={this.state.displaySide === "slide" ? "image-box slide" : "image-box"}>
                             <img
                                 className="image-photo position-top-left"
                                 src={this.getSource(this.state.photoData, this.state.displaySide)}
@@ -502,7 +501,6 @@ export class PhotoView extends PhotoViewer {
                     </div>
                 </div>
             </div>
-            <Footer/>
         </>);
     }
 }
