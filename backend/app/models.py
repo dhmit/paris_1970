@@ -45,7 +45,7 @@ class Photo(models.Model):
         return (self.cleaned_src or
                 self.front_src)
 
-    def get_image_data(self, as_gray=False, use_pillow=False):
+    def get_image_data(self, as_gray=False, use_pillow=False, src_dir=settings.LOCAL_PHOTOS_DIR):
         """
         Get the image data via skimage's imread, for use in analyses
 
@@ -57,12 +57,8 @@ class Photo(models.Model):
 
         TODO: implement as_gray for use_pillow
         """
-        if not (self.cleaned_src or self.front_src):
-            print(f'{self} has no front or binder src')
-            return None
-
         source = os.path.join(
-            settings.LOCAL_SRCS_DIR,
+            src_dir,
             str(self.map_square.number),
             f"{self.number}_photo.jpg"
         )
@@ -80,6 +76,29 @@ class Photo(models.Model):
 
     class Meta:
         unique_together = ['number', 'map_square']
+
+    def get_image_local_filepath(self, src_dir=settings.LOCAL_PHOTOS_DIR):
+        """
+        Get the image local filepath if it exists.
+
+        We try for a local filepath first, as that's faster,
+        and we fallback on Google Drive if there's nothing local.
+        """
+        if self.cleaned_src:
+            source_type = 'cleaned'
+        elif self.front_src:
+            source_type = "front"
+        else:
+            print(f'{self} has no front or binder src')
+            return None
+
+        source = os.path.join(
+            src_dir,
+            str(self.map_square.number),
+            f"{self.number}_photo.jpg"
+        )
+        if source:
+            return source
 
 
 class MapSquare(models.Model):
