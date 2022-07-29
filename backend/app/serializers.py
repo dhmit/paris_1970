@@ -58,10 +58,12 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_map_square_coords(instance):
-        return {
-            dim: float(c)
-            for dim, c in zip(['lat', 'lng'], instance.map_square.coordinates.split(', '))
-        }
+        if instance.map_square.coordinates.split(', ') != ['']:
+            return {dim: float(c)
+                for dim, c in zip(['lat', 'lng'], instance.map_square.coordinates.split(', '))
+                }
+        else:
+            return {}
 
     class Meta:
         model = Photo
@@ -167,11 +169,11 @@ class CorpusAnalysisResultsSerializer(serializers.ModelSerializer):
     Serializes the corpus analysis results. It converts the string version of JSON to regular
     JSON for the frontend to use.
     """
-    analysis_result = serializers.SerializerMethodField()
+    result = serializers.SerializerMethodField()
 
     @staticmethod
-    def get_analysis_result(instance):
-        return json.loads(instance.analysis_result)
+    def get_result(instance):
+        return json.loads(instance.result)
 
     class Meta:
         model = CorpusAnalysisResult

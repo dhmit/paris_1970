@@ -1,13 +1,12 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
 import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
 import {Rectangle} from "react-leaflet";
 
-import {Dropdown, OverlayTrigger, Popover} from "react-bootstrap";
+import {Dropdown, OverlayTrigger, Popover, Modal} from "react-bootstrap";
 import ExpandIcon from "../../images/expand.svg";
 import QuestionIcon from "../../images/question.svg";
 
@@ -141,7 +140,7 @@ export class YoloModelDisplayWidget extends React.Component {
                     height={box["height"] * ratio}
                     width={box["width"] * ratio}
                 />,
-                <g className={"boxGroup"}>
+                <g className={"box-group"}>
                     <text
                         className="label"
                         x={box["x_coord"] * ratio}
@@ -223,7 +222,8 @@ export class PhotoView extends PhotoViewer {
             labels: null,
             mapData: null,
             prevLink: null,
-            nextLink: null
+            nextLink: null,
+            showPhotoModal: false
         };
         this.onImgLoad = this.onImgLoad.bind(this);
         this.photoRef = React.createRef();
@@ -334,9 +334,26 @@ export class PhotoView extends PhotoViewer {
         return (<>
             <div className="page">
                 <br/>
+                <Modal
+                    className="photo-modal"
+                    show={this.state.showPhotoModal}
+                    onHide={() => this.setState({showPhotoModal: false})}
+                    backdrop="static"
+                    keyboard={false}
+                    aria-labelledby="contained-modal-title-vcenter"
+                    fullscreen>
+                    <Modal.Header closeButton/>
+                    <Modal.Body className="photo-modal-body">
+                        <img
+                            className="photo-popup"
+                            alt={this.state.photoData.alt}
+                            src={this.getSource(this.state.photoData)}
+                        />
+                    </Modal.Body>
+                </Modal>
                 <div className="page row">
                     <div className="image-view col-12 col-lg-6 col-md-8">
-                        <div className="image-box">
+                        <div className={this.state.displaySide === "slide" ? "image-box slide" : "image-box"}>
                             <img
                                 className="image-photo position-top-left"
                                 src={this.getSource(this.state.photoData, this.state.displaySide)}
@@ -347,7 +364,10 @@ export class PhotoView extends PhotoViewer {
                             {visualAnalyses}
                         </div>
                         <div className={"center-btn"}>
-                            <ExpandIcon className="expand-icon"/>
+                            <ExpandIcon
+                                className="expand-icon"
+                                onClick={() => this.setState({showPhotoModal: true})}
+                            />
                             <button
                                 className={"side-button"}
                                 style={{backgroundColor: this.state.displaySide === "photo" ? TURQUOISE : "white"}}
@@ -362,23 +382,22 @@ export class PhotoView extends PhotoViewer {
                             </button>
                         </div>
                         <div style={{display: "flex", justifyContent: "space-between", paddingTop: "10px"}}>
-                            <div style={{display: "flex", justifyContent: "flex-start"}}>
+                            <div className="similar-photos-header">
                                 <h4><strong>Similar Photos</strong></h4>
                                 <OverlayTrigger
                                     trigger="hover"
-                                    placement={"right"}
+                                    placement="right"
                                     overlay={
                                         <Popover>
                                             <Popover.Body>
                                             This is what similar photos are and how we generate them.
                                             </Popover.Body>
                                         </Popover>
-                                    }
-                                    >
-                                        <button className={"info-button"}>
-                                            <QuestionIcon/>
-                                        </button>
-                                    </OverlayTrigger>
+                                    }>
+                                    <button className="info-button">
+                                        <QuestionIcon/>
+                                    </button>
+                                </OverlayTrigger>
                             </div>
                             <Dropdown className="photo-sort-dropdown">
                                 <Dropdown.Toggle className="photo-sort-dropdown-button" align="start">
@@ -427,19 +446,18 @@ export class PhotoView extends PhotoViewer {
                             <h6>TAGS</h6>
                             <OverlayTrigger
                                 trigger="hover"
-                                placement={"right"}
+                                placement="right"
                                 overlay={
                                     <Popover>
                                         <Popover.Body>
                                         This is what a tag is and how we generate them.
                                         </Popover.Body>
                                     </Popover>
-                                }
-                                >
-                                    <button className={"info-button"}>
-                                        <QuestionIcon/>
-                                    </button>
-                                </OverlayTrigger>
+                                }>
+                                <button className={"info-button"}>
+                                    <QuestionIcon/>
+                                </button>
+                            </OverlayTrigger>
                         </div>
 
                         {tagList.map((word) => (
@@ -475,7 +493,6 @@ export class PhotoView extends PhotoViewer {
                     </div>
                 </div>
             </div>
-            <Footer/>
         </>);
     }
 }
