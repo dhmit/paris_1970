@@ -421,6 +421,26 @@ def get_arrondissements_map_squares(request, arr_number=None):
     return Response(data)
 
 
+@api_view(['GET'])
+def get_photo_distances(request, photographer_num):
+    photo_data = [
+        {
+            'number': analysis_result.photo.number,
+            'mapSquareNumber': analysis_result.photo.map_square.number,
+            'distance': analysis_result.parsed_result()
+        }
+        for analysis_result in PhotoAnalysisResult.objects.filter(
+            name='photographer_dist',
+            photo__photographer__number=photographer_num
+        )
+    ]
+
+    sorted_photo_data = sorted(
+        photo_data, key=lambda data: data['distance'], reverse=True
+    )
+    return Response(sorted_photo_data)
+
+
 # app views
 def render_view(request, context):
     context.setdefault('component_props', {})
