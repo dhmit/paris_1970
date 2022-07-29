@@ -3,7 +3,7 @@
  */
 
 // Global CSS variables first, so they're available to stylesheets imported below
-$side-padding: 100px;
+$side-padding:25px;
 $side-padding-mobile: 20px;
 $header-height: 100px;
 $footer-height: 150px;
@@ -25,10 +25,13 @@ $footer-height: 150px;
 @import './clusterView';
 @import './analysisView';
 @import './search';
+@import './titleDecorator';
 @import "./blog";
 @import './legend';
 @import './fonts';
 @import './parisMap';
+@import './mapPageView';
+
 
 html {
     position: relative;

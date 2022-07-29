@@ -1,12 +1,13 @@
 from django.contrib import admin
-from .models import BlogPost,BlogPostAdminForm
+from .models import BlogPost, BlogPostAdminForm
 from tinymce.widgets import TinyMCE
 
 
 class BlogPostAdmin(admin.ModelAdmin):
     form = BlogPostAdminForm
     list_display = ['id', 'slug', 'title', 'subtitle', 'author']
-    prepopulated_fields = {'slug':('title',)}
+    prepopulated_fields = {'slug': ('title',)}
+
     # TODO: make slug be a link that takes the admin user to the blog page
 
     def formfield_for_dbfield(self, db_field, **kwargs):
