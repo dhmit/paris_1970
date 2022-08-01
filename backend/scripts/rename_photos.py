@@ -15,11 +15,17 @@ def rename(source_dir, destination_dir, commands=None):
                [ex. 'Users/bob/Desktop/new/']
        :return: None, output produced in new directory
 
-    """
+     Example of command-line:
+      python scripts/rename_photos.py /Users/bob/Desktop/ /Users/bob/Desktop/new 
+"""
+    
+
+
     count = 1
     command_str = ''
-    for i in commands:
-        command_str += i + ' '
+    if len(commands):
+        for i in commands:
+        command_str += i + ' ' 
 
     for file_name in tqdm(os.listdir(source_dir), bar_format='{l_bar}{bar:30}{r_bar}{bar:-10b}'):
 
