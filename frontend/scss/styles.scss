@@ -3,7 +3,7 @@
  */
 
 // Global CSS variables first, so they're available to stylesheets imported below
-$side-padding: 25px;
+$side-padding: 20px;
 $side-padding-mobile: 20px;
 $header-height: 100px;
 $footer-height: 150px;
@@ -90,8 +90,8 @@ footer {
     font-family: $font-family-bold;
     color: $color-gray-light !important;
 
-    &.selected {
-        color: $color-link;
+    &.selected, &:hover, &:focus {
+        color: $color-link !important;
     }
 }
 
