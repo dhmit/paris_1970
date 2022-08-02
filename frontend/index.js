@@ -14,7 +14,7 @@ import {MapSquareView} from "./pages/views/MapSquareView";
 import {Search} from "./pages/Search";
 import About from "./pages/About";
 import MapPage from "./pages/views/MapPageView";
-import TagView from "./pages/Tags";
+import TagView from "./pages/TagView";
 
 // Import all styles
 import "./scss/styles.scss";

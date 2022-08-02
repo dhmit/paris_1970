@@ -10,7 +10,7 @@ import {Dropdown, OverlayTrigger, Popover, Modal} from "react-bootstrap";
 import ExpandIcon from "../../images/expand.svg";
 import QuestionIcon from "../../images/question.svg";
 
-let tagList = ["Bicycle", "Stop Sign", "Cow"];
+let tagList = ["bicycle", "stop sign", "cow"];
 
 export class FindVanishingPointDisplayWidget extends React.Component {
     render() {
@@ -461,7 +461,7 @@ export class PhotoView extends PhotoViewer {
                         </div>
 
                         {tagList.map((word) => (
-                            <a key={"tag"} href={`/tag/${word.toLowerCase()}/`}>
+                            <a key={"tag"} href={`/tag/${word}/`}>
                                 <button className="tag-button" key={word.id}>
                                     {word}
                                 </button>

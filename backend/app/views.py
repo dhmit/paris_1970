@@ -184,22 +184,21 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
     return Response(serializer.data)
 
+def format_photo(photo, photo_values_to_keep):
+    formatted_photo = {}
+    for value in photo_values_to_keep:
+        formatted_photo[value] = photo[value]
 
-@api_view(['GET'])
-def get_photos_by_tag(request, tag_name):
-    """
-    API endpoint to get all photos associated with a tag (specified by tag_name)
-    """
-    # finds yolo_model in PhotoAnalysisResult objects
+def tag_helper(tag_name, photo_values_to_keep):
     analysis_obj = PhotoAnalysisResult.objects.filter(name='yolo_model')
-    sorted_analysis_obj = analysis_obj
+    sorted_analysis_obj = []
     if len(analysis_obj) > 0:
         relevant_objects = []
         for instance in analysis_obj:
             data = instance.parsed_result()
             if tag_name in data['labels']:
                 relevant_objects.append(instance)
-        #sort by confidence
+        # sort by confidence
         by_confidence = []
         for instance in relevant_objects:
             data = instance.parsed_result()
@@ -211,7 +210,17 @@ def get_photos_by_tag(request, tag_name):
             by_confidence.append((instance, confidence))
         sorted_analysis_obj = sorted(by_confidence, key=lambda obj: obj[1],
                                      reverse=True)
-    sorted_photo_obj = [instance[0].photo for instance in sorted_analysis_obj]
+    if photo_values_to_keep and type(photo_values_to_keep) is list:
+        return [format_photo(instace[0].photo, photo_values_to_keep) for instance in sorted_analysis_obj]
+    return [instance[0].photo for instance in sorted_analysis_obj]
+
+
+@api_view(['GET'])
+def get_photos_by_tag(request, tag_name):
+    """
+    API endpoint to get all photos associated with a tag (specified by tag_name)
+    """
+    sorted_photo_obj = tag_helper(tag_name)
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
     return Response(serializer.data)
 
@@ -586,13 +595,16 @@ def tag_view(request, tag_name):
     """
     Tag page, specified by tag_name
     """
+    sorted_photo_obj = tag_helper(tag_name, ["number", "map_square_number"])
+    print(sorted_photo_obj)
     context = {
         'page_metadata': {
             'title': 'Tag View'
         },
         'component_name': 'TagView',
         'component_props': {
-            'tagName': tag_name
+            'tagName': tag_name,
+            'tagPhotos': sorted_photo_obj
         }
     }
 
