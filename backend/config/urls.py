@@ -61,7 +61,6 @@ urlpatterns = [
     path('api/analysis/<str:analysis_name>/<str:object_name>/', views.get_photos_by_analysis,
          name="get_photos_by_analysis"),
     path('api/search/', views.search, name="search"),
-    path('api/get_tags/', views.get_tags, name="get_tags"),
     path('api/arrondissements_geojson/', views.get_arrondissements_geojson,
          name="get_arrondissement"),
     path('api/arrondissements_geojson/<int:arr_number>/',
