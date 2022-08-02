@@ -62,3 +62,13 @@ export function projectFeaturesCreateSVGPaths(geoJSON, width = 800, height = 800
     return mapData;
 }
 
+export function debounce(func, timeout = 300) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func.apply(this, args);
+        }, timeout);
+    };
+}
+
