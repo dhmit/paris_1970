@@ -18,6 +18,7 @@ import {AllPhotosView} from "./pages/views/AllPhotosView";
 import {ClusterView} from "./pages/views/ClusterView";
 import {Search} from "./pages/Search";
 import About from "./pages/About";
+import Blog from "./pages/Blog";
 import MapPage from "./pages/views/MapPageView";
 
 // Import all styles
@@ -31,6 +32,7 @@ const COMPONENTS = {
     HomePage,
     About,
     Search,
+    Blog,
     PhotoView,
     SimilarityView,
     PhotographerView,
