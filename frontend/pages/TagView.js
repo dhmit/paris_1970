@@ -1,30 +1,21 @@
 import React from "react";
 import ParisMap from "../components/ParisMap";
-import LoadingPage from "./LoadingPage";
 import * as PropTypes from "prop-types";
 import PhotoViewer from "../components/PhotoViewer";
 
 class TagView extends PhotoViewer {
     constructor(props) {
         super(props);
-        this.state = {
-            loading: true,
-            tagData: null
-        };
     }
 
     render() {
-        if (this.state.loading) {
-            return (<LoadingPage/>);
-        }
-
-        if (this.state.tagData.length === 0) {
+        if (this.props.tagPhotos.length === 0) {
             return (<>
                 Tag {this.props.tagName} is not in the database.
             </>);
         }
         const tag = this.props.tagName;
-        const photos = this.state.tagData;
+        const photos = JSON.parse(this.props.tagPhotos);
 
         return (<>
             <div className="row">
@@ -37,7 +28,7 @@ class TagView extends PhotoViewer {
                     <ParisMap
                         className="tags-map"
                         zoom={14}
-                        layers={{ }}
+                        layers={{}}
                     />
                 </div>
             </div>
@@ -46,7 +37,8 @@ class TagView extends PhotoViewer {
 }
 
 TagView.propTypes = {
-    tagName: PropTypes.string
+    tagName: PropTypes.string,
+    tagPhotos: PropTypes.string
 };
 
 export default TagView;

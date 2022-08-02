@@ -8,11 +8,11 @@ import math
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 
 from django.shortcuts import render
 from django.db.models import Q, FloatField
 from django.db.models.functions import Cast
-
 from config import settings
 
 from .models import (
@@ -26,6 +26,7 @@ from .models import (
 
 from .serializers import (
     PhotoSerializer,
+    SimplePhotoSerializer,
     MapSquareSerializer,
     MapSquareSerializerWithoutPhotos,
     PhotographerSerializer,
@@ -184,34 +185,34 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
     return Response(serializer.data)
 
+
 def format_photo(photo, photo_values_to_keep):
     formatted_photo = {}
     for value in photo_values_to_keep:
         formatted_photo[value] = photo[value]
 
-def tag_helper(tag_name, photo_values_to_keep):
+
+def tag_helper(tag_name):
     analysis_obj = PhotoAnalysisResult.objects.filter(name='yolo_model')
-    sorted_analysis_obj = []
-    if len(analysis_obj) > 0:
-        relevant_objects = []
-        for instance in analysis_obj:
-            data = instance.parsed_result()
-            if tag_name in data['labels']:
-                relevant_objects.append(instance)
-        # sort by confidence
-        by_confidence = []
-        for instance in relevant_objects:
-            data = instance.parsed_result()
-            confidence = 0
-            for box in data['boxes']:
-                # an image may have several tag_name in labels, find greatest confidence
-                if box['label'] == tag_name:
-                    confidence = max(confidence, box['confidence'])
-            by_confidence.append((instance, confidence))
-        sorted_analysis_obj = sorted(by_confidence, key=lambda obj: obj[1],
-                                     reverse=True)
-    if photo_values_to_keep and type(photo_values_to_keep) is list:
-        return [format_photo(instace[0].photo, photo_values_to_keep) for instance in sorted_analysis_obj]
+    if len(analysis_obj) == 0:
+        return []
+    relevant_objects = []
+    for instance in analysis_obj:
+        data = instance.parsed_result()
+        if tag_name in data['labels']:
+            relevant_objects.append(instance)
+    # sort by confidence
+    by_confidence = []
+    for instance in relevant_objects:
+        data = instance.parsed_result()
+        confidence = 0
+        for box in data['boxes']:
+            # an image may have several tag_name in labels, find greatest confidence
+            if box['label'] == tag_name:
+                confidence = max(confidence, box['confidence'])
+        by_confidence.append((instance, confidence))
+    sorted_analysis_obj = sorted(by_confidence, key=lambda obj: obj[1],
+                                 reverse=True)
     return [instance[0].photo for instance in sorted_analysis_obj]
 
 
@@ -476,7 +477,7 @@ def get_arrondissements_map_squares(request, arr_number=None):
 
     if arr_number is not None:
         # Get data for a single unique arrondissement
-        data['arrondissements'] = [data['arrondissements'][arr_number-1]]
+        data['arrondissements'] = [data['arrondissements'][arr_number - 1]]
 
     return Response(data)
 
@@ -595,8 +596,10 @@ def tag_view(request, tag_name):
     """
     Tag page, specified by tag_name
     """
-    sorted_photo_obj = tag_helper(tag_name, ["number", "map_square_number"])
-    print(sorted_photo_obj)
+    sorted_photo_obj = tag_helper(tag_name)
+    serializer = SimplePhotoSerializer(sorted_photo_obj, many=True)
+    # there's probably a much simpler way...
+    photo_data = JSONRenderer().render(serializer.data).decode("utf-8")
     context = {
         'page_metadata': {
             'title': 'Tag View'
@@ -604,9 +607,8 @@ def tag_view(request, tag_name):
         'component_name': 'TagView',
         'component_props': {
             'tagName': tag_name,
-            'tagPhotos': sorted_photo_obj
+            'tagPhotos': photo_data
         }
     }
 
     return render_view(request, context)
-
