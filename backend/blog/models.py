@@ -14,12 +14,9 @@ from config.settings import BLOG_ROOT_URL
 class BlogPost(models.Model):
     author = models.ForeignKey(User, null=True, on_delete=models.DO_NOTHING)
     title = models.CharField(max_length=200, null=False, blank=False)
-    subtitle = models.CharField(max_length=1000)
-    slug = models.SlugField(
-        max_length=100, blank=True, null=True, help_text=_("Auto generated from title "
-                                                           "field and date "
-                                                           "if not defined.")
-    )
+    subtitle = models.CharField(max_length=1000, blank=True, null=True)
+    slug = models.SlugField(max_length=100, blank=True, null=True,
+                            help_text=_("Auto generated from title field if not defined."))
     content = tinymce_models.HTMLField()
     tags = TaggableManager(blank=True)
     published = models.BooleanField(default=False)
