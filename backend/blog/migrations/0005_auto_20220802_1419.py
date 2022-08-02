@@ -6,8 +6,7 @@ import taggit.managers
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('taggit', '0005_auto_20220424_2025'),
-        ('blog', '0003_auto_20220713_1656'),
+        ('blog', '0004_auto_20220729_1649'),
     ]
 
     operations = [
