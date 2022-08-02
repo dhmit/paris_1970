@@ -308,6 +308,14 @@ export class PhotoView extends PhotoViewer {
         // Resize SVG overlays on viewport resize
         window.addEventListener("resize", () => this.handleResize());
 
+        // Close photo popup by pressing the Esc key
+        window.addEventListener(
+            "keydown",
+            (e) => e.code === "Escape"
+                ? this.setState({showPhotoModal: false})
+                : null
+        );
+
         const visualAnalyses = [];
         for (const [analysisName, result] of Object.entries(analyses)) {
             let visualAnalysis = null;
