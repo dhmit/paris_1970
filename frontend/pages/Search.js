@@ -48,6 +48,11 @@ class SearchBar extends React.Component {
     };
 
     render() {
+        window.addEventListener(
+            "keydown",
+            (e) => e.code === "Enter" ? this.handleSubmit(e) : null
+        );
+
         return (
             <div className="search-bar">
                 <div className="search-icon"><SearchIcon/></div>
