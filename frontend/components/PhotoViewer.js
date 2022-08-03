@@ -46,8 +46,7 @@ export class PhotoViewer extends React.Component {
                     title={titleFunc(k, photo)}
                     onClick={(e) => {
                         onClickFunc(k, photo)(e);
-                        const url = hrefFunc(k, photo);
-                        url ? window.open(url, "_self") : null;
+                        window.open(hrefFunc(k, photo), "_self");
                     }}
                     style={{
                         width: photoSize[0],
