@@ -3,9 +3,12 @@ import PropTypes from "prop-types";
 
 import Footer from "../components/Footer";
 import PhotoViewer from "../components/PhotoViewer";
+import SearchIcon from "../images/icons/search.svg";
+import SearchBgTopLeft from "../images/search_top_left.svg";
+import SearchBgTopRight from "../images/search_top_right.svg";
 
 
-class SearchForm extends React.Component {
+class SearchBar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -21,7 +24,6 @@ class SearchForm extends React.Component {
 
     handleSearch = async (body) => {
         const searchResponse = await fetch(`/api/search/?query=${JSON.stringify(body)}`);
-        console.log("Called handle search");
         const {
             keywords,
             searchData
@@ -47,28 +49,26 @@ class SearchForm extends React.Component {
 
     render() {
         return (
-            <div>
-                {/* Full-Text Form */}
-                <form onSubmit={this.handleSubmit}>
-                    <h3>Full Text Search</h3>
-                    <label className="input-div">
-                        <input
-                            className="search-text-input"
-                            type="text"
-                            name="keywords"
-                            value={this.state.keywords}
-                            onChange={this.handleChange}
-                        />
-                    </label>
-                    <br/>
-                    <input type="submit" value="Search"/>
-                </form>
+            <div className="search-bar">
+                <div className="search-icon"><SearchIcon/></div>
+                <input
+                    className="form-control"
+                    type="text"
+                    name="keywords"
+                    value={this.state.keywords}
+                    onChange={this.handleChange}
+                />
+                <button
+                    className="btn"
+                    onClick={this.handleSubmit}>
+                    Advanced Search
+                </button>
             </div>
         );
     }
 }
 
-SearchForm.propTypes = {
+SearchBar.propTypes = {
     updateSearchData: PropTypes.func
 };
 
@@ -88,31 +88,31 @@ export class Search extends PhotoViewer {
 
     // Full text + advanced search model: http://photogrammar.yale.edu/search/
     render() {
-        return (
-            <>
-                <div className="search-page page row">
-                    <div className="col-sm-12 col-lg-4 search-form">
-                        <h1>Search</h1>
-                        <SearchForm
-                            updateSearchData={this.updateSearchData}
-                        />
-                    </div>
-                    <div className="col-sm-12 col-lg-8">
-                        {
-                            this.state.data &&
-                            <div>
-                                <p>{this.state.searchText}</p>
-                                <div className="search-results">
-                                    {this.getPhotoGrid(
-                                        this.state.data, {"photoSize": [120, 120]}
-                                    )}
-                                </div>
-                            </div>
-                        }
+        return (<>
+            <div className="search-page page row">
+                <div className="search-container">
+                    <SearchBgTopLeft className="search-bg-image-left"/>
+                    <SearchBgTopRight className="search-bg-image-right"/>
+                    <div className="row height d-flex justify-content-center align-items-center">
+                        <div className="col-md-8">
+                            <SearchBar updateSearchData={this.updateSearchData}/>
+                        </div>
                     </div>
                 </div>
-                <Footer/>
-            </>
-        );
+                {
+                    this.state.data &&
+                    <div className="search-container">
+                        <p>{this.state.searchText}</p>
+                        <div className="search-photo-container">
+                            {this.getPhotoGrid(
+                                this.state.data,
+                                {"className": "search-photo", "photoSize": [140, 140]}
+                            )}
+                        </div>
+                    </div>
+                }
+            </div>
+            <Footer/>
+        </>);
     }
 }
