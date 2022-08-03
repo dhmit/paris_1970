@@ -1,7 +1,6 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
 
@@ -57,7 +56,6 @@ export class MapSquareView extends PhotoViewer {
                     : "No metadata has been transcribed for these photos."
                 }
             </div>
-            <Footer/>
         </>);
     }
 }
