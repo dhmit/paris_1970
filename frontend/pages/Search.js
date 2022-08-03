@@ -50,7 +50,7 @@ class SearchBar extends React.Component {
     render() {
         window.addEventListener(
             "keydown",
-            (e) => e.code === "Enter" ? this.handleSubmit(e) : null
+            (e) => e.code.indexOf("Enter") >= 0 ? this.handleSubmit(e) : null
         );
 
         return (
