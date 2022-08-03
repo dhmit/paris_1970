@@ -3,7 +3,7 @@
  */
 
 // Global CSS variables first, so they're available to stylesheets imported below
-$side-padding: 100px;
+$side-padding: 20px;
 $side-padding-mobile: 20px;
 $header-height: 100px;
 $footer-height: 150px;
@@ -78,9 +78,21 @@ footer {
     font-size: 1.50rem;
 }
 
+.navbar-dark {
+    background-color: $color-black;
+}
+
+.navbar-collapse {
+    text-align: right;
+}
 
 .nav-link {
-    font-size: 1.25rem;
+    font-family: $font-family-bold;
+    color: $color-gray-light !important;
+
+    &.selected, &:hover, &:focus {
+        color: $color-link !important;
+    }
 }
 
 .spinner-border {

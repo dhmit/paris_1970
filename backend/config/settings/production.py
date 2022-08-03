@@ -11,7 +11,7 @@ DEBUG = False
 
 # SECRET_KEY = os.environ['DJANGO_SECRET_KEY']  # set in venv activate
 
-ADMINS = ['rahmed@mit.edu']  # Django will email Ryaan on internal server errors
+ADMINS = [('Ahmed', 'rahmed@mit.edu')]
 
 ALLOWED_HOSTS = []
 

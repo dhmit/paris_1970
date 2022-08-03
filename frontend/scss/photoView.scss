@@ -34,19 +34,19 @@ rect {
     font-size: 20px;
 }
 
-.boxGroup {
+.box-gZroup {
     opacity: 0;
 }
 
-.boxGroup rect {
+.box-gZroup rect {
     pointer-events: all;
 }
 
-.boxGroup:hover {
+.box-gZroup:hover, .box-gZroup:focus {
     opacity: 1;
 }
 
-.boxGroup rect:hover {
+.box-gZroup rect:hover, .box-gZroup rect:focus {
     fill: blueviolet !important;
     fill-opacity: 0.25;
 }
@@ -70,7 +70,7 @@ rect {
     font-size: 50px;
 }
 
-.navButton:hover {
+.navButton:hover, .navButton:focus {
     color: black;
     text-decoration: none;
 }
@@ -92,15 +92,23 @@ rect {
 }
 
 .side-button {
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 1em;
+    font-family: $font-family-semibold;
     border: 0.17em solid;
     padding: 0.1em 0.5em;
     background-color: white;
     margin-top: .6em;
+
+    &:last-child {
+        margin-left: -.2em;
+    }
+
+    &:hover, &:focus {
+        background-color: $color-turquoise !important;
+    }
 }
 
-.side-button:hover {
+.side-button:hover, .side-button:focus {
     background-color: $color-turquoise;
 }
 
@@ -108,7 +116,7 @@ rect {
     font-size: 16px;
     border: .08em solid $color-orange;
     padding: .125em 1em;
-    margin: 0.5em 0.75em 1em 0em;
+    margin: 0.25em;
     background-color: white;
 }
 
@@ -146,8 +154,11 @@ rect {
 
 .image-box {
     position: relative;
-    padding: 1em;
     background-color: black;
+
+    &.slide {
+        background-color: $color-turquoise-light;
+    }
 }
 
 .slider-photo {
@@ -204,7 +215,7 @@ rect {
 
 .photo-link {
     color: $color-link;
-    font-weight: 600;
+    font-family: $font-family-bold;
 }
 
 .photo-link:hover {
@@ -219,7 +230,7 @@ rect {
     margin-bottom: .5em;
     cursor: pointer;
 
-    &:hover {
+    &:hover, &:focus {
         background-color: lightgrey;
         transition-duration: .2s;
     }
