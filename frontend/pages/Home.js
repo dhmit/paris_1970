@@ -1,4 +1,5 @@
 import React from "react";
+import Sections from "../components/Sections";
 
 
 export class HomePage extends React.Component {
@@ -8,7 +9,8 @@ export class HomePage extends React.Component {
 
     render() {
 
-        return (<>
-        </>);
+        return (
+         <Sections/>
+        );
     }
 }
