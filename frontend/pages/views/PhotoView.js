@@ -10,8 +10,6 @@ import {Dropdown, OverlayTrigger, Popover, Modal} from "react-bootstrap";
 import ExpandIcon from "../../images/expand.svg";
 import QuestionIcon from "../../images/question.svg";
 
-let tagList = ["Construction", "People", "Building"];
-
 export class FindVanishingPointDisplayWidget extends React.Component {
     render() {
         const items = [];
@@ -300,6 +298,8 @@ export class PhotoView extends PhotoViewer {
             map_square_coords: squareCoords
         } = this.state.photoData;
 
+        const tag_list = this.props.photoTags;
+
         const mapSquareBounds = [
             [squareCoords.lat, squareCoords.lng],
             [squareCoords.lat - MAPSQUARE_HEIGHT, squareCoords.lng - MAPSQUARE_WIDTH]
@@ -481,11 +481,16 @@ export class PhotoView extends PhotoViewer {
                             </OverlayTrigger>
                         </div>
 
-                        {tagList.map((word) => (
-                            <button className="tag-button" key={word.id}>
-                                {word}
-                            </button>
-                        ))}
+                        {tag_list.length !== 0
+                            ? tag_list.map((word) => (
+                                <a key={"tag"} href={`/tag/${word}/`}>
+                                    <button className="tag-button" key={word.id}>
+                                        {word}
+                                    </button>
+                                </a>
+                            ))
+                            : <p>No tags to display for this photo.</p>
+                        }
 
                         <br></br><br></br>
 

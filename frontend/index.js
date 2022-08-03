@@ -9,16 +9,12 @@ import Base from "./Base";
 
 import {HomePage} from "./pages/Home";
 import {PhotoView} from "./pages/views/PhotoView";
-import {SimilarityView} from "./pages/views/SimilarityView";
 import {PhotographerView} from "./pages/views/PhotographerView";
 import {MapSquareView} from "./pages/views/MapSquareView";
-import {AnalysisView} from "./pages/views/AnalysisView";
-import {AllAnalysisView} from "./pages/views/AllAnalysisView";
-import {AllPhotosView} from "./pages/views/AllPhotosView";
-import {ClusterView} from "./pages/views/ClusterView";
 import {Search} from "./pages/Search";
 import About from "./pages/About";
 import MapPage from "./pages/views/MapPageView";
+import TagView from "./pages/TagView";
 
 // Import all styles
 import "./scss/styles.scss";
@@ -32,14 +28,10 @@ const COMPONENTS = {
     About,
     Search,
     PhotoView,
-    SimilarityView,
     PhotographerView,
     MapSquareView,
-    AllAnalysisView,
-    AnalysisView,
-    AllPhotosView,
-    ClusterView,
-    MapPage
+    MapPage,
+    TagView
 };
 
 const PreselectedComponent = COMPONENTS[COMPONENT_NAME || "ErrorNotFoundComponent"];
