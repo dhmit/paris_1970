@@ -161,8 +161,12 @@ rect {
     }
 }
 
+.default-photo {
+    cursor: pointer;
+}
+
 .slider-photo {
-    max-width: 110px;
+    min-width: 100px;
     margin-left: .1em;
     margin-right: .1em;
 }

@@ -35,22 +35,32 @@ export class PhotoViewer extends React.Component {
             "hrefFunc",
             (k, photo) => `/photo/${photo["map_square_number"]}/${photo["number"]}/`
         );
-        const onClickFunc = getValue(config, "onClickFunc", (_k, _photo) => () => {});
+        const onClickFunc = getValue(
+            config, "onClickFunc", (_k, _photo) => (_e) => {}
+        );
         return photoData.map((photo, k) => {
             return (
-                <a
+                <div
                     key={k}
-                    className={className}
+                    className={`default-photo ${className}`}
                     title={titleFunc(k, photo)}
-                    href={hrefFunc(k, photo)}
-                    onClick={onClickFunc(k, photo)}>
+                    onClick={(e) => {
+                        onClickFunc(k, photo)(e);
+                        const url = hrefFunc(k, photo);
+                        url ? window.open(url, "_self") : null;
+                    }}
+                    style={{
+                        width: photoSize[0],
+                        height: photoSize[1],
+                        display: "inline-block"
+                    }}>
                     <img
                         alt={photo.alt}
-                        width={photoSize[0]}
-                        height={photoSize[1]}
+                        width="100%"
+                        height="100%"
                         src={this.getSource(photo)}
                     />
-                </a>
+                </div>
             );
         });
     }

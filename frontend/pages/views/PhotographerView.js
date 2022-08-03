@@ -45,7 +45,7 @@ export class PhotographerView extends PhotoViewer {
         }
         if (!this.state.photographerData) {
             return (<>
-                Photographer number ${this.props.photographerNumber} is not in the database.
+                Photographer number {this.props.photographerNumber} is not in the database.
             </>);
         }
         const {
@@ -112,7 +112,7 @@ export class PhotographerView extends PhotoViewer {
                         photos,
                         {
                             "className": "photo slider-photo",
-                            "hrefFunc": (_k, _photo) => "#",
+                            "hrefFunc": (_k, _photo) => "",
                             "onClickFunc": (k, _) => () => this.onPhotoClick(k)
                         }
                     )}
