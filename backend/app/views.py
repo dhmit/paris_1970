@@ -226,18 +226,22 @@ def get_photos_by_tag(request, tag_name):
     return Response(serializer.data)
 
 
-@api_view(['GET'])
-def get_photos_tags(request, map_square_number, photo_number):
-    """
-    Given a specific photo, identified by map_square_number and photo_number, outputs the tags
-    identified in that photo
-    """
+def photo_tag_helper(map_square_number, photo_number):
     photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
     analysis_obj = PhotoAnalysisResult.objects.filter(name='yolo_model', photo=photo_obj)
     if analysis_obj:
         parsed_obj = analysis_obj[0].parsed_result()
-        tags = [label for label in parsed_obj['labels']]
-        return tags
+        return [label for label in parsed_obj['labels']]
+
+
+@api_view(['GET'])
+def get_photo_tags(request, map_square_number, photo_number):
+    """
+    Given a specific photo, identified by map_square_number and photo_number, outputs the tags
+    identified in that photo
+    """
+    print(photo_tag_helper(map_square_number, photo_number))
+    return photo_tag_helper(map_square_number, photo_number)
 
 
 @api_view(['GET'])
@@ -579,6 +583,7 @@ def photo_view(request, map_square_num, photo_num):
     """
     Photo page, specified by map_square_num and photo_num
     """
+    tag_data = photo_tag_helper(map_square_num, photo_num)
     context = {
         'page_metadata': {
             'title': 'Photo View'
@@ -586,7 +591,8 @@ def photo_view(request, map_square_num, photo_num):
         'component_name': 'PhotoView',
         'component_props': {
             'mapSquareNumber': map_square_num,
-            'photoNumber': photo_num
+            'photoNumber': photo_num,
+            'photoTags': tag_data
         }
     }
     return render_view(request, context)
