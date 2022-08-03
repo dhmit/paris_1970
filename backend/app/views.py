@@ -240,6 +240,22 @@ def search(request):
         django_query &= sub_query
 
     photo_obj = photo_obj.filter(django_query).distinct()
+
+    def tag_confidence(photo):
+        analysis_result = PhotoAnalysisResult.objects.filter(
+            name='yolo_model',
+            photo=photo,
+        ).first()
+        if not analysis_result:
+            return 100
+        yolo_dict = analysis_result.parsed_result()
+        max_confidence = max(
+            [box['confidence'] for box in yolo_dict['boxes'] if box['label'] in keywords],
+            default=100
+        )
+        return max_confidence
+
+    photo_obj = sorted(photo_obj, key=tag_confidence, reverse=True)
     serializer = PhotoSerializer(photo_obj, many=True)
     return Response({
         'keywords': ', '.join([f'"{keyword}"' for keyword in keywords]),
