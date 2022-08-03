@@ -41,7 +41,7 @@ urlpatterns = [
 
     # API endpoints
     # Photos
-    path('api/photo/<int:map_square_number>/<int:photo_number>/', views.photo),
+    path('api/photo/<int:map_square_number>/<int:photo_number>/', views.photo, name="photo"),
     path('api/prev_next_photos/<int:map_square_number>/<int:photo_number>/',
          views.previous_next_photos, name="previous_next_photos"),
     path('api/similar_photos/<int:map_square_number>/<int:photo_number>/<int:num_similar_photos>/',
@@ -61,9 +61,6 @@ urlpatterns = [
     path('api/tag/<str:tag_name>/', views.get_photos_by_tag, name="get_photos_by_tag"),
     path('api/get_tags/', views.get_tags, name="get_tags"),
 
-    # path('api/corpus_analysis/', views.get_corpus_analysis_results, name="get_corpus"),
-    # path('api/clustering/<int:number_of_clusters>/<int:cluster_number>/',
-    #      views.get_photos_by_cluster, name="clustering"),
 
     # Analyses
     path('api/all_analyses/', views.all_analyses, name='all_analyses'),
@@ -72,6 +69,9 @@ urlpatterns = [
          name="get_photos_by_analysis"),
     path('api/analysis/<str:analysis_name>/<str:object_name>/', views.get_photos_by_analysis,
          name="get_photos_by_analysis"),
+    path('api/corpus_analysis/', views.get_corpus_analysis_results, name="get_corpus"),
+    path('api/clustering/<int:number_of_clusters>/<int:cluster_number>/',
+         views.get_photos_by_cluster, name="clustering"),
 
     path('api/search/', views.search, name="search"),
 
