@@ -169,6 +169,14 @@ rect {
     min-width: 100px;
     margin-left: .1em;
     margin-right: .1em;
+    padding: 3px;
+    opacity: 1;
+    -webkit-transition: .3s ease-in-out;
+    transition: .3s ease-in-out;
+
+    &:hover {
+        opacity: .5;
+    }
 }
 
 .slider-photos {

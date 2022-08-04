@@ -111,7 +111,7 @@ export class PhotographerView extends PhotoViewer {
                     {this.getPhotoSlider(
                         photos,
                         {
-                            "className": "photo slider-photo",
+                            "className": "slider-photo",
                             "hrefFunc": (_k, _photo) => "",
                             "onClickFunc": (k, _) => () => this.onPhotoClick(k)
                         }
