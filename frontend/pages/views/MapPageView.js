@@ -248,7 +248,8 @@ class MapPage extends React.Component {
                                                     title={`Map Square ${this.state.mapSquare}`}/>
                                                 <MapSquareContent mapSquare={this.state.mapSquare}
                                                                   photos={this.state.photos}
-                                                                  photographers={this.state.photographers}/>
+                                                                  photographers={this.state.photographers}
+                                                                  photoDir={this.props.photoDir}/>
                                             </>
                                             : <>
                                                 <MapPageEntryDecorator title={"Map"}/>
@@ -313,7 +314,8 @@ class MapPage extends React.Component {
 }
 
 MapPage.propTypes = {
-    arrondissement_data: PropTypes.string
+    arrondissement_data: PropTypes.string,
+    photoDir: PropTypes.string
 };
 
 export default MapPage;

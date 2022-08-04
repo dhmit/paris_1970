@@ -100,3 +100,33 @@ footer {
     width: 3rem;
     height: 3rem;
 }
+
+
+/* BUTTONS */
+.btn-primary {
+    border: 2px solid $color-black;
+    background-color: white;
+    text-transform: uppercase;
+    font-family: $font-family-semibold;
+    border-radius: 0;
+    color: $color-black;
+    &:hover, &:focus, &:active {
+        background-color: $color-turquoise;
+        border: 2px solid $color-turquoise;
+        color: $color-black;
+    }
+}
+
+.btn-secondary {
+    font-size: .8em;
+    border: .08em solid $color-red;
+    padding: .125em 1em;
+    margin: 0.25em;
+    background-color: white;
+    text-transform: capitalize;
+
+    &:hover {
+        color: white;
+        background-color: $color-red;
+    }
+}

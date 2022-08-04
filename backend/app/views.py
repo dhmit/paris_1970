@@ -488,7 +488,7 @@ def get_arrondissements_map_squares(request, arr_number=None):
 def get_map_square_details(request, map_square_number):
     map_square = MapSquare.objects.get(number=map_square_number)
     photos = Photo.objects.filter(map_square=map_square)
-    photos_data = SimplePhotoSerializer(photos[:5], many=True).data
+    photos_data = SimplePhotoSerializer(photos[:4], many=True).data
     photographers = Photographer.objects.filter(map_square=map_square)
     photographers_data = PhotographerSerializer(photographers, many=True).data
     data = {
@@ -543,6 +543,7 @@ def map_page(request):
         'component_name': 'MapPage',
         'component_props': {
             'arrondissement_data': json.dumps(arrondissement_data),
+            'photoDir': str(settings.LOCAL_PHOTOS_DIR),
         }
     }
 
