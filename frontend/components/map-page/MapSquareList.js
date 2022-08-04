@@ -17,7 +17,7 @@ function MapSquareList(props) {
         return (<span key={map_square_number}>
                         <a href={link}
                            onClick={() => props.setSelectedMapSquare(map_square_number)}
-                           className="link">{map_square_number}</a>
+                           className="link map-square-link">{map_square_number}</a>
             {mapSquareNumbers[i + 1] ? ", " : ""}
                 </span>);
     });
