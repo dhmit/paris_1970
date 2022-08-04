@@ -6,6 +6,7 @@ import {
     TileLayer,
     ZoomControl
 } from "react-leaflet";
+import Legend from "./Legend";
 
 // Measurements in Longitude and Latitude distance respectively.
 // Used for creating a grid of all the map squares along with each map squares' approximate
@@ -27,14 +28,16 @@ export class ParisMap extends React.Component {
 
         this.state = {
             visibleLayers,
+            layers: ["Arrondissements", "Photo Density"],
             bounds: [[48.8030, 2.1330], [48.9608, 2.6193]],
             minZoom: 12,
             zoom: this.props.zoom
         };
+        this.toggleLayer = this.toggleLayer.bind(this);
     }
 
-    onLayerChange(event) {
-        const clickedLayer = event.target.value;
+    toggleLayer(event) {
+        const clickedLayer = event.target.dataset.value;
         let newVisibleLayers = this.state.visibleLayers;
         if (this.props.singleLayer) {
             newVisibleLayers = [];
@@ -46,34 +49,33 @@ export class ParisMap extends React.Component {
         }
         this.setState({visibleLayers: newVisibleLayers});
     }
-    // componentDidUpdate(prevProps) {
-    //     if (prevProps.lat !== this.props.lat) {
-    //         this.setState({zoom: 15});
-    //     }
-    // }
 
     render() {
         // Sorts the map squares by number of photos (ascending order)
         return (
             <div className={this.props.className} id="map-container">
+                {this.state.layers}
+                <Legend layers={this.state.layers}
+                        toggleLayer={this.toggleLayer}
+                        visibleLayers={this.state.visibleLayers}/>
                 <MapContainer key={this.props.scrollWheelZoom}
                     // Initial state of Map
-                    center={[
-                        this.props.lat ? this.props.lat : 48.858859,
-                        this.props.lng ? this.props.lng : 2.3470599
-                    ]}
-                    zoom={this.state.zoom}
+                              center={[
+                                  this.props.lat ? this.props.lat : 48.858859,
+                                  this.props.lng ? this.props.lng : 2.3470599
+                              ]}
+                              zoom={this.state.zoom}
 
-                    scrollWheelZoom={this.props.scrollWheelZoom}
-                    style={{
-                        width: "100%",
-                        height: "100%"
-                    }}
+                              scrollWheelZoom={this.props.scrollWheelZoom}
+                              style={{
+                                  width: "100%",
+                                  height: "100%"
+                              }}
                     // Sets Map Boundaries - Keeps user from leaving Paris
-                    maxBoundsViscosity={1.0}
-                    maxBounds={this.state.bounds}
-                    minZoom={this.state.minZoom}
-                    zoomControl={false}>
+                              maxBoundsViscosity={1.0}
+                              maxBounds={this.state.bounds}
+                              minZoom={this.state.minZoom}
+                              zoomControl={false}>
                     <ZoomControl position="bottomleft"/>
                     <TileLayer
                         // Sets Map Boundaries - Keeps user from leaving Paris
@@ -92,26 +94,6 @@ export class ParisMap extends React.Component {
                             ? this.props.layers[layerName]
                             : <></>;
                     })}
-                    {
-                        this.props.layerSelectVisible === true
-                        ? <div className="card layer-select">
-                            <div className="card-body">
-                                {Object.keys(this.props.layers)
-                                .map((layerName, idx) => (
-                                    <div key={idx}>
-                                        <input
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            value={layerName}
-                                            checked={this.state.visibleLayers.includes(layerName)}
-                                            onChange={(e) => this.onLayerChange(e)}
-                                        /> {layerName}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                        : <></>
-                    }
                 </MapContainer>
             </div>
         );

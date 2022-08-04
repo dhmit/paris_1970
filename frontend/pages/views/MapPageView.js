@@ -11,7 +11,6 @@ import LoadingPage from "../LoadingPage";
 import MapSquareList from "../../components/map-page/MapSquareList";
 import MapSquareContent from "../../components/map-page/MapSquareContent";
 import MapPageEntryDecorator from "../../components/map-page/MapPageEntryDecorator";
-import Legend from "../../components/Legend";
 
 
 function densityOverlay(mapData) {
@@ -26,13 +25,8 @@ function densityOverlay(mapData) {
     const fortyPctMax = Math.round(0.4 * maxNumOfPhotos);
     const sixtyPctMax = Math.round(0.6 * maxNumOfPhotos);
     const eightyPctMax = Math.round(0.8 * maxNumOfPhotos);
-    const buckets = [0, twentyPctMax, twentyPctMax + 1,
-        fortyPctMax, fortyPctMax + 1,
-        sixtyPctMax, sixtyPctMax + 1,
-        eightyPctMax, eightyPctMax + 1, maxNumOfPhotos];
-    return (<>
-        <Legend buckets={buckets}/>
 
+    return (<>
         {
             sortedMapData.map((mapSquareData) => {
                 const index = mapSquareData.number;
@@ -83,6 +77,10 @@ function arrondissementsOverlay(data) {
     return data !== null ? data.map(tract => {
         return (
             <GeoJSON
+                style={{
+                    fillColor: "none",
+                    color: "#20CCD7"
+                }}
                 key={tract.properties["GISJOIN"]}
                 data={tract}
             />
@@ -223,8 +221,8 @@ class MapPage extends React.Component {
                                  lat={this.state.mapLat}
                                  lng={this.state.mapLng}
                                  layers={{
-                                     "Photo Density": densityOverlay(this.state.mapData),
-                                     "Arrondissements": arrondissementsOverlay(this.state.geojsonData)
+                                     "Arrondissements": arrondissementsOverlay(this.state.geojsonData),
+                                     "Photo Density": densityOverlay(this.state.mapData)
                                  }}
                                  visibleLayers={["Photo Density"]}
                                  layerSelectVisible={true}
