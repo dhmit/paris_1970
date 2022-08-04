@@ -1,9 +1,18 @@
 """
 These view functions and classes implement API endpoints
 """
-from django.shortcuts import render
-from blog.models import BlogPost
+import json
 
+from django.core import serializers
+from django.shortcuts import render
+
+from blog.models import (
+    BlogPost
+)
+
+from .serializers import (
+    BlogPostSerializer
+)
 
 def index(request):
     """
@@ -14,6 +23,26 @@ def index(request):
     tags = set([tag for post in posts for tag in post.tags.names() if post.published])
     context = {'posts': posts, 'tags': tags}
     return render(request, 'blog/home.html', context)
+
+
+def blog_page(request):
+    posts = BlogPost.objects.all()
+    # Set of all tags belonging to published posts
+    tags = list(set([tag for post in posts for tag in post.tags.names() if post.published]))
+    serialized_posts = serializers.serialize('json', posts)
+
+    context = {
+        'page_metadata': {
+            'title': 'Blog Page'
+        },
+        'component_name': 'Blog',
+        'component_props': {
+            'posts': serialized_posts,
+            'tags': tags
+        }
+    }
+
+    return render_view(request, context)
 
 
 def blog_post(request, slug):
@@ -32,3 +61,8 @@ def blog_post(request, slug):
         return render(request, 'blog/post.html', context)
 
     return render(request, 'blog/blog_404.html')  # Respond with 404 page
+
+
+def render_view(request, context):
+    context.setdefault('component_props', {})
+    return render(request, 'index.html', context)
