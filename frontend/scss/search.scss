@@ -55,7 +55,11 @@
 	transition: .3s ease-in-out;
 
     &:hover {
-        opacity: .5;
+        background-color: $color-turquoise;
+
+        :first-child {
+            opacity: .5;
+        }
     }
 }
 
