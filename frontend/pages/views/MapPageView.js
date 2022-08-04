@@ -1,49 +1,14 @@
 import React from "react";
-import {Container, Row, Col} from "react-bootstrap";
-import Map, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
-import LoadingPage from "../LoadingPage";
-import TitleDecorator from "../../components/TitleDecorator";
-import Legend from "../../components/Legend";
 import {GeoJSON, Popup, Rectangle} from "react-leaflet";
-import * as PropTypes from "prop-types";
+import {Container, Row, Col} from "react-bootstrap";
+
 import {debounce} from "../../common";
 
-function MapPageEntryDecorator() {
-    return (<div>
-            <Container id="map-page-title">
-                <Row>
-                    <Col>
-                        <TitleDecorator id="site-decorator" top={22} left={-1.5}
-                                        decorator_type={"title-decorator"}/>
-                        <h2>Map</h2>
-                    </Col>
-                </Row>
-            </Container>
-        </div>
-    );
-}
-
-function MapSquareList(props) {
-    //Given an arrondissiment, only keeps the map squares that actually contain photos
-    const mapSquareNumbers = props.arrondissementData[props.arrondissementNumber - 1]["map_square_numbers"].filter(
-        number => props.filledMapSquares.has(number));
-
-    if (mapSquareNumbers.length === 0) {
-        return <span>No Map Squares!</span>;
-    }
-
-    //Returns a comma delimited list of the map square numbers in a arrondissement. Each number
-    //links to corresponding map page
-    const displayedMapSquares = mapSquareNumbers.map((map_square_number, i) => {
-        const link = "/map_square/" + map_square_number + "/";
-        return (<span key={map_square_number}>
-                        <a href={link} className="link">{map_square_number}</a>
-            {mapSquareNumbers[i + 1] ? ", " : ""}
-                </span>);
-    });
-
-    return (<span>{displayedMapSquares}</span>);
-}
+import Map, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
+import LoadingPage from "../LoadingPage";
+import MapSquareList from "../../components/map-page/MapSquareList";
+import MapPageEntryDecorator from "../../components/map-page/MapPageEntryDecorator";
+import Legend from "../../components/Legend";
 
 
 function densityOverlay(mapData) {
@@ -130,9 +95,10 @@ class MapPage extends React.Component {
             mapData: null,
             geojsonData: null,
             filledMapSquares: null,
-            isLgViewportUp: null
+            isLgViewportUp: null,
+            mapSquare: null
         };
-
+        this.selectMapSquare = this.selectMapSquare.bind(this);
         this.updateViewport = this.updateViewport.bind(this);
     }
 
@@ -175,7 +141,6 @@ class MapPage extends React.Component {
                 loading: false
             });
 
-
         } catch (e) {
             console.log(e);
         }
@@ -209,13 +174,15 @@ class MapPage extends React.Component {
         this.updateViewport();
 
         window.addEventListener("resize", debounce(() => this.updateViewport(), 250));
+    }
 
-
+    selectMapSquare(mapSquare) {
+        console.log("selectMapSquare", mapSquare);
+        this.setState({mapSquare: mapSquare});
     }
 
     updateViewport() {
         this.setState({isLgViewportUp: window.innerWidth > 992});
-
     }
 
 
@@ -246,8 +213,7 @@ class MapPage extends React.Component {
                                 <Row>
                                     <Col lg={1}/>
                                     <Col lg={9}>
-                                        <MapPageEntryDecorator/>
-
+                                        <MapPageEntryDecorator title={"Map"}/>
                                         <p>
                                             This is a small paragraph about the division of Paris
                                             into however
@@ -264,6 +230,7 @@ class MapPage extends React.Component {
 
                                         <p className="info-text">
                                             Map Squares: <MapSquareList
+                                            setSelectedMapSquare={this.selectMapSquare}
                                             arrondissementData={this.state.arrondissementData}
                                             arrondissementNumber={4}
                                             filledMapSquares={this.state.filledMapSquares}/>
@@ -279,7 +246,9 @@ class MapPage extends React.Component {
 
                                         <p className="info-header-link">Arrondissement 19</p>
 
-                                        <p className="info-text"> Map Squares: <MapSquareList
+                                        <p className="info-text">
+                                            Map Squares: <MapSquareList
+                                            setSelectedMapSquare={this.selectMapSquare}
                                             arrondissementData={this.state.arrondissementData}
                                             arrondissementNumber={19}
                                             filledMapSquares={this.state.filledMapSquares}/>
@@ -308,10 +277,5 @@ class MapPage extends React.Component {
 
 }
 
-MapSquareList.propTypes = {
-    arrondissementData: PropTypes.array,
-    arrondissementNumber: PropTypes.number,
-    filledMapSquares: PropTypes.object
-};
 
 export default MapPage;
