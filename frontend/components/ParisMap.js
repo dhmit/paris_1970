@@ -28,7 +28,7 @@ export class ParisMap extends React.Component {
 
         this.state = {
             visibleLayers,
-            layers: ["Arrondissements", "Photo Density"],
+            layers: ["Photo Density", "Arrondissements"],
             bounds: [[48.8030, 2.1330], [48.9608, 2.6193]],
             minZoom: 12,
             zoom: this.props.zoom
@@ -54,7 +54,6 @@ export class ParisMap extends React.Component {
         // Sorts the map squares by number of photos (ascending order)
         return (
             <div className={this.props.className} id="map-container">
-                {this.state.layers}
                 <Legend layers={this.state.layers}
                         toggleLayer={this.toggleLayer}
                         visibleLayers={this.state.visibleLayers}/>
