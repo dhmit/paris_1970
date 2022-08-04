@@ -28,7 +28,8 @@ export class ParisMap extends React.Component {
         this.state = {
             visibleLayers,
             bounds: [[48.8030, 2.1330], [48.9608, 2.6193]],
-            minZoom: 12
+            minZoom: 12,
+            zoom: this.props.zoom
         };
     }
 
@@ -45,6 +46,11 @@ export class ParisMap extends React.Component {
         }
         this.setState({visibleLayers: newVisibleLayers});
     }
+    // componentDidUpdate(prevProps) {
+    //     if (prevProps.lat !== this.props.lat) {
+    //         this.setState({zoom: 15});
+    //     }
+    // }
 
     render() {
         // Sorts the map squares by number of photos (ascending order)
@@ -56,7 +62,7 @@ export class ParisMap extends React.Component {
                         this.props.lat ? this.props.lat : 48.858859,
                         this.props.lng ? this.props.lng : 2.3470599
                     ]}
-                    zoom={this.props.zoom}
+                    zoom={this.state.zoom}
 
                     scrollWheelZoom={this.props.scrollWheelZoom}
                     style={{

@@ -2,13 +2,16 @@ import React from "react";
 import * as PropTypes from "prop-types";
 
 function MapSquareContent(props) {
+
     return <>
-        <p>Hello there {props.mapSquare}</p>
+        <p>{props.mapSquare}</p>
     </>;
 }
 
 MapSquareContent.propTypes = {
-    mapSquare: PropTypes.string
+    mapSquare: PropTypes.number,
+    photos: PropTypes.array,
+    photographers: PropTypes.array
 };
 
 export default MapSquareContent;

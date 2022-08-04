@@ -78,7 +78,7 @@ class SimplePhotoSerializer(PhotoSerializer):
     class Meta:
         model = Photo
         fields = [
-            'number', 'map_square_number'
+            'number', 'map_square_number', 'photographer_number',  'photographer_name'
         ]
 
 

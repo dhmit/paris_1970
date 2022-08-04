@@ -100,10 +100,15 @@ class MapPage extends React.Component {
             geojsonData: null,
             filledMapSquares: null,
             isLgViewportUp: null,
-            mapSquare: window.location.hash ? window.location.hash.split("#")[1] : null
+            mapSquare: null,
+            mapLat: 48.858859,
+            mapLng: 2.3470599,
+            photos: [],
+            photographers: []
         };
         this.selectMapSquare = this.selectMapSquare.bind(this);
         this.updateViewport = this.updateViewport.bind(this);
+        this.returnToMap = this.returnToMap.bind(this);
         this.arrondissementData = JSON.parse(this.props.arrondissement_data)["arrondissements"];
     }
 
@@ -111,7 +116,6 @@ class MapPage extends React.Component {
         try {
             const mapResponse = await fetch("/api/all_map_squares/");
             const mapData = await mapResponse.json();
-
 
             for (const mapSquare of mapData) {
                 // This code right here might cause problems if said user hasn't run syncdb
@@ -177,14 +181,31 @@ class MapPage extends React.Component {
         window.addEventListener("resize", debounce(() => this.updateViewport(), 250));
     }
 
-    selectMapSquare(mapSquare) {
+    async selectMapSquare(mapSquare) {
         this.setState({mapSquare: mapSquare});
+        this.state.mapData.map(ms => {
+            if (ms.id === mapSquare) {
+                return this.setState({
+                    mapLat: ms.topLeftCoords.lat,
+                    mapLng: ms.topLeftCoords.lng
+                });
+            }
+        });
+        const mapSquareDetails = await fetch("/api/map_square_details/" + mapSquare);
+        const mapSquareDetailsJSON = await mapSquareDetails.json();
+        this.setState({
+            photos: mapSquareDetailsJSON.photos,
+            photographers: mapSquareDetailsJSON.photographers
+        });
     }
 
     updateViewport() {
         this.setState({isLgViewportUp: window.innerWidth > 992});
     }
 
+    returnToMap() {
+        this.setState({mapSquare: null});
+    }
 
     render() {
         if (!this.state.mapData || !this.state.filledMapSquares ||
@@ -198,15 +219,16 @@ class MapPage extends React.Component {
                 <Container fluid>
                     <Row className="page-body">
                         <Col md={12} lg={7} className="page-map">
-                            <Map
-                                zoom={viewportZoom}
-                                layers={{
-                                    "Photo Density": densityOverlay(this.state.mapData),
-                                    "Arrondissements": arrondissementsOverlay(this.state.geojsonData)
-                                }}
-                                visibleLayers={["Photo Density"]}
-                                layerSelectVisible={true}
-                                scrollWheelZoom={isLgViewportUp}/>
+                            <Map zoom={viewportZoom}
+                                 lat={this.state.mapLat}
+                                 lng={this.state.mapLng}
+                                 layers={{
+                                     "Photo Density": densityOverlay(this.state.mapData),
+                                     "Arrondissements": arrondissementsOverlay(this.state.geojsonData)
+                                 }}
+                                 visibleLayers={["Photo Density"]}
+                                 layerSelectVisible={true}
+                                 scrollWheelZoom={isLgViewportUp}/>
                         </Col>
                         <Col md={12} lg={5} className="m-0 p-0 min-vh-100">
                             <Container>
@@ -215,33 +237,39 @@ class MapPage extends React.Component {
                                     <Col lg={9}>
                                         {this.state.mapSquare
                                             ? <>
+                                                <a href={"#"}
+                                                   className={"small"}
+                                                   onClick={() => {
+                                                       this.returnToMap();
+                                                   }}>
+                                                    &larr; Return
+                                                </a>
                                                 <MapPageEntryDecorator
                                                     title={`Map Square ${this.state.mapSquare}`}/>
-                                                <MapSquareContent mapSquare={this.state.mapSquare}/>
+                                                <MapSquareContent mapSquare={this.state.mapSquare}
+                                                                  photos={this.state.photos}
+                                                                  photographers={this.state.photographers}/>
                                             </>
-                                            : <><MapPageEntryDecorator title={"Map"}/>
+                                            : <>
+                                                <MapPageEntryDecorator title={"Map"}/>
                                                 <p>
                                                     This is a small paragraph about the division of
-                                                    Paris
-                                                    into however
-                                                    many map squares for this competition + other
-                                                    information about
+                                                    Paris into however many map squares for this
+                                                    competition + other information about
                                                     the format of the competition relevant to
-                                                    interpreting
-                                                    this map.
+                                                    interpreting this map.
                                                     <br/><br/> Click on a square to learn more about
-                                                    it and
-                                                    see all the
-                                                    photos taken in it!
+                                                    it and see all the photos taken in it!
                                                 </p>
 
-                                                <p className="info-header-link">Arrondissement 4</p>
+                                                <p className="info-header-link">Arrondissement
+                                                    13</p>
 
                                                 <p className="info-text">
                                                     Map Squares: <MapSquareList
                                                     setSelectedMapSquare={this.selectMapSquare}
                                                     arrondissementData={this.arrondissementData}
-                                                    arrondissementNumber={4}
+                                                    arrondissementNumber={13}
                                                     filledMapSquares={this.state.filledMapSquares}/>
                                                 </p>
 

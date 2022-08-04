@@ -484,6 +484,20 @@ def get_arrondissements_map_squares(request, arr_number=None):
     return Response(data)
 
 
+@api_view(['GET'])
+def get_map_square_details(request, map_square_number):
+    map_square = MapSquare.objects.get(number=map_square_number)
+    photos = Photo.objects.filter(map_square=map_square)
+    photos_data = SimplePhotoSerializer(photos[:5], many=True).data
+    photographers = Photographer.objects.filter(map_square=map_square)
+    photographers_data = PhotographerSerializer(photographers, many=True).data
+    data = {
+        "photos": photos_data,
+        "photographers": photographers_data
+    }
+    return Response(data)
+
+
 # app views
 def render_view(request, context):
     context.setdefault('component_props', {})
