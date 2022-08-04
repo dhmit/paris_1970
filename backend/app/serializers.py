@@ -157,8 +157,8 @@ class PhotoForPhotographerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photo
-        fields = ['id', 'front_src', 'back_src', 'binder_src', 'alt', 'map_square', 'number',
-                  'shelfmark', 'librarian_caption', 'photographer_caption', 'contains_sticker',
+        fields = ['id', 'alt', 'map_square', 'number', 'shelfmark', 'librarian_caption',
+                  'photographer_caption', 'contains_sticker',
                   ]
 
 
