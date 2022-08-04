@@ -152,35 +152,24 @@ const studentMembers = [
 ];
 
 function TeamMember(props) {
-    const className = props.isUROP
-        ? "student-member col-12 col-sm-6 col-md-4 col-lg-3"
-        : "staff-member col-12 col-md-6";
-
-    const imgClassName = props.isUROP ? "student-img" : "staff-img";
-    const nameClassName = props.isUROP ? "student-name" : "staff-name";
     return (
-        <div className={className}>
+        <div className="urop-view">
             <img
-                className={imgClassName}
+                className="urop-image"
                 src={props.photoSrc}
-                alt={props.name}
             />
-            <div className={nameClassName}>
-                {props.name}
+            <div className="urop-image-overlay">
+                <div className="urop-text">
+                    <h4>{props.name}</h4>
+                    <p>Here is a paragraph about this person!</p>
+                </div>
             </div>
-            {!props.isUROP &&
-            <div className="job-title">
-                {props.title}
-            </div>
-            }
         </div>
     );
 }
 
 TeamMember.propTypes = {
-    isUROP: PropTypes.bool,
-    name: PropTypes.string,
-    title: PropTypes.string,
+    name: PropTypes.bool,
     photoSrc: PropTypes.string
 };
 
@@ -192,6 +181,7 @@ class About extends React.Component {
                 <div className="about-title">
                     About This Project
                 </div>
+
                 <div className="about-text">
                     <div className="prof-img-div text-wrap col-xs-2 col-sm-5 col-md-5 col-lg-3">
                         <figure className="figure text-center">
@@ -249,26 +239,22 @@ class About extends React.Component {
                     </div>
                 </div>
                 <div className="team">
-                    <div className="about-title">Staff</div>
-                    <div className="staff row">
+                    <div className="about-title">Staff Members</div>
+                    <div className="row justify-content-center">
                         {staffMembers.map((member, k) => (
                             <TeamMember
                                 key={k}
-                                isUROP={false}
                                 name={member.name}
-                                title={member.title}
                                 photoSrc={member.photoSrc}
                             />
                         ))}
                     </div>
                     <div className="about-title">UROP Members</div>
-                    <div className="students row">
+                    <div className="row justify-content-center">
                         {studentMembers.map((member, k) => (
                             <TeamMember
                                 key={k}
-                                isUROP={true}
                                 name={member.name}
-                                title={member.title}
                                 photoSrc={member.photoSrc}
                             />
                         ))}
