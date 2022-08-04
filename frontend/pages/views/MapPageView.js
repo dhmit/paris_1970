@@ -1,4 +1,6 @@
 import React from "react";
+import * as PropTypes from "prop-types";
+
 import {GeoJSON, Popup, Rectangle} from "react-leaflet";
 import {Container, Row, Col} from "react-bootstrap";
 
@@ -7,6 +9,7 @@ import {debounce} from "../../common";
 import Map, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
 import LoadingPage from "../LoadingPage";
 import MapSquareList from "../../components/map-page/MapSquareList";
+import MapSquareContent from "../../components/map-page/MapSquareContent";
 import MapPageEntryDecorator from "../../components/map-page/MapPageEntryDecorator";
 import Legend from "../../components/Legend";
 
@@ -91,15 +94,17 @@ function arrondissementsOverlay(data) {
 class MapPage extends React.Component {
     constructor(props) {
         super(props);
+
         this.state = {
             mapData: null,
             geojsonData: null,
             filledMapSquares: null,
             isLgViewportUp: null,
-            mapSquare: null
+            mapSquare: window.location.hash ? window.location.hash.split("#")[1] : null
         };
         this.selectMapSquare = this.selectMapSquare.bind(this);
         this.updateViewport = this.updateViewport.bind(this);
+        this.arrondissementData = JSON.parse(this.props.arrondissement_data)["arrondissements"];
     }
 
     async componentDidMount() {
@@ -148,9 +153,6 @@ class MapPage extends React.Component {
             const geojsonResponse = await fetch("/api/arrondissements_geojson/");
             const geojsonData = await geojsonResponse.json();
 
-            //Fetches the data set containing which map squares belong to which arrondissement
-            const mapSquareDataResponse = await fetch("/api/arrondissements_map_squares/");
-            const mapSquareData = await mapSquareDataResponse.json();
             //Makes a set of all map squares that actually contain pictures. Eventually shouldn't
             //be needed once full picture database is added.
             const filledMapSquares = new Set();
@@ -163,7 +165,6 @@ class MapPage extends React.Component {
 
             this.setState({
                 filledMapSquares: filledMapSquares,
-                arrondissementData: mapSquareData["arrondissements"],
                 geojsonData: geojsonData["features"],
                 loading: false
             });
@@ -177,7 +178,6 @@ class MapPage extends React.Component {
     }
 
     selectMapSquare(mapSquare) {
-        console.log("selectMapSquare", mapSquare);
         this.setState({mapSquare: mapSquare});
     }
 
@@ -187,7 +187,7 @@ class MapPage extends React.Component {
 
 
     render() {
-        if (!this.state.mapData || !this.state.arrondissementData || !this.state.filledMapSquares ||
+        if (!this.state.mapData || !this.state.filledMapSquares ||
             this.state.isLgViewportUp === null) {
             return (<LoadingPage/>);
         }
@@ -213,58 +213,65 @@ class MapPage extends React.Component {
                                 <Row>
                                     <Col lg={1}/>
                                     <Col lg={9}>
-                                        <MapPageEntryDecorator title={"Map"}/>
-                                        <p>
-                                            This is a small paragraph about the division of Paris
-                                            into however
-                                            many map squares for this competition + other
-                                            information about
-                                            the format of the competition relevant to interpreting
-                                            this map.
-                                            <br/><br/> Click on a square to learn more about it and
-                                            see all the
-                                            photos taken in it!
-                                        </p>
+                                        {this.state.mapSquare
+                                            ? <>
+                                                <MapPageEntryDecorator
+                                                    title={`Map Square ${this.state.mapSquare}`}/>
+                                                <MapSquareContent mapSquare={this.state.mapSquare}/>
+                                            </>
+                                            : <><MapPageEntryDecorator title={"Map"}/>
+                                                <p>
+                                                    This is a small paragraph about the division of
+                                                    Paris
+                                                    into however
+                                                    many map squares for this competition + other
+                                                    information about
+                                                    the format of the competition relevant to
+                                                    interpreting
+                                                    this map.
+                                                    <br/><br/> Click on a square to learn more about
+                                                    it and
+                                                    see all the
+                                                    photos taken in it!
+                                                </p>
 
-                                        <p className="info-header-link">Arrondissement 4</p>
+                                                <p className="info-header-link">Arrondissement 4</p>
 
-                                        <p className="info-text">
-                                            Map Squares: <MapSquareList
-                                            setSelectedMapSquare={this.selectMapSquare}
-                                            arrondissementData={this.state.arrondissementData}
-                                            arrondissementNumber={4}
-                                            filledMapSquares={this.state.filledMapSquares}/>
-                                        </p>
+                                                <p className="info-text">
+                                                    Map Squares: <MapSquareList
+                                                    setSelectedMapSquare={this.selectMapSquare}
+                                                    arrondissementData={this.arrondissementData}
+                                                    arrondissementNumber={4}
+                                                    filledMapSquares={this.state.filledMapSquares}/>
+                                                </p>
 
-                                        <p className="info-text-small">
-                                            Arrondissement 4 is known for being a cool place with
-                                            many historical
-                                            sites such as the Mickey Mouse clubhouse. Notable
-                                            locations and events
-                                            include this and that and these as well.
-                                        </p>
+                                                <p className="info-text-small">
+                                                    Arrondissement 4 is known for being a cool place
+                                                    with many historical sites such as the Mickey
+                                                    Mouse clubhouse. Notable locations and events
+                                                    include this and that and these as well.
+                                                </p>
 
-                                        <p className="info-header-link">Arrondissement 19</p>
+                                                <p className="info-header-link">Arrondissement
+                                                    19</p>
 
-                                        <p className="info-text">
-                                            Map Squares: <MapSquareList
-                                            setSelectedMapSquare={this.selectMapSquare}
-                                            arrondissementData={this.state.arrondissementData}
-                                            arrondissementNumber={19}
-                                            filledMapSquares={this.state.filledMapSquares}/>
-                                        </p>
+                                                <p className="info-text">
+                                                    Map Squares: <MapSquareList
+                                                    setSelectedMapSquare={this.selectMapSquare}
+                                                    arrondissementData={this.arrondissementData}
+                                                    arrondissementNumber={19}
+                                                    filledMapSquares={this.state.filledMapSquares}/>
+                                                </p>
 
-                                        <p className="info-text-small">
-                                            Arrondissement 19 is known for being a cool place with
-                                            many historical
-                                            sites such as the Mickey Mouse clubhouse. Notable
-                                            locations and events
-                                            include this and that and these as well.
-                                        </p>
-                                        {
-                                            //Eventually all arrondissement info will
-                                            // be in separate functional component.
+                                                <p className="info-text-small">
+                                                    Arrondissement 19 is known for being a cool
+                                                    place with many historical sites such as the
+                                                    Mickey Mouse clubhouse. Notable locations and
+                                                    events include this and that and these as well.
+                                                </p>
+                                            </>
                                         }
+
                                     </Col>
                                 </Row>
                             </Container>
@@ -277,5 +284,8 @@ class MapPage extends React.Component {
 
 }
 
+MapPage.propTypes = {
+    arrondissement_data: PropTypes.string
+};
 
 export default MapPage;
