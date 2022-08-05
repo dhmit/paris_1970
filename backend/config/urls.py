@@ -97,12 +97,6 @@ urlpatterns = [
 
     # Photos
     path('photo/<int:map_square_num>/<int:photo_num>/', views.photo_view),
-    path('similar_photos/<int:map_square_num>/<int:photo_num>/'
-         '<int:num_similar_photos>/', views.similarity_view),
-    path('analysis/<str:analysis_name>/', views.analysis_view),
-    path('analysis/<str:analysis_name>/<str:object_name>', views.analysis_view),
-    path('all_analysis/', views.all_analysis_view),
-    path('clustering/<int:num_of_clusters>/<int:cluster_num>/', views.cluster_view),
 
     # blog urls
     path(f'{BLOG_ROOT_URL}/', blog_views.blog_home_page, name="blog_home"),
@@ -114,7 +108,7 @@ urlpatterns = [
 
     # Map Squares
     path('map_square/<int:map_square_num>/', views.map_square_view),
-    
+
     # path('clustering/<int:num_of_clusters>/<int:cluster_num>/', views.cluster_view),
     # BFlog urls
     # Log in/out urls
