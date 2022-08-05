@@ -1,17 +1,10 @@
 import React from "react";
 import {Container, Row, Col} from "react-bootstrap";
+import BlogSidebar from "../components/BlogSidebar";
 import * as PropTypes from "prop-types";
+import {truncateText} from "../common";
 
 function Posts(props){
-
-    function truncateText(text, truncate_point,raw_html=false){
-        let newText = text.split(" ");
-        newText = newText.length > truncate_point ? newText.slice(0,truncate_point).join(" ") + " ..."
-            : newText.join(" ");
-        console.log(props.tags);
-        return (raw_html ? newText : <span> {newText} </span>);
-    }
-
     const blogPosts = props.posts.map((post) => {
         if(post.published){
             return(<div key={post.slug} className="card mb-4 border-0">
@@ -34,7 +27,7 @@ function Posts(props){
                             <div dangerouslySetInnerHTML={{__html:
                                     truncateText(post.content,100, true)}}
                                  />
-                            <a className="stretched-link text-decoration-none text-uppercase blog-post-read-more"
+                            <a className="stretched-link text-decoration-none text-uppercase post-link"
                                href={"/blog/"+post.slug}> Read more
                             </a>
                             <div className="list-inline mb-4 mt-3">
@@ -74,7 +67,10 @@ class Blog extends React.Component {
                             />
                         </Col>
                         <Col lg={4} >
-                            <h2>Blog Sidebar Placeholder</h2>
+                            <BlogSidebar
+                                posts={this.props.posts}
+                                tags={this.props.tags}
+                            />
                         </Col>
                     </Row>
                 </Container>

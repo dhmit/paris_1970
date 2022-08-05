@@ -16,6 +16,7 @@ import {AnalysisView} from "./pages/views/AnalysisView";
 import {AllAnalysisView} from "./pages/views/AllAnalysisView";
 import {AllPhotosView} from "./pages/views/AllPhotosView";
 import {ClusterView} from "./pages/views/ClusterView";
+import {BlogPost} from "./pages/views/BlogPostView";
 import {Search} from "./pages/Search";
 import About from "./pages/About";
 import Blog from "./pages/Blog";
@@ -33,6 +34,7 @@ const COMPONENTS = {
     About,
     Search,
     Blog,
+    BlogPost,
     PhotoView,
     SimilarityView,
     PhotographerView,

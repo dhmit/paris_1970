@@ -30,18 +30,15 @@ def blog_page(request):
     posts = BlogPost.objects.all()
     # Set of all tags belonging to published posts
     tags = list(set([tag for post in posts for tag in post.tags.names() if post.published]))
-    print(posts[0].content)
     serialized_posts = BlogPostSerializer(posts, many=True)
     data = serialized_posts.data
-    print(serialized_posts)
-    print(data)
+
     for post in data:
         post['tags'] = list(post['tags'].names())
-        print(post['author'])
 
     context = {
         'page_metadata': {
-            'title': 'Blog Page'
+            'title': 'Blog Home Page'
         },
         'component_name': 'Blog',
         'component_props': {
@@ -65,8 +62,24 @@ def blog_post(request, slug):
         or request.user.is_superuser
     ):
         tags = posts[0].tags.names()
-        context = {'post': posts[0], 'tags': tags}
-        return render(request, 'blog/post.html', context)
+        post = posts[0]
+
+        serialized_post = BlogPostSerializer(post)
+        data = serialized_post.data
+
+        data['tags'] = list(data['tags'].names())
+
+        context = {
+            'page_metadata': {
+                'title': 'Blog Post: ' + data['slug']
+            },
+            'component_name': 'BlogPostView',
+            'component_props': {
+                'post': data,
+                'tags': tags
+            }
+        }
+        return render_view(request, context)
 
     return render(request, 'blog/blog_404.html')  # Respond with 404 page
 

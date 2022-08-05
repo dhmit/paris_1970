@@ -3,6 +3,7 @@
  */
 
 import * as d3 from "d3";
+import React from "react";
 
 
 /**
@@ -62,6 +63,9 @@ export function projectFeaturesCreateSVGPaths(geoJSON, width = 800, height = 800
     return mapData;
 }
 
+/**
+ * Standard js implementation of a debouncer function
+ */
 export function debounce(func, timeout = 300) {
     let timer;
     return (...args) => {
@@ -70,5 +74,22 @@ export function debounce(func, timeout = 300) {
             func.apply(this, args);
         }, timeout);
     };
+}
+
+/**
+ * Given a string, returns a truncated version of the string. String is truncated based on the
+ * amount of words in the string.
+ *
+ * @param text input string to truncate
+ * @param truncate_point the numbers of words that are still maintained in the string
+ * @param raw_html true if return type is a string in raw HTML format. Otherwise return type is
+ *                 a JSX element
+ * @returns {string|*|JSX.Element}
+ */
+export function truncateText(text, truncate_point,raw_html=false){
+    let newText = text.split(" ");
+    newText = newText.length > truncate_point ? newText.slice(0,truncate_point).join(" ") + " ..."
+        : newText.join(" ");
+    return (raw_html ? newText : <span> {newText} </span>);
 }
 
