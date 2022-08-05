@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Footer from "../components/Footer";
+import TitleDecoratorContainer from "../components/TitleDecoratorContainer";
 
 // Images
 import Clark_Catherine from "../images/team/Clark_Catherine.jpg";
@@ -178,9 +179,7 @@ class About extends React.Component {
     render() {
         return (<>
             <div className="page">
-                <div className="about-title">
-                    About This Project
-                </div>
+                <TitleDecoratorContainer title={"About"}/>
 
                 <div className="about-text">
                     <div className="prof-img-div text-wrap col-xs-2 col-sm-5 col-md-5 col-lg-3">

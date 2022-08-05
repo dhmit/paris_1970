@@ -10,7 +10,7 @@ import Map, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap"
 import LoadingPage from "../LoadingPage";
 import MapSquareList from "../../components/map-page/MapSquareList";
 import MapSquareContent from "../../components/map-page/MapSquareContent";
-import MapPageEntryDecorator from "../../components/map-page/MapPageEntryDecorator";
+import TitleDecoratorContainer from "../../components/TitleDecoratorContainer";
 
 
 function densityOverlay(mapData) {
@@ -242,7 +242,7 @@ class MapPage extends React.Component {
                                                    }}>
                                                     &larr; Return
                                                 </a>
-                                                <MapPageEntryDecorator
+                                                <TitleDecoratorContainer
                                                     title={`Map Square ${this.state.mapSquare}`}/>
                                                 <MapSquareContent mapSquare={this.state.mapSquare}
                                                                   photos={this.state.photos}
@@ -250,7 +250,7 @@ class MapPage extends React.Component {
                                                                   photoDir={this.props.photoDir}/>
                                             </>
                                             : <>
-                                                <MapPageEntryDecorator title={"Map"}/>
+                                                <TitleDecoratorContainer title="Map"/>
                                                 <p>
                                                     This is a small paragraph about the division of
                                                     Paris into however many map squares for this
