@@ -57,8 +57,6 @@ def analyze_similarity(photo: Photo, similarity_function, reverse=True):
         similarities.append({
             'number': other_photo.number,
             'map_square_number': other_photo.map_square.number,
-            'cleaned_src': other_photo.cleaned_src,
-            'front_src': other_photo.front_src,
             'alt': other_photo.alt,
             'similarity': similarity_value
         })

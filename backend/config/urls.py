@@ -40,6 +40,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # API endpoints
+
     # Photos
     path('api/photo/<int:map_square_number>/<int:photo_number>/', views.photo, name="photo"),
     path('api/prev_next_photos/<int:map_square_number>/<int:photo_number>/',
@@ -59,8 +60,6 @@ urlpatterns = [
 
     # Tags
     path('api/tag/<str:tag_name>/', views.get_photos_by_tag, name="get_photos_by_tag"),
-    path('api/get_tags/', views.get_tags, name="get_tags"),
-
 
     # Analyses
     path('api/all_analyses/', views.all_analyses, name='all_analyses'),
@@ -75,6 +74,7 @@ urlpatterns = [
 
     path('api/search/', views.search, name="search"),
 
+    path('api/map_square_details/<int:map_square_number>', views.get_map_square_details),
     # Arrondissements
     path('api/arrondissements_geojson/', views.get_arrondissements_geojson,
          name="get_arrondissement"),

@@ -22,7 +22,7 @@ class TagView extends PhotoViewer {
                 <div className="tag-info col-12 col-lg-5">
                     <p className="tag-header">Photographs tagged</p>
                     <p className="tag-title">{tag}</p>
-                    <>{this.getPhotoGrid(photos, {"photoSize": [120, 120]})}</>
+                    <ul className="p-0">{this.getPhotoGrid(photos, {"photoSize": [120, 120]})}</ul>
                 </div>
                 <div className="tag-map col-12 col-lg-7">
                     <ParisMap
