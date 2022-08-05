@@ -1,6 +1,6 @@
-.post-link{
+.post-link {
     color: #3295B8;
-    font-weight:500;
+    font-weight: 500;
 }
 
 .blog {
@@ -18,7 +18,7 @@
     }
 }
 
-.blog-home{
+.blog-home {
     .blog-list-title {
         text-align: justify;
         margin-top: 50px;
@@ -28,25 +28,26 @@
         color: #3295B8;
     }
 
-    .blog-preview-text{
-        max-width:660px;
-        max-height:226px;
+    .blog-preview-text {
+        max-width: 660px;
+        max-height: 226px;
     }
 
-    .blog-tag{
+    .blog-tag {
         margin-right: 0.2em;
     }
 }
 
-.blog-sidebar{
-    .blog-sidebar-tag-button{
+.blog-sidebar {
+    .blog-sidebar-tag-button {
+        text-decoration: none;
         margin-right: 0.25em;
         margin-top: 0.25em;
         margin-bottom: 0.25em;
         color: black;
     }
 
-    #blog-sidebar-post-list{
+    #blog-sidebar-post-list {
         max-width: 479px;
     }
 }

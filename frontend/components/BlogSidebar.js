@@ -24,8 +24,9 @@ export class BlogSidebar extends React.Component {
                             {this.state.tags.map((tag) => {
                                 return(
                                     //outputs a list of tag buttons
-                                    <a key={tag.id} className="btn btn-secondary btn-sm blog-sidebar-tag-button"
-                                       href="#"
+                                    // FIXME: each tag should take you to blogs tagged with same
+                                    <a key={tag} className="btn-secondary tag-button btn-sm blog-sidebar-tag-button"
+                                       href={`/tag/${tag}`}
                                        role="button">{tag}</a>);
                             })}
                         </Container>
