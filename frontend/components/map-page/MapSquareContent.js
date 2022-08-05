@@ -1,6 +1,7 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 import PhotoViewer from "../../components/PhotoViewer";
+import {Row, Col} from "react-bootstrap";
 
 
 export class MapSquareContent extends PhotoViewer {
@@ -14,19 +15,25 @@ export class MapSquareContent extends PhotoViewer {
 
                 ? (<>
                     <h6 className={"text-uppercase"}>Example photos</h6>
-                    <ul className={"list-inline p-0"}>{
-                        this.getPhotoGrid(this.props.photos, {
-                            "photoSize": [120, 120],
-                            "className": "example-photo"
-                        })
-                    }
-                    </ul>
-                    <div className="d-inline-block">
-                        <a className={"link"}
-                          href={"/map_square/" + this.props.mapSquare}>
-                        Go to map square
-                    </a>
-                    </div>
+                    <Row>
+                        <Col sm={12} lg={9} className={"p-0"}>
+                            <ul className={"list-inline p-0"}>{
+                                this.getPhotoGrid(this.props.photos, {
+                                    "photoSize": [120, 120],
+                                    "className": "example-photo"
+                                })
+                            }
+                            </ul>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col className="d-inline-block p-0">
+                            <a className={"link"}
+                               href={"/map_square/" + this.props.mapSquare}>
+                                Go to map square
+                            </a>
+                        </Col>
+                    </Row>
                 </>)
                 : <></>
             }
