@@ -35,9 +35,9 @@ class Photo(models.Model):
     librarian_caption = models.CharField(max_length=252)
     photographer_caption = models.CharField(max_length=252)
 
-    def has_valid_source(self):
-        return os.path.exists(os.path.join(settings.LOCAL_PHOTOS_DIR,
-                                           f"{self.map_square.number}/{self.number}"))
+    def has_valid_source(self, photo_dir=settings.LOCAL_PHOTOS_DIR):
+        return os.path.exists(os.path.join(photo_dir, f"{self.map_square.number}/"
+                                                      f"{self.number}_photo.jpg"))
 
     def get_image_data(self, as_gray=False, use_pillow=False, src_dir=settings.LOCAL_PHOTOS_DIR):
         """
