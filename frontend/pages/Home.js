@@ -5,7 +5,7 @@ import "../scss/animation.scss";
 // animation
 import Logo_Gif from "../images/gif/rec-animation-english---Copy.gif";
 import Car from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_008.jpg";
-import Logo from "../images/featured/nav-logo.png";
+
 
 
 export class HomePage extends React.Component {
