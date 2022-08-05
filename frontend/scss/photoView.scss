@@ -117,11 +117,11 @@ rect {
 }
 
 
-.photo-sort-dropdown-button {
+.photo-sort-dropdown-button.btn-primary {
     font-size: 16px;
-    border-width: 0;
+    border: 0;
     border-bottom: 0.125em solid black;
-    padding: 0 1.38em 0 0;
+    padding: 0 1.38em 0 0.2em;
     margin: 0.31em;
     border-radius: 0;
     background-color: white;
@@ -268,7 +268,7 @@ rect {
     background-color: $color-turquoise-light;
     position: relative;
     top: 0;
-    white-space: nowrap; /* This is required unless you put the helper span closely near the img */
+    //white-space: nowrap; /* This is required unless you put the helper span closely near the img */
     flex-direction: column;
     text-align: center;
 
