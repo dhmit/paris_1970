@@ -483,8 +483,8 @@ export class PhotoView extends PhotoViewer {
 
                         {tag_list.length !== 0
                             ? tag_list.map((word) => (
-                                <a key={"tag"} href={`/tag/${word}/`}>
-                                    <button className="tag-button" key={word.id}>
+                                <a key={`${word}-tag`} href={`/tag/${word}/`}>
+                                    <button className="btn-secondary tag-button" key={word.id}>
                                         {word}
                                     </button>
                                 </a>

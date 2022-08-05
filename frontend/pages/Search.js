@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import Footer from "../components/Footer";
 import PhotoViewer from "../components/PhotoViewer";
 import SearchIcon from "../images/icons/search.svg";
 import SearchBgTopLeft from "../images/search_top_left.svg";
@@ -108,16 +107,15 @@ export class Search extends PhotoViewer {
                     this.state.data &&
                     <div className="search-container">
                         <p>{this.state.searchText}</p>
-                        <div className="search-photo-container">
+                        <ul className="list-inline earch-photo-container">
                             {this.getPhotoGrid(
                                 this.state.data,
                                 {"className": "search-photo", "photoSize": [140, 140]}
                             )}
-                        </div>
+                        </ul>
                     </div>
                 }
             </div>
-            <Footer/>
         </>);
     }
 }

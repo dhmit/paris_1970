@@ -116,6 +116,7 @@ footer {
 }
 
 .btn-primary {
+    @extend .btn;
     border: 2px solid $color-black;
     text-transform: uppercase;
 
@@ -127,6 +128,8 @@ footer {
 }
 
 .btn-secondary {
+    @extend .btn;
+    text-transform: uppercase;
     font-size: .8em;
     border: .08em solid $color-red;
 

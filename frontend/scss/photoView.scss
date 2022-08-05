@@ -113,9 +113,8 @@ rect {
 }
 
 .tag-button {
-    @extend .btn-secondary;
+    border: 1px solid $color-red;
 }
-
 
 .photo-sort-dropdown-button.btn-primary {
     font-size: 16px;
@@ -268,9 +267,15 @@ rect {
     background-color: $color-turquoise-light;
     position: relative;
     top: 0;
-    //white-space: nowrap; /* This is required unless you put the helper span closely near the img */
+    margin-bottom: .5em;
     flex-direction: column;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80vw;
+    height: 80vw;
+    float: left;
 
     &:hover, &:focus {
         background-color: $color-turquoise;
@@ -285,5 +290,8 @@ rect {
         justify-content: center;
         display: flex;
         margin: 0 auto;
+        /* align horizontal */
+        align-items: center;
+        /* align vertical */
     }
 }

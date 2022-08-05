@@ -40,28 +40,6 @@ export class PhotoViewer extends React.Component {
             config, "onClickFunc", (_k, _photo) => (_e) => {
             }
         );
-        // return photoData.map((photo, k) => {
-        //     return (
-        //         <div
-        //             key={k}
-        //             className={`default-photo ${className}`}
-        //             title={titleFunc(k, photo)}
-        //             onClick={(e) => {
-        //                 onClickFunc(k, photo)(e);
-        //                 window.open(hrefFunc(k, photo), "_self");
-        //             }}
-        //             style={{
-        //                 width: photoSize[0],
-        //                 height: photoSize[1],
-        //                 display: "inline-block"
-        //             }}>
-        //             <img
-        //                 alt={photo.alt}
-        //                 width="100%"
-        //                 height="100%"
-        //                 src={this.getSource(photo)}
-        //             />
-        //         </div>
         return photoData.map((photo, k) => {
             return (
                 <li className={`default-photo photo-item-background text-center list-inline-item ${className}`}
@@ -100,7 +78,7 @@ export class PhotoViewer extends React.Component {
             <div className="photos-box">
                 <button
                     type="button"
-                    className="slider-scroll-left btn btn-dark"
+                    className="slider-scroll-left btn-dark"
                     onClick={
                         () => document.getElementById("photo-slider").scrollLeft -=
                             document.getElementById("photo-slider").clientWidth}
@@ -110,7 +88,7 @@ export class PhotoViewer extends React.Component {
                 </div>
                 <button
                     type="button"
-                    className="slider-scroll-right btn btn-dark"
+                    className="slider-scroll-right btn-dark"
                     onClick={
                         () => document.getElementById("photo-slider").scrollLeft +=
                             document.getElementById("photo-slider").clientWidth}
