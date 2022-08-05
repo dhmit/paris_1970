@@ -19,15 +19,7 @@ export class HomePage extends React.Component {
             <div>
                 <div className="animation" style={{backgroundImage: `url(${Logo_Gif})`}}>
                     <img src={Car} className="background"/>
-                    <ul className="nav flex-column">
-                        <li className="nav-item-sec">
-                            <p className="navbar-header-sec"> <img className='navbar-brand' src={Logo}/>Digital archive of photographs of paris 1970</p>
-                        </li>
-                        <li className="nav-item-sec">
-                             <a href='#section'><i className="bi-down bi-chevron-double-down"></i></a>
-                        </li>
 
-                    </ul>
                 </div>
 
 

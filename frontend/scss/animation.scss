@@ -1,16 +1,5 @@
 
-.background{
-    width: 100%;
-    height: auto;
-    filter: grayscale(100%);
-    mix-blend-mode: multiply;
 
-}
-.bi-down{
-    font-size: 35px;
-    margin-left: 150px;
-
-}
 .animation{
     display: flex;
     justify-content: center;
@@ -20,7 +9,7 @@
     animation-fill-mode: forwards;
     width: 100vw;
     height: 100vh;
-
+    background-repeat: no-repeat;
 
 
     ul{
@@ -31,7 +20,6 @@
         right: 0px;
         position: absolute;
         width: 100%;
-        padding-top: 10px;
         padding-left:40% ;
 
     }
@@ -39,14 +27,18 @@
     p{
        position: center;
     }
+    img{
+    width: 100%;
+    height: auto;
+    filter: grayscale(100%);
+    mix-blend-mode: multiply;
+    }
 }
-.nav-item-sec{
-    justify-content: center;
-}
-.navbar-brand-sec{
-    max-height: 30px;
-    max-width: 30px;
-}
-.navbar-header-sec{
-    margin-bottom: 0px;
+@media screen and (max-width: 767px) {
+    .animation{
+        img{
+            height: 100%;
+            width: auto;
+        }
+    }
 }
