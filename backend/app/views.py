@@ -505,6 +505,9 @@ def photo_view(request, map_square_num, photo_num):
     Photo page, specified by map_square_num and photo_num
     """
     tag_data = photo_tag_helper(map_square_num, photo_num)
+    photographer = Photo.objects.get(number=photo_num,
+                                     map_square__number=map_square_num).photographer
+
     context = {
         'page_metadata': {
             'title': 'Photo View'
@@ -513,9 +516,16 @@ def photo_view(request, map_square_num, photo_num):
         'component_props': {
             'mapSquareNumber': map_square_num,
             'photoNumber': photo_num,
-            'photoTags': tag_data
+            'photoTags': tag_data,
+            'photographer_name': "",
+            'photographer_number': ""
         }
     }
+
+    if photographer:
+        context['photographer_name'] = photographer.name,
+        context['photographer_number'] = photographer.number
+
     return render_view(request, context)
 
 

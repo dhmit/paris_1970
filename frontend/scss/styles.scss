@@ -78,6 +78,12 @@ footer {
     font-size: 1.50rem;
 }
 
+.navbar-toggler,
+.navbar-toggler:focus {
+    border: 0;
+    border-radius: 0;
+}
+
 .navbar-dark {
     background-color: $color-black;
 }
@@ -105,7 +111,6 @@ footer {
 .btn {
     border-radius: 0;
     color: $color-black;
-    font-family: $font-family-semibold;
     background-color: white;
     text-transform: uppercase;
     margin: 0.25em;
@@ -117,6 +122,7 @@ footer {
 
 .btn-primary {
     @extend .btn;
+    font-family: $font-family-semibold;
     border: 2px solid $color-black;
     text-transform: uppercase;
 

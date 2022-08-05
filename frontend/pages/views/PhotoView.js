@@ -9,6 +9,7 @@ import {Rectangle} from "react-leaflet";
 import {Dropdown, OverlayTrigger, Popover, Modal} from "react-bootstrap";
 import ExpandIcon from "../../images/expand.svg";
 import QuestionIcon from "../../images/question.svg";
+import TitleDecoratorContainer from "../../components/TitleDecoratorContainer";
 
 export class FindVanishingPointDisplayWidget extends React.Component {
     render() {
@@ -293,7 +294,6 @@ export class PhotoView extends PhotoViewer {
         const {
             alt,
             map_square_number: mapSquareNumber,
-            photographer_number: photographerNumber,
             analyses,
             map_square_coords: squareCoords
         } = this.state.photoData;
@@ -340,7 +340,7 @@ export class PhotoView extends PhotoViewer {
         );
 
         return (<>
-            <div className="page">
+            <div className="page" id="photo-view">
                 <br/>
                 <Modal
                     className="photo-modal"
@@ -443,17 +443,16 @@ export class PhotoView extends PhotoViewer {
                         )}
                     </div>
                     <div className="image-info col-12 col-lg-6 col-md-4">
-                        <h5>Photograph Details</h5>
-                        <br></br>
+                        <TitleDecoratorContainer title="Photograph details"/>
                         <h6>PHOTOGRAPHER</h6>
                         <p>
-                            <a href={`/photographer/${photographerNumber}/`}
+                            <a href={`/photographer/${this.props.photographer_number}/`}
                                className={"photo-link"}>
-                                Bob Frenchman
+                                {this.props.photographer_name}
                             </a>
                             <br></br>
                             <span><strong>#23</strong></span> out of <span>
-                            <a href={`/photographer/${photographerNumber}/`}
+                            <a href={`/photographer/${this.props.photographer_number}/`}
                                className={"photo-link"}>72</a></span> in collection
                         </p>
 
@@ -526,5 +525,7 @@ export class PhotoView extends PhotoViewer {
 PhotoView.propTypes = {
     photoNumber: PropTypes.number,
     mapSquareNumber: PropTypes.number,
-    photo_dir: PropTypes.string
+    photo_dir: PropTypes.string,
+    photographer_name: PropTypes.string,
+    photographer_number: PropTypes.number
 };
