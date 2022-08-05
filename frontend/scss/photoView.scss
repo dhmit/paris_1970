@@ -1,3 +1,20 @@
+#photo-view {
+    .title-decorator-container {
+        @include media-breakpoint-up(lg) {
+            position: relative;
+            top: -1em;
+        }
+        h2 {
+            font-size: 1.3em;
+            font-family: $font-family-bold;
+        }
+    }
+
+    .legend {
+        display: none;
+    }
+}
+
 .image-photo {
     width: 100%;
 }
@@ -112,8 +129,10 @@ rect {
     background-color: $color-turquoise;
 }
 
-.tag-button {
+.tag-button.btn-secondary {
+    text-transform: capitalize !important;
     border: 1px solid $color-red;
+    font-size: 1em;
 }
 
 .photo-sort-dropdown-button.btn-primary {

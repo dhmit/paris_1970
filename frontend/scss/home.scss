@@ -31,7 +31,9 @@ code {
     margin-top: 1.5em;
 
     .col-lg-6:nth-child(2) {
-        padding-left: 3em;
+        @include media-breakpoint-up(lg) {
+            padding-left: 3em;
+        }
     }
 }
 
