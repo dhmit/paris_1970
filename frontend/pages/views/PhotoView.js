@@ -10,8 +10,6 @@ import {Dropdown, OverlayTrigger, Popover, Modal} from "react-bootstrap";
 import ExpandIcon from "../../images/expand.svg";
 import QuestionIcon from "../../images/question.svg";
 
-let tagList = ["Construction", "People", "Building"];
-
 export class FindVanishingPointDisplayWidget extends React.Component {
     render() {
         const items = [];
@@ -300,6 +298,8 @@ export class PhotoView extends PhotoViewer {
             map_square_coords: squareCoords
         } = this.state.photoData;
 
+        const tag_list = this.props.photoTags ? this.props.photoTags : [];
+
         const mapSquareBounds = [
             [squareCoords.lat, squareCoords.lng],
             [squareCoords.lat - MAPSQUARE_HEIGHT, squareCoords.lng - MAPSQUARE_WIDTH]
@@ -361,7 +361,8 @@ export class PhotoView extends PhotoViewer {
                 </Modal>
                 <div className="page row">
                     <div className="image-view col-12 col-lg-6 col-md-8">
-                        <div className={this.state.displaySide === "slide" ? "image-box slide" : "image-box"}>
+                        <div
+                            className={this.state.displaySide === "slide" ? "image-box slide" : "image-box"}>
                             <img
                                 className="image-photo position-top-left"
                                 src={this.getSource(this.state.photoData, this.state.displaySide)}
@@ -371,7 +372,7 @@ export class PhotoView extends PhotoViewer {
                             />
                             {visualAnalyses}
                         </div>
-                        <div className={"center-btn"}>
+                        <div className={"center-btn mb-4"}>
                             <ExpandIcon
                                 className="expand-icon"
                                 onClick={() => this.setState({showPhotoModal: true})}
@@ -389,16 +390,21 @@ export class PhotoView extends PhotoViewer {
                                 SLIDE
                             </button>
                         </div>
-                        <div style={{display: "flex", justifyContent: "space-between", paddingTop: "10px"}}>
+                        <div style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            paddingTop: "10px"
+                        }}>
                             <div className="similar-photos-header">
-                                <h4><strong>Similar Photos</strong></h4>
+                                <h4>Similar Photos</h4>
                                 <OverlayTrigger
                                     trigger="hover"
                                     placement="right"
                                     overlay={
                                         <Popover>
                                             <Popover.Body>
-                                            This is what similar photos are and how we generate them.
+                                                This is what similar photos are and how we generate
+                                                them.
                                             </Popover.Body>
                                         </Popover>
                                     }>
@@ -408,13 +414,15 @@ export class PhotoView extends PhotoViewer {
                                 </OverlayTrigger>
                             </div>
                             <Dropdown className="photo-sort-dropdown">
-                                <Dropdown.Toggle className="photo-sort-dropdown-button" align="start">
+                                <Dropdown.Toggle className="photo-sort-dropdown-button"
+                                                 align="start">
                                     Sort By...
                                 </Dropdown.Toggle>
 
                                 <Dropdown.Menu>
                                     {
-                                        Object.keys(analyses).map(
+                                        Object.keys(analyses)
+                                        .map(
                                             (analysisName, k) =>
                                                 <Dropdown.Item key={k} href={`#/action-${k}`}>
                                                     {analysisName}
@@ -427,10 +435,10 @@ export class PhotoView extends PhotoViewer {
                         {this.getPhotoSlider(
                             similarPhotos,
                             {
-                                "className": "photo slider-photo",
+                                "className": "slider-photo",
                                 "titleFunc": (k, photo) =>
-                                `Map Square: ${photo["map_square_number"]}, ` +
-                                `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
+                                    `Map Square: ${photo["map_square_number"]}, ` +
+                                    `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
                             }
                         )}
                     </div>
@@ -439,18 +447,23 @@ export class PhotoView extends PhotoViewer {
                         <br></br>
                         <h6>PHOTOGRAPHER</h6>
                         <p>
-                            <a href={`/photographer/${photographerNumber}/`} className={"photo-link"}>
+                            <a href={`/photographer/${photographerNumber}/`}
+                               className={"photo-link"}>
                                 Bob Frenchman
                             </a>
                             <br></br>
                             <span><strong>#23</strong></span> out of <span>
                             <a href={`/photographer/${photographerNumber}/`}
-                                     className={"photo-link"}>72</a></span> in collection
+                               className={"photo-link"}>72</a></span> in collection
                         </p>
 
                         <br></br>
 
-                        <div style={{display: "flex", justifyContent: "flex-start", paddingTop: "10px"}}>
+                        <div style={{
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            paddingTop: "10px"
+                        }}>
                             <h6>TAGS</h6>
                             <OverlayTrigger
                                 trigger="hover"
@@ -458,7 +471,7 @@ export class PhotoView extends PhotoViewer {
                                 overlay={
                                     <Popover>
                                         <Popover.Body>
-                                        This is what a tag is and how we generate them.
+                                            This is what a tag is and how we generate them.
                                         </Popover.Body>
                                     </Popover>
                                 }>
@@ -468,11 +481,16 @@ export class PhotoView extends PhotoViewer {
                             </OverlayTrigger>
                         </div>
 
-                        {tagList.map((word) => (
-                            <button className="tag-button" key={word.id}>
-                                {word}
-                            </button>
-                        ))}
+                        {tag_list.length !== 0
+                            ? tag_list.map((word) => (
+                                <a key={`${word}-tag`} href={`/tag/${word}/`}>
+                                    <button className="btn-secondary tag-button" key={word.id}>
+                                        {word}
+                                    </button>
+                                </a>
+                            ))
+                            : <p>No tags to display for this photo.</p>
+                        }
 
                         <br></br><br></br>
 
@@ -494,7 +512,7 @@ export class PhotoView extends PhotoViewer {
                         <br></br>
                         <b>
                             Map Square <span><a href={`/map_square/${mapSquareNumber}`}
-                            className={"photo-link"}>{mapSquareNumber}</a></span>
+                                                className={"photo-link"}>{mapSquareNumber}</a></span>
                             <br></br>
                             Arrondissement 17
                         </b>

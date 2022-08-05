@@ -42,11 +42,11 @@ rect {
     pointer-events: all;
 }
 
-.box-gZroup:hover {
+.box-gZroup:hover, .box-gZroup:focus {
     opacity: 1;
 }
 
-.box-gZroup rect:hover {
+.box-gZroup rect:hover, .box-gZroup rect:focus {
     fill: blueviolet !important;
     fill-opacity: 0.25;
 }
@@ -70,7 +70,7 @@ rect {
     font-size: 50px;
 }
 
-.navButton:hover {
+.navButton:hover, .navButton:focus {
     color: black;
     text-decoration: none;
 }
@@ -92,8 +92,8 @@ rect {
 }
 
 .side-button {
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 1em;
+    font-family: $font-family-semibold;
     border: 0.17em solid;
     padding: 0.1em 0.5em;
     background-color: white;
@@ -103,35 +103,26 @@ rect {
         margin-left: -.2em;
     }
 
-    &:hover {
+    &:hover, &:focus {
         background-color: $color-turquoise !important;
     }
 }
 
-.side-button:hover {
+.side-button:hover, .side-button:focus {
     background-color: $color-turquoise;
 }
 
 .tag-button {
-    font-size: 16px;
-    border: .08em solid $color-orange;
-    padding: .125em 1em;
-    margin: 0.25em;
-    background-color: white;
+    border: 1px solid $color-red;
 }
 
-.tag-button:hover {
-    color: white;
-    background-color: $color-orange;
-}
-
-.photo-sort-dropdown-button {
+.photo-sort-dropdown-button.btn-primary {
     font-size: 16px;
-    border-width: 0em;
+    border: 0;
     border-bottom: 0.125em solid black;
-    padding: 0em 1.38em 0em 0em;
+    padding: 0 1.38em 0 0.2em;
     margin: 0.31em;
-    border-radius: 0em;
+    border-radius: 0;
     background-color: white;
     color: #5E5F5F;
 }
@@ -154,17 +145,29 @@ rect {
 
 .image-box {
     position: relative;
-    padding: 1em;
-    background-color: black;
+    background-color: $color-black;
+
     &.slide {
         background-color: $color-turquoise-light;
     }
 }
 
+.default-photo {
+    cursor: pointer;
+}
+
 .slider-photo {
-    max-width: 110px;
+    min-width: 100px;
     margin-left: .1em;
     margin-right: .1em;
+    padding: 3px;
+    opacity: 1;
+    -webkit-transition: .3s ease-in-out;
+    transition: .3s ease-in-out;
+
+    &:hover {
+        opacity: .5;
+    }
 }
 
 .slider-photos {
@@ -219,7 +222,7 @@ rect {
 }
 
 .photo-link:hover {
-    color: $color-orange;
+    color: $color-red;
 }
 
 .expand-icon {
@@ -258,4 +261,37 @@ rect {
     flex-direction: row;
     position: relative;
     align-items: center;
+}
+
+.photo-item-background {
+    background-color: $color-turquoise-light;
+    position: relative;
+    top: 0;
+    margin-bottom: .5em;
+    flex-direction: column;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80vw;
+    height: 80vw;
+    float: left;
+
+    &:hover, &:focus {
+        background-color: $color-turquoise;
+    }
+
+    .img-container {
+        vertical-align: middle;
+    }
+
+    img {
+        mix-blend-mode: multiply;
+        justify-content: center;
+        display: flex;
+        margin: 0 auto;
+        /* align horizontal */
+        align-items: center;
+        /* align vertical */
+    }
 }
