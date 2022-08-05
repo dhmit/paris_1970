@@ -14,6 +14,7 @@ from .serializers import (
     BlogPostSerializer
 )
 
+
 def index(request):
     """
     Blog home page
@@ -29,7 +30,14 @@ def blog_page(request):
     posts = BlogPost.objects.all()
     # Set of all tags belonging to published posts
     tags = list(set([tag for post in posts for tag in post.tags.names() if post.published]))
-    serialized_posts = serializers.serialize('json', posts)
+    print(posts[0].content)
+    serialized_posts = BlogPostSerializer(posts, many=True)
+    data = serialized_posts.data
+    print(serialized_posts)
+    print(data)
+    for post in data:
+        post['tags'] = list(post['tags'].names())
+        print(post['author'])
 
     context = {
         'page_metadata': {
@@ -37,7 +45,7 @@ def blog_page(request):
         },
         'component_name': 'Blog',
         'component_props': {
-            'posts': serialized_posts,
+            'posts': data,
             'tags': tags
         }
     }
