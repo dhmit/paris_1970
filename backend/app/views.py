@@ -389,6 +389,7 @@ def get_photo_distances(request, photographer_num):
     return Response(sorted_photo_data)
 
 
+@api_view(['GET'])
 def get_map_square_details(request, map_square_number):
     map_square = MapSquare.objects.get(number=map_square_number)
     photos = Photo.objects.filter(map_square=map_square)
