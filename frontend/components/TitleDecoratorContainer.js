@@ -11,9 +11,9 @@ export class TitleDecoratorContainer extends React.Component {
 
     render() {
         return (
-            <Container id="about-page-title">
-                <Row>
-                    <Col>
+            <Container className="p-0 title-decorator-container">
+                <Row className="p-0">
+                    <Col className="p-0">
                         <TitleDecorator id="site-decorator" top={22} left={-1.5}
                                         decorator_type={"title-decorator"}/>
                         <h2>{this.props.title}</h2>

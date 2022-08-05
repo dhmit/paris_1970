@@ -370,6 +370,25 @@ def get_arrondissements_map_squares(request, arr_number=None):
 
 
 @api_view(['GET'])
+def get_photo_distances(request, photographer_num):
+    photo_data = [
+        {
+            'number': analysis_result.photo.number,
+            'mapSquareNumber': analysis_result.photo.map_square.number,
+            'distance': analysis_result.parsed_result()
+        }
+        for analysis_result in PhotoAnalysisResult.objects.filter(
+            name='photographer_dist',
+            photo__photographer__number=photographer_num
+        )
+    ]
+
+    sorted_photo_data = sorted(
+        photo_data, key=lambda data: data['distance'], reverse=True
+    )
+    return Response(sorted_photo_data)
+
+
 def get_map_square_details(request, map_square_number):
     map_square = MapSquare.objects.get(number=map_square_number)
     photos = Photo.objects.filter(map_square=map_square)
@@ -486,6 +505,9 @@ def photo_view(request, map_square_num, photo_num):
     Photo page, specified by map_square_num and photo_num
     """
     tag_data = photo_tag_helper(map_square_num, photo_num)
+    photographer = Photo.objects.get(number=photo_num,
+                                     map_square__number=map_square_num).photographer
+
     context = {
         'page_metadata': {
             'title': 'Photo View'
@@ -494,9 +516,16 @@ def photo_view(request, map_square_num, photo_num):
         'component_props': {
             'mapSquareNumber': map_square_num,
             'photoNumber': photo_num,
-            'photoTags': tag_data
+            'photoTags': tag_data,
+            'photographer_name': "",
+            'photographer_number': ""
         }
     }
+
+    if photographer:
+        context['photographer_name'] = photographer.name,
+        context['photographer_number'] = photographer.number
+
     return render_view(request, context)
 
 

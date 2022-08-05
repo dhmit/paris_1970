@@ -75,6 +75,7 @@ urlpatterns = [
     path('api/search/', views.search, name="search"),
 
     path('api/map_square_details/<int:map_square_number>', views.get_map_square_details),
+
     # Arrondissements
     path('api/arrondissements_geojson/', views.get_arrondissements_geojson,
          name="get_arrondissement"),
@@ -83,6 +84,9 @@ urlpatterns = [
     path('api/arrondissements_map_squares/', views.get_arrondissements_map_squares),
     path('api/arrondissements_map_squares/<int:arr_number>', views.get_arrondissements_map_squares),
 
+    # Distances
+    path('api/get_photo_distances/<int:photographer_num>/',
+         views.get_photo_distances, name="get_photo_distances"),
     # path('api/faster_rcnn_object_detection/<str:object_name>/', views.get_photos_by_object_rcnn),
     # path('api/model/<str:model_name>/<str:object_name>/', views.get_photos_by_object),
     # path('api/faster_rcnn_object_detection/<str:object_name>/',
