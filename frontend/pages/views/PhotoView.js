@@ -427,7 +427,7 @@ export class PhotoView extends PhotoViewer {
                         )}
                     </div>
                     <div className="image-info col-12 col-lg-6 col-md-4">
-                        <h5>Photograph Details</h5>
+                        <h5 style={{fontSize:"28px"}}>Photograph Details</h5>
                         <br></br>
                         <h6>PHOTOGRAPHER</h6>
                         <p>

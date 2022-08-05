@@ -14,10 +14,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 25px;
+    padding: 1em;
     background-color: black;
-    height: 50em;
-    margin-top: 1em;
+    margin-top: 1.5em;
     margin-bottom: 1em;
 }
 
@@ -28,4 +27,5 @@
 
 .photographer-name {
     color: $color-orange;
+    font-size: 60px
 }
