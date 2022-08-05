@@ -13,6 +13,8 @@ import {PhotographerView} from "./pages/views/PhotographerView";
 import {MapSquareView} from "./pages/views/MapSquareView";
 import {Search} from "./pages/Search";
 import About from "./pages/About";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/views/BlogPostView";
 import MapPage from "./pages/views/MapPageView";
 import TagView from "./pages/TagView";
 
@@ -27,6 +29,8 @@ const COMPONENTS = {
     HomePage,
     About,
     Search,
+    Blog,
+    BlogPost,
     PhotoView,
     PhotographerView,
     MapSquareView,

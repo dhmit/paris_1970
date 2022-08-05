@@ -98,17 +98,23 @@ urlpatterns = [
     path('map/', views.map_page),
     path('about/', views.about),
     path('search/', views.search_view),
+
     # Photos
     path('photo/<int:map_square_num>/<int:photo_num>/', views.photo_view),
-    # Photographers
-    path('photographer/<int:photographer_num>/', views.photographer_view),
-    # Map Squares
-    path('map_square/<int:map_square_num>/', views.map_square_view),
-    # path('clustering/<int:num_of_clusters>/<int:cluster_num>/', views.cluster_view),
-    # BFlog urls
-    path(f'{BLOG_ROOT_URL}/', blog_views.index, name="blog_home"),
+
+    # blog urls
+    path(f'{BLOG_ROOT_URL}/', blog_views.blog_home_page, name="blog_home"),
     path(f'{BLOG_ROOT_URL}/<str:slug>/', blog_views.blog_post,
          name='blog-detail'),
+
+    # Photographers
+    path('photographer/<int:photographer_num>/', views.photographer_view),
+
+    # Map Squares
+    path('map_square/<int:map_square_num>/', views.map_square_view),
+
+    # path('clustering/<int:num_of_clusters>/<int:cluster_num>/', views.cluster_view),
+    # BFlog urls
     # Log in/out urls
     path('login/', auth_views.LoginView.as_view(template_name='admin/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),

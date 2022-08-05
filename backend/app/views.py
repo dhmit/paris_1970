@@ -220,7 +220,6 @@ def get_photo_tags(request, map_square_number, photo_number):
     Given a specific photo, identified by map_square_number and photo_number, outputs the tags
     identified in that photo
     """
-    print(photo_tag_helper(map_square_number, photo_number))
     return photo_tag_helper(map_square_number, photo_number)
 
 
