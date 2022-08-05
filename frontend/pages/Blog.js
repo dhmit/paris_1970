@@ -5,6 +5,7 @@ import * as PropTypes from "prop-types";
 import {truncateText} from "../common";
 
 function Posts(props){
+    //Display all posts
     const blogPosts = props.posts.map((post) => {
         if(post.published){
             return(<div key={post.slug} className="card mb-4 border-0">
@@ -31,6 +32,9 @@ function Posts(props){
                                href={"/blog/"+post.slug}> Read more
                             </a>
                             <div className="list-inline mb-4 mt-3">
+                                {
+                                    //Displays tag buttons for each post
+                                }
                                 {post.tags.map((tag) => {
                                     return(<a key={tag} className="btn btn-secondary blog-tag" href="#"
                                        role="button">{tag}</a>);
