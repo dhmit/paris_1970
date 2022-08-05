@@ -87,10 +87,9 @@ urlpatterns = [
     path('all_analysis/', views.all_analysis_view),
     path('clustering/<int:num_of_clusters>/<int:cluster_num>/', views.cluster_view),
     # blog urls
-    path(f'{BLOG_ROOT_URL}/', blog_views.index, name="blog_home"),
+    path(f'{BLOG_ROOT_URL}/', blog_views.blog_home_page, name="blog_home"),
     path(f'{BLOG_ROOT_URL}/<str:slug>/', blog_views.blog_post,
          name='blog-detail'),
-    path('blog_test/', blog_views.blog_page),
 
     # log in/out urls
     path('login/', auth_views.LoginView.as_view(template_name='admin/login.html'), name='login'),

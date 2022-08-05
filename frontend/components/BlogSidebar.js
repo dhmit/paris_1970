@@ -40,7 +40,7 @@ export class BlogSidebar extends React.Component {
                                 if(post.published) {
                                     return (
                                         //outputs a list of post links
-                                        <li id="blog-sidebar-post-list">
+                                        <li key={post.slug} id="blog-sidebar-post-list">
                                             <a className="post-link" href={"/blog/" + post.slug}>
                                                 {truncateText(post.title,4)}
                                             </a>

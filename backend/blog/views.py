@@ -15,18 +15,7 @@ from .serializers import (
 )
 
 
-def index(request):
-    """
-    Blog home page
-    """
-    posts = BlogPost.objects.all()
-    # Set of all tags belonging to published posts
-    tags = set([tag for post in posts for tag in post.tags.names() if post.published])
-    context = {'posts': posts, 'tags': tags}
-    return render(request, 'blog/home.html', context)
-
-
-def blog_page(request):
+def blog_home_page(request):
     posts = BlogPost.objects.all()
     # Set of all tags belonging to published posts
     tags = list(set([tag for post in posts for tag in post.tags.names() if post.published]))
@@ -55,17 +44,24 @@ def blog_post(request, slug):
     Single blog post view
     """
     posts = BlogPost.objects.filter(slug=slug)
+    all_posts = BlogPost.objects.all()
+
     if posts and (
         posts[0].published
         or request.user == posts[0].author
         or request.user.has_perm('blog.view_blogpost')
         or request.user.is_superuser
     ):
-        tags = posts[0].tags.names()
+        tags = list(posts[0].tags.names())
         post = posts[0]
-
         serialized_post = BlogPostSerializer(post)
+        serialized_all_posts = BlogPostSerializer(all_posts, many=True)
+
         data = serialized_post.data
+        all_posts_data = serialized_all_posts.data
+
+        for post in all_posts_data:
+            post['tags'] = list(post['tags'].names())
 
         data['tags'] = list(data['tags'].names())
 
@@ -73,8 +69,9 @@ def blog_post(request, slug):
             'page_metadata': {
                 'title': 'Blog Post: ' + data['slug']
             },
-            'component_name': 'BlogPostView',
+            'component_name': 'BlogPost',
             'component_props': {
+                'all_posts': all_posts_data,
                 'post': data,
                 'tags': tags
             }
