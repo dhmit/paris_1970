@@ -1,7 +1,6 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import Footer from "../../components/Footer";
 import PhotoViewer from "../../components/PhotoViewer";
 import LoadingPage from "../LoadingPage";
 
@@ -50,14 +49,14 @@ export class MapSquareView extends PhotoViewer {
         return (<>
             <div className="page">
                 <h1>Map Square {number}</h1>
-                {photos.length
+                <ul className={"list-inline"}>
+                    {photos.length
                     ? (<>{
                         this.getPhotoGrid(photos, {"photoSize": [120, 120]})
                     }</>)
                     : "No metadata has been transcribed for these photos."
-                }
+                }</ul>
             </div>
-            <Footer/>
         </>);
     }
 }
