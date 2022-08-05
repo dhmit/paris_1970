@@ -102,13 +102,24 @@ footer {
 
 
 /* BUTTONS */
-.btn-primary {
-    border: 2px solid $color-black;
-    background-color: white;
-    text-transform: uppercase;
-    font-family: $font-family-semibold;
+.btn {
     border-radius: 0;
     color: $color-black;
+    font-family: $font-family-semibold;
+    background-color: white;
+    text-transform: uppercase;
+    margin: 0.25em;
+}
+
+.btn-primary, .btn-secondary {
+    padding: .125em 1em;
+}
+
+.btn-primary {
+    @extend .btn;
+    border: 2px solid $color-black;
+    text-transform: uppercase;
+
     &:hover, &:focus, &:active {
         background-color: $color-turquoise;
         border: 2px solid $color-turquoise;
@@ -117,15 +128,13 @@ footer {
 }
 
 .btn-secondary {
+    @extend .btn;
+    text-transform: uppercase;
     font-size: .8em;
     border: .08em solid $color-red;
-    padding: .125em 1em;
-    margin: 0.25em;
-    background-color: white;
-    text-transform: capitalize;
 
-    &:hover {
-        color: white;
-        background-color: $color-red;
+    &:hover, &:focus {
+        color: white !important;
+        background-color: $color-red !important;
     }
 }

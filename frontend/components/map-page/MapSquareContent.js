@@ -14,17 +14,19 @@ export class MapSquareContent extends PhotoViewer {
 
                 ? (<>
                     <h6 className={"text-uppercase"}>Example photos</h6>
-                    <ul className={"list-inline"}>{
+                    <ul className={"list-inline p-0"}>{
                         this.getPhotoGrid(this.props.photos, {
                             "photoSize": [120, 120],
                             "className": "example-photo"
                         })
                     }
                     </ul>
-                    <a className={"link"}
-                       href={"/map_square/" + this.props.mapSquare}>
+                    <div className="d-inline-block">
+                        <a className={"link"}
+                          href={"/map_square/" + this.props.mapSquare}>
                         Go to map square
                     </a>
+                    </div>
                 </>)
                 : <></>
             }

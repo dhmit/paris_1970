@@ -435,7 +435,7 @@ export class PhotoView extends PhotoViewer {
                         {this.getPhotoSlider(
                             similarPhotos,
                             {
-                                "className": "photo slider-photo",
+                                "className": "slider-photo",
                                 "titleFunc": (k, photo) =>
                                     `Map Square: ${photo["map_square_number"]}, ` +
                                     `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
@@ -483,8 +483,8 @@ export class PhotoView extends PhotoViewer {
 
                         {tag_list.length !== 0
                             ? tag_list.map((word) => (
-                                <a key={"tag"} href={`/tag/${word}/`}>
-                                    <button className="tag-button" key={word.id}>
+                                <a key={`${word}-tag`} href={`/tag/${word}/`}>
+                                    <button className="btn-secondary tag-button" key={word.id}>
                                         {word}
                                     </button>
                                 </a>

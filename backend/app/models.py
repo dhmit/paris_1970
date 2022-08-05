@@ -35,11 +35,11 @@ class Photo(models.Model):
     librarian_caption = models.CharField(max_length=252)
     photographer_caption = models.CharField(max_length=252)
 
-    def has_valid_source(self, photo_dir=settings.LOCAL_PHOTOS_DIR):
+    def has_valid_source(self, photo_dir=settings.LOCAL_PHOTOS_LOCATION):
         return os.path.exists(os.path.join(photo_dir, f"{self.map_square.number}/"
                                                       f"{self.number}_photo.jpg"))
 
-    def get_image_data(self, as_gray=False, use_pillow=False, src_dir=settings.LOCAL_PHOTOS_DIR):
+    def get_image_data(self, as_gray=False, use_pillow=False, src_dir=settings.LOCAL_PHOTOS_LOCATION):
         """
         Get the image data via skimage's imread, for use in analyses
 
@@ -71,7 +71,7 @@ class Photo(models.Model):
     class Meta:
         unique_together = ['number', 'map_square']
 
-    def get_image_local_filepath(self, src_dir=settings.LOCAL_PHOTOS_DIR):
+    def get_image_local_filepath(self, src_dir=settings.LOCAL_PHOTOS_LOCATION):
         """
         Get the image local filepath if it exists.
 

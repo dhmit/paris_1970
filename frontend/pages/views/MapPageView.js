@@ -232,7 +232,7 @@ class MapPage extends React.Component {
                             <Container>
                                 <Row>
                                     <Col lg={1}/>
-                                    <Col lg={9}>
+                                    <Col lg={9} className="p-0">
                                         {this.state.mapSquare
                                             ? <>
                                                 <a href={"#"}
