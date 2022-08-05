@@ -618,3 +618,25 @@ def tag_view(request, tag_name):
     }
 
     return render_view(request, context)
+
+
+def photographer_list_view(request):
+    """
+    Photographer list page
+    """
+    photos_dir = os.path.join(settings.LOCAL_PHOTOS_DIR, 'photographers')
+    photographers = Photographer.objects.all()
+    photographer_data = [[i.number, i.name] for i in photographers]
+    photographer_data.sort(key=lambda x: x[1])
+    context = {
+        'page_metadata': {
+            'title': 'Photographer List View'
+        },
+        'component_name': 'PhotographerListView',
+        'component_props': {
+            'photoListDir': photos_dir,
+            'photographers': photographer_data
+        }
+    }
+
+    return render_view(request, context)

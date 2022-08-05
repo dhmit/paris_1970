@@ -15,6 +15,7 @@ import {Search} from "./pages/Search";
 import About from "./pages/About";
 import MapPage from "./pages/views/MapPageView";
 import TagView from "./pages/TagView";
+import {PhotographerListView} from "./pages/views/PhotographerListView";
 
 // Import all styles
 import "./scss/styles.scss";
@@ -31,7 +32,8 @@ const COMPONENTS = {
     PhotographerView,
     MapSquareView,
     MapPage,
-    TagView
+    TagView,
+    PhotographerListView
 };
 
 const PreselectedComponent = COMPONENTS[COMPONENT_NAME || "ErrorNotFoundComponent"];

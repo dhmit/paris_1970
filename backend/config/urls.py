@@ -56,12 +56,9 @@ urlpatterns = [
     # Map Squares
     path('api/map_square/<int:map_square_number>/', views.get_map_square, name="map_square"),
     path('api/all_map_squares/', views.all_map_squares, name="all_map_squares"),
-
     # Tags
     path('api/tag/<str:tag_name>/', views.get_photos_by_tag, name="get_photos_by_tag"),
     path('api/get_tags/', views.get_tags, name="get_tags"),
-
-
     # Analyses
     path('api/all_analyses/', views.all_analyses, name='all_analyses'),
     path('api/similarity/', views.get_all_photos_in_order, name="all_photos_in_order"),
@@ -97,6 +94,7 @@ urlpatterns = [
     # Photos
     path('photo/<int:map_square_num>/<int:photo_num>/', views.photo_view),
     # Photographers
+    path('photographers/', views.photographer_list_view),
     path('photographer/<int:photographer_num>/', views.photographer_view),
     # Map Squares
     path('map_square/<int:map_square_num>/', views.map_square_view),
@@ -110,5 +108,6 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     # Tags
     path('tag/<str:tag_name>/', views.tag_view),
+
 
 ]
