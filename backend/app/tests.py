@@ -36,7 +36,7 @@ class MainAPITests(TestCase):
         for i in range(3):
             map_square = MapSquare.objects.create(number=i + 1, coordinates="24, 25")
             photographer = Photographer.objects.create(map_square=map_square, number=i + 1,
-                                                       name=names[i])
+                                                       name=names[i], approx_loc="Popstar")
             path = os.path.join(settings.TEST_PHOTOS_DIR, f"{i + 1}")
             os.mkdir(path, mode=0o755)
             # in each map square, create 4 empty photos and some PhotoAnalysisResult
@@ -166,6 +166,7 @@ class MainAPITests(TestCase):
         for i in (1, 2, 3):
             resone = self.initTest("photographer", args=[i])
             assert len(resone["photos"]) == 4
+            assert resone["approx_loc"] == "Popstar"
 
     def test_prev_next_photos(self):
         # need to decrease number of tries, currently too many

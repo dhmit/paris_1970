@@ -57,6 +57,7 @@ export class PhotographerView extends PhotoViewer {
             name,
             number,
             photos,
+            recorded_sex,
             approx_loc
         } = this.state.photographerData;
 
@@ -75,7 +76,8 @@ export class PhotographerView extends PhotoViewer {
                         <h5 style={{paddingTop: "1em", fontSize:"28px"}}><strong>Photographer Profile</strong></h5>
                         <h1 className="photographer-name">{name}</h1>
                         <div><strong>Number:</strong>{" " + number}</div>
-                        <div><strong>Recorded Sex:</strong>{" "}No record</div>
+                        <div><strong>Recorded Sex:</strong>{" " + (recorded_sex ? recorded_sex : "No" +
+                            " record")}</div>
                         <div><strong>Address:</strong>{" " + (approx_loc ? approx_loc : "No" +
                             " record")}</div>
                         <br/>
