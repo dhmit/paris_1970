@@ -298,7 +298,7 @@ export class PhotoView extends PhotoViewer {
             map_square_coords: squareCoords
         } = this.state.photoData;
 
-        const tag_list = this.props.photoTags;
+        const tag_list = this.props.photoTags ? this.props.photoTags : [];
 
         const mapSquareBounds = [
             [squareCoords.lat, squareCoords.lng],

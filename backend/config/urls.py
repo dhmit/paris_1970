@@ -75,6 +75,7 @@ urlpatterns = [
 
     path('api/search/', views.search, name="search"),
 
+    path('api/map_square_details/<int:map_square_number>', views.get_map_square_details),
     # Arrondissements
     path('api/arrondissements_geojson/', views.get_arrondissements_geojson,
          name="get_arrondissement"),

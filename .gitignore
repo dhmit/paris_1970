@@ -168,6 +168,6 @@ backend/app/analysis/yolo_files/model.pkl
 # Locally cached photos
 backend/data/local_photos/
 assets/images/
-
+assets/data/test_photos
 data_dump.json
 
