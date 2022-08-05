@@ -14,7 +14,9 @@ from rest_framework.renderers import JSONRenderer
 from django.shortcuts import render
 from django.db.models import Q, FloatField
 from django.db.models.functions import Cast
-from config import settings
+from django.conf import settings
+
+from app import view_helpers
 
 from .models import (
     Photo,
@@ -336,9 +338,7 @@ def get_arrondissements_geojson(request, arr_number=None):
     :param arr_number:
     :return: Response
     """
-    geojson_path = os.path.join(settings.BACKEND_DATA_DIR, 'arrondissements.geojson')
-    with open(geojson_path, encoding='utf-8') as f:
-        data = json.load(f)
+    data = view_helpers.get_arrondissement_geojson()
 
     if arr_number is not None:
         # Get data for a single unique arrondissement
@@ -360,14 +360,26 @@ def get_arrondissements_map_squares(request, arr_number=None):
     :param arr_number:
     :return: Response
     """
-    json_path = os.path.join(settings.BACKEND_DATA_DIR, 'arrondissements_map_squares.json')
-    with open(json_path, encoding='utf-8') as f:
-        data = json.load(f)
+    data = view_helpers.get_map_square_data()
 
     if arr_number is not None:
         # Get data for a single unique arrondissement
         data['arrondissements'] = [data['arrondissements'][arr_number - 1]]
 
+    return Response(data)
+
+
+@api_view(['GET'])
+def get_map_square_details(request, map_square_number):
+    map_square = MapSquare.objects.get(number=map_square_number)
+    photos = Photo.objects.filter(map_square=map_square)
+    photos_data = SimplePhotoSerializer(photos[:4], many=True).data
+    photographers = Photographer.objects.filter(map_square=map_square)
+    photographers_data = PhotographerSerializer(photographers, many=True).data
+    data = {
+        "photos": photos_data,
+        "photographers": photographers_data
+    }
     return Response(data)
 
 
@@ -408,11 +420,16 @@ def about(request):
 
 
 def map_page(request):
+    arrondissement_data = view_helpers.get_map_square_data()
     context = {
         'page_metadata': {
             'title': 'Map Page'
         },
-        'component_name': 'MapPage'
+        'component_name': 'MapPage',
+        'component_props': {
+            'arrondissement_data': json.dumps(arrondissement_data),
+            'photoDir': str(settings.LOCAL_PHOTOS_DIR),
+        }
     }
 
     return render_view(request, context)

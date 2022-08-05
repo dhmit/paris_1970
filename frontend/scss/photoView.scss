@@ -113,26 +113,17 @@ rect {
 }
 
 .tag-button {
-    font-size: 16px;
-    border: .08em solid $color-orange;
-    padding: .125em 1em;
-    margin: 0.25em;
-    background-color: white;
-    text-transform: capitalize;
+    @extend .btn-secondary;
 }
 
-.tag-button:hover {
-    color: white;
-    background-color: $color-orange;
-}
 
 .photo-sort-dropdown-button {
     font-size: 16px;
-    border-width: 0em;
+    border-width: 0;
     border-bottom: 0.125em solid black;
-    padding: 0em 1.38em 0em 0em;
+    padding: 0 1.38em 0 0;
     margin: 0.31em;
-    border-radius: 0em;
+    border-radius: 0;
     background-color: white;
     color: #5E5F5F;
 }
@@ -155,7 +146,7 @@ rect {
 
 .image-box {
     position: relative;
-    background-color: black;
+    background-color: $color-black;
 
     &.slide {
         background-color: $color-turquoise-light;
@@ -232,7 +223,7 @@ rect {
 }
 
 .photo-link:hover {
-    color: $color-orange;
+    color: $color-red;
 }
 
 .expand-icon {
@@ -271,4 +262,28 @@ rect {
     flex-direction: row;
     position: relative;
     align-items: center;
+}
+
+.photo-item-background {
+    background-color: $color-turquoise-light;
+    position: relative;
+    top: 0;
+    white-space: nowrap; /* This is required unless you put the helper span closely near the img */
+    flex-direction: column;
+    text-align: center;
+
+    &:hover, &:focus {
+        background-color: $color-turquoise;
+    }
+
+    .img-container {
+        vertical-align: middle;
+    }
+
+    img {
+        mix-blend-mode: multiply;
+        justify-content: center;
+        display: flex;
+        margin: 0 auto;
+    }
 }

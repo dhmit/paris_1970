@@ -29,6 +29,7 @@ code {
     padding: 0 $side-padding 0;
     flex: 1 0 auto;
     margin-top: 1.5em;
+
     .col-lg-6:nth-child(2) {
         padding-left: 3em;
     }
@@ -86,27 +87,36 @@ code {
     fill-opacity: 0.7;
 }
 
+.box {
+    mix-blend-mode: multiply;
+}
+
 .box-one {
+    @extend .box;
     stroke: #FFBEBD;
     fill: #FFBEBD;
 }
 
 .box-two {
+    @extend .box;
     stroke: #FF9E9C;
     fill: #FF9E9C;
 }
 
 .box-three {
+    @extend .box;
     stroke: #FF7E7A;
     fill: #FF7E7A;
 }
 
 .box-four {
+    @extend .box;
     stroke: #FF5D59;
     fill: #FF5D59;
 }
 
 .box-five {
+    @extend .box;
     stroke: #FF3D3A;
     fill: #FF3D3A;
 }
