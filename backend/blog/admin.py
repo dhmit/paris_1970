@@ -4,10 +4,11 @@ from django.utils.safestring import mark_safe
 from blog.models import BlogPost
 from tinymce.widgets import TinyMCE
 
+from blog.forms import BlogPostAdminForm
 
 class BlogPostAdmin(admin.ModelAdmin):
     list_display = ['id', 'custom_slug', 'title', 'subtitle', 'author']
-
+    form = BlogPostAdminForm
     # TODO: make slug be a link that takes the admin user to the blog page
 
     def formfield_for_dbfield(self, db_field, **kwargs):

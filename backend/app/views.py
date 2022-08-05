@@ -9,11 +9,11 @@ import re
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 
 from django.shortcuts import render
 from django.db.models import Q, FloatField
 from django.db.models.functions import Cast
-
 from config import settings
 
 from .models import (
@@ -27,6 +27,7 @@ from .models import (
 
 from .serializers import (
     PhotoSerializer,
+    SimplePhotoSerializer,
     MapSquareSerializer,
     MapSquareSerializerWithoutPhotos,
     PhotographerSerializer,
@@ -104,6 +105,7 @@ def all_map_squares(request):
 def get_photographer(request, photographer_number=None):
     """
     API endpoint to get a photographer based on the photographer_id
+    If given photographer_number, GETs associated photographer, else, returns all
     """
     if photographer_number:
         photographer_obj = Photographer.objects.get(number=photographer_number)
@@ -135,7 +137,8 @@ def all_analyses(request):
 @api_view(['GET'])
 def get_photos_by_analysis(request, analysis_name, object_name=None):
     """
-    API endpoint to get photos sorted by analysis
+    API endpoint to get photos sorted by analysis (specified by analysis_name)
+    Filters photos from analysis by object_name if given
     """
     analysis_obj = PhotoAnalysisResult.objects.filter(name=analysis_name)
     sorted_analysis_obj = analysis_obj
@@ -161,10 +164,68 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
     return Response(serializer.data)
 
 
+def format_photo(photo, photo_values_to_keep):
+    formatted_photo = {}
+    for value in photo_values_to_keep:
+        formatted_photo[value] = photo[value]
+
+
+def tag_helper(tag_name):
+    analysis_obj = PhotoAnalysisResult.objects.filter(name='yolo_model')
+    if len(analysis_obj) == 0:
+        return []
+    relevant_objects = []
+    for instance in analysis_obj:
+        data = instance.parsed_result()
+        if tag_name in data['labels']:
+            relevant_objects.append(instance)
+    # sort by confidence
+    by_confidence = []
+    for instance in relevant_objects:
+        data = instance.parsed_result()
+        confidence = 0
+        for box in data['boxes']:
+            # an image may have several tag_name in labels, find greatest confidence
+            if box['label'] == tag_name:
+                confidence = max(confidence, box['confidence'])
+        by_confidence.append((instance, confidence))
+    sorted_analysis_obj = sorted(by_confidence, key=lambda obj: obj[1],
+                                 reverse=True)
+    return [instance[0].photo for instance in sorted_analysis_obj]
+
+
+@api_view(['GET'])
+def get_photos_by_tag(request, tag_name):
+    """
+    API endpoint to get all photos associated with a tag (specified by tag_name)
+    """
+    sorted_photo_obj = tag_helper(tag_name)
+    serializer = PhotoSerializer(sorted_photo_obj, many=True)
+    return Response(serializer.data)
+
+
+def photo_tag_helper(map_square_number, photo_number):
+    photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
+    analysis_obj = PhotoAnalysisResult.objects.filter(name='yolo_model', photo=photo_obj)
+    if analysis_obj:
+        parsed_obj = analysis_obj[0].parsed_result()
+        return [label for label in parsed_obj['labels']]
+
+
+@api_view(['GET'])
+def get_photo_tags(request, map_square_number, photo_number):
+    """
+    Given a specific photo, identified by map_square_number and photo_number, outputs the tags
+    identified in that photo
+    """
+    print(photo_tag_helper(map_square_number, photo_number))
+    return photo_tag_helper(map_square_number, photo_number)
+
+
 @api_view(['GET'])
 def get_all_photos_in_order(request):
     """
-    API endpoint to get photos sorted by map square
+    API endpoint to get photos sorted by map square, for similarity analysis
     """
     analysis_obj = PhotoAnalysisResult.objects.filter(name="resnet18_cosine_similarity")
     sorted_analysis_obj = sorted(analysis_obj, key=lambda instance: instance.parsed_result())
@@ -176,7 +237,9 @@ def get_all_photos_in_order(request):
 @api_view(['GET'])
 def get_photo_by_similarity(request, map_square_number, photo_number, num_similar_photos):
     """
-    API endpoint to get top 10 similar photos of a specific photo
+    API endpoint to get top similar photos of a specific photo, specified by map_square_number
+    and photo_number
+    Number of similar photos to GET specified by num_similar_photos
     """
 
     photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
@@ -205,6 +268,7 @@ def get_photo_by_similarity(request, map_square_number, photo_number, num_simila
 @api_view(['GET'])
 def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     """
+    TODO: not needed?
     API endpoint to get clusters of similar photos
     """
     cluster = Cluster.objects.get(model_n=number_of_clusters, label=cluster_number)
@@ -216,6 +280,7 @@ def get_photos_by_cluster(request, number_of_clusters, cluster_number):
 def search(request):
     """
     API endpoint to search for photos that match the search query
+    Post request
     """
     query = json.loads(request.GET.get('query', '{}'))
 
@@ -301,7 +366,7 @@ def get_arrondissements_map_squares(request, arr_number=None):
 
     if arr_number is not None:
         # Get data for a single unique arrondissement
-        data['arrondissements'] = [data['arrondissements'][arr_number-1]]
+        data['arrondissements'] = [data['arrondissements'][arr_number - 1]]
 
     return Response(data)
 
@@ -329,6 +394,9 @@ def index(request):
 
 
 def about(request):
+    """
+    About page
+    """
     context = {
         'page_metadata': {
             'title': 'About'
@@ -351,6 +419,9 @@ def map_page(request):
 
 
 def search_view(request):
+    """
+    Search page
+    """
     context = {
         'page_metadata': {
             'title': 'Search'
@@ -361,18 +432,10 @@ def search_view(request):
     return render_view(request, context)
 
 
-def similarity(request):
-    context = {
-        'page_metadata': {
-            'title': 'All Photo View'
-        },
-        'component_name': 'AllPhotosView'
-    }
-
-    return render_view(request, context)
-
-
 def map_square_view(request, map_square_num):
+    """
+    Map square page, specified by map_square_num
+    """
     context = {
         'page_metadata': {
             'title': 'Map Square View'
@@ -386,6 +449,9 @@ def map_square_view(request, map_square_num):
 
 
 def photographer_view(request, photographer_num):
+    """
+    Photographer page, specified by photographer_num
+    """
     context = {
         'page_metadata': {
             'title': 'Photographer View'
@@ -399,6 +465,10 @@ def photographer_view(request, photographer_num):
 
 
 def photo_view(request, map_square_num, photo_num):
+    """
+    Photo page, specified by map_square_num and photo_num
+    """
+    tag_data = photo_tag_helper(map_square_num, photo_num)
     context = {
         'page_metadata': {
             'title': 'Photo View'
@@ -406,78 +476,29 @@ def photo_view(request, map_square_num, photo_num):
         'component_name': 'PhotoView',
         'component_props': {
             'mapSquareNumber': map_square_num,
-            'photoNumber': photo_num
-        }
-    }
-    return render_view(request, context)
-
-
-def similarity_view(request, map_square_num, photo_num, num_similar_photos):
-    context = {
-        'page_metadata': {
-            'title': 'Similarity View'
-        },
-        'component_name': 'SimilarityView',
-        'component_props': {
-            'mapSquareNumber': map_square_num,
             'photoNumber': photo_num,
-            'numSimilarPhotos': num_similar_photos
+            'photoTags': tag_data
         }
     }
     return render_view(request, context)
 
 
-def analysis_name_view(request, analysis_name):
+def tag_view(request, tag_name):
+    """
+    Tag page, specified by tag_name
+    """
+    sorted_photo_obj = tag_helper(tag_name)
+    serializer = SimplePhotoSerializer(sorted_photo_obj, many=True)
+    # there's probably a much simpler way...
+    photo_data = JSONRenderer().render(serializer.data).decode("utf-8")
     context = {
         'page_metadata': {
-            'title': 'Analysis View'
+            'title': 'Tag View'
         },
-        'component_name': 'AnalysisView',
+        'component_name': 'TagView',
         'component_props': {
-            'analysisName': analysis_name
-        }
-    }
-    return render_view(request, context)
-
-
-def analysis_view(request, analysis_name, object_name=None):
-    context = {
-        'page_metadata': {
-            'title': 'Analysis View'
-        },
-        'component_name': 'AnalysisView',
-        'component_props': {
-            'analysisName': analysis_name
-        }
-    }
-
-    if object_name:
-        context['component_props']['objectName'] = object_name
-
-    return render_view(request, context)
-
-
-def all_analysis_view(request):
-    context = {
-        'page_metadata': {
-            'title': 'All Analysis View'
-        },
-        'component_name': 'AllAnalysisView',
-        'component_props': {}
-    }
-
-    return render_view(request, context)
-
-
-def cluster_view(request, num_of_clusters, cluster_num):
-    context = {
-        'page_metadata': {
-            'title': 'Cluster View'
-        },
-        'component_name': 'ClusterView',
-        'component_props': {
-            'numberOfClusters': num_of_clusters,
-            'clusterNumber': cluster_num
+            'tagName': tag_name,
+            'tagPhotos': photo_data
         }
     }
 

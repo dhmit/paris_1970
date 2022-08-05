@@ -60,18 +60,25 @@ class PhotoSerializer(serializers.ModelSerializer):
     def get_map_square_coords(instance):
         if instance.map_square.coordinates.split(', ') != ['']:
             return {dim: float(c)
-                for dim, c in zip(['lat', 'lng'], instance.map_square.coordinates.split(', '))
-                }
+                    for dim, c in zip(['lat', 'lng'], instance.map_square.coordinates.split(', '))
+                    }
         else:
             return {}
 
     class Meta:
         model = Photo
         fields = [
-            'id', 'number', 'cleaned_src', 'front_src', 'back_src',
-            'thumbnail_src', 'alt', 'photographer_name', 'photographer_number',
+            'id', 'number', 'alt', 'photographer_name', 'photographer_number',
             'map_square_number', 'shelfmark', 'librarian_caption', 'photographer_caption',
             'contains_sticker', 'analyses', 'map_square_coords'
+        ]
+
+
+class SimplePhotoSerializer(PhotoSerializer):
+    class Meta:
+        model = Photo
+        fields = [
+            'number', 'map_square_number'
         ]
 
 
@@ -132,6 +139,7 @@ class PhotographerSearchSerializer(serializers.ModelSerializer):
     """
     Serializes a photographer for the search page
     """
+
     class Meta:
         model = Photographer
         fields = ['id', 'name', 'number']
