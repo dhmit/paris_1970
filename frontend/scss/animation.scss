@@ -1,0 +1,52 @@
+
+.background{
+    width: 100%;
+    height: auto;
+    filter: grayscale(100%);
+    mix-blend-mode: multiply;
+
+}
+.bi-down{
+    font-size: 35px;
+    margin-left: 150px;
+
+}
+.animation{
+    display: flex;
+    justify-content: center;
+    background-position-x: center;
+    background-position-y: center;
+    background-size: contain;
+    animation-fill-mode: forwards;
+    width: 100vw;
+    height: 100vh;
+
+
+
+    ul{
+        list-style: none;
+        background-color: rgba(255, 255, 255, 0.76);
+        height: auto;
+        top: 92%;
+        right: 0px;
+        position: absolute;
+        width: 100%;
+        padding-top: 10px;
+        padding-left:40% ;
+
+    }
+
+    p{
+       position: center;
+    }
+}
+.nav-item-sec{
+    justify-content: center;
+}
+.navbar-brand-sec{
+    max-height: 30px;
+    max-width: 30px;
+}
+.navbar-header-sec{
+    margin-bottom: 0px;
+}

@@ -19,50 +19,55 @@ const randomMapImages = [Walking_Man, Car, Neighbourhood];
 const randomContextImages = [Staring_Man, Roof, House];
 
 function Sections() {
-    return (
-        <Container fluid>
-            <a href= '#photo'>
-                <Row className="photo-archive">
-                     <Col xs={8} xxl={4} className="text">
-                         <h5>Photography Archive:Explore Photos</h5>
-                        <p>Capture a time of change in the city</p>
-                       <span className="arrow">&#10230;</span>
 
-                    </Col>
-                    <Col xs={4} xxl={8} className="photo" style={{
-                        backgroundImage: `url(${randomMapImages[Math.floor(Math.random() * randomMapImages.length)]})`
-                    }}>
-                    </Col>
-                </Row>
-            </a>
+        return (
+            <Container fluid id="section">
+                <a href= '/photographers/'>
+                    <Row className="photo-archive">
+                        <Col xs={8} xxl={4} className="text">
+                            <h5>Photography Archive:Explore Photos</h5>
+                            <p>Capture a time of change in the city</p>
+                            <span className="large-arrow d-none d-md-block d-lg-block">&#10230;</span>
+                            <i className="bi bi-chevron-right"></i>
+                        </Col>
+                        <Col xs={4} xxl={8} className="photo" style={{
+                            backgroundImage: `url(${randomMapImages[Math.floor(Math.random() * randomMapImages.length)]})`
+                        }}>
+                        </Col>
+                    </Row>
+                </a>
 
-            <a href= '#map'>
-                <Row className="map-section">
-                    <Col xs={4} xxl={8} className="photo" style={{backgroundImage: `url(${Map_Page})`}}/>
-                    <Col xs={8} xxl={4} className="text">
-                        <h5>Map Squares</h5>
-                        <p>Capture a time of change in the city</p>
-                        <span className="arrow">&#10230;</span>
-                    </Col>
-                </Row>
-            </a>
+                <a href= '/map/'>
+                    <Row className="map-section">
+                        <Col xs={4} xxl={8} className="photo" style={{backgroundImage: `url(${Map_Page})`}}/>
+                        <Col xs={8} xxl={4} className="text">
+                            <h5>Map Squares</h5>
+                            <p>Capture a time of change in the city</p>
+                            <span className="large-arrow d-none d-md-block d-lg-block">&#10230;</span>
+                            <i className="bi-mid bi-chevron-left "></i>
+                        </Col>
+                    </Row>
+                </a>
 
-            <a href= '#context'>
-                <Row className="context">
-                    <Col xs={8} xxl={4} className="text">
-                        <h5>Context:Paris 1970 photo contest</h5>
-                        <p>Capture a time of change in the city</p>
-                        <span className="arrow">&#10230;</span>
-                    </Col>
-                    <Col xs={4} xxl={8} className="photo"
-                         style={{backgroundImage: `url(${randomContextImages[Math.floor(Math.random() * randomContextImages.length)]})`,filter:"grayscale(100%)"
-                    }}>
-                    </Col>
-                </Row>
-            </a>
+                <a href= '/about/'>
+                    <Row className="context">
+                        <Col xs={8} xxl={4} className="text">
+                            <h5>Context:Paris 1970 photo contest</h5>
+                            <p>Capture a time of change in the city</p>
+                            <span className="large-arrow d-none d-md-block d-lg-block">&#10230;</span>
+                            <i className="bi bi-chevron-right"></i>
+                        </Col>
+                        <Col xs={4} xxl={8} className="photo"
+                             style={{
+                                 backgroundImage:`url(${randomContextImages[Math.floor(Math.random() * randomContextImages.length)]})`,
+                                 filter:"grayscale(100%)"}}>
+                        </Col>
+                    </Row>
+                </a>
 
-        </Container>
-    );
-}
+            </Container>
+        );
+
+};
 
 export default Sections;
