@@ -169,5 +169,5 @@ backend/app/analysis/yolo_files/model.pkl
 backend/data/local_photos/
 assets/images/
 
-data_dump.json
+backend/data_dump.json
 
