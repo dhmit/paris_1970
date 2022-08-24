@@ -625,9 +625,8 @@ def photographer_list_view(request):
     Photographer list page
     """
     photos_dir = os.path.join(settings.LOCAL_PHOTOS_DIR, 'photographers')
-    photographers = Photographer.objects.all()
-    photographer_data = [[i.number, i.name] for i in photographers]
-    photographer_data.sort(key=lambda x: x[1])
+    photographers = Photographer.objects.all().order_by('name')
+    photographer_data = PhotographerSearchSerializer(photographers, many=True)
     context = {
         'page_metadata': {
             'title': 'Photographer List View'
