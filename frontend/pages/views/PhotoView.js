@@ -443,21 +443,22 @@ export class PhotoView extends PhotoViewer {
                         )}
                     </div>
                     <div className="image-info col-12 col-lg-6 col-md-4">
-                        <TitleDecoratorContainer title={"Photograph Details"}/>
+                        <TitleDecoratorContainer title="Photograph Details"/>
                         <br></br>
-                        <h6>PHOTOGRAPHER</h6>
-                        <p>
-                            <a href={`/photographer/${this.props.photographer_number}/`}
-                               className={"photo-link"}>
-                                {this.props.photographer_name}
-                            </a>
-                            <br></br>
-                            <span><strong>#23</strong></span> out of <span>
-                            <a href={`/photographer/${this.props.photographer_number}/`}
-                               className={"photo-link"}>72</a></span> in collection
-                        </p>
-
-                        <br></br>
+                        {this.props.photographer_name
+                            ? <><h6>PHOTOGRAPHER</h6>
+                                <p>
+                                    <a href={`/photographer/${this.props.photographer_number}/`}
+                                       className={"photo-link"}>
+                                        {this.props.photographer_name}
+                                    </a>
+                                    <br></br>
+                                    <span><strong>#23</strong></span> out of <span>
+                                <a href={`/photographer/${this.props.photographer_number}/`}
+                                   className={"photo-link"}>72</a></span> in collection
+                                </p></>
+                            : <></>
+                        }
 
                         <div style={{
                             display: "flex",
@@ -509,7 +510,6 @@ export class PhotoView extends PhotoViewer {
                                 />
                             }}
                         />
-                        <br></br>
                         <b>
                             Map Square <span><a href={`/map_square/${mapSquareNumber}`}
                                                 className={"photo-link"}>{mapSquareNumber}</a></span>
