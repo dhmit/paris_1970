@@ -12,8 +12,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 
 from django.shortcuts import render
-from django.db.models import Q, FloatField
-from django.db.models.functions import Cast
+from django.db.models import Q
 from django.conf import settings
 
 from app import view_helpers
@@ -33,6 +32,7 @@ from .serializers import (
     MapSquareSerializer,
     MapSquareSerializerWithoutPhotos,
     PhotographerSerializer,
+    PhotographerSearchSerializer,
     CorpusAnalysisResultsSerializer
 )
 
@@ -107,7 +107,7 @@ def all_map_squares(request):
 def get_photographer(request, photographer_number=None):
     """
     API endpoint to get a photographer based on the photographer_id
-    If given photographer_number, GETs associated photographer, else, returns all
+    If given photographer_number, GETs associated phhotographer, else, returns all
     """
     if photographer_number:
         photographer_obj = Photographer.objects.get(number=photographer_number)
@@ -484,19 +484,33 @@ def map_square_view(request, map_square_num):
     return render_view(request, context)
 
 
-def photographer_view(request, photographer_num):
+def photographer_view(request, photographer_num=None):
     """
     Photographer page, specified by photographer_num
     """
-    context = {
-        'page_metadata': {
-            'title': 'Photographer View'
-        },
-        'component_name': 'PhotographerView',
-        'component_props': {
-            'photographerNumber': photographer_num
+    if photographer_num:
+        context = {
+            'page_metadata': {
+                'title': 'Photographer View'
+            },
+            'component_name': 'PhotographerView',
+            'component_props': {
+                'photographerNumber': photographer_num
+            }
         }
-    }
+    else:
+        serializer = PhotographerSearchSerializer(Photographer.objects.all().order_by('name'),
+                                                  many=True)
+        photographers = JSONRenderer().render(serializer.data).decode("utf-8")
+        context = {
+            'page_metadata': {
+                'title': 'Photographers'
+            },
+            'component_name': 'PhotographersView',
+            'component_props': {
+                'photographers': photographers
+            }
+        }
     return render_view(request, context)
 
 
