@@ -132,7 +132,7 @@ class PhotographerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photographer
-        fields = ['id', 'name', 'number', 'type', 'sentiment', 'photos', 'map_square']
+        fields = ['id', 'name', 'number', 'type', 'sentiment', 'photos', 'map_square', 'approx_loc']
 
 
 class PhotographerSearchSerializer(serializers.ModelSerializer):
