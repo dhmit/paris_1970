@@ -10,7 +10,6 @@ import Base from "./Base";
 import {HomePage} from "./pages/Home";
 import {PhotoView} from "./pages/views/PhotoView";
 import {PhotographerView} from "./pages/views/PhotographerView";
-import {PhotographersView} from "./pages/views/PhotographersView";
 import {MapSquareView} from "./pages/views/MapSquareView";
 import {Search} from "./pages/Search";
 import About from "./pages/About";
@@ -18,6 +17,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/views/BlogPostView";
 import MapPage from "./pages/views/MapPageView";
 import TagView from "./pages/TagView";
+import {PhotographerListView} from "./pages/views/PhotographerListView";
 
 // Import all styles
 import "./scss/styles.scss";
@@ -34,10 +34,10 @@ const COMPONENTS = {
     BlogPost,
     PhotoView,
     PhotographerView,
-    PhotographersView,
     MapSquareView,
     MapPage,
-    TagView
+    TagView,
+    PhotographerListView
 };
 
 const PreselectedComponent = COMPONENTS[COMPONENT_NAME || "ErrorNotFoundComponent"];

@@ -484,33 +484,42 @@ def map_square_view(request, map_square_num):
     return render_view(request, context)
 
 
-def photographer_view(request, photographer_num=None):
+def photographer_view(request, photographer_num):
     """
     Photographer page, specified by photographer_num
     """
-    if photographer_num:
-        context = {
-            'page_metadata': {
-                'title': 'Photographer View'
-            },
-            'component_name': 'PhotographerView',
-            'component_props': {
-                'photographerNumber': photographer_num
-            }
+    context = {
+        'page_metadata': {
+            'title': 'Photographer View'
+        },
+        'component_name': 'PhotographerView',
+        'component_props': {
+            'photographerNumber': photographer_num
         }
-    else:
-        serializer = PhotographerSearchSerializer(Photographer.objects.all().order_by('name'),
-                                                  many=True)
-        photographers = JSONRenderer().render(serializer.data).decode("utf-8")
-        context = {
-            'page_metadata': {
-                'title': 'Photographers'
-            },
-            'component_name': 'PhotographersView',
-            'component_props': {
-                'photographers': photographers
-            }
+    }
+    return render_view(request, context)
+
+
+def photographer_list_view(request):
+    """
+    Photographer list page
+    """
+    photos_dir = os.path.join(settings.LOCAL_PHOTOS_DIR, 'photographers')
+    serializer = PhotographerSearchSerializer(
+        Photographer.objects.all().order_by('name'), many=True)
+    photographer_data = JSONRenderer().render(serializer.data).decode("utf-8")
+
+    context = {
+        'page_metadata': {
+            'title': 'Photographer List View'
+        },
+        'component_name': 'PhotographerListView',
+        'component_props': {
+            'photoListDir': photos_dir,
+            'photographers': photographer_data
         }
+    }
+
     return render_view(request, context)
 
 

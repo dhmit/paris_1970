@@ -99,7 +99,7 @@ urlpatterns = [
     path('about/', views.about),
     path('search/', views.search_view),
     # Photographers
-    path('photographers/', views.photographer_view),
+    path('photographers/', views.photographer_list_view),
     path('photographer/<int:photographer_num>/', views.photographer_view),
 
     # Photos
