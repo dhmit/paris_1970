@@ -5,15 +5,17 @@ import ast
 import json
 import os
 import math
+import re
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 
 from django.shortcuts import render
-from django.db.models import Q, FloatField
-from django.db.models.functions import Cast
-from config import settings
+from django.db.models import Q
+from django.conf import settings
+
+from app import view_helpers
 
 from .models import (
     Photo,
@@ -33,28 +35,6 @@ from .serializers import (
     PhotographerSearchSerializer,
     CorpusAnalysisResultsSerializer
 )
-
-ANALYSIS_TAGS = {
-    'detail_fft2': 'detail_fft2',
-    'find_vanishing_point': 'find_vanishing_point',
-    'foreground_percentage': 'foreground_percentage',
-    'combined_indoor': 'indoor_analysis.combined_indoor',
-    'courtyard_frame': 'indoor_analysis.courtyard_frame',
-    'find_windows': 'indoor_analysis.find_windows',
-    'gradient_analysis': 'indoor_analysis.gradient_analysis',
-    'local_variance': 'local_variance',
-    'mean_detail': 'mean_detail',
-    'photographer_caption_length': 'photographer_caption_length',
-    'resnet18_cosine_similarity': 'photo_similarity.resnet18_cosine_similarity',
-    'resnet18_mean_squares_similarity': 'photo_similarity.resnet18_mean_squares_similarity',
-    'resnet18_pairwise_similarity': 'photo_similarity.resnet18_pairwise_similarity',
-    'pop_density_detection': 'pop_density_detection',
-    'portrait_detection': 'portrait_detection',
-    'stdev': 'stdev',
-    'text_ocr': 'text_ocr',
-    'whitespace_percentage': 'whitespace_percentage',
-    'yolo_model': 'yolo_model'
-}
 
 
 @api_view(['GET'])
@@ -127,7 +107,7 @@ def all_map_squares(request):
 def get_photographer(request, photographer_number=None):
     """
     API endpoint to get a photographer based on the photographer_id
-    If given photographer_number, GETs associated photographer, else, returns all
+    If given photographer_number, GETs associated phhotographer, else, returns all
     """
     if photographer_number:
         photographer_obj = Photographer.objects.get(number=photographer_number)
@@ -240,7 +220,6 @@ def get_photo_tags(request, map_square_number, photo_number):
     Given a specific photo, identified by map_square_number and photo_number, outputs the tags
     identified in that photo
     """
-    print(photo_tag_helper(map_square_number, photo_number))
     return photo_tag_helper(map_square_number, photo_number)
 
 
@@ -298,148 +277,55 @@ def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     return Response(serializer.data)
 
 
-def get_analysis_value_ranges(analysis_names):
-    """
-    Function used to get the value ranges for the analysis search on the search page
-    :return: Dictionary of 2-value lists representing the minimum and maximum values respectively,
-    of the analysis.
-    """
-    value_ranges = {}
-    all_results = PhotoAnalysisResult.objects.all()
-    for analysis_name in analysis_names:
-        analysis_results = all_results.filter(name=analysis_name)
-
-        # Try sorting the values of the results and ignore the analysis name if the results
-        # cannot be sorted (results of type dict or varying types)
-        try:
-            sorted_results = sorted(
-                analysis_results, key=lambda instance: instance.parsed_result()
-            )
-        except TypeError:
-            continue
-        if not sorted_results:
-            continue
-
-        min_value = sorted_results[0].parsed_result()
-        max_value = sorted_results[-1].parsed_result()
-
-        # TODO: Add support for categorical values
-        if type(min_value) in [int, float] and type(max_value) in [int, float]:
-            value_ranges[analysis_name] = [math.floor(min_value), math.ceil(max_value)]
-
-    return value_ranges
-
-
-@api_view(['POST'])
+@api_view(['GET'])
 def search(request):
     """
     API endpoint to search for photos that match the search query
     Post request
     """
-    # pylint: disable=too-many-locals
-    query = json.loads(request.body)
-    is_advanced = query['isAdvanced']
+    query = json.loads(request.GET.get('query', '{}'))
 
-    if is_advanced:
-        photographer_name = query['photographerName']
-        photographer_num = query['photographerId']
-        caption = query['caption'].strip()
-        tags = query['tags']
-        analysis_tags = query['analysisTags']
-        slider_search_values = query['sliderSearchValues']
-        print(slider_search_values)
+    between_quotes = r'(?<=\").*?(?=\")'
+    special_characters = r'.?!,@#$%^&*_+<>/\'();:|`~\-\[\]\{\}'
+    keywords = re.findall(
+        rf'({between_quotes}|[\w{special_characters}]+)', query.get('keywords', '')
+    )
 
-        django_query = Q()
-        photo_obj = Photo.objects.all()
-        if photographer_name:
-            django_query &= Q(photographer__name=photographer_name)
+    django_query = Q()
+    photo_obj = Photo.objects.all()
+    for keyword in keywords:
+        sub_query = Q(
+            Q(photographer__name=keyword)
+            | Q(photographer_caption__icontains=keyword)
+            | Q(librarian_caption__icontains=keyword)
+            | Q(photoanalysisresult__name='yolo_model',
+                photoanalysisresult__result__icontains=keyword)
+        )
+        if keyword.isdigit():
+            sub_query |= Q(photographer__number=int(keyword))
+        django_query &= sub_query
 
-        if photographer_num:
-            django_query &= Q(photographer__number=photographer_num)
+    photo_obj = photo_obj.filter(django_query).distinct()
 
-        if caption:
-            django_query &= Q(photographer_caption__icontains=caption) | \
-                            Q(librarian_caption__icontains=caption)
+    def tag_confidence(photo):
+        analysis_result = PhotoAnalysisResult.objects.filter(
+            name='yolo_model',
+            photo=photo,
+        ).first()
+        if not analysis_result:
+            return 100
+        yolo_dict = analysis_result.parsed_result()
+        max_confidence = max(
+            [box['confidence'] for box in yolo_dict['boxes'] if box['label'] in keywords],
+            default=100
+        )
+        return max_confidence
 
-        # Check confidences
-        range_matches = set()
-        min_confidence, max_confidence = slider_search_values['Object Detection Confidence']
-        for p in photo_obj.all():
-            analysis_result = PhotoAnalysisResult.objects.filter(
-                name='yolo_model',
-                photo_id=p.id,
-            ).first()
-            if not analysis_result:
-                continue
-            yolo_dict = analysis_result.parsed_result()
-            has_confidence_in_range = any(
-                min_confidence <= box["confidence"] <= max_confidence
-                for box in yolo_dict['boxes']
-                if box['label'] in tags
-            )
-            if has_confidence_in_range:
-                range_matches.add(p.id)
-
-        django_query &= Q(id__in=range_matches)
-
-        for tag in tags:
-            django_query &= Q(photoanalysisresult__name='yolo_model') & \
-                            Q(photoanalysisresult__result__icontains=tag)
-
-        for analysis_tag in analysis_tags:
-            photo_obj = photo_obj.filter(
-                # Map display name to internal name and search for photos with matching analysis
-                Q(photoanalysisresult__name=ANALYSIS_TAGS[analysis_tag])
-            ).distinct()
-            if slider_search_values.get(analysis_tag):
-                min_value, max_value = slider_search_values[analysis_tag]
-                print(f'Searching between {min_value} and {max_value} for {analysis_tag}')
-                # Save the analysis results casted as float values to a new 'parsed_result' field
-                photo_obj = photo_obj.annotate(
-                    parsed_result=Cast('photoanalysisresult__result', FloatField())
-                )
-                # Filter for photos that have a result in the specified range
-                photo_obj = photo_obj.filter(
-                    Q(parsed_result__gte=min_value) &
-                    Q(parsed_result__lte=max_value)
-                )
-
-        photo_obj = photo_obj.filter(django_query).distinct()
-    else:
-        keyword = query['keyword'].strip()
-        photo_obj = Photo.objects.filter(Q(photographer__name__icontains=keyword) |
-                                         Q(photographer__number__icontains=keyword) |
-                                         Q(photographer_caption__icontains=keyword) |
-                                         Q(librarian_caption__icontains=keyword) |
-                                         (Q(photoanalysisresult__name='yolo_model') &
-                                          Q(photoanalysisresult__result__icontains=keyword))
-                                         ).distinct()
-        # distinct is to prevent duplicates
-
+    photo_obj = sorted(photo_obj, key=tag_confidence, reverse=True)
     serializer = PhotoSerializer(photo_obj, many=True)
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
-def get_tags(request):
-    """
-    API endpoint to get YOLO model tags, photographer data, and analysis tags for search
-    """
-    tags = []
-    coco_dir = os.path.join(settings.YOLO_DIR, 'coco.names')
-    with open(coco_dir, encoding='utf-8') as file:
-        tag = file.readline()
-        while tag:
-            tags.append(tag.strip())
-            tag = file.readline()
-    analysis_tags = list(ANALYSIS_TAGS.keys())
-    photographer_obj = Photographer.objects.all()
-    photographer_serializer = PhotographerSearchSerializer(photographer_obj, many=True)
     return Response({
-        'tags': tags,
-        'photographers': photographer_serializer.data,
-        'analysisTags': analysis_tags,
-        'valueRanges': get_analysis_value_ranges(analysis_tags)
+        'keywords': ', '.join([f'"{keyword}"' for keyword in keywords]),
+        'searchData': serializer.data
     })
 
 
@@ -451,9 +337,7 @@ def get_arrondissements_geojson(request, arr_number=None):
     :param arr_number:
     :return: Response
     """
-    geojson_path = os.path.join(settings.BACKEND_DATA_DIR, 'arrondissements.geojson')
-    with open(geojson_path, encoding='utf-8') as f:
-        data = json.load(f)
+    data = view_helpers.get_arrondissement_geojson()
 
     if arr_number is not None:
         # Get data for a single unique arrondissement
@@ -475,14 +359,46 @@ def get_arrondissements_map_squares(request, arr_number=None):
     :param arr_number:
     :return: Response
     """
-    json_path = os.path.join(settings.BACKEND_DATA_DIR, 'arrondissements_map_squares.json')
-    with open(json_path, encoding='utf-8') as f:
-        data = json.load(f)
+    data = view_helpers.get_map_square_data()
 
     if arr_number is not None:
         # Get data for a single unique arrondissement
         data['arrondissements'] = [data['arrondissements'][arr_number - 1]]
 
+    return Response(data)
+
+
+@api_view(['GET'])
+def get_photo_distances(request, photographer_num):
+    photo_data = [
+        {
+            'number': analysis_result.photo.number,
+            'mapSquareNumber': analysis_result.photo.map_square.number,
+            'distance': analysis_result.parsed_result()
+        }
+        for analysis_result in PhotoAnalysisResult.objects.filter(
+            name='photographer_dist',
+            photo__photographer__number=photographer_num
+        )
+    ]
+
+    sorted_photo_data = sorted(
+        photo_data, key=lambda data: data['distance'], reverse=True
+    )
+    return Response(sorted_photo_data)
+
+
+@api_view(['GET'])
+def get_map_square_details(request, map_square_number):
+    map_square = MapSquare.objects.get(number=map_square_number)
+    photos = Photo.objects.filter(map_square=map_square)
+    photos_data = SimplePhotoSerializer(photos[:4], many=True).data
+    photographers = Photographer.objects.filter(map_square=map_square)
+    photographers_data = PhotographerSerializer(photographers, many=True).data
+    data = {
+        "photos": photos_data,
+        "photographers": photographers_data
+    }
     return Response(data)
 
 
@@ -523,11 +439,16 @@ def about(request):
 
 
 def map_page(request):
+    arrondissement_data = view_helpers.get_map_square_data()
     context = {
         'page_metadata': {
             'title': 'Map Page'
         },
-        'component_name': 'MapPage'
+        'component_name': 'MapPage',
+        'component_props': {
+            'arrondissement_data': json.dumps(arrondissement_data),
+            'photoDir': str(settings.LOCAL_PHOTOS_DIR),
+        }
     }
 
     return render_view(request, context)
@@ -579,11 +500,37 @@ def photographer_view(request, photographer_num):
     return render_view(request, context)
 
 
+def photographer_list_view(request):
+    """
+    Photographer list page
+    """
+    photos_dir = os.path.join(settings.LOCAL_PHOTOS_DIR, 'photographers')
+    serializer = PhotographerSearchSerializer(
+        Photographer.objects.all().order_by('name'), many=True)
+    photographer_data = JSONRenderer().render(serializer.data).decode("utf-8")
+
+    context = {
+        'page_metadata': {
+            'title': 'Photographer List View'
+        },
+        'component_name': 'PhotographerListView',
+        'component_props': {
+            'photoListDir': photos_dir,
+            'photographers': photographer_data
+        }
+    }
+
+    return render_view(request, context)
+
+
 def photo_view(request, map_square_num, photo_num):
     """
     Photo page, specified by map_square_num and photo_num
     """
     tag_data = photo_tag_helper(map_square_num, photo_num)
+    photographer = Photo.objects.get(number=photo_num,
+                                     map_square__number=map_square_num).photographer
+
     context = {
         'page_metadata': {
             'title': 'Photo View'
@@ -592,9 +539,16 @@ def photo_view(request, map_square_num, photo_num):
         'component_props': {
             'mapSquareNumber': map_square_num,
             'photoNumber': photo_num,
-            'photoTags': tag_data
+            'photoTags': tag_data,
+            'photographer_name': "",
+            'photographer_number': ""
         }
     }
+
+    if photographer:
+        context['photographer_name'] = photographer.name,
+        context['photographer_number'] = photographer.number
+
     return render_view(request, context)
 
 
@@ -614,27 +568,6 @@ def tag_view(request, tag_name):
         'component_props': {
             'tagName': tag_name,
             'tagPhotos': photo_data
-        }
-    }
-
-    return render_view(request, context)
-
-
-def photographer_list_view(request):
-    """
-    Photographer list page
-    """
-    photos_dir = os.path.join(settings.LOCAL_PHOTOS_DIR, 'photographers')
-    photographers = Photographer.objects.all().order_by('name')
-    photographer_data = PhotographerSearchSerializer(photographers, many=True)
-    context = {
-        'page_metadata': {
-            'title': 'Photographer List View'
-        },
-        'component_name': 'PhotographerListView',
-        'component_props': {
-            'photoListDir': photos_dir,
-            'photographers': photographer_data
         }
     }
 

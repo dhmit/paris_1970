@@ -9,6 +9,7 @@ import {Rectangle} from "react-leaflet";
 import {Dropdown, OverlayTrigger, Popover, Modal} from "react-bootstrap";
 import ExpandIcon from "../../images/expand.svg";
 import QuestionIcon from "../../images/question.svg";
+import TitleDecoratorContainer from "../../components/TitleDecoratorContainer";
 
 export class FindVanishingPointDisplayWidget extends React.Component {
     render() {
@@ -293,12 +294,11 @@ export class PhotoView extends PhotoViewer {
         const {
             alt,
             map_square_number: mapSquareNumber,
-            photographer_number: photographerNumber,
             analyses,
             map_square_coords: squareCoords
         } = this.state.photoData;
 
-        const tag_list = this.props.photoTags;
+        const tag_list = this.props.photoTags ? this.props.photoTags : [];
 
         const mapSquareBounds = [
             [squareCoords.lat, squareCoords.lng],
@@ -340,7 +340,7 @@ export class PhotoView extends PhotoViewer {
         );
 
         return (<>
-            <div className="page">
+            <div className="page" id="photo-view">
                 <br/>
                 <Modal
                     className="photo-modal"
@@ -435,7 +435,7 @@ export class PhotoView extends PhotoViewer {
                         {this.getPhotoSlider(
                             similarPhotos,
                             {
-                                "className": "photo slider-photo",
+                                "className": "slider-photo",
                                 "titleFunc": (k, photo) =>
                                     `Map Square: ${photo["map_square_number"]}, ` +
                                     `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
@@ -443,21 +443,22 @@ export class PhotoView extends PhotoViewer {
                         )}
                     </div>
                     <div className="image-info col-12 col-lg-6 col-md-4">
-                        <h5>Photograph Details</h5>
+                        <TitleDecoratorContainer title="Photograph Details"/>
                         <br></br>
-                        <h6>PHOTOGRAPHER</h6>
-                        <p>
-                            <a href={`/photographer/${photographerNumber}/`}
-                               className={"photo-link"}>
-                                Bob Frenchman
-                            </a>
-                            <br></br>
-                            <span><strong>#23</strong></span> out of <span>
-                            <a href={`/photographer/${photographerNumber}/`}
-                               className={"photo-link"}>72</a></span> in collection
-                        </p>
-
-                        <br></br>
+                        {this.props.photographer_name
+                            ? <><h6>PHOTOGRAPHER</h6>
+                                <p>
+                                    <a href={`/photographer/${this.props.photographer_number}/`}
+                                       className={"photo-link"}>
+                                        {this.props.photographer_name}
+                                    </a>
+                                    <br></br>
+                                    <span><strong>#23</strong></span> out of <span>
+                                <a href={`/photographer/${this.props.photographer_number}/`}
+                                   className={"photo-link"}>72</a></span> in collection
+                                </p></>
+                            : <></>
+                        }
 
                         <div style={{
                             display: "flex",
@@ -483,8 +484,8 @@ export class PhotoView extends PhotoViewer {
 
                         {tag_list.length !== 0
                             ? tag_list.map((word) => (
-                                <a key={"tag"} href={`/tag/${word}/`}>
-                                    <button className="tag-button" key={word.id}>
+                                <a key={`${word}-tag`} href={`/tag/${word}/`}>
+                                    <button className="btn-secondary tag-button" key={word.id}>
                                         {word}
                                     </button>
                                 </a>
@@ -509,7 +510,6 @@ export class PhotoView extends PhotoViewer {
                                 />
                             }}
                         />
-                        <br></br>
                         <b>
                             Map Square <span><a href={`/map_square/${mapSquareNumber}`}
                                                 className={"photo-link"}>{mapSquareNumber}</a></span>
@@ -526,5 +526,7 @@ export class PhotoView extends PhotoViewer {
 PhotoView.propTypes = {
     photoNumber: PropTypes.number,
     mapSquareNumber: PropTypes.number,
-    photo_dir: PropTypes.string
+    photo_dir: PropTypes.string,
+    photographer_name: PropTypes.string,
+    photographer_number: PropTypes.number
 };

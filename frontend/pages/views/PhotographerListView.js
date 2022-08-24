@@ -6,50 +6,51 @@ import * as PropTypes from "prop-types";
 export class PhotographerListView extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            photographers: JSON.parse(this.props.photographers)
+        };
     }
 
-    hrefFunc (number) {
+    hrefFunc(number) {
         return `/photographer/${number}`;
     };
 
-    srcFunc (number) {
+    srcFunc(number) {
         return `${this.props.photoListDir}/${number}_photo.jpg`;
     };
 
-    getPhotoList(){
-         const photoSize = [100, 100];
-         return this.props.photographers.map((photog,k) =>{
-             return (
-                 <>
-                     <div className="col-2 col-lg-2 one-photographer">
-                         <div className="child">
-                             <a
-                                key={k}
-                                href={this.hrefFunc(photog[0])}
-                             >
-                                 <img
-                                     alt={photog[0]}
-                                     width={photoSize[0]}
-                                     src={this.srcFunc(photog[0])}
-                                 />
-                             </a>
-                             <p>{photog[1]? photog[1]:"No Name"}</p>
-                         </div>
-                     </div>
-                 </>
-             );
+    getPhotoList() {
+        const photoSize = [100, 100];
+        return this.state.photographers.map((photog, k) => {
+            return (
+                <li className="col-2 col-lg-2 one-photographer list-inline-item" key={k}>
+                    <div className="child">
+                        <a key={k}
+                           href={this.hrefFunc(photog.number)}>
+                            <img
+                                alt={photog.number}
+                                width={photoSize[0]}
+                                src={this.srcFunc(photog.number)}/>
+                        </a>
+                        <p>{photog.name ? photog.name : "No Name"}</p>
+                    </div>
+                </li>
+            );
         });
 
     }
 
-    render () {
+    render() {
         return (
             <>
                 <div className="row">
-                    <p style={{fontSize: "30px", fontWeight: "600"}}>Photographers</p>
+                    <p style={{
+                        fontSize: "30px",
+                        fontWeight: "600"
+                    }}>Photographers</p>
                 </div>
                 <div className="row">
-                    <>{this.getPhotoList()}</>
+                    <ul className="list-inline">{this.getPhotoList()}</ul>
                 </div>
                 <div>
                     <Footer/>
@@ -62,6 +63,6 @@ export class PhotographerListView extends React.Component {
 
 PhotographerListView.propTypes = {
     photoListDir: PropTypes.string,
-    photographers: PropTypes.array
-        };
+    photographers: PropTypes.string
+};
 
