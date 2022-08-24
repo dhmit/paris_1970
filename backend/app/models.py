@@ -29,23 +29,17 @@ class Photo(models.Model):
     map_square = models.ForeignKey('MapSquare', on_delete=models.CASCADE, null=True)
     photographer = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
 
-    cleaned_src = models.BooleanField(default=False)
-    front_src = models.BooleanField(default=False)
-    back_src = models.BooleanField(default=False)
-    thumbnail_src = models.BooleanField(default=False)
-
-    # We transcribe this metadata in the Google Sheet
     shelfmark = models.CharField(max_length=252)
     contains_sticker = models.BooleanField(null=True)
     alt = models.CharField(max_length=252)
     librarian_caption = models.CharField(max_length=252)
     photographer_caption = models.CharField(max_length=252)
 
-    def has_valid_source(self):
-        return (self.cleaned_src or
-                self.front_src)
+    def has_valid_source(self, photo_dir=settings.LOCAL_PHOTOS_LOCATION):
+        return os.path.exists(os.path.join(photo_dir, f"{self.map_square.number}/"
+                                                      f"{self.number}_photo.jpg"))
 
-    def get_image_data(self, as_gray=False, use_pillow=False, src_dir=settings.LOCAL_PHOTOS_DIR):
+    def get_image_data(self, as_gray=False, use_pillow=False, src_dir=settings.LOCAL_PHOTOS_LOCATION):
         """
         Get the image data via skimage's imread, for use in analyses
 
@@ -77,20 +71,13 @@ class Photo(models.Model):
     class Meta:
         unique_together = ['number', 'map_square']
 
-    def get_image_local_filepath(self, src_dir=settings.LOCAL_PHOTOS_DIR):
+    def get_image_local_filepath(self, src_dir=settings.LOCAL_PHOTOS_LOCATION):
         """
         Get the image local filepath if it exists.
 
         We try for a local filepath first, as that's faster,
         and we fallback on Google Drive if there's nothing local.
         """
-        if self.cleaned_src:
-            source_type = 'cleaned'
-        elif self.front_src:
-            source_type = "front"
-        else:
-            print(f'{self} has no front or binder src')
-            return None
 
         source = os.path.join(
             src_dir,

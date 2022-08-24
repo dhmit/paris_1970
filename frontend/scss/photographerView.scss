@@ -1,23 +1,11 @@
-.photo {
-    padding: 3px;
-    opacity: 1;
-	-webkit-transition: .3s ease-in-out;
-	transition: .3s ease-in-out;
-}
-
-.photo:hover {
-	opacity: .5;
-}
-
 .photo-container {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 25px;
+    padding: 1em;
     background-color: black;
-    height: 50em;
-    margin-top: 1em;
+    margin-top: 1.5em;
     margin-bottom: 1em;
 }
 
@@ -27,5 +15,6 @@
 }
 
 .photographer-name {
-    color: $color-orange;
+    font-size: 60px;
+    color: $color-red;
 }

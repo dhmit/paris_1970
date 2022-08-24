@@ -49,12 +49,13 @@ export class MapSquareView extends PhotoViewer {
         return (<>
             <div className="page">
                 <h1>Map Square {number}</h1>
-                {photos.length
+                <ul className={"list-inline"}>
+                    {photos.length
                     ? (<>{
                         this.getPhotoGrid(photos, {"photoSize": [120, 120]})
                     }</>)
                     : "No metadata has been transcribed for these photos."
-                }
+                }</ul>
             </div>
         </>);
     }
