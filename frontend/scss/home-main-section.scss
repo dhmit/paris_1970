@@ -1,6 +1,5 @@
 
-
-.animation{
+.main-section {
     display: flex;
     justify-content: center;
     background-position-x: center;
@@ -13,31 +12,43 @@
     overflow: hidden;
 
 
-    ul{
+    ul {
         list-style: none;
         background-color: rgba(255, 255, 255, 0.76);
         height: auto;
         top: 92%;
-        right: 0px;
+        right: 0;
         position: absolute;
         width: 100%;
-        padding-left:40% ;
+        padding-left: 40%;
 
     }
 
-    p{
-       position: center;
+    p {
+        position: center;
     }
-    img{
-    width: 100%;
-    height: auto;
-    filter: grayscale(100%);
-    mix-blend-mode: multiply;
+
+    img {
+        width: 100%;
+        height: auto;
+        position: absolute;
+
+        &:first-child {
+            mix-blend-mode: multiply;
+            z-index: 999;
+        }
+
+        &:last-child {
+            filter: grayscale(100%);
+            opacity: 0.8;
+
+        }
     }
 }
+
 @media screen and (max-width: 767px) {
-    .animation{
-        img{
+    .animation {
+        img {
             height: 100%;
             width: auto;
         }
