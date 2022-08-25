@@ -18,6 +18,8 @@ $footer-height: 150px;
 @import './fonts';
 @import './variables';
 @import './home';
+@import './home-sections';
+@import './home-main-section';
 @import './about';
 @import './photoView';
 @import './photographerView';
@@ -37,6 +39,7 @@ $footer-height: 150px;
 html {
     position: relative;
     height: 100% !important;
+    scroll-behavior: smooth;
 }
 
 body {
