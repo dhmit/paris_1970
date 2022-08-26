@@ -546,8 +546,8 @@ def photo_view(request, map_square_num, photo_num):
     }
 
     if photographer:
-        context['photographer_name'] = photographer.name,
-        context['photographer_number'] = photographer.number
+        context['component_props']['photographer_name'] = photographer.name,
+        context['component_props']['photographer_number'] = photographer.number
 
     return render_view(request, context)
 

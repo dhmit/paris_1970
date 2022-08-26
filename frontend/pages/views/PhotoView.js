@@ -339,187 +339,185 @@ export class PhotoView extends PhotoViewer {
                 : []
         );
 
-        return (<>
-            <div className="page" id="photo-view">
-                <br/>
-                <Modal
-                    className="photo-modal"
-                    show={this.state.showPhotoModal}
-                    onHide={() => this.setState({showPhotoModal: false})}
-                    backdrop="static"
-                    keyboard={false}
-                    aria-labelledby="contained-modal-title-vcenter"
-                    fullscreen>
-                    <Modal.Header closeButton/>
-                    <Modal.Body className="photo-modal-body">
+        return (<div className="page" id="photo-view">
+            <br/>
+            <Modal
+                className="photo-modal"
+                show={this.state.showPhotoModal}
+                onHide={() => this.setState({showPhotoModal: false})}
+                backdrop="static"
+                keyboard={false}
+                aria-labelledby="contained-modal-title-vcenter"
+                fullscreen>
+                <Modal.Header closeButton/>
+                <Modal.Body className="photo-modal-body">
+                    <img
+                        className="photo-popup"
+                        alt={this.state.photoData.alt}
+                        src={this.getSource(this.state.photoData)}
+                    />
+                </Modal.Body>
+            </Modal>
+            <div className="page row">
+                <div className="image-view col-12 col-lg-6 col-md-8">
+                    <div
+                        className={this.state.displaySide === "slide" ? "image-box slide" : "image-box"}>
                         <img
-                            className="photo-popup"
-                            alt={this.state.photoData.alt}
-                            src={this.getSource(this.state.photoData)}
+                            className="image-photo position-top-left"
+                            src={this.getSource(this.state.photoData, this.state.displaySide)}
+                            alt={alt}
+                            onLoad={this.onImgLoad}
+                            ref={this.photoRef}
                         />
-                    </Modal.Body>
-                </Modal>
-                <div className="page row">
-                    <div className="image-view col-12 col-lg-6 col-md-8">
-                        <div
-                            className={this.state.displaySide === "slide" ? "image-box slide" : "image-box"}>
-                            <img
-                                className="image-photo position-top-left"
-                                src={this.getSource(this.state.photoData, this.state.displaySide)}
-                                alt={alt}
-                                onLoad={this.onImgLoad}
-                                ref={this.photoRef}
-                            />
-                            {visualAnalyses}
-                        </div>
-                        <div className={"center-btn mb-4"}>
-                            <ExpandIcon
-                                className="expand-icon"
-                                onClick={() => this.setState({showPhotoModal: true})}
-                            />
-                            <button
-                                className={"side-button"}
-                                style={{backgroundColor: this.state.displaySide === "photo" ? TURQUOISE : "white"}}
-                                onClick={() => this.changeSide("photo")}>
-                                PHOTO
-                            </button>
-                            <button
-                                className={"side-button"}
-                                style={{backgroundColor: this.state.displaySide === "slide" ? TURQUOISE : "white"}}
-                                onClick={() => this.changeSide("slide")}>
-                                SLIDE
-                            </button>
-                        </div>
-                        <div style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            paddingTop: "10px"
-                        }}>
-                            <div className="similar-photos-header">
-                                <h4>Similar Photos</h4>
-                                <OverlayTrigger
-                                    trigger="hover"
-                                    placement="right"
-                                    overlay={
-                                        <Popover>
-                                            <Popover.Body>
-                                                This is what similar photos are and how we generate
-                                                them.
-                                            </Popover.Body>
-                                        </Popover>
-                                    }>
-                                    <button className="info-button">
-                                        <QuestionIcon/>
-                                    </button>
-                                </OverlayTrigger>
-                            </div>
-                            <Dropdown className="photo-sort-dropdown">
-                                <Dropdown.Toggle className="photo-sort-dropdown-button"
-                                                 align="start">
-                                    Sort By...
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu>
-                                    {
-                                        Object.keys(analyses)
-                                        .map(
-                                            (analysisName, k) =>
-                                                <Dropdown.Item key={k} href={`#/action-${k}`}>
-                                                    {analysisName}
-                                                </Dropdown.Item>
-                                        )
-                                    }
-                                </Dropdown.Menu>
-                            </Dropdown>
-                        </div>
-                        {this.getPhotoSlider(
-                            similarPhotos,
-                            {
-                                "className": "slider-photo",
-                                "titleFunc": (k, photo) =>
-                                    `Map Square: ${photo["map_square_number"]}, ` +
-                                    `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
-                            }
-                        )}
+                        {visualAnalyses}
                     </div>
-                    <div className="image-info col-12 col-lg-6 col-md-4">
-                        <TitleDecoratorContainer title="Photograph Details"/>
-                        <br></br>
-                        {this.props.photographer_name
-                            ? <><h6>PHOTOGRAPHER</h6>
-                                <p>
-                                    <a href={`/photographer/${this.props.photographer_number}/`}
-                                       className={"photo-link"}>
-                                        {this.props.photographer_name}
-                                    </a>
-                                    <br></br>
-                                    <span><strong>#23</strong></span> out of <span>
-                                <a href={`/photographer/${this.props.photographer_number}/`}
-                                   className={"photo-link"}>72</a></span> in collection
-                                </p></>
-                            : <></>
-                        }
-
-                        <div style={{
-                            display: "flex",
-                            justifyContent: "flex-start",
-                            paddingTop: "10px"
-                        }}>
-                            <h6>TAGS</h6>
+                    <div className={"center-btn mb-4"}>
+                        <ExpandIcon
+                            className="expand-icon"
+                            onClick={() => this.setState({showPhotoModal: true})}
+                        />
+                        <button
+                            className={"side-button"}
+                            style={{backgroundColor: this.state.displaySide === "photo" ? TURQUOISE : "white"}}
+                            onClick={() => this.changeSide("photo")}>
+                            PHOTO
+                        </button>
+                        <button
+                            className={"side-button"}
+                            style={{backgroundColor: this.state.displaySide === "slide" ? TURQUOISE : "white"}}
+                            onClick={() => this.changeSide("slide")}>
+                            SLIDE
+                        </button>
+                    </div>
+                    <div style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        paddingTop: "10px"
+                    }}>
+                        <div className="similar-photos-header">
+                            <h4>Similar Photos</h4>
                             <OverlayTrigger
                                 trigger="hover"
                                 placement="right"
                                 overlay={
                                     <Popover>
                                         <Popover.Body>
-                                            This is what a tag is and how we generate them.
+                                            This is what similar photos are and how we generate
+                                            them.
                                         </Popover.Body>
                                     </Popover>
                                 }>
-                                <button className={"info-button"}>
+                                <button className="info-button">
                                     <QuestionIcon/>
                                 </button>
                             </OverlayTrigger>
                         </div>
+                        <Dropdown className="photo-sort-dropdown">
+                            <Dropdown.Toggle className="photo-sort-dropdown-button"
+                                             align="start">
+                                Sort By...
+                            </Dropdown.Toggle>
 
-                        {tag_list.length !== 0
-                            ? tag_list.map((word) => (
-                                <a key={`${word}-tag`} href={`/tag/${word}/`}>
-                                    <button className="btn-secondary tag-button" key={word.id}>
-                                        {word}
-                                    </button>
-                                </a>
-                            ))
-                            : <p>No tags to display for this photo.</p>
-                        }
-
-                        <br></br><br></br>
-
-                        <h6>LOCATION</h6>
-
-                        <ParisMap
-                            className="single-photo-map"
-                            lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
-                            lng={squareCoords.lng - MAPSQUARE_WIDTH / 2}
-                            zoom={15}
-                            layers={{
-                                mapSquare: <Rectangle
-                                    className="current-map-square"
-                                    key={mapSquareNumber}
-                                    bounds={mapSquareBounds}
-                                />
-                            }}
-                        />
-                        <b>
-                            Map Square <span><a href={`/map_square/${mapSquareNumber}`}
-                                                className={"photo-link"}>{mapSquareNumber}</a></span>
-                            <br></br>
-                            Arrondissement 17
-                        </b>
+                            <Dropdown.Menu>
+                                {
+                                    Object.keys(analyses)
+                                    .map(
+                                        (analysisName, k) =>
+                                            <Dropdown.Item key={k} href={`#/action-${k}`}>
+                                                {analysisName}
+                                            </Dropdown.Item>
+                                    )
+                                }
+                            </Dropdown.Menu>
+                        </Dropdown>
                     </div>
+                    {this.getPhotoSlider(
+                        similarPhotos,
+                        {
+                            "className": "slider-photo",
+                            "titleFunc": (k, photo) =>
+                                `Map Square: ${photo["map_square_number"]}, ` +
+                                `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
+                        }
+                    )}
+                </div>
+                <div className="image-info col-12 col-lg-6 col-md-4">
+                    <TitleDecoratorContainer title="Photograph Details"/>
+                    <br></br>
+                    {this.props.photographer_name
+                        ? <><h6>PHOTOGRAPHER</h6>
+                            <p>
+                                <a href={`/photographer/${this.props.photographer_number}/`}
+                                   className={"photo-link"}>
+                                    {this.props.photographer_name}
+                                </a>
+                                <br></br>
+                                <span><strong>#23</strong></span> out of <span>
+                                <a href={`/photographer/${this.props.photographer_number}/`}
+                                   className={"photo-link"}>72</a></span> in collection
+                            </p></>
+                        : <>we are here {this.props.photographer_name} {this.props.photographer_number}</>
+                    }
+
+                    <div style={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        paddingTop: "10px"
+                    }}>
+                        <h6>TAGS</h6>
+                        <OverlayTrigger
+                            trigger="hover"
+                            placement="right"
+                            overlay={
+                                <Popover>
+                                    <Popover.Body>
+                                        This is what a tag is and how we generate them.
+                                    </Popover.Body>
+                                </Popover>
+                            }>
+                            <button className={"info-button"}>
+                                <QuestionIcon/>
+                            </button>
+                        </OverlayTrigger>
+                    </div>
+
+                    {tag_list.length !== 0
+                        ? tag_list.map((word) => (
+                            <a key={`${word}-tag`} href={`/tag/${word}/`}>
+                                <button className="btn-secondary tag-button" key={word.id}>
+                                    {word}
+                                </button>
+                            </a>
+                        ))
+                        : <p>No tags to display for this photo.</p>
+                    }
+
+                    <br></br><br></br>
+
+                    <h6>LOCATION</h6>
+
+                    <ParisMap
+                        className="single-photo-map"
+                        lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
+                        lng={squareCoords.lng - MAPSQUARE_WIDTH / 2}
+                        zoom={15}
+                        layers={{
+                            mapSquare: <Rectangle
+                                className="current-map-square"
+                                key={mapSquareNumber}
+                                bounds={mapSquareBounds}
+                            />
+                        }}
+                    />
+                    <b>
+                        Map Square <span><a href={`/map_square/${mapSquareNumber}`}
+                                            className={"photo-link"}>{mapSquareNumber}</a></span>
+                        <br></br>
+                        Arrondissement 17
+                    </b>
                 </div>
             </div>
-        </>);
+        </div>);
     }
 }
 
