@@ -1,11 +1,10 @@
 """
 These view functions and classes implement API endpoints
 """
-import json
-
-from django.core import serializers
+from datetime import datetime
+from django.utils import dateparse
 from django.shortcuts import render
-
+from django.contrib.auth.models import User
 from blog.models import (
     BlogPost
 )
@@ -24,6 +23,10 @@ def blog_home_page(request):
 
     for post in data:
         post['tags'] = list(post['tags'].names())
+        author_obj = User.objects.get(username=post['author'])
+        post['author'] = author_obj.first_name + " " + author_obj.last_name
+        date = dateparse.parse_datetime(post['date'])
+        post['date'] = datetime.strftime(date, "%B %d, %Y")
 
     context = {
         'page_metadata': {
@@ -54,17 +57,20 @@ def blog_post(request, slug):
     ):
         tags = list(posts[0].tags.names())
         post = posts[0]
+
         serialized_post = BlogPostSerializer(post)
         serialized_all_posts = BlogPostSerializer(all_posts, many=True)
-
         data = serialized_post.data
+        date = dateparse.parse_datetime(data['date'])
+        data['date'] = datetime.strftime(date, "%B %d, %Y")
         all_posts_data = serialized_all_posts.data
 
         for post in all_posts_data:
+            author_obj = User.objects.get(username=post['author'])
             post['tags'] = list(post['tags'].names())
+            post['author'] = author_obj.first_name + " " + author_obj.last_name
 
         data['tags'] = list(data['tags'].names())
-
         context = {
             'page_metadata': {
                 'title': 'Blog Post: ' + data['slug']

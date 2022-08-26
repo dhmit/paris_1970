@@ -18,14 +18,24 @@
     }
 }
 
-.blog-home {
+.blog-home, .blog-post {
     .blog-list-title {
         text-align: justify;
         margin-top: 50px;
     }
 
+    .blog-post-short {
+        background-color: $color-turquoise-light;
+    }
+
+    .blog-title > a {
+        color: $color-red;
+        text-decoration: none;
+    }
+
     .blog-author {
         color: #3295B8;
+        font-family: $font-family-semibold;
     }
 
     .blog-preview-text {
@@ -36,6 +46,14 @@
     .blog-tag {
         margin-right: 0.2em;
     }
+
+    .blog-text {
+        img, video {
+            max-width: 100%;
+            height: auto;
+        }
+    }
+
 }
 
 .blog-sidebar {
