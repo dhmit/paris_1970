@@ -41,6 +41,8 @@ export class PhotoViewer extends React.Component {
             }
         );
         return photoData.map((photo, k) => {
+            // TODO: This is where we cap up to 10 photos. Maybe this needs to live on the backend?
+            if (k >= 10) return <></>;
             return (
                 <li className={`default-photo photo-item-background text-center list-inline-item ${className}`}
                     key={k}
