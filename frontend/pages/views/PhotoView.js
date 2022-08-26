@@ -443,7 +443,6 @@ export class PhotoView extends PhotoViewer {
                 </div>
                 <div className="image-info col-12 col-lg-6 col-md-4">
                     <TitleDecoratorContainer title="Photograph Details"/>
-                    <br></br>
                     {this.props.photographer_name
                         ? <><h6>PHOTOGRAPHER</h6>
                             <p>
@@ -451,12 +450,12 @@ export class PhotoView extends PhotoViewer {
                                    className={"photo-link"}>
                                     {this.props.photographer_name}
                                 </a>
-                                <br></br>
+                                <br/>
                                 <span><strong>#23</strong></span> out of <span>
                                 <a href={`/photographer/${this.props.photographer_number}/`}
                                    className={"photo-link"}>72</a></span> in collection
                             </p></>
-                        : <>we are here {this.props.photographer_name} {this.props.photographer_number}</>
+                        : <>{this.props.photographer_name} {this.props.photographer_number}</>
                     }
 
                     <div style={{
@@ -480,39 +479,39 @@ export class PhotoView extends PhotoViewer {
                             </button>
                         </OverlayTrigger>
                     </div>
-
-                    {tag_list.length !== 0
-                        ? tag_list.map((word) => (
-                            <a key={`${word}-tag`} href={`/tag/${word}/`}>
-                                <button className="btn-secondary tag-button" key={word.id}>
-                                    {word}
-                                </button>
-                            </a>
-                        ))
-                        : <p>No tags to display for this photo.</p>
-                    }
-
-                    <br></br><br></br>
+                    <ul className="list-inline list-tags">
+                        {tag_list.length !== 0
+                            ? tag_list.map((word) => (
+                                <li className="list-inline-item single-tag" key={`tag-${word}`}>
+                                    <a className="btn btn-secondary tag-button" key={`${word}-tag`}
+                                       href={`/tag/${word}/`}>
+                                        {word}
+                                    </a>
+                                </li>
+                            ))
+                            : <li>No tags to display for this photo.</li>
+                        }
+                    </ul>
+                    <br/>
 
                     <h6>LOCATION</h6>
 
-                    <ParisMap
-                        className="single-photo-map"
-                        lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
-                        lng={squareCoords.lng - MAPSQUARE_WIDTH / 2}
-                        zoom={15}
-                        layers={{
-                            mapSquare: <Rectangle
-                                className="current-map-square"
-                                key={mapSquareNumber}
-                                bounds={mapSquareBounds}
-                            />
-                        }}
+                    <ParisMap className="single-photo-map"
+                              lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
+                              lng={squareCoords.lng - MAPSQUARE_WIDTH / 2}
+                              zoom={15}
+                              layers={{
+                                  mapSquare: <Rectangle
+                                      className="current-map-square"
+                                      key={mapSquareNumber}
+                                      bounds={mapSquareBounds}
+                                  />
+                              }}
                     />
                     <b>
                         Map Square <span><a href={`/map_square/${mapSquareNumber}`}
                                             className={"photo-link"}>{mapSquareNumber}</a></span>
-                        <br></br>
+                        <br/>
                         Arrondissement 17
                     </b>
                 </div>

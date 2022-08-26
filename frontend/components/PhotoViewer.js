@@ -85,9 +85,9 @@ export class PhotoViewer extends React.Component {
                         () => document.getElementById("photo-slider").scrollLeft -=
                             document.getElementById("photo-slider").clientWidth}
                 >&#8249;</button>
-                <div id="photo-slider" className="slider-photos list-inline">
+                <ul id="photo-slider" className="slider-photos list-inline">
                     {this.getPhotoGrid(photoData, config)}
-                </div>
+                </ul>
                 <button
                     type="button"
                     className="slider-scroll-right btn-dark"
