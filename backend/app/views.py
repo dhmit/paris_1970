@@ -428,11 +428,17 @@ def about(request):
     """
     About page
     """
+    with open(os.path.join(settings.BACKEND_DATA_DIR, 'about.json')) as f:
+        about_text = json.load(f)
+
     context = {
         'page_metadata': {
             'title': 'About'
         },
-        'component_name': 'About'
+        'component_name': 'About',
+        'component_props': {
+            'text': about_text
+        }
     }
 
     return render_view(request, context)

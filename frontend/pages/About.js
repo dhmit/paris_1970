@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import Footer from "../components/Footer";
 import TitleDecoratorContainer from "../components/TitleDecoratorContainer";
 
@@ -176,12 +176,22 @@ TeamMember.propTypes = {
 
 
 class About extends React.Component {
+    constructor(props) {
+        super(props);
+        console.log("getting props?", this.props.text);
+    }
     render() {
         return (<>
             <div className="page">
                 <TitleDecoratorContainer title={"About"}/>
-
                 <div className="about-text">
+                    {/*<ul>{this.props.text.map((section, key) => {*/}
+                    {/*    return <li key={key}>*/}
+                    {/*        {section.section === "intro"*/}
+                    {/*            ? <><TitleDecoratorContainer title={section.title}/> hello we're here</>*/}
+                    {/*            : <h2>{section.title}</h2>}*/}
+                    {/*    </li>;*/}
+                    {/*})}</ul>*/}
                     <div className="prof-img-div text-wrap col-xs-2 col-sm-5 col-md-5 col-lg-3">
                         <figure className="figure text-center">
                             <img
@@ -264,5 +274,9 @@ class About extends React.Component {
         </>);
     }
 }
+
+About.propTypes = {
+    text: PropTypes.array
+};
 
 export default About;
