@@ -127,6 +127,9 @@ dmypy.json
 .idea/runConfigurations
 .idea/misc.xml
 
+# VSCode
+.vscode/
+
 # dependencies
 node_modules
 /.pnp
