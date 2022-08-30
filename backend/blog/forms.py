@@ -19,6 +19,7 @@ class BlogPostAdminForm(forms.ModelForm):
     def clean(self):
         slug = self.cleaned_data["slug"]
 
+        # pylint: disable=protected-access
         if self.instance._state.adding is True:
             if slug is None:
                 slug = self.slug_generator()

@@ -98,6 +98,7 @@ class Command(BaseCommand):
                         reformatted_photo = cv2.resize(grayscale_image, dimensions).flatten() / 255
                         reformatted_photos.append(reformatted_photo)
                         print(f'Reformatted {i} of {num_photos} photos.')
+                    # pylint: disable=broad-except
                     except Exception as e:
                         print(f'Error: {e}')
                         print(f'Skipping photo number {photo.number}, map square '

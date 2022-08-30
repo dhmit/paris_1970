@@ -84,8 +84,11 @@ class Photo(models.Model):
             str(self.map_square.number),
             f"{self.number}_photo.jpg"
         )
+
         if source:
             return source
+        else:
+            return None
 
 
 class MapSquare(models.Model):

@@ -1,6 +1,16 @@
 """
 Tests for the main app.
 """
+
+
+# pylint: skip-file
+
+"""
+NOTE(Ryaan 2022-08-30):
+    These tests need some cleanup but for now we're skipping pylint tests on them
+    until someone can get in and give them a good scrub.
+"""
+
 from pathlib import Path
 
 from django.test import TestCase
@@ -10,8 +20,7 @@ from django.urls import reverse
 import os
 import json
 
-from app.models import Photo, PhotoAnalysisResult, MapSquare, Photographer, Cluster, \
-    CorpusAnalysisResult
+from app.models import Photo, PhotoAnalysisResult, MapSquare, Photographer, Cluster, CorpusAnalysisResult
 from app.analysis import yolo_model
 from app.analysis.photo_similarity import resnet18_cosine_similarity, resnet18_feature_vectors
 
@@ -42,8 +51,7 @@ class MainAPITests(TestCase):
             # in each map square, create 4 empty photos and some PhotoAnalysisResult
             # objects for each photo, and add photo to either cluster 0 or 1 (photo_number mod 2)
             for j in range(4):
-                photo = Photo.objects.create(number=j + 1, map_square=map_square,
-                                             photographer=photographer)
+                photo = Photo.objects.create(number=j + 1, map_square=map_square, photographer=photographer)
 
                 with open(os.path.join(path, f"{j + 1}_photo.jpg"), "w+") as f:
                     pass

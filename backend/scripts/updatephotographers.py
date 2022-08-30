@@ -31,10 +31,10 @@ def read_csv():
 
     filename = os.path.join(settings.BACKEND_DIR, 'data/photographers_full.csv')
 
-    with open(filename, 'r') as csvfile:
+    with open(filename, 'r', encoding='utf-8') as csvfile:
         datareader = csv.reader(csvfile)
         # read header so it's not saved to database
-        datareader.__next__()
+        next(datareader)
         for row in datareader:
             # skip row if it doesn't start with a number
             try:

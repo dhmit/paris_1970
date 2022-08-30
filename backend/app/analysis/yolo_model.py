@@ -12,9 +12,9 @@ links:
 """
 import os
 import sys
+import pickle
 
 import torch
-import pickle
 
 from django.conf import settings
 from ..models import Photo

@@ -1,7 +1,8 @@
 import os
-import subprocess
-from tqdm import tqdm
 import sys
+import subprocess
+
+from tqdm import tqdm
 
 
 def crop_border(old_path, new_path, fuzz_val='20'):
@@ -35,7 +36,7 @@ def crop_border(old_path, new_path, fuzz_val='20'):
         cmd = f'magick convert {in_file} -bordercolor white -border 1 -fuzz {fuzz_val}% -trim ' \
               f'-background white {out_file}'
         # adds 1 pixel wide white border, and trims based on fuzz (mean color distance)
-        subprocess.run(cmd, shell=True, capture_output=True)
+        subprocess.run(cmd, shell=True, capture_output=True, check=True)
 
 
 if __name__ == '__main__':
@@ -57,6 +58,3 @@ if __name__ == '__main__':
         # provided fuzz percentage
         fuzz_arg = sys.argv[3]  # argument 3 fuzz_val
         crop_border(old_path_arg, new_path_arg, fuzz_arg)
-
-
-

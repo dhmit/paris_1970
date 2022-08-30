@@ -1,8 +1,9 @@
 """
 This file controls the administrative interface for paris_1970 app
 """
-from django.conf import settings
 import os
+
+from django.conf import settings
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from .models import (
@@ -98,7 +99,7 @@ class PhotoAdmin(admin.ModelAdmin):
             cmd = '<a target="blank" href="{url}">{title}</a>'.format(url=link, title=title)
             return mark_safe(cmd)
         else:
-            return
+            return None
 
     photographer_info.short_description = 'Photographer'
 
