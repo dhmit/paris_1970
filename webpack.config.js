@@ -2,6 +2,7 @@ const path = require("path");
 const BundleTracker = require("webpack-bundle-tracker");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ESLintPlugin = require("eslint-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
     context: __dirname,
@@ -49,5 +50,9 @@ module.exports = {
                 use: "url-loader"
             }
         ]
+    },
+    optimization: {
+        minimize: true,
+        minimizer: [new TerserPlugin()]
     }
 };

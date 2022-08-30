@@ -1,6 +1,7 @@
 const baseConfig = require('./webpack.config');
 
 baseConfig.output.publicPath = "http://localhost:3000/build/";
+baseConfig.optimization.minimize = false;
 baseConfig.devServer = {
     port: 3000,
     headers: {
