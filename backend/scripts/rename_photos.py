@@ -19,13 +19,15 @@ def rename(source_dir, destination_dir, commands=None):
       python scripts/rename_photos.py /Users/bob/Desktop/ /Users/bob/Desktop/new
 """
 
-
-
     count = 1
     command_str = ''
     if commands and len(commands):
         for i in commands:
             command_str += i + ' '
+
+
+    with open('dictionary.csv', 'a+', encoding='utf-8') as csvfile:
+        csvwriter = csv.writer(csvfile)
 
     for file_name in tqdm(os.listdir(source_dir), bar_format='{l_bar}{bar:30}{r_bar}{bar:-10b}'):
 
@@ -45,11 +47,8 @@ def rename(source_dir, destination_dir, commands=None):
         print(source, destination)
 
         cmd = f' {source_dir} {command_str}{destination_dir}'
-        subprocess.run(cmd, shell=True, capture_output=True)
-
-        with open('dictionary.csv', 'a+') as csvfile:
-            csvwriter = csv.writer(csvfile)
-            csvwriter.writerow([source, destination])
+        subprocess.run(cmd, shell=True, capture_output=True, check=True)
+        csvwriter.writerow([source, destination])
 
     print("The renaming is over. Photos can be found in  " + destination_dir)
 

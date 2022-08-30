@@ -4,18 +4,12 @@ Django management command syncdb
 Syncs local db with data from project Google Sheet
 """
 
-import sys
-import pickle
 import os
-import json
 
-from importlib import import_module
-from typing import Callable
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from app.common import print_header
 from app.models import Photo, MapSquare
 from scripts import rename_photos
 
@@ -36,7 +30,7 @@ class Command(BaseCommand):
         map_square_dir = os.path.join(settings.LOCAL_PHOTOS_LOCATION, map_square)
         try:
             os.mkdir(map_square_dir)
-        except:
+        except Exception:
             pass
 
         rename_photos.rename(source_dir, map_square_dir)
@@ -50,6 +44,6 @@ class Command(BaseCommand):
             try:
                 Photo.objects.create(number=photo_num,
                                  map_square=map_square_instance)
-            except:
+            except Exception:
                 # here because each image has a slide and photo with same number
                 pass

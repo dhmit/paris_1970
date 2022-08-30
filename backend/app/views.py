@@ -4,7 +4,6 @@ These view functions and classes implement API endpoints
 import ast
 import json
 import os
-import math
 import re
 
 from rest_framework.decorators import api_view
@@ -166,10 +165,10 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
     return Response(serializer.data)
 
 
-def format_photo(photo, photo_values_to_keep):
+def format_photo(photo_obj, photo_values_to_keep):
     formatted_photo = {}
     for value in photo_values_to_keep:
-        formatted_photo[value] = photo[value]
+        formatted_photo[value] = photo_obj[value]
 
 
 def tag_helper(tag_name):
@@ -211,7 +210,9 @@ def photo_tag_helper(map_square_number, photo_number):
     analysis_obj = PhotoAnalysisResult.objects.filter(name='yolo_model', photo=photo_obj)
     if analysis_obj:
         parsed_obj = analysis_obj[0].parsed_result()
-        return [label for label in parsed_obj['labels']]
+        return list(parsed_obj['labels'])
+    else:
+        return None
 
 
 @api_view(['GET'])
@@ -291,6 +292,9 @@ def search(request):
         rf'({between_quotes}|[\w{special_characters}]+)', query.get('keywords', '')
     )
 
+    # This shouldn't be necessary in most recent pylint,
+    # but older pylint doesn't understand the | below
+    # pylint: disable=unsupported-binary-operation
     django_query = Q()
     photo_obj = Photo.objects.all()
     for keyword in keywords:
@@ -307,10 +311,10 @@ def search(request):
 
     photo_obj = photo_obj.filter(django_query).distinct()
 
-    def tag_confidence(photo):
+    def tag_confidence(photo_obj):
         analysis_result = PhotoAnalysisResult.objects.filter(
             name='yolo_model',
-            photo=photo,
+            photo=photo_obj,
         ).first()
         if not analysis_result:
             return 100
@@ -428,7 +432,7 @@ def about(request):
     """
     About page
     """
-    with open(os.path.join(settings.BACKEND_DATA_DIR, 'about.json')) as f:
+    with open(os.path.join(settings.BACKEND_DATA_DIR, 'about.json'), encoding='utf-8') as f:
         about_text = json.load(f)
 
     context = {
@@ -552,7 +556,7 @@ def photo_view(request, map_square_num, photo_num):
     }
 
     if photographer:
-        context['component_props']['photographer_name'] = photographer.name,
+        context['component_props']['photographer_name'] = photographer.name
         context['component_props']['photographer_number'] = photographer.number
 
     return render_view(request, context)

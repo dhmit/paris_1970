@@ -1,9 +1,7 @@
 from django.db import models
-from django.contrib.flatpages.models import FlatPage
-from django.contrib.auth.models import User, Group, Permission
-from django.contrib.contenttypes.models import ContentType
 from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import User
 
 from tinymce import models as tinymce_models
 from taggit.managers import TaggableManager
@@ -31,5 +29,4 @@ class BlogPost(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
-        super(BlogPost, self).save(*args, **kwargs)
-
+        super().save(*args, **kwargs)

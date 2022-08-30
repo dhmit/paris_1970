@@ -1,4 +1,3 @@
-import json
 from rest_framework import serializers
 from config.settings import BLOG_ROOT_URL
 

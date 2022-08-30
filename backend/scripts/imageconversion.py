@@ -1,7 +1,8 @@
 import os
 import subprocess
-from tqdm import tqdm
 import sys
+
+from tqdm import tqdm
 
 
 def convert(old_path, new_path, old_filetype, new_filetype, commands=None):
@@ -44,7 +45,7 @@ def convert(old_path, new_path, old_filetype, new_filetype, commands=None):
             # ex. magick Users/bob/Desktop/old/square.jpg -quality 20%
             # Users/bob/Desktop/new/square.jpg
             cmd = f'magick {old_type} {command_str}{new_type}'
-            subprocess.run(cmd, shell=True, capture_output=True)
+            subprocess.run(cmd, shell=True, capture_output=True, check=True)
 
 
 if __name__ == "__main__":
