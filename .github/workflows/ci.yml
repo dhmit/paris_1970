@@ -68,10 +68,6 @@ jobs:
       with:
         node-version: '16.x'
     - name: Install frontend deps and eslint
-      run: |
-        cd frontend
-        npm ci
+      run: npm ci
     - name: Run eslint on frontend/src
-      run: |
-        cd frontend
-        ./node_modules/.bin/eslint --max-warnings 0 src
+      run: ./node_modules/.bin/eslint --max-warnings 0 src
