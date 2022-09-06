@@ -1,8 +1,0 @@
-************* Module backend.scripts.rename_photos
-************* Module backend.scripts.updatephotographers
-backend\scripts\updatephotographers.py:34: [W1514(unspecified-encoding), read_csv] Using open without explicitly specifying an encoding
-backend\scripts\updatephotographers.py:37: [C2801(unnecessary-dunder-call), read_csv] Unnecessarily calls dunder method __next__. Use next built-in function.
-
-------------------------------------------------------------------
-Your code has been rated at 9.25/10 (previous run: 9.25/10, +0.00)
-
