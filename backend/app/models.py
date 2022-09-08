@@ -68,9 +68,6 @@ class Photo(models.Model):
             ) from base_exception
         return image
 
-    class Meta:
-        unique_together = ['number', 'map_square']
-
     def get_image_local_filepath(self, src_dir=settings.LOCAL_PHOTOS_LOCATION):
         """
         Get the image local filepath if it exists.
@@ -89,6 +86,9 @@ class Photo(models.Model):
             return source
         else:
             return None
+
+    class Meta:
+        unique_together = ['number', 'map_square']
 
 
 class MapSquare(models.Model):

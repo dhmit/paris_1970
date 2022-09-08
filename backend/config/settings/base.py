@@ -28,6 +28,7 @@ TESSDATA_DIR = Path(PROJECT_ROOT, 'backend', 'data', 'tessdata')
 TEXT_DETECTION_PATH = Path(BACKEND_DATA_DIR, 'frozen_east_text_detection.pb')
 YOLO_DIR = Path(ANALYSIS_DIR, 'yolo_files')
 BLOG_ROOT_URL = "blog"
+AWS_S3_PHOTOS_DIR = "https://paris1970-fa22-dev-assets.s3.amazonaws.com/photos"
 
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -104,15 +105,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 LOGIN_REDIRECT_URL = '/admin'
 
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BACKEND_DIR, 'db.sqlite3'),
-    }
-}
+# DATABASES live in production and dev settings
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 

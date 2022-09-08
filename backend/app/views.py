@@ -409,7 +409,10 @@ def get_map_square_details(request, map_square_number):
 # app views
 def render_view(request, context):
     context.setdefault('component_props', {})
-    context['component_props']['photoDir'] = str(settings.LOCAL_PHOTOS_DIR)
+
+    # TODO(ra): We're mid-refactor here: ultimately we want a switch
+    # for where to look for photos, rather than hardcoding this right here!
+    context['component_props']['photoDir'] = str(settings.AWS_S3_PHOTOS_DIR)
     return render(request, 'index.html', context)
 
 

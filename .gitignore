@@ -152,6 +152,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 *.swp
+db_password.txt
 
 # Build byproducts
 webpack-stats-dev.json
