@@ -14,7 +14,7 @@
             "name": "Run backend",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}\\backend\\manage.py",
+            "program": "${workspaceFolder}/backend/manage.py",
             "args": [
                 "runserver"
             ],
