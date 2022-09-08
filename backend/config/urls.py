@@ -14,6 +14,7 @@ Including another URL configuration
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
@@ -21,7 +22,6 @@ from django.urls import path
 from app import views
 from app.common import render_react_view
 from blog import views as blog_views
-from django.conf import settings
 
 
 def react_view_path(route, component_name):
