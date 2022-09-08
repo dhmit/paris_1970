@@ -2,11 +2,10 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
+from django.conf import settings
 
 from tinymce import models as tinymce_models
 from taggit.managers import TaggableManager
-
-from config.settings import BLOG_ROOT_URL
 
 
 class BlogPost(models.Model):
@@ -24,7 +23,7 @@ class BlogPost(models.Model):
     # TODO: Maybe add related blogposts field?
 
     def get_absolute_url(self):
-        return f"/{BLOG_ROOT_URL}/{self.slug}"
+        return f"/{settings.BLOG_ROOT_URL}/{self.slug}"
 
     def save(self, *args, **kwargs):
         if not self.slug:

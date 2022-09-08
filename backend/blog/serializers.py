@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from config.settings import BLOG_ROOT_URL
+from django.conf import settings
 
 from .models import (
     BlogPost
@@ -15,7 +15,7 @@ class BlogPostSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_absolute_url(instance):
-        return f"/{BLOG_ROOT_URL}/{instance.slug}"
+        return f"/{settings.BLOG_ROOT_URL}/{instance.slug}"
 
     @staticmethod
     def get_author(instance):
