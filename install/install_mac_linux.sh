@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/zsh 
 
 # exit on any command failure
 set -e
@@ -7,11 +7,11 @@ PYTHON_TGT_VER="3.10"
 
 
 header () {
-    printf "\n\n/---------------------------------------------------------------------------------------------------\n"
-    printf "|\n"
-    printf "* %s\n" "$1"
-    printf "|\n"
-    printf "----------------------------------------------------------------------------------------------------\n"
+    printf -- "\n\n/---------------------------------------------------------------------------------------------------\n"
+    printf -- "|\n"
+    printf -- "* %s\n" "$1"
+    printf -- "|\n"
+    printf -- "----------------------------------------------------------------------------------------------------\n"
 }
 
 header "Checking Python"
@@ -24,7 +24,7 @@ printf "Your python3 location: $python_loc\n"
 # check if python installation looks right
 if [ "$python_ver" != "$PYTHON_TGT_VER" ]; then
     printf "python3 version incorrect. Should be $PYTHON_TGT_VER\n"
-    exit(1)
+    exit 1
 fi
 
 header "Installing Python virtual environment"
