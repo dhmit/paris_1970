@@ -149,7 +149,11 @@ const studentMembers = [
     {
         name: "Vicky Zheng",
         photoSrc: Zheng_Vicky
-    }
+    },
+    {
+        name: "Nisha Nkya",
+        photoSrc: Zheng_Vicky
+    },
 ];
 
 function TeamMember(props) {
