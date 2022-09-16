@@ -152,6 +152,7 @@ const studentMembers = [
     },
     {
         name: "Mena Filfil",
+        name: "Bukunmi Shodipo",
         photoSrc: Zheng_Vicky
     }
 ];
