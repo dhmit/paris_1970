@@ -149,6 +149,10 @@ const studentMembers = [
     {
         name: "Vicky Zheng",
         photoSrc: Zheng_Vicky
+    },
+    { 
+        name: "Cindy Zheng",
+        photoSrc: Zheng_Vicky
     }
 ];
 
