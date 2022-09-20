@@ -153,6 +153,10 @@ const studentMembers = [
     {
         name: "MY NEW NAME GOES HERE",
         photoSrc: Zheng_Vicky
+    },
+    {
+        name: "NEW NAME 2",
+        photoSrc: Zheng_Vicky
     }
 ];
 
