@@ -153,10 +153,17 @@ const studentMembers = [
         name: "Amanda Paredes Rioboo",
         photoSrc: Zheng_Vicky
     },
+    
     {
         name: "Disha Kohli",
         photoSrc: Ahmed_Ryaan,
     },
+
+    {
+        name: "Amanda Paredes Rioboo",
+        photoSrc: Zheng_Vicky
+    }
+
 ];
 
 function TeamMember(props) {
