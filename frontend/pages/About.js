@@ -151,19 +151,19 @@ const studentMembers = [
         photoSrc: Zheng_Vicky
     },
     {
-        name: "Sharon Yu"
+        name: "Sharon Yu",
         photoSrc: Zheng_Vicky
     },
     {
-        name:"Amber Lien"
+        name:"Amber Lien",
         photoSrc: Zheng_Vicky
     },
     {
-        name:"Suzanne Jiang"
+        name:"Suzanne Jiang",
         photoSrc: Zheng_Vicky
     },
     {
-        name:"Jade Durham"
+        name:"Jade Durham",
         photoSrc: Zheng_Vicky
     }
 ];
