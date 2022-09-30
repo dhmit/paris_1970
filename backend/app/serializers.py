@@ -53,7 +53,11 @@ class PhotoSerializer(serializers.ModelSerializer):
         for analysis_result in analysis_results:
             name = analysis_result['name']
             result = json.loads(analysis_result['result'])
-            analyses_dict[name] = result
+            if name == "photo_similarity.resnet18_cosine_similarity":
+                analyses_dict[name] = result[:min(10, len(result))]
+            else:
+                analyses_dict[name] = result
+            
         return analyses_dict
 
     @staticmethod
