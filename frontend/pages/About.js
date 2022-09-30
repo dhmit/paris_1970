@@ -149,22 +149,6 @@ const studentMembers = [
     {
         name: "Vicky Zheng",
         photoSrc: Zheng_Vicky
-    },
-    {
-        name: "Sharon Yu",
-        photoSrc: Zheng_Vicky
-    },
-    {
-        name:"Amber Lien",
-        photoSrc: Zheng_Vicky
-    },
-    {
-        name:"Suzanne Jiang",
-        photoSrc: Zheng_Vicky
-    },
-    {
-        name:"Jade Durham",
-        photoSrc: Zheng_Vicky
     }
 ];
 
