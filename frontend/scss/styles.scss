@@ -95,6 +95,12 @@ footer {
     background-color: $color-black;
 }
 
+.navbar-collapse {
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+}
+
 .nav-link {
     font-family: $font-family-bold;
     color: $color-gray-light !important;
