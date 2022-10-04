@@ -22,26 +22,26 @@ pw_path = Path(PROJECT_ROOT, 'db_password.txt')
 with open(pw_path, 'r', encoding='utf-8') as pw_file:
     db_pw = pw_file.readline().strip()
 
-# DATABASES = {
-#     'default': {
-#        'ENGINE': 'django.db.backends.postgresql',
-#        'HOST': 'paris1970-urop-fa22.crdpmszp71qh.us-east-1.rds.amazonaws.com',
-#        'USER': 'urop',
-#        'NAME': 'paris1970-urop-fa22',
-#        'PORT': '5432',
-#        'PASSWORD': db_pw,
-#    }
-#}
+DATABASES = {
+    'default': {
+       'ENGINE': 'django.db.backends.postgresql',
+       'HOST': 'paris1970-urop-fa22.crdpmszp71qh.us-east-1.rds.amazonaws.com',
+       'USER': 'urop',
+       'NAME': 'paris1970-urop-fa22',
+       'PORT': '5432',
+       'PASSWORD': db_pw,
+   }
+}
 
 # NOTE(ra): AWS RDS is down on 2022-09-09 during our first hack session,
 # so we're patching in this temporary sqlite3 DB. We'll restore the original
 # situation once it's back up.
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BACKEND_DIR, 'db.sqlite3'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BACKEND_DIR, 'db.sqlite3'),
+#     }
+# }
 
 
 SITE_ID = 1
