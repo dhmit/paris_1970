@@ -1,7 +1,7 @@
 import React from "react";
 import Footer from "../../components/Footer";
 import * as PropTypes from "prop-types";
-import { debounce } from "../../common";
+import {debounce} from "../../common";
 
 export class PhotographerListView extends React.Component {
     constructor(props) {
@@ -22,7 +22,7 @@ export class PhotographerListView extends React.Component {
     updatePhotographers(name) {
         debounce(async () => {
             const fetchedPhotographers = await this.fetchPhotographers(name);
-            this.setState({ photographers: fetchedPhotographers });
+            this.setState({photographers: fetchedPhotographers});
         }, 300)();
     }
 
