@@ -42,7 +42,7 @@ export class PhotographerListView extends React.Component {
 
     render() {
         return (
-            <>
+            <div className = "photographers-container">
                 <div className="row">
                     <p style={{
                         fontSize: "30px",
@@ -55,7 +55,7 @@ export class PhotographerListView extends React.Component {
                 <div>
                     <Footer/>
                 </div>
-            </>
+            </div>
         );
     }
 }
