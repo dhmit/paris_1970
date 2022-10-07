@@ -9,7 +9,8 @@ def main(src_dir_path, dest_dir_path):
     Creates CSV file templates for the map square entry process
     """
     for src_sub_dir in src_dir_path.iterdir():
-        if not src_sub_dir.is_dir(): continue
+        if not src_sub_dir.is_dir():
+            continue
 
         map_square_folder_url = src_sub_dir.name
         folder_number = '_'.join(map_square_folder_url.split('_')[-2:])
