@@ -35,7 +35,6 @@ from .serializers import (
     CorpusAnalysisResultsSerializer
 )
 
-
 @api_view(['GET'])
 def photo(request, map_square_number, photo_number):
     """
@@ -100,6 +99,23 @@ def all_map_squares(request):
     map_square_obj = MapSquare.objects.all()
     serializer = MapSquareSerializerWithoutPhotos(map_square_obj, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def search_photographers(request):
+    """
+    API endpoint to get a list of photographers based on a search query that looks the photographers by name 
+    If not given a search query it will return the first 50 photographers sorted by name
+    """
+    name = request.GET.get("name", None)
+    if name is not None or name.strip() != "":
+        matching_photographers = Photographer.objects.filter(name__icontains=name)
+    else:
+        matching_photographers = Photographer.objects.all()
+
+    page_limit = 50
+    serialized_photographers = PhotographerSearchSerializer(matching_photographers.order_by("name")[:page_limit], many=True) # add pagination here
+    res = Response(serialized_photographers.data)
+    return res
 
 
 @api_view(['GET'])
@@ -518,9 +534,6 @@ def photographer_list_view(request):
     Photographer list page
     """
     photos_dir = os.path.join(settings.LOCAL_PHOTOS_DIR, 'photographers')
-    serializer = PhotographerSearchSerializer(
-        Photographer.objects.all().order_by('name'), many=True)
-    photographer_data = JSONRenderer().render(serializer.data).decode("utf-8")
 
     context = {
         'page_metadata': {
@@ -529,7 +542,6 @@ def photographer_list_view(request):
         'component_name': 'PhotographerListView',
         'component_props': {
             'photoListDir': photos_dir,
-            'photographers': photographer_data
         }
     }
 
