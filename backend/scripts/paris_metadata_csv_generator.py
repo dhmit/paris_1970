@@ -1,5 +1,3 @@
-import os
-import subprocess
 import sys
 from pathlib import Path
 
@@ -34,6 +32,6 @@ def main(src_dir_path, dest_dir_path):
         out_csv.close()
 
 if __name__ == "__main__":
-    src_dir_path = Path(sys.argv[1])
-    dest_dir_path = Path(sys.argv[2])
-    main(src_dir_path, dest_dir_path)
+    src_path = Path(sys.argv[1])
+    dest_path = Path(sys.argv[2])
+    main(src_path, dest_path)
