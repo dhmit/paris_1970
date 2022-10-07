@@ -102,6 +102,9 @@ class MapSquare(models.Model):
     boundaries = models.CharField(max_length=252)
     coordinates = models.CharField(max_length=252)
 
+    def __str__(self):
+        return f'Map Square {self.number}'
+
 
 class Photographer(models.Model):
     """
@@ -112,8 +115,8 @@ class Photographer(models.Model):
     number = models.IntegerField(null=True)
     approx_loc = models.CharField(max_length=252, null=True, blank=True)
     map_square = models.ForeignKey(MapSquare, on_delete=models.SET_NULL, null=True)
-    type = models.CharField(max_length=252, null=True)
-    sentiment = models.CharField(max_length=252, null=True)
+    type = models.CharField(max_length=252, null=True, blank=True)
+    sentiment = models.CharField(max_length=252, null=True, blank=True)
 
 
 class AnalysisResult(models.Model):
