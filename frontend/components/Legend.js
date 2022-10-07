@@ -20,13 +20,13 @@ export class Legend extends React.Component {
                                     className={`legend-square
                                     ${layer.toLowerCase()}
                                     ${this.props.visibleLayers.indexOf(layer) > -1 ? "" : "inactive"}`}/>
-
+                                    
 
                             <span className={"label"}>{layer}</span>
                         </li>;
-
+                        
                     })}
-                </ul>
+                </ul>             
             </div>
         );
     }

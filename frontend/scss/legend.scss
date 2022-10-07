@@ -42,20 +42,25 @@
     margin-right: 0.2em;
 
     &.photo {
-        background-color: #FF7E7A;
-        border: 3px solid $color-red;
+        border: 1px solid #ffffff;
+        background: url("../images/icons/photo_density_legend_icon.svg");
+        background-size: cover;
     }
-
     &.photo.inactive {
-        background-color: #7e5756;
-        border: 3px solid #693a38;
+        border: 1px solid #ffffff;
+        background: url("../images/icons/photo_density_legend_icon.svg");
+        background-size: cover;
     }
 
-    &.arrondissements {
-        border: 3px solid $color-link;
+    &.arrondissement {
+        background-color: #70D8F1;
+        border: 3px solid #00B1DB;
     }
 
-    &.arrondissements.inactive {
-        border: 3px solid #6f989d;
+    &.arrondissement.inactive {
+        background-color: $color-mid-gray;
+        border: 3px solid #2c4a4f;
     }
 }
+
+

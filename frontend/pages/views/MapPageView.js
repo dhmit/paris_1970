@@ -221,10 +221,10 @@ class MapPage extends React.Component {
                                  lat={this.state.mapLat}
                                  lng={this.state.mapLng}
                                  layers={{
-                                     "Arrondissements": arrondissementsOverlay(this.state.geojsonData),
+                                     "Arrondissement": arrondissementsOverlay(this.state.geojsonData),
                                      "Photo Density": densityOverlay(this.state.mapData)
                                  }}
-                                 visibleLayers={["Photo Density"]}
+                                 visibleLayers={["Photo Density", "Arrondissement"]}
                                  layerSelectVisible={true}
                                  scrollWheelZoom={isLgViewportUp}/>
                         </Col>
