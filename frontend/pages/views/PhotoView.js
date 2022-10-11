@@ -180,12 +180,8 @@ export class PhotoView extends PhotoViewer {
                             SLIDE
                         </button>
                     </div>
-                    <div style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        paddingTop: "10px"
-                    }}>
-                        <div className="similar-photos-header">
+                    <div className="similar-photos-header">
+                        <div className="similar-photos-title">
                             <h4>Similar Photos</h4>
                             <OverlayTrigger
                                 trigger="hover"
@@ -249,11 +245,7 @@ export class PhotoView extends PhotoViewer {
                         : <>{this.props.photographer_name} {this.props.photographer_number}</>
                     }
 
-                    <div style={{
-                        display: "flex",
-                        justifyContent: "flex-start",
-                        paddingTop: "10px"
-                    }}>
+                    <div className="tags-container">
                         <h6>TAGS</h6>
                         <OverlayTrigger
                             trigger="hover"
@@ -288,20 +280,24 @@ export class PhotoView extends PhotoViewer {
                     <h6>LOCATION</h6>
 
                     <ParisMap className="single-photo-map"
-                              lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
-                              lng={squareCoords.lng - MAPSQUARE_WIDTH / 2}
-                              zoom={15}
-                              layers={{
-                                  mapSquare: <Rectangle
-                                      className="current-map-square"
-                                      key={mapSquareNumber}
-                                      bounds={mapSquareBounds}
-                                  />
-                              }}
+                        lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
+                        lng={squareCoords.lng - MAPSQUARE_WIDTH / 2}
+                        zoom={15}
+                        layers={{
+                            mapSquare: <Rectangle
+                                className="current-map-square"
+                                key={mapSquareNumber}
+                                bounds={mapSquareBounds}
+                            />
+                        }}
                     />
                     <b>
-                        Map Square <span><a href={`/map_square/${mapSquareNumber}`}
-                                            className={"photo-link"}>{mapSquareNumber}</a></span>
+                        Map Square
+                        <span>
+                            <a className="photo-link"
+                                href={`/map_square/${mapSquareNumber}`}
+                            >{mapSquareNumber}</a>
+                        </span>
                         <br/>
                         Arrondissement 17
                     </b>
