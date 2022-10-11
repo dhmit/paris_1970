@@ -51,11 +51,11 @@ class Photo(models.Model):
 
         TODO: implement as_gray for use_pillow
         """
-        source = os.path.join(
-            src_dir,
-            str(self.map_square.number),
+        source = '/'.join([
+            src_dir.rstrip(r"\/"), 
+            str(self.map_square.number), 
             f"{self.number}_photo.jpg"
-        )
+        ])
 
         try:
             if use_pillow:
