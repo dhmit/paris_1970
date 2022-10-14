@@ -17,7 +17,7 @@
     "rules": {
         "arrow-body-style": ["off"],
         "class-methods-use-this": ["off"],
-        "comma-dangle": ["warn"],
+        "comma-dangle": ["off"],
         "dot-notation": ["off"],
         "eqeqeq": ["error", "always"],
         "import/extensions": ["off"],
