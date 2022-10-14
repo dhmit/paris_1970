@@ -4,6 +4,17 @@
     display: inline-block;
 }
 
+/* added this */
+.project-description {
+    font-weight: 400;
+    position: absolute;
+    width: 783px;
+    height: 387px;
+    left: 151px;
+    top: 183px;
+}
+/////////////////////
+
 .about-title {
     font-size: 50px;
     font-weight: bold;
@@ -12,15 +23,34 @@
 }
 
 .prof-img-div {
+    position: absolute;
+    width: 383px;
+    height: 435px;
+    left: 126px;
+    top: 600px;
+
     display: flex;
     align-items: center;
     margin-bottom: 10px;
 }
 
 .prof-img {
-    border-radius: 270px;
+    //border-radius: 270px;
     width: 100%;
     margin-right: 20px;
+}
+
+.prof-description {
+    position: absolute;
+    width: 783px;
+    height: 387px;
+    left: 611px;
+    top: 687px;
+}
+
+.team {
+    position: absolute;
+    top: 1200px;
 }
 
 .text-wrap {

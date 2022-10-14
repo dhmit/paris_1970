@@ -192,6 +192,24 @@ class About extends React.Component {
                     {/*            : <h2>{section.title}</h2>}*/}
                     {/*    </li>;*/}
                     {/*})}</ul>*/}
+                    <p className="project-description">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                        eiusmod tempor incididunt ut labore et dolore magna aliqua. Odio
+                        eu feugiat pretium nibh ipsum consequat nisl vel pretium. Malesuada
+                        nunc vel risus commodo viverra maecenas accumsan lacus vel. Cras
+                        pulvinar mattis nunc sed blandit libero volutpat. Aliquam faucibus
+                        purus in massa tempor nec feugiat nisl pretium. Quam nulla porttitor
+                        massa id neque aliquam. Quam quisque id diam vel quam elementum
+                        pulvinar etiam non. Etiam dignissim diam quis enim lobortis scelerisque
+                        fermentum. Fringilla urna porttitor rhoncus dolor purus non. Vel
+                        fringilla est ullamcorper eget nulla facilisi etiam. Tristique et
+                        egestas quis ipsum suspendisse ultrices gravida. Vehicula ipsum a arcu
+                        cursus vitae. Donec et odio pellentesque diam. Morbi tincidunt ornare
+                        massa eget egestas purus viverra accumsan. Neque vitae tempus quam
+                        pellentesque nec nam aliquam sem. Vitae congue mauris rhoncus aenean.
+                    </p>
+
+                    {/* <div className="prof-img-div text-wrap col-xs-2 col-sm-5 col-md-5 col-lg-3"></div> */}
                     <div className="prof-img-div text-wrap col-xs-2 col-sm-5 col-md-5 col-lg-3">
                         <figure className="figure text-center">
                             <img
@@ -200,13 +218,15 @@ class About extends React.Component {
                                 alt="Catherine Clark"
                                 align="left"
                             />
-                            <div className="staff-name">Catherine Clark</div>
-                            <figcaption className="figure-caption text-center">
+                            <div className="prof-titles">
+                                <div className="staff-name">Catherine Clark</div>
+                                <figcaption className="figure-caption text-center">
                                 Associate Professor of History and French Studies
-                            </figcaption>
+                                </figcaption>
+                            </div>
                         </figure>
                     </div>
-                    <div>
+                    <div className="prof-description">    
                         <p>
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                             eiusmod tempor incididunt ut labore et dolore magna aliqua. Odio
@@ -222,7 +242,7 @@ class About extends React.Component {
                             cursus vitae. Donec et odio pellentesque diam. Morbi tincidunt ornare
                             massa eget egestas purus viverra accumsan. Neque vitae tempus quam
                             pellentesque nec nam aliquam sem. Vitae congue mauris rhoncus aenean.
-                        </p>
+                        </p> 
                         <p>
                             Suspendisse potenti nullam ac tortor. Ac auctor augue mauris augue
                             neque gravida in. Vitae sapien pellentesque habitant morbi tristique
