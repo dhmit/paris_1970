@@ -460,7 +460,7 @@ def map_page(request):
         'component_name': 'MapPage',
         'component_props': {
             'arrondissement_data': json.dumps(arrondissement_data),
-            'photoDir': str(settings.LOCAL_PHOTOS_DIR),
+            'photoDir': str(settings.AWS_S3_PHOTOS_DIR),
         }
     }
 
@@ -517,7 +517,7 @@ def photographer_list_view(request):
     """
     Photographer list page
     """
-    photos_dir = os.path.join(settings.LOCAL_PHOTOS_DIR, 'photographers')
+    photos_dir = os.path.join(settings.AWS_S3_PHOTOS_DIR, 'photographers')
     serializer = PhotographerSearchSerializer(
         Photographer.objects.all().order_by('name'), many=True)
     photographer_data = JSONRenderer().render(serializer.data).decode("utf-8")
