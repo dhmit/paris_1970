@@ -132,8 +132,18 @@ class PhotoAdmin(admin.ModelAdmin):
 
 
 class PhotographerAdmin(admin.ModelAdmin):
-    list_display = ["id", "name", "number"]
-
+    list_display = ["id", "name", "number", "approx_loc", "map_square"]
+    search_fields = ['id', 'number', "name", "approx_loc", "map_square__number"]
+    
+    def map_square(self, obj):
+        """
+        Returns map square number
+        """
+        link = os.path.join('/admin/app/mapsquare', str(obj.map_square.id))
+        cmd = '<a target="blank" href="{url}">{title}</a>'.format(url=link,
+                                                                  title=obj.map_square.number)
+        return mark_safe(cmd)
+    map_square.short_description = 'Map Square'
 
 admin.site.register(CorpusAnalysisResult)
 admin.site.register(MapSquare, MapSquareAdmin)

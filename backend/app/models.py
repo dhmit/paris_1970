@@ -101,7 +101,9 @@ class MapSquare(models.Model):
     number = models.IntegerField(null=True)
     boundaries = models.CharField(max_length=252)
     coordinates = models.CharField(max_length=252)
-
+    
+    def __str__(self):
+        return "Map Square " + str(self.number)
 
 class Photographer(models.Model):
     """
@@ -115,6 +117,8 @@ class Photographer(models.Model):
     type = models.CharField(max_length=252, null=True)
     sentiment = models.CharField(max_length=252, null=True)
 
+    def __str__(self):
+        return self.name + " (" + str(self.number) + ")"
 
 class AnalysisResult(models.Model):
     """
@@ -132,7 +136,9 @@ class AnalysisResult(models.Model):
         # Make this an abstract base class, which means that Django won't create a database
         # table for this model -- it's only here as a base class for classes below
         abstract = True
-
+    
+    def __str__(self):
+        return self.name
 
 class CorpusAnalysisResult(AnalysisResult):
     """
