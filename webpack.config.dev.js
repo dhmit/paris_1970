@@ -10,5 +10,6 @@ baseConfig.devServer = {
     compress: true,
     hot: true
 };
+baseConfig.devtool = 'eval-source-map';
 
 module.exports = baseConfig;
