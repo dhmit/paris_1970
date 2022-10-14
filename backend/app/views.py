@@ -42,7 +42,7 @@ def photo(request, map_square_number, photo_number):
     API endpoint to get a photo with a map square number of map_square_number
     and photo number of photo_number
     """
-    photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
+    photo_obj = Photo.objects.get(number=photo_number, map_square_number=map_square_number)
     serializer = PhotoSerializer(photo_obj)
     return Response(serializer.data)
 
@@ -276,7 +276,6 @@ def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     cluster = Cluster.objects.get(model_n=number_of_clusters, label=cluster_number)
     serializer = PhotoSerializer(cluster.photos.all(), many=True)
     return Response(serializer.data)
-
 
 @api_view(['GET'])
 def search(request):
