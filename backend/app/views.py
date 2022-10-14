@@ -517,7 +517,6 @@ def photographer_list_view(request):
     """
     Photographer list page
     """
-    # photos_dir = os.path.join(settings.LOCAL_PHOTOS_DIR, 'photographers')
     photos_dir = settings.PHOTOGRAPHERS_DIR
     serializer = PhotographerSearchSerializer(
         Photographer.objects.all().order_by('name'), many=True)
