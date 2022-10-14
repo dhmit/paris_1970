@@ -97,6 +97,8 @@ footer {
 
 .navbar-collapse {
     text-align: right;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .nav-link {
