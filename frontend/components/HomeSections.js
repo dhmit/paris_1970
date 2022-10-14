@@ -3,15 +3,15 @@ import {Row, Col, Container} from "react-bootstrap";
 
 // images
 import Map_Page from "../images/featured/map page.png";
-import Walking_Man from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_078.jpg";
-import Car from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_008.jpg";
+// import Walking_Man from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_078.jpg";
+// import Car from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_008.jpg";
 import Staring_Man from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_024.jpg";
 import Roof from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_002.jpg";
-import Neighbourhood from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_012.jpg";
+// import Neighbourhood from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_012.jpg";
 import House from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_030.jpg";
 
 
-const randomMapImages = [Walking_Man, Car, Neighbourhood];
+// const randomMapImages = [Walking_Man, Car, Neighbourhood];
 
 const randomContextImages = [Staring_Man, Roof, House];
 
@@ -27,10 +27,12 @@ function HomeSections() {
                         <span className="large-arrow d-none d-md-block d-lg-block">&#10230;</span>
                         <i className="bi bi-chevron-right"/>
                     </Col>
-                    <Col xs={4} sm={8} className="home-section-photo" style={{
+                    {/* <Col xs={4} sm={8} className="home-section-photo" 
+                         style={{
                         backgroundImage: `url(${randomMapImages[Math.floor(Math.random() * randomMapImages.length)]})`
-                    }}>
-                    </Col>
+                        
+                        }}>
+                    </Col> */}
                 </Row>
             </a>
 
@@ -59,7 +61,10 @@ function HomeSections() {
                          style={{
                              backgroundImage: `url(${randomContextImages[Math.floor(
                                  Math.random() * randomContextImages.length)]})`,
-                             filter: "grayscale(100%)"
+                             filter: "grayscale(100%)",
+                             backgroundRepeat: "no-repeat",
+                             backgroundSize: 960
+                            
                          }}>
                     </Col>
                 </Row>
