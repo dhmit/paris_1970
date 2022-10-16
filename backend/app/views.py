@@ -112,16 +112,12 @@ def search_photographers(request):
     name = request.GET.get("name", None)
     is_searching_by_name = name is not None and name.strip() != ""
     if is_searching_by_name:
-        matching_photographers = Photographer.objects.filter(name__icontains=name)
+        matching_photographers = Photographer.objects.filter(name__icontains=name).order_by("name")
     else:
-        matching_photographers = Photographer.objects.all()
+        matching_photographers = Photographer.objects.all().order_by("name")[:50]
 
-    ordered_capped_photographers = (
-        matching_photographers.order_by("name")[:50] 
-        if not is_searching_by_name else matching_photographers.order_by("name")
-    )
     serialized_photographers = (
-        PhotographerSearchSerializer(ordered_capped_photographers, many=True)
+        PhotographerSearchSerializer(matching_photographers, many=True)
     ) # add pagination here
     res = Response(serialized_photographers.data)
     return res

@@ -20,35 +20,34 @@ export class PhotographerListView extends React.Component {
     }
 
     updatePhotographers(name) {
+        const fetchPhotographers = async (sq) => {
+            try {
+                const res = await fetch(`/api/search_photographers?name=${sq}`);
+                return res.json();
+            } catch {
+                return [];
+            }
+        };
         debounce(async () => {
-            const fetchedPhotographers = await this.fetchPhotographers(name);
+            const fetchedPhotographers = await fetchPhotographers(name);
             this.setState({photographers: fetchedPhotographers});
         }, 300)();
     }
 
-    async fetchPhotographers(sq) {
-        try {
-            const res = await fetch(`/api/search_photographers?name=${sq}`);
-            return res.json();
-        } catch {
-            return [];
-        }
-    }
-
     getPhotoList() {
         const photoSize = [100, 100];
-        return this.state.photographers.map((photog, k) => {
+        return this.state.photographers.map((photographer, k) => {
             return (
                 <li className="col-2 col-lg-2 one-photographer list-inline-item" key={k}>
                     <div className="child">
-                        <a key={k} href={this.hrefFunc(photog.number)}>
+                        <a key={k} href={this.hrefFunc(photographer.number)}>
                             <img
-                                alt={photog.number}
+                                alt={photographer.number}
                                 width={photoSize[0]}
-                                src={this.srcFunc(photog.number)}
+                                src={this.srcFunc(photographer.number)}
                             />
                         </a>
-                        <p>{photog.name ? photog.name : "No Name"}</p>
+                        <p>{photographer.name ? photographer.name : "No Name"}</p>
                     </div>
                 </li>
             );
@@ -73,7 +72,7 @@ export class PhotographerListView extends React.Component {
                     </p>
                 </div>
                 <div>
-                    Search By Name:{" "}
+                    Search By Name:&nbsp;
                     <input
                         onChange={(e) => {
                             this.updatePhotographers(e.target.value);
