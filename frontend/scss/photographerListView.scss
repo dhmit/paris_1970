@@ -1,9 +1,87 @@
-.one-photographer{
+.one-photographer {
     flex-direction: row;
     justify-content: space-evenly;
-
 }
 
-.child{
+.child {
     background-color: $color-turquoise-light;
+}
+
+.photographerList-container {
+    position: sticky;
+    top: 0;
+
+    .banner {
+        transition: height 0.5s, background-color 0.5s;
+        position: absolute;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        row-gap: 2vh;
+        padding: 4vh 5vw;
+        border-bottom: 1px solid black;
+        overflow: hidden;
+        width: 100%;
+        top: 0;
+
+        &.grow {
+            height: 30vh;
+        }
+
+        &.shrink {
+            height: calc(4vh + 30px + 1rem + 2vh);
+        }
+
+        .heading {
+            font-size: 30px;
+            font-weight: 600;
+        }
+
+        .filterContainer {
+            flex-direction: column;
+            row-gap: 3vh;
+            display: flex;
+            flex: 0;
+
+            input#photographerList-search:focus {
+                outline-width: 0;
+            }
+
+            #photographerList-search {
+                height: 5vh;
+                width: 60vw;
+                background-color: #ebf3f4;
+                border: 2px solid #000000;
+                padding: 10px;
+                -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+                -moz-box-sizing: border-box; /* Firefox, other Gecko */
+                box-sizing: border-box; /* Opera/IE 8+ */
+            }
+
+            .advancedSearch-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+
+                .filterBy-container,
+                .sortBy-container {
+                    display: flex;
+                    flex-direction: row;
+                    column-gap: 2vw;
+                }
+
+                p {
+                    margin: 0;
+                }
+            }
+        }
+    }
+
+    .photographerGallery {
+        margin: 8vh 5vw;
+        border: 1px solid black;
+        height: 200vh;
+        top: 30vh;
+    }
 }
