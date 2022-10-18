@@ -42,7 +42,7 @@ def photo(request, map_square_number, photo_number):
     API endpoint to get a photo with a map square number of map_square_number
     and photo number of photo_number
     """
-    photo_obj = Photo.objects.get(number=photo_number, map_square_number=map_square_number)
+    photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
     serializer = PhotoSerializer(photo_obj)
     return Response(serializer.data)
 

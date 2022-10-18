@@ -8,12 +8,8 @@ export class MapSquareContent extends PhotoViewer {
         super(props);
     }
 
-    // fields = ['id', 'name', 'number', 'type', 'sentiment', 'photos', 'map_square', 'approx_loc']
-
     getPhotographersGrid(photographerData, config = {}){
-        // photographerData.propTypes = {
-        //     map_square: PropTypes.object
-        // };
+        
         const className = getValue(config, "className", "");
         const titleFunc = getValue(
             config,
@@ -43,6 +39,7 @@ export class MapSquareContent extends PhotoViewer {
                         title={titleFunc(k, photographer)}
                         href={hrefFunc(k, photographer)}
                         onClick={onClickFunc(k, photographer)}>
+                            {photographer["name"]}
                     </button>
                 </li>
             );
@@ -78,16 +75,15 @@ export class MapSquareContent extends PhotoViewer {
                         <Col sm={12} lg={9} className={"p-1"}>
                             <ul className={"list-inline p-0"}>{
                                 this.getPhotographersGrid(this.props.photographers
-                                    // {
-                                    // "photoSize": [120, 120],
-                                    // "className": "example-photo"
-                                    // }
                                 )
                             }
                             </ul>
                         </Col>
                     </Row>
-
+                </>)
+                : <></>
+            }
+            {
                     <Row>
                         <Col className="d-inline-block p-0">
                             <a className={"link"}
@@ -96,8 +92,6 @@ export class MapSquareContent extends PhotoViewer {
                             </a>
                         </Col>
                     </Row>
-                </>)
-                : <></>
             }
         </>);
     }
@@ -106,7 +100,8 @@ export class MapSquareContent extends PhotoViewer {
 MapSquareContent.propTypes = {
     mapSquare: PropTypes.number,
     photos: PropTypes.array,
-    photographers: PropTypes.array,
+    // photographers: PropTypes.array,
+    photographers: PropTypes.string,
     photoDir: PropTypes.string
 };
 
