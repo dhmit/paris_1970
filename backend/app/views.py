@@ -12,6 +12,7 @@ from rest_framework.renderers import JSONRenderer
 
 from django.shortcuts import render
 from django.db.models import Q
+from django.core.paginator import Paginator
 from django.conf import settings
 
 from app import view_helpers
@@ -110,16 +111,27 @@ def search_photographers(request):
     so that the user is sent the first 50 results and they can view more results as they scroll down the page.
     """
     name = request.GET.get("name", None)
+    page_number = request.GET.get("page", 0)
+
     is_searching_by_name = name is not None and name.strip() != ""
+    count_per_page = 50
+
     if is_searching_by_name:
         matching_photographers = Photographer.objects.filter(name__icontains=name).order_by("name")
     else:
-        matching_photographers = Photographer.objects.all().order_by("name")[:50]
+        matching_photographers = Photographer.objects.all().order_by("name")
+
+    photographers_paginator = Paginator(matching_photographers, count_per_page)
+    current_page = photographers_paginator.get_page(page_number)
 
     serialized_photographers = (
-        PhotographerSearchSerializer(matching_photographers, many=True)
+        PhotographerSearchSerializer(current_page.object_list, many=True)
     ) # add pagination here
-    res = Response(serialized_photographers.data)
+    res = Response({
+        "page_number": page_number,
+        "results": serialized_photographers.data,
+        "is_last_page": current_page.has_other_pages()
+    })
     return res
 
 

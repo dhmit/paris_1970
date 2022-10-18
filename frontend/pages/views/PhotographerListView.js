@@ -1,13 +1,16 @@
 import React from "react";
 import Footer from "../../components/Footer";
 import * as PropTypes from "prop-types";
-import {debounce} from "../../common";
+import { debounce } from "../../common";
 
 export class PhotographerListView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            searchQueries: { name: "" },
             photographers: [],
+            pageNumber: 0,
+            isLastPage: false,
         };
     }
 
@@ -19,18 +22,28 @@ export class PhotographerListView extends React.Component {
         return `${this.props.photoListDir}/${number}_photo.jpg`;
     }
 
-    updatePhotographers(name) {
+    refetchPhotographers() {
         const fetchPhotographers = async (sq) => {
+            const newPageNumber = this.state.pageNumber + 1;
             try {
-                const res = await fetch(`/api/search_photographers?name=${sq}`);
+                console.log("Fetching.....");
+                const res = await fetch(
+                    `/api/search_photographers?name=${sq}&page=${newPageNumber}`
+                );
                 return res.json();
             } catch {
                 return [];
             }
         };
         debounce(async () => {
-            const fetchedPhotographers = await fetchPhotographers(name);
-            this.setState({photographers: fetchedPhotographers});
+            const { results, is_last_page, page_number } = await fetchPhotographers(
+                this.state.searchQueries.name
+            );
+            this.setState({
+                photographers: this.state.photographers.concat(results),
+                isLastPage: is_last_page,
+                pageNumber: parseInt(page_number),
+            });
         }, 300)();
     }
 
@@ -54,13 +67,23 @@ export class PhotographerListView extends React.Component {
         });
     }
 
+    searchQueryChanged(oldQuery, newQuery) {
+        // update as we add more queries
+        return oldQuery.name !== newQuery.name;
+    }
+
+    resetPaginationParameters() {
+        this.setState({ pageNumber: 0, isLastPage: false, photographers: [] });
+    }
+
     componentDidMount() {
-        this.updatePhotographers("");
+        this.refetchPhotographers();
     }
 
     render() {
         return (
             <>
+                <button onClick={this.refetchPhotographers}>Nextpage</button>
                 <div className="row">
                     <p
                         style={{
@@ -75,7 +98,7 @@ export class PhotographerListView extends React.Component {
                     Search By Name:&nbsp;
                     <input
                         onChange={(e) => {
-                            this.updatePhotographers(e.target.value);
+                            this.setState({ searchQueries: { name: e.target.value } });
                         }}
                     />
                 </div>
