@@ -35,7 +35,6 @@ from .serializers import (
     CorpusAnalysisResultsSerializer
 )
 
-
 @api_view(['GET'])
 def photo(request, map_square_number, photo_number):
     """
@@ -100,6 +99,28 @@ def all_map_squares(request):
     map_square_obj = MapSquare.objects.all()
     serializer = MapSquareSerializerWithoutPhotos(map_square_obj, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def search_photographers(request):
+    """
+    API endpoint to get a list of photographers based on a search query that looks the photographers by name 
+    If not given a search query it will return the first 50 photographers sorted by name
+
+    TODO: Add pagination for both cases (when given a search query and when nothing is given) 
+    so that the user is sent the first 50 results and they can view more results as they scroll down the page.
+    """
+    name = request.GET.get("name", None)
+    is_searching_by_name = name is not None and name.strip() != ""
+    if is_searching_by_name:
+        matching_photographers = Photographer.objects.filter(name__icontains=name).order_by("name")
+    else:
+        matching_photographers = Photographer.objects.all().order_by("name")[:50]
+
+    serialized_photographers = (
+        PhotographerSearchSerializer(matching_photographers, many=True)
+    ) # add pagination here
+    res = Response(serialized_photographers.data)
+    return res
 
 
 @api_view(['GET'])
@@ -517,9 +538,6 @@ def photographer_list_view(request):
     Photographer list page
     """
     photos_dir = os.path.join(settings.LOCAL_PHOTOS_DIR, 'photographers')
-    serializer = PhotographerSearchSerializer(
-        Photographer.objects.all().order_by('name'), many=True)
-    photographer_data = JSONRenderer().render(serializer.data).decode("utf-8")
 
     context = {
         'page_metadata': {
@@ -528,7 +546,6 @@ def photographer_list_view(request):
         'component_name': 'PhotographerListView',
         'component_props': {
             'photoListDir': photos_dir,
-            'photographers': photographer_data
         }
     }
 
