@@ -8,7 +8,6 @@
 }
 
 .photographerList-container {
-    position: sticky;
     top: 0;
 
     .banner {
@@ -22,7 +21,7 @@
         border-bottom: 1px solid black;
         overflow: hidden;
         width: 100%;
-        top: 0;
+        top: 70px;
 
         &.grow {
             height: 30vh;

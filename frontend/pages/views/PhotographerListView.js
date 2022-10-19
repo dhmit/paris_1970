@@ -59,16 +59,21 @@ export class PhotographerListView extends React.Component {
             document.getElementsByClassName("banner")[0].classList.add("grow");
             document.getElementsByClassName("banner")[0].classList.remove("shrink");
 
-            // document.getElementsByClassName("filterContainer")[0].classList.add("grow");
-            // document.getElementsByClassName("filterContainer")[0].classList.remove("shrink");
             }, 1000);
 
             document.getElementsByClassName("banner")[0].classList.add("shrink");
-            document.getElementsByClassName("banner")[0].classList.remove("grow");   
+            document.getElementsByClassName("banner")[0].classList.remove("grow");  
+            
+            if (window.scrollY > 70) {
+                document.getElementsByClassName("banner")[0].style.position = "fixed";
+                document.getElementsByClassName("banner")[0].style.top = "0px";
+            } else {
+                document.getElementsByClassName("banner")[0].style.position = "absolute";
+                document.getElementsByClassName("banner")[0].style.top = "70px";
+            }
 
 
-            // document.getElementsByClassName("filterContainer")[0].classList.add("shrink");
-            // document.getElementsByClassName("filterContainer")[0].classList.remove("grow");
+
 
 
         
