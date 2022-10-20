@@ -158,7 +158,6 @@ footer {
     @extend .btn-secondary;
     border: .08em solid $color-blue-light;
     &:hover, &:focus {
-        color: white !important;
         background-color: $color-blue-light !important;
     }
 }
