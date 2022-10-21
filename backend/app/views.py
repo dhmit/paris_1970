@@ -298,7 +298,6 @@ def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     serializer = PhotoSerializer(cluster.photos.all(), many=True)
     return Response(serializer.data)
 
-
 @api_view(['GET'])
 def search(request):
     """
