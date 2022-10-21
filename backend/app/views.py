@@ -545,8 +545,7 @@ def photographer_list_view(request):
         },
         'component_name': 'PhotographerListView',
         'component_props': {
-            'photoListDir': photos_dir,
-            'photographers': photographer_data
+            'photoListDir': photos_dir
         }
     }
 
