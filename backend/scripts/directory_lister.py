@@ -1,12 +1,8 @@
-import os
-import subprocess
 import sys
 from pathlib import Path
 
-from tqdm import tqdm
 
-
-def convert(src_dir_path, dest_dir_path, commands=['-quality', '20%']):
+def convert(src_dir_path, dest_dir_path):
     """
     Python script for image conversion using Image Magick
     
@@ -16,15 +12,13 @@ def convert(src_dir_path, dest_dir_path, commands=['-quality', '20%']):
     :return: None, output produced in new directory
     """
 
-    magick_commands = []
     for src_sub_dir in src_dir_path.iterdir():
-        if not src_sub_dir.is_dir(): continue
+        if not src_sub_dir.is_dir(): 
+            continue
 
         dest_sub_dir = Path(dest_dir_path, src_sub_dir.name)
         if not dest_sub_dir.exists():
             dest_sub_dir.mkdir()
-
-        magick_args = ' ' .join(commands)
 
         # looping through old directory
         for src_image_path in src_sub_dir.iterdir():
@@ -34,13 +28,14 @@ def convert(src_dir_path, dest_dir_path, commands=['-quality', '20%']):
                 continue
 
             dest_image_path = Path(dest_sub_dir, src_image_path.stem + '.jpg')
-            if dest_image_path.exists(): continue
+            if dest_image_path.exists(): 
+                continue
 
 if __name__ == "__main__":
-    src_dir_path = Path(sys.argv[1])
-    commands_arg = sys.argv[3:]
+    src_path = Path(sys.argv[1])
+    dest_path = Path(sys.argv[1])
 
-    convert(src_dir_path, dest_dir_path, commands_arg)
+    convert(src_path, dest_path)
 
 """
 # Example of command-line:
