@@ -537,7 +537,7 @@ def photographer_list_view(request):
     """
     Photographer list page
     """
-    photos_dir = os.path.join(settings.PHOTOGRAPHERS_DIR, '')
+    photos_dir = os.path.join(settings.PHOTOGRAPHERS_DIR)
 
     context = {
         'page_metadata': {
