@@ -153,3 +153,11 @@ footer {
         background-color: $color-red !important;
     }
 }
+
+.btn-secondary-blue {
+    @extend .btn-secondary;
+    border: .08em solid $color-blue-light;
+    &:hover, &:focus {
+        background-color: $color-blue-light !important;
+    }
+}
