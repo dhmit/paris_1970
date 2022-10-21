@@ -537,11 +537,7 @@ def photographer_list_view(request):
     """
     Photographer list page
     """
-
-    photos_dir = settings.PHOTOGRAPHERS_DIR
-    serializer = PhotographerSearchSerializer(
-        Photographer.objects.all().order_by('name'), many=True)
-    photographer_data = JSONRenderer().render(serializer.data).decode("utf-8")
+    photos_dir = os.path.join(settings.PHOTOGRAPHERS_DIR, '')
 
     context = {
         'page_metadata': {
@@ -549,7 +545,7 @@ def photographer_list_view(request):
         },
         'component_name': 'PhotographerListView',
         'component_props': {
-            'photoListDir': photos_dir,
+            'photoListDir': photos_dir
         }
     }
 
