@@ -26,7 +26,10 @@ export class Legend extends React.Component {
                         </li>;
                         
                     })}
-                </ul>             
+                </ul> 
+                <div className="photos-available-subtext">
+                    (from least to most)
+                    </div>            
             </div>
         );
     }

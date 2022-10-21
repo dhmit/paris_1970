@@ -2,19 +2,20 @@
 @import "fonts";
 
 .legend {
+    position: absolute; 
     background-color: $color-white;
     border: 1px solid $color-black;
     z-index: 999;
     padding: 0.4em;
-    position: absolute; 
-    text-align: left;
-    line-height: 18px;
-    color: $color-black;
-    width: 7em;
-    overflow-x: scroll;
+    width: 7.8em;
+    height: 5.6em; 
     right: 0.5em;
     top: 0.5em;
+    color: $color-black;
+    text-align: left;
+    line-height: 0px;
     font-family: $font-family-bold;
+    overflow-x: scroll;
 
     h6 {
         font-weight: 700;
@@ -29,24 +30,32 @@
     }
 
     .label {
-        font-size: .6em;
         position: relative;
+        font-size: .7em;
         bottom: 0.5em;
+    }
+
+    .photos-available-subtext {
+        position: absolute;
+        bottom: 1.2em;
+        right: 1.5em;
+        font-size: .55em;
+        text-align: center;
     }
 }
 
 .legend-square {
     height: 1.5em;
     width: 1.5em;
-    cursor: pointer;
     margin-right: 0.2em;
+    cursor: pointer;
 
-    &.photo {
+    &.photos {
         border: 0.1px solid $color-white;
         background: url("../images/icons/photo_density_legend_icon.svg");
         background-size: cover;
     }
-    &.photo.inactive {
+    &.photos.inactive {
         filter: grayscale(60%);
     }
 
@@ -54,7 +63,6 @@
         background-color: #70D8F1;
         border: 4px solid #00B1DB;
     }
-
     &.arrondissement.inactive {
         filter: grayscale(60%);
     }

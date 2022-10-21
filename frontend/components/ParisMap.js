@@ -28,7 +28,7 @@ export class ParisMap extends React.Component {
 
         this.state = {
             visibleLayers,
-            layers: ["Arrondissement", "Photo Density"],
+            layers: ["Arrondissement", "Photos available"],
             bounds: [[48.8030, 2.1330], [48.9608, 2.6193]],
             minZoom: 12,
             zoom: this.props.zoom
