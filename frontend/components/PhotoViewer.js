@@ -1,7 +1,7 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-function getValue(dictionary, key, default_val) {
+export function getValue(dictionary, key, default_val) {
     let result = dictionary[key];
     if (typeof result === "undefined") {
         result = default_val;
