@@ -113,7 +113,7 @@ export class PhotographerListView extends React.Component {
 
     render() {
         return (
-            <div className = "photographers-container">
+            <div className="photographers-container">
                 <div className="row">
                     <p
                         style={{
@@ -138,7 +138,7 @@ export class PhotographerListView extends React.Component {
                         style={{
                             overflowY: "scroll",
                             maxHeight: "700px",
-                            width: "100%",
+                            width: "99%",
                         }}
                         onScroll={this.handleScroll}
                     >
