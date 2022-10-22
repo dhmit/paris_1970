@@ -9,9 +9,12 @@ export class PhotographerListView extends React.Component {
         this.state = {
             searchQueries: { name: "" },
             photographers: [],
-            pageNumber: 0,
+            pageNumber: 1,
             isLastPage: false,
         };
+        this.refetchPhotographers = this.refetchPhotographers.bind(this);
+        this.resetPaginationParameters = this.resetPaginationParameters.bind(this);
+        this.handleScroll = this.handleScroll.bind(this);
     }
 
     hrefFunc(number) {
@@ -24,9 +27,11 @@ export class PhotographerListView extends React.Component {
 
     refetchPhotographers() {
         const fetchPhotographers = async (sq) => {
+            if (this.state.isLastPage) {
+                return;
+            }
             const newPageNumber = this.state.pageNumber + 1;
             try {
-                console.log("Fetching.....");
                 const res = await fetch(
                     `/api/search_photographers?name=${sq}&page=${newPageNumber}`
                 );
@@ -36,14 +41,20 @@ export class PhotographerListView extends React.Component {
             }
         };
         debounce(async () => {
-            const { results, is_last_page, page_number } = await fetchPhotographers(
-                this.state.searchQueries.name
-            );
-            this.setState({
-                photographers: this.state.photographers.concat(results),
-                isLastPage: is_last_page,
-                pageNumber: parseInt(page_number),
-            });
+            try {
+                const { results, is_last_page, page_number } = await fetchPhotographers(
+                    this.state.searchQueries.name
+                );
+                console.log(results);
+                this.setState({
+                    photographers: this.state.photographers.concat(results),
+                    isLastPage: is_last_page,
+                    pageNumber: parseInt(page_number),
+                });
+            } catch (err) {
+                console.log(err);
+                console.log("ERROR IN FETCHING");
+            }
         }, 300)();
     }
 
@@ -54,11 +65,11 @@ export class PhotographerListView extends React.Component {
                 <li className="col-2 col-lg-2 one-photographer list-inline-item" key={k}>
                     <div className="child">
                         <a key={k} href={this.hrefFunc(photographer.number)}>
-                            <img
+                            {/* <img
                                 alt={photographer.number}
                                 width={photoSize[0]}
                                 src={this.srcFunc(photographer.number)}
-                            />
+                            /> */}
                         </a>
                         <p>{photographer.name ? photographer.name : "No Name"}</p>
                     </div>
@@ -72,6 +83,31 @@ export class PhotographerListView extends React.Component {
         return oldQuery.name !== newQuery.name;
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        // change this to a more universal way of comparing queries
+        if (prevState.searchQueries.name !== this.state.searchQueries.name) {
+            this.resetPaginationParameters();
+            this.refetchPhotographers();
+        }
+    }
+
+    onReachBottomOfPage() {
+        if (!this.state.isLastPage) {
+            this.refetchPhotographers();
+        }
+    }
+
+    handleScroll(e) {
+        // doing some arithmetic with the scroll height here to detect when the user reaches the bottom of the list
+        const bottom =
+            Math.trunc((e.target.scrollHeight - e.target.clientHeight) / 10) <=
+            Math.trunc(e.target.scrollTop / 10);
+        // if we reach bottom we load the next page of photographers
+        if (bottom) {
+            this.onReachBottomOfPage();
+        }
+    }
+
     resetPaginationParameters() {
         this.setState({ pageNumber: 0, isLastPage: false, photographers: [] });
     }
@@ -83,7 +119,7 @@ export class PhotographerListView extends React.Component {
     render() {
         return (
             <>
-                <button onClick={this.refetchPhotographers}>Nextpage</button>
+                <div>{this.state.isLastPage.toString()}</div>
                 <div className="row">
                     <p
                         style={{
@@ -103,7 +139,17 @@ export class PhotographerListView extends React.Component {
                     />
                 </div>
                 <div className="row">
-                    <ul className="list-inline">{this.getPhotoList()}</ul>
+                    <ul
+                        className="list-inline"
+                        style={{
+                            overflowY: "scroll",
+                            maxHeight: "700px",
+                        }}
+                        onScroll={this.handleScroll}
+                    >
+                        {this.getPhotoList()}
+                        {this.state.isLastPage && <div>End of results!</div>}
+                    </ul>
                 </div>
                 <div>
                     <Footer />

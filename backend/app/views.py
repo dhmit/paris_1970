@@ -111,10 +111,10 @@ def search_photographers(request):
     so that the user is sent the first 50 results and they can view more results as they scroll down the page.
     """
     name = request.GET.get("name", None)
-    page_number = request.GET.get("page", 0)
+    page_number = request.GET.get("page", None)
 
     is_searching_by_name = name is not None and name.strip() != ""
-    count_per_page = 50
+    count_per_page = 100
 
     if is_searching_by_name:
         matching_photographers = Photographer.objects.filter(name__icontains=name).order_by("name")
@@ -130,7 +130,7 @@ def search_photographers(request):
     res = Response({
         "page_number": page_number,
         "results": serialized_photographers.data,
-        "is_last_page": current_page.has_other_pages()
+        "is_last_page": not current_page.has_next()
     })
     return res
 
