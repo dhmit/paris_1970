@@ -45,7 +45,6 @@ export class PhotographerListView extends React.Component {
                 const { results, is_last_page, page_number } = await fetchPhotographers(
                     this.state.searchQueries.name
                 );
-                console.log(results);
                 this.setState({
                     photographers: this.state.photographers.concat(results),
                     isLastPage: is_last_page,
@@ -53,7 +52,7 @@ export class PhotographerListView extends React.Component {
                 });
             } catch (err) {
                 console.log(err);
-                console.log("ERROR IN FETCHING");
+                console.log("Error fetching page!!!");
             }
         }, 300)();
     }
@@ -65,11 +64,11 @@ export class PhotographerListView extends React.Component {
                 <li className="col-2 col-lg-2 one-photographer list-inline-item" key={k}>
                     <div className="child">
                         <a key={k} href={this.hrefFunc(photographer.number)}>
-                            {/* <img
+                            <img
                                 alt={photographer.number}
                                 width={photoSize[0]}
                                 src={this.srcFunc(photographer.number)}
-                            /> */}
+                            />
                         </a>
                         <p>{photographer.name ? photographer.name : "No Name"}</p>
                     </div>
@@ -84,15 +83,8 @@ export class PhotographerListView extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        // change this to a more universal way of comparing queries
-        if (prevState.searchQueries.name !== this.state.searchQueries.name) {
+        if (this.searchQueryChanged(prevState.searchQueries, this.state.searchQueries)) {
             this.resetPaginationParameters();
-            this.refetchPhotographers();
-        }
-    }
-
-    onReachBottomOfPage() {
-        if (!this.state.isLastPage) {
             this.refetchPhotographers();
         }
     }
@@ -102,9 +94,12 @@ export class PhotographerListView extends React.Component {
         const bottom =
             Math.trunc((e.target.scrollHeight - e.target.clientHeight) / 10) <=
             Math.trunc(e.target.scrollTop / 10);
+
         // if we reach bottom we load the next page of photographers
         if (bottom) {
-            this.onReachBottomOfPage();
+            if (!this.state.isLastPage) {
+                this.refetchPhotographers();
+            }
         }
     }
 
@@ -119,7 +114,6 @@ export class PhotographerListView extends React.Component {
     render() {
         return (
             <>
-                <div>{this.state.isLastPage.toString()}</div>
                 <div className="row">
                     <p
                         style={{
@@ -144,11 +138,12 @@ export class PhotographerListView extends React.Component {
                         style={{
                             overflowY: "scroll",
                             maxHeight: "700px",
+                            width: "100%",
                         }}
                         onScroll={this.handleScroll}
                     >
                         {this.getPhotoList()}
-                        {this.state.isLastPage && <div>End of results!</div>}
+                        <div>{this.state.isLastPage ? "End of Results!!!" : "Loading..."}</div>
                     </ul>
                 </div>
                 <div>
