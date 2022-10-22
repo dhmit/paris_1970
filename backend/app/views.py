@@ -310,7 +310,6 @@ def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     serializer = PhotoSerializer(cluster.photos.all(), many=True)
     return Response(serializer.data)
 
-
 @api_view(['GET'])
 def search(request):
     """
@@ -550,7 +549,7 @@ def photographer_list_view(request):
     """
     Photographer list page
     """
-    photos_dir = os.path.join(settings.LOCAL_PHOTOS_DIR, 'photographers')
+    photos_dir = os.path.join(settings.PHOTOGRAPHERS_DIR, '')
 
     context = {
         'page_metadata': {
@@ -558,7 +557,7 @@ def photographer_list_view(request):
         },
         'component_name': 'PhotographerListView',
         'component_props': {
-            'photoListDir': photos_dir,
+            'photoListDir': photos_dir
         }
     }
 
