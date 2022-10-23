@@ -2,6 +2,41 @@ import React from "react";
 import Footer from "../../components/Footer";
 import * as PropTypes from "prop-types";
 
+class DropDown extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+        };
+    }
+
+    render () {
+        return(
+           <div className="dropdown-container">
+                <div className="dropdown-select"
+                    onMouseEnter={()=>{
+                        console.log(`fired onMouseEnter ${this.props.id}`);
+                        elt = document.getElementById(this.props.id);
+                        elt.classList.remove("d-none");
+                    }}
+                    onMouseLeave={()=>{
+                        console.log(`fired onMouseLeave ${this.props.id}`);
+                        elt = document.getElementById(this.props.id);
+                        elt.classList.add("d-none");
+                    }}
+                >
+                    <p>hi</p>
+                    <p>hi</p>
+                </div>
+                <div className={"dropdown-items"} 
+                id={this.props.id}>
+                    <div className="dropdown-itm"><p>1</p></div>
+                    <div className="dropdown-itm"><p>1</p></div>
+                    <div className="dropdown-itm"><p>1</p></div>
+                </div>
+           </div>
+        );
+    }
+}
 
 export class PhotographerListView extends React.Component {
     constructor(props) {
@@ -40,7 +75,7 @@ export class PhotographerListView extends React.Component {
                 </li>
             );
         });
-    }
+    };
 
 
     handleScroll = () => {
@@ -86,11 +121,11 @@ export class PhotographerListView extends React.Component {
         //     return;
         //   }
         window.addEventListener("scroll", this.handleScroll);
-    }
+    };
 
     componentWillUnmount(){
         window.removeEventListener("scroll", this.handleScroll);
-    }
+    };
     
        
     
@@ -107,13 +142,15 @@ export class PhotographerListView extends React.Component {
                                 <div className="advancedSearch-container">
                                     <div className="filterBy-container">
                                         <p>Filter by:</p>
-                                        
-
-                                    
-                                        
+                                        <div style={{display:"flex", flexDirection:"row", columnGap:"5vw"}}>
+                                            <DropDown id="loc-filter"/>
+                                            <DropDown id="sq-filter"/>
+                                            <DropDown id="alph-filter"/>
+                                        </div>
                                     </div>
                                     <div className="sortBy-container">
                                         <p>Sort by:</p>
+                                        <DropDown/>
                                         
                                     </div>
                                     
@@ -139,5 +176,9 @@ export class PhotographerListView extends React.Component {
 PhotographerListView.propTypes = {
     photoListDir: PropTypes.string,
     photographers: PropTypes.string
+};
+
+DropDown.propTypes = {
+    id: PropTypes.string
 };
 

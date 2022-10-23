@@ -9,6 +9,7 @@
 
 .photographerList-container {
     top: 0;
+    margin-top: 40vh;
 
     .banner {
         transition: height 0.5s, background-color 0.5s;
@@ -42,6 +43,16 @@
             display: flex;
             flex: 0;
 
+            // figma says to right align place holder but input is shown left aligned?
+            // /* webkit solution */
+            // ::-webkit-input-placeholder {
+            //     text-align: right;
+            // }
+            // /* mozilla solution */
+            // input:-moz-placeholder {
+            //     text-align: right;
+            // }
+
             input#photographerList-search:focus {
                 outline-width: 0;
             }
@@ -68,6 +79,33 @@
                     display: flex;
                     flex-direction: row;
                     column-gap: 2vw;
+                    align-items: center;
+
+                    .dropdown-container {
+                        width: 150px;
+                        position: relative;
+
+                        .dropdown-select {
+                            padding: 5px 10px;
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: space-between;
+                            align-items: center;
+                            border: 1px solid $color-turquoise;
+                        }
+
+                        .dropdown-items {
+                            margin-top: 1vh;
+                            position: fixed;
+                            width: 180px;
+
+                            .dropdown-itm {
+                                background: #1c1a1a;
+                                color: white;
+                                padding: 0.5rem;
+                            }
+                        }
+                    }
                 }
 
                 p {
