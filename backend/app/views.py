@@ -117,7 +117,7 @@ def search_photographers(request):
     count_per_page = 100
 
     if is_searching_by_name:
-        matching_photographers = Photographer.objects.filter(name__contains=name).order_by("name")
+        matching_photographers = Photographer.objects.filter(name__icontains=name).order_by("name")
     else:
         matching_photographers = Photographer.objects.all().order_by("name")
 
