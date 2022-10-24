@@ -2,10 +2,15 @@ import React from "react";
 import Footer from "../../components/Footer";
 import * as PropTypes from "prop-types";
 
+
+
 class DropDown extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            toggleDropDown: false,
+            toggleDropDownItem: false,
+            selected: null
         };
     }
 
@@ -13,30 +18,61 @@ class DropDown extends React.Component {
         return(
            <div className="dropdown-container">
                 <div className="dropdown-select"
+                    style={{border:this.props.blue?"1px solid $color-turquoise":"1px solid #FB2F2A"}}
                     onMouseEnter={()=>{
-                        console.log(`fired onMouseEnter ${this.props.id}`);
-                        elt = document.getElementById(this.props.id);
-                        elt.classList.remove("d-none");
+                        this.setState({toggleDropDown:true});
+                        let dropdowns = document.getElementsByClassName("dropdown-items");
+                        for (const elt of dropdowns) {
+                            if (elt.id !== this.props.id) {
+                                elt.classList.add("d-none");
+                            }
+                        }
                     }}
                     onMouseLeave={()=>{
-                        console.log(`fired onMouseLeave ${this.props.id}`);
-                        elt = document.getElementById(this.props.id);
-                        elt.classList.add("d-none");
+                        this.mouseLeaveTimer = setTimeout(()=>{
+                            if (!this.state.toggleDropDownItem) {
+                                this.setState({toggleDropDown:false});
+                            }
+                        }, 1000);
                     }}
                 >
-                    <p>hi</p>
+                    <p>{this.props.placeholder}</p>
                     <p>hi</p>
                 </div>
-                <div className={"dropdown-items"} 
+                <div className={`dropdown-items ${this.state.toggleDropDown?"":"d-none"}`} 
                 id={this.props.id}>
-                    <div className="dropdown-itm"><p>1</p></div>
-                    <div className="dropdown-itm"><p>1</p></div>
-                    <div className="dropdown-itm"><p>1</p></div>
+                    {this.props.items.map((item)=>{
+                        return(
+                        <div key={item} 
+                        className={`dropdown-itm ${this.state.selected === item ? "selected-itm": "unselected-itm"}`}
+                        onClick={()=>{
+                            if (this.state.selected !== item) {
+                                this.setState({selected:item});
+                            } else {
+                                this.setState({selected:null});
+                            }
+                            
+                        }}
+                        onMouseEnter={()=>{
+                            this.setState({
+                                toggleDropDown:true,
+                                toggleDropDownItem:true
+                            });
+                        }}
+                        onMouseLeave={()=>{
+                            this.setState({
+                                toggleDropDown:false,
+                                toggleDropDownItem:false
+                            });
+                        }}>{item}</div>);})}
+                    
+                       
+                    
                 </div>
            </div>
         );
-    }
-}
+    };
+};
 
 export class PhotographerListView extends React.Component {
     constructor(props) {
@@ -46,8 +82,15 @@ export class PhotographerListView extends React.Component {
             photographers: JSON.parse(this.props.photographers),
             timer: null
                 };
-            
+
+        this.LOCATIONS = ["1", "2", "3"];
+        this.SQUARES = ["4", "5", "6"];
+        this.ALPHABET = ["7", "8", "9"];
+        this.SORTS = ["10", "11", "12"];
+   
     }
+
+
 
     hrefFunc(number) {
         return `/photographer/${number}`;
@@ -85,7 +128,13 @@ export class PhotographerListView extends React.Component {
         if (this.scrollOverTimer !== null) {
           clearTimeout(this.scrollOverTimer);
         }
-    
+
+        let dropdowns = document.getElementsByClassName("dropdown-items");
+        for (const elt of dropdowns) {
+            elt.classList.add("d-none");
+        };
+
+        
         
         this.scrollOverTimer= setTimeout(() => {
             console.log("retract");
@@ -94,11 +143,13 @@ export class PhotographerListView extends React.Component {
             document.getElementsByClassName("banner")[0].classList.add("grow");
             document.getElementsByClassName("banner")[0].classList.remove("shrink");
 
+
             }, 1000);
 
             document.getElementsByClassName("banner")[0].classList.add("shrink");
             document.getElementsByClassName("banner")[0].classList.remove("grow");  
-            
+        
+
             if (window.scrollY > 70) {
                 document.getElementsByClassName("banner")[0].style.position = "fixed";
                 document.getElementsByClassName("banner")[0].style.top = "0px";
@@ -106,12 +157,6 @@ export class PhotographerListView extends React.Component {
                 document.getElementsByClassName("banner")[0].style.position = "absolute";
                 document.getElementsByClassName("banner")[0].style.top = "70px";
             }
-
-
-
-
-
-        
       };
 
 
@@ -127,6 +172,8 @@ export class PhotographerListView extends React.Component {
         window.removeEventListener("scroll", this.handleScroll);
     };
     
+
+   
        
     
 
@@ -143,14 +190,17 @@ export class PhotographerListView extends React.Component {
                                     <div className="filterBy-container">
                                         <p>Filter by:</p>
                                         <div style={{display:"flex", flexDirection:"row", columnGap:"5vw"}}>
-                                            <DropDown id="loc-filter"/>
-                                            <DropDown id="sq-filter"/>
-                                            <DropDown id="alph-filter"/>
+                                            <DropDown id="loc-filter" blue={true} 
+                                            items={this.LOCATIONS} placeholder={"Locations"}/>
+                                            <DropDown id="sq-filter" blue={true} 
+                                            items={this.SQUARES} placeholder={"Map Square"}/>
+                                            <DropDown id="alph-filter" blue={true} 
+                                            items={this.ALPHABET} placeholder={"Alphabet"}/>
                                         </div>
                                     </div>
                                     <div className="sortBy-container">
                                         <p>Sort by:</p>
-                                        <DropDown/>
+                                        <DropDown id="sort" blue={false} items={this.SORTS} placeholder={"---"}/>
                                         
                                     </div>
                                     
@@ -179,6 +229,9 @@ PhotographerListView.propTypes = {
 };
 
 DropDown.propTypes = {
-    id: PropTypes.string
+    id: PropTypes.string,
+    blue: PropTypes.bool,
+    items: PropTypes.array,
+    placeholder: PropTypes.string
 };
 

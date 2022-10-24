@@ -43,16 +43,6 @@
             display: flex;
             flex: 0;
 
-            // figma says to right align place holder but input is shown left aligned?
-            // /* webkit solution */
-            // ::-webkit-input-placeholder {
-            //     text-align: right;
-            // }
-            // /* mozilla solution */
-            // input:-moz-placeholder {
-            //     text-align: right;
-            // }
-
             input#photographerList-search:focus {
                 outline-width: 0;
             }
@@ -98,11 +88,22 @@
                             margin-top: 1vh;
                             position: fixed;
                             width: 180px;
+                            max-height: 30vh;
+                            overflow-y: auto;
 
                             .dropdown-itm {
                                 background: #1c1a1a;
-                                color: white;
                                 padding: 0.5rem;
+                                width: 100%;
+
+                                &.unselected-itm {
+                                    color: white;
+                                }
+
+                                &.selected-itm,
+                                &:hover {
+                                    color: $color-turquoise;
+                                }
                             }
                         }
                     }
