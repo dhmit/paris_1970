@@ -4,6 +4,7 @@ import * as PropTypes from "prop-types";
 
 
 import Chevron from "../../images/icons/chevron_down.svg";
+import RedBlueBox from "../../images/icons/red_blue_box.svg";
 
 class DropDown extends React.Component {
     constructor(props) {
@@ -184,7 +185,10 @@ export class PhotographerListView extends React.Component {
                     <div className="overlay"></div>
 
                     <div className={"banner"}>
+                        <div style={{position:"relative"}}>
+                        <div style={{position:"absolute", bottom:"1.5rem", left:"-1.5rem"}}><RedBlueBox/></div>
                         <p className="heading">Photographers</p>
+                        </div>
                         <form className={"filterContainer"}>
                             {/* TODO: add magnify glass icon down */}
                             <input
