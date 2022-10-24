@@ -2,6 +2,9 @@ import React from "react";
 import Footer from "../../components/Footer";
 import * as PropTypes from "prop-types";
 
+
+import Chevron from "../../images/icons/chevron_down.svg";
+
 class DropDown extends React.Component {
     constructor(props) {
         super(props);
@@ -39,7 +42,7 @@ class DropDown extends React.Component {
                     }}
                 >
                     <p>{this.state.selected || this.props.placeholder}</p>
-                    {/* TODO: add chevron down */}
+                    <Chevron/>
                 </div>
                 <div
                     className={`dropdown-items ${this.state.toggleDropDown ? "" : "d-none"}`}
