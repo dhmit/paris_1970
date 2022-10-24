@@ -14,6 +14,21 @@ class DropDown extends React.Component {
         };
     }
 
+
+    componentDidUpdate(prevState){
+        if (this.state.toggleDropDown !== prevState.toggleDropDown || 
+            this.state.toggleDropDownItem !== prevState.toggleDropDownItem) {
+                let overlay = document.getElementsByClassName("overlay")[0];
+        if (this.state.toggleDropDownItem || this.state.toggleDropDown) {
+            overlay.classList.remove("hide");
+            overlay.classList.add("show");
+          } else {
+            overlay.classList.remove("show");
+            overlay.classList.add("hide");
+          }
+            }
+    }
+
     render () {
         return(
            <div className="dropdown-container">
@@ -36,8 +51,8 @@ class DropDown extends React.Component {
                         }, 1000);
                     }}
                 >
-                    <p>{this.props.placeholder}</p>
-                    <p>hi</p>
+                    <p>{this.state.selected || this.props.placeholder}</p>
+                    {/* TODO: add chevron down */}
                 </div>
                 <div className={`dropdown-items ${this.state.toggleDropDown?"":"d-none"}`} 
                 id={this.props.id}>
@@ -181,10 +196,13 @@ export class PhotographerListView extends React.Component {
         return (
             <>
                 <div className="photographerList-container">
+                <div className="overlay"></div>
+
 
                     <div className={"banner"}>
                         <p className="heading">Photographers</p>
                         <form className={"filterContainer"}>
+                            {/* TODO: add magnify glass icon down */}
                                 <input type="text" id="photographerList-search" placeholder="Search by name"/>
                                 <div className="advancedSearch-container">
                                     <div className="filterBy-container">

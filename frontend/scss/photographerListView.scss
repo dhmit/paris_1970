@@ -12,6 +12,7 @@
     margin-top: 40vh;
 
     .banner {
+        background-color: white;
         transition: height 0.5s, background-color 0.5s;
         position: absolute;
         z-index: 2;
@@ -116,10 +117,29 @@
         }
     }
 
+    .overlay {
+        position: fixed;
+        opacity: 0.5;
+        height: 100%;
+        width: 100%;
+        left: 0;
+        top: calc(4vh + 30px + 1rem + 2vh);
+        transition: background-color 0.5s;
+
+        &.show {
+            background-color: black;
+        }
+
+        &.hide {
+            background-color: transparent;
+            pointer-events: none;
+        }
+    }
+
     .photographerGallery {
         margin: 8vh 5vw;
         border: 1px solid black;
-        height: 200vh;
+        height: 500vh;
         top: 30vh;
     }
 }
