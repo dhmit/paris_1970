@@ -1,9 +1,28 @@
 .one-photographer{
     flex-direction: row;
     justify-content: space-evenly;
+    width: 13.7%;
 
+}
+
+.photographers-container{
+    padding: 1px;
+    justify-content: center;
 }
 
 .child{
+    margin: 20px 10px;
     background-color: $color-turquoise-light;
+
+    img{
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+    }
+    p{
+        text-align: center;
+        font-size: 12px;
+    }
 }
+
