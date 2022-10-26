@@ -1,14 +1,51 @@
 import React from "react";
 import * as PropTypes from "prop-types";
-import PhotoViewer from "../../components/PhotoViewer";
+import {PhotoViewer, getValue} from "../../components/PhotoViewer";
 import {Row, Col} from "react-bootstrap";
-
 
 export class MapSquareContent extends PhotoViewer {
     constructor(props) {
         super(props);
     }
 
+    getPhotographersGrid(photographerData, config = {}){
+        
+        const className = getValue(config, "className", "");
+        const titleFunc = getValue(
+            config,
+            "titleFunc",
+            (k, photographer) => `Map Square: ${photographer["map_square"]}` +
+                `, Photographer: ${photographer["name"]}`
+        );
+        const hrefFunc = getValue(
+            config,
+            "hrefFunc",
+            (k, photographer) => `/photographer/${photographer["number"]}/`
+        );
+        const onClickFunc = getValue(
+            config, "onClickFunc", (_k, _photographer) => (_e) => {
+            }
+        );
+        return photographerData.map((photographer, k) => {
+            return (
+                <li className={`default-photographer list-inline-item ${className}`}
+                    key={k}
+                    onClick={(e) => {
+                        onClickFunc(k, photographer)(e);
+                        window.open(hrefFunc(k, photographer), "_self");
+                    }}>
+                    <button type= "button" 
+                        className="btn-secondary-blue"
+                        title={titleFunc(k, photographer)}
+                        href={hrefFunc(k, photographer)}
+                        onClick={onClickFunc(k, photographer)}>
+                            {photographer["name"]}
+                    </button>
+                </li>
+            );
+        });
+    }
+        
     render() {
         return (<>
             {this.props.photos.length
@@ -26,6 +63,27 @@ export class MapSquareContent extends PhotoViewer {
                             </ul>
                         </Col>
                     </Row>
+                    
+                </>)
+                : <></>
+            }
+            {this.props.photographers.length 
+            
+                ? (<>
+                <h6 className={"text-uppercase"}>Photographers</h6>
+                    <Row>
+                        <Col sm={12} lg={9} className={"p-1"}>
+                            <ul className={"list-inline p-0"}>{
+                                this.getPhotographersGrid(this.props.photographers
+                                )
+                            }
+                            </ul>
+                        </Col>
+                    </Row>
+                </>)
+                : <></>
+            }
+            {
                     <Row>
                         <Col className="d-inline-block p-0">
                             <a className={"link"}
@@ -34,12 +92,7 @@ export class MapSquareContent extends PhotoViewer {
                             </a>
                         </Col>
                     </Row>
-                </>)
-                : <></>
             }
-            {this.props.photographers.length ? <>
-                <h6 className={"text-uppercase"}>Photographers</h6>
-            </> : <></>}
         </>);
     }
 }
@@ -47,7 +100,8 @@ export class MapSquareContent extends PhotoViewer {
 MapSquareContent.propTypes = {
     mapSquare: PropTypes.number,
     photos: PropTypes.array,
-    photographers: PropTypes.array,
+    // photographers: PropTypes.array,
+    photographers: PropTypes.string,
     photoDir: PropTypes.string
 };
 
