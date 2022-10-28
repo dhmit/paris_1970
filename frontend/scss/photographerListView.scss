@@ -189,8 +189,8 @@
 
     .photographerGallery {
         margin: 8vh 5vw;
-        border: 1px solid black;
-        max-height: 100vh;
+        // border: 1px solid black;
+        height: fit-content;
         top: 30vh;
         overflow: auto;
     }
