@@ -153,3 +153,15 @@ footer {
         background-color: $color-red !important;
     }
 }
+
+.btn-seebelow {
+    @extend .btn-primary;
+    position: absolute;
+    top: 100%;
+    left: 25%;
+    right: 25%;
+    width: 250px;
+    text-align: center;
+    display: inline-block;
+    margin: auto;
+}

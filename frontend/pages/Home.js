@@ -21,7 +21,13 @@ export class HomePage extends React.Component {
                     <img src={Logo_Gif} alt="Paris Logo"/>
                     <img src={Car} className="background" alt="Background image: Car"/>
                 </div>
-                
+                <div>
+                <body>
+                    <div className="btn-seebelow">
+                            <a href="#home-sections">See Below</a>
+                    </div>
+                </body>
+                </div>
                 <HomeSections/>
             </section>
         );
