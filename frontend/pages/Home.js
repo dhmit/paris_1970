@@ -22,7 +22,7 @@ export class HomePage extends React.Component {
                     <img src={Car} className="background" alt="Background image: Car"/>
                 </div>
                 
-                {/* <HomeSections/> */}
+                <HomeSections/>
             </section>
         );
     }

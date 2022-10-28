@@ -9,20 +9,7 @@ import Roof from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_002.jpg";
 import Neighbourhood from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_012.jpg";
 import House from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_030.jpg";
 
-// const breakpoint = {
-// // Small screen / phone
-// sm: 576,
 
-// // Medium screen / tablet
-// md: 768,
-
-// // Large screen / desktop
-// lg: 992,
-
-// // Extra large screen / wide desktop
-// xl: 1200
-
-// };
 
 if (window.matchMedia('(min-width: 769px)').matches) {
     // screens like laptops
