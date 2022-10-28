@@ -58,7 +58,6 @@ function HomeSections() {
             </a>
 
             <a href="/about/">
-
                 <Row className="context"
                     style={{
                         height: 475
