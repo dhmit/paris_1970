@@ -1,9 +1,3 @@
-"""
-Django management command syncdb
-
-Syncs local db with data from project Google Sheet
-"""
-
 import os
 
 
