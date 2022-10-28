@@ -150,16 +150,8 @@ class TagView extends PhotoViewer {
                 const photoMapSquareNumber = photo["map_square_number"];
                 filledMapSquares.add(photoMapSquare["id"]);
                 if (!filledMapSquaresData[photoMapSquareNumber]){
-                    filledMapSquaresData[photoMapSquareNumber] = {
-                        num_photos: 0,
-                        photos: new Set(),
-                        boundaries: photoMapSquare.boundaries, 
-                        coordinates: photoMapSquare.coordinates, 
-                        id: photoMapSquare.id, 
-                        name: photoMapSquare.name,
-                        number: photoMapSquare.number,
-                        topLeftCoords: photoMapSquare.topLeftCoords
-                    };
+                    filledMapSquaresData[photoMapSquareNumber] = photoMapSquare;
+                    filledMapSquaresData[photoMapSquareNumber].num_photos = 0;
                 }
                 filledMapSquaresData[photoMapSquareNumber].num_photos += 1;
             }
