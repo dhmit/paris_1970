@@ -53,7 +53,11 @@ class PhotoSerializer(serializers.ModelSerializer):
         for analysis_result in analysis_results:
             name = analysis_result['name']
             result = json.loads(analysis_result['result'])
-            analyses_dict[name] = result
+            if name == "photo_similarity.resnet18_cosine_similarity":
+                analyses_dict[name] = result[:10]
+            else:
+                analyses_dict[name] = result
+            
         return analyses_dict
 
     @staticmethod
@@ -106,8 +110,8 @@ class MapSquareSerializerWithoutPhotos(serializers.ModelSerializer):
 
     @staticmethod
     def get_num_photos(instance):
-        photo_obj = Photo.objects.filter(map_square__number=instance.number)
-        return len(photo_obj)
+        num_photos = instance.photo_set.all().count()
+        return num_photos
 
     class Meta:
         model = MapSquare
