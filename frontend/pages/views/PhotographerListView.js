@@ -10,7 +10,6 @@ class DropDown extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            toggleDropDown: false,
             selected: null,
         };
     }
@@ -19,20 +18,27 @@ class DropDown extends React.Component {
         return (
             <div
                 className="dropdown-container"
-                onMouseEnter={() => {
-                    this.setState({toggleDropDown: true});
-                    let dropdowns = document.getElementsByClassName("dropdown-items");
-                    for (const elt of dropdowns) {
-                        if (elt.id !== this.props.id) {
-                            elt.classList.add("d-none");
-                        }
+                onClick={()=>{
+                    if (this.props.activeDropdown === this.props.id) {
+                        this.props.toggleActiveDropdown(null);
+                    } else {
+                        this.props.toggleActiveDropdown(this.props.id);
                     }
-                    this.props.toggleActiveDropdown(this.props.id);
                 }}
-                onMouseLeave={() => {
-                    this.setState({toggleDropDown: false});
-                    this.props.toggleActiveDropdown(null);
-                }}
+                // onMouseEnter={() => {
+                //     this.setState({toggleDropDown: true});
+                //     let dropdowns = document.getElementsByClassName("dropdown-items");
+                //     for (const elt of dropdowns) {
+                //         if (elt.id !== this.props.id) {
+                //             elt.classList.add("d-none");
+                //         }
+                //     }
+                //     this.props.toggleActiveDropdown(this.props.id);
+                // }}
+                // onMouseLeave={() => {
+                //     this.setState({toggleDropDown: false});
+                //     this.props.toggleActiveDropdown(null);
+                // }}
             >
                 <div
                     className={`dropdown-select ${this.props.blue?"blue-border":"red-border"}`}
@@ -41,7 +47,7 @@ class DropDown extends React.Component {
                     <Chevron/>
                 </div>
                 <div
-                    className={`dropdown-items ${this.state.toggleDropDown ? "" : "d-none"}`}
+                    className={`dropdown-items ${this.props.id === this.props.activeDropdown ? "" : "d-none"}`}
                     id={this.props.id}
                 >
                     <div className="dropdown-spacer"></div>
