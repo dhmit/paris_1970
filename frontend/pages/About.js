@@ -151,8 +151,12 @@ const studentMembers = [
         photoSrc: Zheng_Vicky
     },
     {
-        name: "Jeffrey Kwon",
-        photoSrc: Jeffrey_Kwon
+        name: "Nisha Nkya",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Vivian Chinoda",
+        photoSrc: Zheng_Vicky
     }
 ];
 
