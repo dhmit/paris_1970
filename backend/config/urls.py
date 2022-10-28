@@ -50,6 +50,7 @@ urlpatterns = [
     path('api/all_photos/', views.all_photos, name="all_photos"),
 
     # Photographers
+   	path('api/search_photographers/', views.search_photographers),
     path('api/photographer/', views.get_photographer, name="all_photographers"),
     path('api/photographer/<int:photographer_number>/', views.get_photographer,
          name='photographer'),
