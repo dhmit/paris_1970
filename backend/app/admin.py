@@ -16,11 +16,15 @@ from .models import (
     PhotographerAnalysisResult,
 )
 
+class PhotoInline(admin.TabularInline):
+    model = Photo
+
 
 class MapSquareAdmin(admin.ModelAdmin):
     """
     MapSquare Admin
     """
+    inlines = [PhotoInline,]
     list_display = ('id', 'number', 'show_coordinates', 'count_photos', 'boundaries')
     search_fields = ['id', 'number']
     readonly_fields = ('all_photos',)
@@ -135,6 +139,7 @@ class PhotoAdmin(admin.ModelAdmin):
 
 class PhotographerAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "number"]
+
 
 
 admin.site.register(CorpusAnalysisResult)
