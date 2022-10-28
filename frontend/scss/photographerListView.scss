@@ -193,5 +193,13 @@
         height: fit-content;
         top: 30vh;
         overflow: auto;
+
+        .list-inline {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
     }
 }
