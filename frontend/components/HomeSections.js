@@ -1,7 +1,7 @@
 import React from "react";
 import {Row, Col, Container} from "react-bootstrap";
 
-//images
+//Images
 import Map_Page from "../images/featured/map page.png";
 import Walking_Man from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_078.jpg";
 import Car from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_008.jpg";
