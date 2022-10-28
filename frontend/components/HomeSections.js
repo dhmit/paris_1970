@@ -58,7 +58,11 @@ function HomeSections() {
             </a>
 
             <a href="/about/">
-                <Row className="context" style={{height: 475}}>
+
+                <Row className="context"
+                    style={{
+                        height: 475
+                    }}>
                     <Col xs={8} xxl={4} className="home-section-text">
                         <h5><strong>Context:Paris 1970 photo contest</strong></h5>
                         <p>Capture a time of change in the city</p>
