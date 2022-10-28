@@ -22,7 +22,7 @@ function HomeSections() {
             <a href="/photographers/">
                 <Row className="photo-archive"
                     style={{
-                        height: 350
+                        height: 475
                     }}>
                     <Col xs={8} sm={4} className="home-section-text">
                         <h5>Photography Archive:Explore Photos</h5>
@@ -44,7 +44,7 @@ function HomeSections() {
             <a href="/map/">
                 <Row className="map-section"
                     style={{
-                        height: 350
+                        height: 475
                     }}>
                     <Col xs={4} xxl={8} className="home-section-photo"
                          style={{backgroundImage: `url(${Map_Page})`}}/>
@@ -58,7 +58,7 @@ function HomeSections() {
             </a>
 
             <a href="/about/">
-                <Row className="context" style={{height: 350}}>
+                <Row className="context" style={{height: 475}}>
                     <Col xs={8} xxl={4} className="home-section-text">
                         <h5><strong>Context:Paris 1970 photo contest</strong></h5>
                         <p>Capture a time of change in the city</p>
