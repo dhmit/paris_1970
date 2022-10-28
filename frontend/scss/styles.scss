@@ -95,6 +95,8 @@ footer {
 
 .navbar-collapse {
     text-align: right;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .nav-link {
@@ -152,5 +154,13 @@ footer {
     &:focus {
         color: white !important;
         background-color: $color-red !important;
+    }
+}
+
+.btn-secondary-blue {
+    @extend .btn-secondary;
+    border: .08em solid $color-blue-light;
+    &:hover, &:focus {
+        background-color: $color-blue-light !important;
     }
 }

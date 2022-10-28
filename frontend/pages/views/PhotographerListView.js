@@ -1,7 +1,7 @@
 import React from "react";
 import Footer from "../../components/Footer";
 import * as PropTypes from "prop-types";
-
+import {debounce} from "../../common";
 
 import Chevron from "../../images/icons/chevron_down.svg";
 import RedBlueBox from "../../images/icons/red_blue_box.svg";
@@ -75,9 +75,9 @@ export class PhotographerListView extends React.Component {
         super(props);
 
         this.state = {
-            photographers: JSON.parse(this.props.photographers),
             timer: null,
             activeDropdown: null,
+            photographers: [],
         };
 
 
@@ -96,20 +96,35 @@ export class PhotographerListView extends React.Component {
         return `${this.props.photoListDir}/${number}_photo.jpg`;
     }
 
+    updatePhotographers(name) {
+        const fetchPhotographers = async (sq) => {
+            try {
+                const res = await fetch(`/api/search_photographers?name=${sq}`);
+                return res.json();
+            } catch {
+                return [];
+            }
+        };
+        debounce(async () => {
+            const fetchedPhotographers = await fetchPhotographers(name);
+            this.setState({photographers: fetchedPhotographers});
+        }, 300)();
+    }
+
     getPhotoList() {
         const photoSize = [100, 100];
-        return this.state.photographers.map((photog, k) => {
+        return this.state.photographers.map((photographer, k) => {
             return (
                 <li className="col-2 col-lg-2 one-photographer list-inline-item" key={k}>
                     <div className="child">
-                        <a key={k} href={this.hrefFunc(photog.number)}>
+                        <a key={k} href={this.hrefFunc(photographer.number)}>
                             <img
-                                alt={photog.number}
+                                alt={photographer.number}
                                 width={photoSize[0]}
-                                src={this.srcFunc(photog.number)}
+                                src={this.srcFunc(photographer.number)}
                             />
                         </a>
-                        <p>{photog.name ? photog.name : "No Name"}</p>
+                        <p>{photographer.name ? photographer.name : "No Name"}</p>
                     </div>
                 </li>
             );
@@ -151,6 +166,7 @@ export class PhotographerListView extends React.Component {
     };
 
     componentDidMount() {
+        this.updatePhotographers("");
         window.addEventListener("scroll", this.handleScroll);
     }
 
@@ -174,7 +190,7 @@ export class PhotographerListView extends React.Component {
 
     render() {
         return (
-            <>
+            
                 <div className="photographerList-container">
                     <div id="overlay"></div>
 
@@ -188,6 +204,9 @@ export class PhotographerListView extends React.Component {
                                 type="text"
                                 id="photographerList-search"
                                 placeholder="Search by name"
+                                onChange={(e) => {
+                                    this.updatePhotographers(e.target.value);
+                                }}
                             />
                             <div className="advancedSearch-container">
                                 <div className="filterBy-container">
@@ -235,14 +254,12 @@ export class PhotographerListView extends React.Component {
                     </div>
 
                     <div className="photographerGallery">
-                        {/* <ul className="list-inline">{this.getPhotoList()}</ul> */}
+                        <ul className="list-inline">{this.getPhotoList()}</ul>
                     </div>
-                </div>
-
                 <div>
                     <Footer />
                 </div>
-            </>
+            </div>
         );
     }
 }

@@ -320,9 +320,21 @@ rect {
     align-items: flex-start;
 }
 
-.similar-photos-header {
+.similar-photos-title {
     display: flex;
     flex-direction: row;
     position: relative;
     align-items: center;
+}
+
+.similar-photos-header {
+    display: "flex";
+    justify-content: "space-between";
+    padding-top: "10px";
+}
+
+.tags-container {
+    display: "flex";
+    justify-content: "flex-start";
+    padding-top: "10px";
 }
