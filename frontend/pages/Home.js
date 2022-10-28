@@ -12,18 +12,18 @@ export class HomePage extends React.Component {
 
     render() {
         return (
-            <StrictMode>
-                <Collage/>
-            </StrictMode>
+            // <StrictMode>
+            //     <Collage/>
+            // </StrictMode>
    
-            // <section>
-            //     <div className="main-section">
-            //         <img src={Logo_Gif} alt="Paris Logo"/>
-            //         <img src={Car} className="background" alt="Background image: Car"/>
-            //     </div>
+            <section>
+                <div className="main-section">
+                    <img src={Logo_Gif} alt="Paris Logo"/>
+                    <img src={Car} className="background" alt="Background image: Car"/>
+                </div>
                 
-            //     {/* <HomeSections/> */}
-            // </section>
+                {/* <HomeSections/> */}
+            </section>
         );
     }
 }
