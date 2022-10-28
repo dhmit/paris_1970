@@ -538,8 +538,8 @@ def photographer_list_view(request):
     Photographer list page
     """
     photos_dir = os.path.join(settings.AWS_S3_PHOTOS_DIR, 'photographers')
-    serializer = PhotographerSearchSerializer(
-        Photographer.objects.all().order_by('name'), many=True)
+    # serializer = PhotographerSearchSerializer(
+    #     Photographer.objects.all().order_by('name'), many=True)
 
     context = {
         'page_metadata': {

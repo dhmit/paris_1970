@@ -1,9 +1,8 @@
-.one-photographer{
+.one-photographer {
     flex-direction: row;
     justify-content: space-evenly;
-    width: 13.7%;
-
 }
+
 
 .photographers-container{
     padding: 1px;
@@ -11,6 +10,7 @@
 }
 
 .child{
+    width: 13.7%;
     margin: 20px 10px;
     background-color: $color-turquoise-light;
 
@@ -26,3 +26,180 @@
     }
 }
 
+.photographerList-container {
+    top: 0;
+    margin-top: 40vh;
+
+    #banner {
+        background-color: white;
+        transition: height 0.5s, background-color 0.5s;
+        position: absolute;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        row-gap: 2vh;
+        padding: 4vh 5vw;
+        border-bottom: 1px solid black;
+        overflow: hidden;
+        width: 100%;
+        top: 70px;
+
+        &.grow {
+            height: 30vh;
+        }
+
+        &.shrink {
+            height: calc(4vh + 30px + 1rem + 2vh);
+        }
+
+        .header {
+            position: relative;
+            .red-blue-box {
+                position:absolute;
+                bottom:1.55rem;
+                left:-1.5rem;
+            }
+    
+            .heading {
+                font-size: 30px;
+                font-weight: 600;
+            }
+        }
+
+        .filterContainer {
+            flex-direction: column;
+            row-gap: 3vh;
+            display: flex;
+            flex: 0;
+
+            input#photographerList-search:focus {
+                outline-width: 0;
+            }
+
+            #photographerList-search {
+                height: 5vh;
+                width: 60vw;
+                background-color: #ebf3f4;
+                border: 2px solid #000000;
+                padding: 10px 10px 10px 7vh;
+                -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+                -moz-box-sizing: border-box; /* Firefox, other Gecko */
+                box-sizing: border-box; /* Opera/IE 8+ */
+                background-image: url("/frontend/images/icons/magnify_glass.svg");
+                background-repeat: no-repeat;
+                background-size: 3vh;
+                background-position: left 2vh top 0.75vh;
+            }
+
+            .advancedSearch-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+
+                .filterBy-container,
+                .sortBy-container {
+                    display: flex;
+                    flex-direction: row;
+                    column-gap: 2vw;
+                    align-items: center;
+
+                    .dropdown-container {
+                        width: 150px;
+                        position: relative;
+
+                        .dropdown-select {
+                            padding: 5px 10px;
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: space-between;
+                            align-items: center;
+                            border: 1px solid $color-turquoise;
+
+                            &.blue-border {
+                                border: 1px solid $color-turquoise;
+                            }
+
+                            &.red-border {
+                                border: 1px solid #FB2F2A;
+                            }
+                        }
+
+                        .dropdown-items {
+                            position: fixed;
+                            width: 180px;
+                            max-height: 30vh;
+                            overflow-y: auto;
+
+                            .dropdown-spacer {
+                                height: 1vh;
+                                background-color: transparent;
+                                pointer-events: none;
+                            }
+
+                            .dropdown-itm {
+                                background: #1c1a1a;
+                                padding: 0.5rem;
+                                width: 100%;
+
+                                &.unselected-itm {
+                                    color: white;
+                                }
+
+                                &.selected-itm,
+                                &:hover {
+                                    color: $color-turquoise;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .filters-container {
+                    display: flex;
+                    flex-direction: row;
+                    column-gap: 5vw;
+                }
+
+                p {
+                    margin: 0;
+                }
+            }
+        }
+    }
+
+    #overlay {
+        position: fixed;
+        opacity: 0.5;
+        height: 100%;
+        width: 100%;
+        left: 0;
+        top: calc(4vh + 30px + 1rem + 2vh);
+        transition: background-color 0.5s;
+
+        &.show {
+            background-color: black;
+        }
+
+        &.hide {
+            background-color: transparent;
+            pointer-events: none;
+        }
+    }
+
+    .photographerGallery {
+        margin: 8vh 5vw;
+        // border: 1px solid black;
+        height: fit-content;
+        top: 30vh;
+        overflow: auto;
+
+        .list-inline {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+}
