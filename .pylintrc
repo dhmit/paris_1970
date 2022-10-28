@@ -78,7 +78,8 @@ disable=
     trailing-newlines,
     trailing-whitespace,
     pointless-string-statement,
-    too-many-locals
+    too-many-locals,
+    consider-using-with
 
 
 [REPORTS]
