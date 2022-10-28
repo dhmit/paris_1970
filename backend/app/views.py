@@ -97,7 +97,7 @@ def all_map_squares(request):
     """
     API endpoint to get all map squares in the database for landing page
     """
-    map_square_obj = MapSquare.objects.all()
+    map_square_obj = MapSquare.objects.all().prefetch_related("photo_set")
     serializer = MapSquareSerializerWithoutPhotos(map_square_obj, many=True)
     return Response(serializer.data)
 
