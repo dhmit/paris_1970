@@ -1,4 +1,3 @@
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -6,7 +5,7 @@ from pathlib import Path
 from tqdm import tqdm
 
 
-def convert(src_dir_path, dest_dir_path, commands=['-quality', '20%']):
+def convert(src_dir_path, dest_dir_path, commands=None):
     """
     Python script for image conversion using Image Magick
     
@@ -15,10 +14,13 @@ def convert(src_dir_path, dest_dir_path, commands=['-quality', '20%']):
     :param commands: (list of strings) commands to apply to images
     :return: None, output produced in new directory
     """
+    if not commands:
+        commands = ['-quality', '20%']
 
     magick_commands = []
     for src_sub_dir in src_dir_path.iterdir():
-        if not src_sub_dir.is_dir(): continue
+        if not src_sub_dir.is_dir(): 
+            continue
 
         dest_sub_dir = Path(dest_dir_path, src_sub_dir.name)
         if not dest_sub_dir.exists():
@@ -34,7 +36,8 @@ def convert(src_dir_path, dest_dir_path, commands=['-quality', '20%']):
                 continue
 
             dest_image_path = Path(dest_sub_dir, src_image_path.stem + '.jpg')
-            if dest_image_path.exists(): continue
+            if dest_image_path.exists(): 
+                continue
 
             # formatting command
             # ex. magick Users/bob/Desktop/old/square.jpg -quality 20% Users/bob/Desktop/new/square.jpg
@@ -50,7 +53,8 @@ def convert(src_dir_path, dest_dir_path, commands=['-quality', '20%']):
         print(f"| Processing {min_job_idx} to {max_job_idx} of {len(magick_commands)}")
         print("--------------------------------------------------------------------------------")
         procs = [subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE) for cmd in batch_cmds]
-        for proc in tqdm(procs): proc.wait()
+        for proc in tqdm(procs): 
+            proc.wait()
 
 if __name__ == "__main__":
     src_dir_path = Path(sys.argv[1])
