@@ -1,13 +1,13 @@
 import React from "react";
 import Footer from "../../components/Footer";
 import * as PropTypes from "prop-types";
-import { debounce } from "../../common";
+import {debounce} from "../../common";
 
 export class PhotographerListView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            searchQueries: { name: "" },
+            searchQueries: {name: ""},
             photographers: [],
             pageNumber: 1,
             isLastPage: false,
@@ -42,7 +42,7 @@ export class PhotographerListView extends React.Component {
         };
         debounce(async () => {
             try {
-                const { results, is_last_page, page_number } = await fetchPhotographers(
+                const {results, is_last_page, page_number} = await fetchPhotographers(
                     this.state.searchQueries.name
                 );
                 this.setState({
@@ -104,7 +104,7 @@ export class PhotographerListView extends React.Component {
     }
 
     resetPaginationParameters() {
-        this.setState({ pageNumber: 0, isLastPage: false, photographers: [] });
+        this.setState({pageNumber: 0, isLastPage: false, photographers: []});
     }
 
     componentDidMount() {
@@ -128,7 +128,7 @@ export class PhotographerListView extends React.Component {
                     Search By Name:&nbsp;
                     <input
                         onChange={(e) => {
-                            this.setState({ searchQueries: { name: e.target.value } });
+                            this.setState({searchQueries: {name: e.target.value}});
                         }}
                     />
                 </div>
