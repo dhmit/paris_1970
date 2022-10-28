@@ -35,12 +35,7 @@ class DropDown extends React.Component {
                 }}
             >
                 <div
-                    className="dropdown-select"
-                    style={{
-                        border: this.props.blue
-                            ? "1px solid $color-turquoise"
-                            : "1px solid #FB2F2A",
-                    }}
+                    className={`dropdown-select ${this.props.blue?"blue-border":"red-border"}`}
                 >
                     <p>{this.state.selected || this.props.placeholder}</p>
                     <Chevron/>
@@ -85,6 +80,8 @@ export class PhotographerListView extends React.Component {
             activeDropdown: null,
         };
 
+
+        // THIS IS DUMMY DATA
         this.LOCATIONS = ["1", "2", "3"];
         this.SQUARES = ["4", "5", "6"];
         this.ALPHABET = ["7", "8", "9"];
@@ -130,22 +127,22 @@ export class PhotographerListView extends React.Component {
             elt.classList.add("d-none");
         }
 
+        let banner = document.getElementById("banner");
+
         this.scrollOverTimer = setTimeout(() => {
-            // If the timer elapses, show to
-            // this.setState({retract:true});
-            document.getElementsByClassName("banner")[0].classList.add("grow");
-            document.getElementsByClassName("banner")[0].classList.remove("shrink");
+            banner.classList.add("grow");
+            banner.classList.remove("shrink");
         }, 1000);
 
-        document.getElementsByClassName("banner")[0].classList.add("shrink");
-        document.getElementsByClassName("banner")[0].classList.remove("grow");
+        banner.classList.add("shrink");
+        banner.classList.remove("grow");
 
         if (window.scrollY > 70) {
-            document.getElementsByClassName("banner")[0].style.position = "fixed";
-            document.getElementsByClassName("banner")[0].style.top = "0px";
+            banner.style.position = "fixed";
+            banner.style.top = "0px";
         } else {
-            document.getElementsByClassName("banner")[0].style.position = "absolute";
-            document.getElementsByClassName("banner")[0].style.top = "70px";
+            banner.style.position = "absolute";
+            banner.style.top = "70px";
         }
     };
 
@@ -154,22 +151,19 @@ export class PhotographerListView extends React.Component {
     };
 
     componentDidMount() {
-        // if (!this.galleryRef) {
-        //     return;
-        //   }
         window.addEventListener("scroll", this.handleScroll);
     }
 
     componentDidUpdate(prevState) {
-        console.log(this.state.activeDropdown);
 
         if (prevState.activeDropdown !== this.state.activeDropdown) {
+            let overlay = document.getElementById("overlay");
             if (this.state.activeDropdown) {
-                document.getElementsByClassName("overlay")[0].classList.add("show");
-                document.getElementsByClassName("overlay")[0].classList.remove("hide");
+                overlay.classList.add("show");
+                overlay.classList.remove("hide");
             } else {
-                document.getElementsByClassName("overlay")[0].classList.add("hide");
-                document.getElementsByClassName("overlay")[0].classList.remove("show");
+                overlay.classList.add("hide");
+                overlay.classList.remove("show");
             }
         }
     }
@@ -182,15 +176,14 @@ export class PhotographerListView extends React.Component {
         return (
             <>
                 <div className="photographerList-container">
-                    <div className="overlay"></div>
+                    <div id="overlay"></div>
 
-                    <div className={"banner"}>
-                        <div style={{position:"relative"}}>
-                        <div style={{position:"absolute", bottom:"1.5rem", left:"-1.5rem"}}><RedBlueBox/></div>
+                    <div id={"banner"}>
+                        <div className="header">
+                        <div className="red-blue-box"><RedBlueBox/></div>
                         <p className="heading">Photographers</p>
                         </div>
                         <form className={"filterContainer"}>
-                            {/* TODO: add magnify glass icon down */}
                             <input
                                 type="text"
                                 id="photographerList-search"
@@ -199,13 +192,7 @@ export class PhotographerListView extends React.Component {
                             <div className="advancedSearch-container">
                                 <div className="filterBy-container">
                                     <p>Filter by:</p>
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            flexDirection: "row",
-                                            columnGap: "5vw",
-                                        }}
-                                    >
+                                    <div className="filters-container">
                                         <DropDown
                                             id="loc-filter"
                                             blue={true}

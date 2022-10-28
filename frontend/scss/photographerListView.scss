@@ -11,7 +11,7 @@
     top: 0;
     margin-top: 40vh;
 
-    .banner {
+    #banner {
         background-color: white;
         transition: height 0.5s, background-color 0.5s;
         position: absolute;
@@ -33,9 +33,18 @@
             height: calc(4vh + 30px + 1rem + 2vh);
         }
 
-        .heading {
-            font-size: 30px;
-            font-weight: 600;
+        .header {
+            position: relative;
+            .red-blue-box {
+                position:absolute;
+                bottom:1.55rem;
+                left:-1.5rem;
+            }
+    
+            .heading {
+                font-size: 30px;
+                font-weight: 600;
+            }
         }
 
         .filterContainer {
@@ -87,6 +96,14 @@
                             justify-content: space-between;
                             align-items: center;
                             border: 1px solid $color-turquoise;
+
+                            &.blue-border {
+                                border: 1px solid $color-turquoise;
+                            }
+
+                            &.red-border {
+                                border: 1px solid #FB2F2A;
+                            }
                         }
 
                         .dropdown-items {
@@ -119,6 +136,12 @@
                     }
                 }
 
+                .filters-container {
+                    display: flex;
+                    flex-direction: row;
+                    column-gap: 5vw;
+                }
+
                 p {
                     margin: 0;
                 }
@@ -126,7 +149,7 @@
         }
     }
 
-    .overlay {
+    #overlay {
         position: fixed;
         opacity: 0.5;
         height: 100%;
