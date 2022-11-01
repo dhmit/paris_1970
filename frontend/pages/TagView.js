@@ -142,7 +142,7 @@ class TagView extends PhotoViewer {
             const geojsonResponse = await fetch("/api/arrondissements_geojson/");
             const geojsonData = await geojsonResponse.json();
 
-            //Makes a set of all map squares that actually contain pictures for the current tag
+            //Makes a set of all map squares with num_photos equal to the number of pictures for the current tag
             const filledMapSquares = new Set();
             const filledMapSquaresData = {};
             for (const photo of this.state.photos) {
@@ -171,7 +171,6 @@ class TagView extends PhotoViewer {
             console.log(e);
         }
 
-        // window.addEventListener("resize", debounce(() => this.updateViewport(), 250));
     }
 
 
@@ -200,10 +199,11 @@ class TagView extends PhotoViewer {
                         className="tags-map"
                         zoom={14}
                         layers={{
-                            "Arrondissements": arrondissementsOverlay(this.state.geojsonData),
-                            "Photo Density": densityOverlay(this.state.filledMapSquaresData)
+                            "Arrondissement": arrondissementsOverlay(this.state.geojsonData),
+                            "Photos available": densityOverlay(this.state.filledMapSquaresData)
                         }}
-                        visibleLayers={["Photo Density"]}
+                        visibleLayers={["Photos available", "Arrondissement"]} 
+                        layerSelectVisible={true}
                     />
                 </div>
             </div>
