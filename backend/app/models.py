@@ -14,7 +14,6 @@ from PIL import Image
 from django.db import models
 from django.conf import settings
 
-
 class Photo(models.Model):
     """
     This model holds the metadata for a single photo, which includes the

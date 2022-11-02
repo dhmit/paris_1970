@@ -120,8 +120,8 @@ class MapSquareSerializerWithoutPhotos(serializers.ModelSerializer):
 
     @staticmethod
     def get_num_photos(instance):
-        photo_obj = Photo.objects.filter(map_square__number=instance.number)
-        return len(photo_obj)
+        num_photos = instance.photo_set.all().count()
+        return num_photos
 
     class Meta:
         model = MapSquare
