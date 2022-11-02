@@ -31,8 +31,8 @@ def convert(src_dir_path, dest_dir_path, commands=None):
         # looping through old directory
         for src_image_path in src_sub_dir.iterdir():
             # print(src_image_path)
-            if src_image_path.suffix.lower() != '.jp2' or not src_image_path.is_file():
-                print(f"Skipping {src_image_path} because it is not a .jp2 file\n")
+            if src_image_path.suffix.lower() != '.jpg' or not src_image_path.is_file():
+                print(f"Skipping {src_image_path} because it is not a .jpg file\n")
                 continue
 
             dest_image_path = Path(dest_sub_dir, src_image_path.stem + '.jpg')
@@ -57,13 +57,13 @@ def convert(src_dir_path, dest_dir_path, commands=None):
             proc.wait()
 
 if __name__ == "__main__":
+    """
+    Usage:
+    python imageconversion.py PATH_TO/SOURCE_IMG_FOLDER PATH_TO/DEST_IMAGE_FOLDER optional_img_magick_flags
+    """
     src_dir_path = Path(sys.argv[1])
     dest_dir_path = Path(sys.argv[2])
     commands_arg = sys.argv[3:]
 
     convert(src_dir_path, dest_dir_path, commands_arg)
 
-"""
-# Example of command-line:
-    python scripts/imageconversion.py /Users/bob/Desktop/TestImages /Users/bob/Desktop/newtest
-"""

@@ -104,13 +104,25 @@ class Photo(models.Model):
         else:
             return None
 
-    def get_slide_url(self):
-        # return `${this.props.photoDir}/${photoData.map_square_number}/${photoData.number}_${displaySide}.jpg`;
-        pass
+    def number_to_photo_file_number(self):
+        return self.number*2
+
+    def number_to_slide_file_number(self):
+        return self.number*2 - 1
 
     def get_photo_url(self):
-        # return (settings.AWS_S3_PHOTOS_DIR)
-        pass
+        return (
+           settings.AWS_S3_PHOTOS_DIR + 
+           f'/BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}/'
+           f'/BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}_{self.number_to_photo_file_number:04}.jpg/'
+        )
+
+    def get_slide_url(self):
+        return (
+           settings.AWS_S3_PHOTOS_DIR + 
+           f'/BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}/'
+           f'/BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}_{self.number_to_slide_file_number:04}.jpg/'
+        )
 
     class Meta:
         unique_together = ['number', 'folder', 'map_square']

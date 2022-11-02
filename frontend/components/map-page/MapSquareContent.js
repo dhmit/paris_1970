@@ -102,7 +102,6 @@ MapSquareContent.propTypes = {
     photos: PropTypes.array,
     // photographers: PropTypes.array,
     photographers: PropTypes.string,
-    photoDir: PropTypes.string
 };
 
 export default MapSquareContent;
