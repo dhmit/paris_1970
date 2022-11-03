@@ -136,6 +136,27 @@ def search_photographers(request):
 
 
 @api_view(['GET'])
+def get_search_photographers_dropdown_options(request):
+    """
+    API endpoint to get a list of photographers based on a search query that looks the photographers by name 
+    If not given a search query it will return the first 50 photographers sorted by name
+
+    TODO: Add pagination for both cases (when given a search query and when nothing is given) 
+    so that the user is sent the first 50 results and they can view more results as they scroll down the page.
+    """
+    locations = sorted(filter(lambda x: x is not None, list(set(Photographer.objects.all().values_list('approx_loc', flat=True)))))
+    squares = sorted(filter(lambda x: x is not None, list(set(Photographer.objects.all().values_list('map_square_id', flat=True)))))
+    nameStartsWith = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    orderBy = ["Name: ascending", "Name: descending", "Location: ascending", "Location: descedning", "Map Square #: ascending", "Map Square #: descending"]
+    res = Response({
+        "locations": locations,
+        "squares": squares,
+        "nameStartWith": nameStartsWith,
+        "orderBy": orderBy
+	})
+    return res
+
+@api_view(['GET'])
 def get_photographer(request, photographer_number=None):
     """
     API endpoint to get a photographer based on the photographer_id

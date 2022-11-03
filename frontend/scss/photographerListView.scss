@@ -3,37 +3,34 @@
     justify-content: space-evenly;
 }
 
-
-.photographers-container{
+.photographers-container {
     padding: 1px;
     justify-content: center;
 }
 
-.child{
+.child {
     width: 13.7%;
     margin: 20px 10px;
     background-color: $color-turquoise-light;
 
-    img{
+    img {
         display: block;
         margin-left: auto;
         margin-right: auto;
         width: 100%;
     }
-    p{
+    p {
         text-align: center;
         font-size: 12px;
     }
 }
 
 .photographerList-container {
-    top: 0;
-    margin-top: 40vh;
+    // top: 0;
 
     #banner {
         background-color: white;
         transition: height 0.5s, background-color 0.5s;
-        position: absolute;
         z-index: 2;
         display: flex;
         flex-direction: column;
@@ -42,7 +39,6 @@
         border-bottom: 1px solid black;
         overflow: hidden;
         width: 100%;
-        top: 70px;
 
         &.grow {
             height: 30vh;
@@ -55,11 +51,11 @@
         .header {
             position: relative;
             .red-blue-box {
-                position:absolute;
-                bottom:1.55rem;
-                left:-1.5rem;
+                position: absolute;
+                bottom: 1.55rem;
+                left: -1.5rem;
             }
-    
+
             .heading {
                 font-size: 30px;
                 font-weight: 600;
@@ -121,7 +117,7 @@
                             }
 
                             &.red-border {
-                                border: 1px solid #FB2F2A;
+                                border: 1px solid #fb2f2a;
                             }
                         }
 
@@ -169,16 +165,16 @@
     }
 
     #overlay {
-        position: fixed;
         opacity: 0.5;
         height: 100%;
         width: 100%;
-        left: 0;
-        top: calc(4vh + 30px + 1rem + 2vh);
         transition: background-color 0.5s;
 
         &.show {
+            position: fixed;
             background-color: black;
+            left: 0;
+            top: calc(26vh + 30px + 1rem + 2vh);
         }
 
         &.hide {
@@ -188,13 +184,12 @@
     }
 
     .photographerGallery {
-        margin: 8vh 5vw;
-        // border: 1px solid black;
-        height: fit-content;
-        top: 30vh;
-        overflow: auto;
-
         .list-inline {
+            padding: 0 5vw 0 5vw;
+            background-color: black;
+            overflow-y: scroll;
+            max-height: calc(100vh - 450px);
+            height: calc(100vh - 450px);
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;

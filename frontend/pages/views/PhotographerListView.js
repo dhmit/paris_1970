@@ -6,17 +6,41 @@ import { debounce } from "../../common";
 import Chevron from "../../images/icons/chevron_down.svg";
 import RedBlueBox from "../../images/icons/red_blue_box.svg";
 
+const initialDropdownOptions = {
+    locations: ["1", "2", "3"],
+    squares: ["1", "2", "3"],
+    nameStartWith: ["A", "B", "..."],
+    orderBy: ["name asc", "name desc", "..."],
+};
 class DropDown extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             selected: null,
         };
+
+        this.wrapperRef = React.createRef();
+        this.handleClickOutside = this.handleClickOutside.bind(this);
+    }
+
+    handleClickOutside() {
+        if (this.wrapperRef && !this.wrapperRef.current.contains(event.target)) {
+            this.props.toggleActiveDropdown(null);
+        }
+    }
+
+    componentDidMount() {
+        document.addEventListener("mousedown", this.handleClickOutside);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener("mousedown", this.handleClickOutside);
     }
 
     render() {
         return (
             <div
+                ref={this.wrapperRef}
                 className="dropdown-container"
                 onClick={() => {
                     if (this.props.activeDropdown === this.props.id) {
@@ -89,16 +113,13 @@ export class PhotographerListView extends React.Component {
             photographers: [],
             pageNumber: 1,
             isLastPage: false,
+            // These are dummy values. The actual value and options should be fetched from the backend
+            dropdownSearchOptions: initialDropdownOptions,
         };
         this.refetchPhotographers = this.refetchPhotographers.bind(this);
+        this.loadDropdownSearchOptions = this.loadDropdownSearchOptions.bind(this);
         this.resetPaginationParameters = this.resetPaginationParameters.bind(this);
         this.handleScroll = this.handleScroll.bind(this);
-
-        // THIS IS DUMMY DATA
-        this.LOCATIONS = ["1", "2", "3"];
-        this.SQUARES = ["4", "5", "6"];
-        this.ALPHABET = ["7", "8", "9"];
-        this.SORTS = ["10", "11", "12"];
     }
 
     hrefFunc(number) {
@@ -107,6 +128,20 @@ export class PhotographerListView extends React.Component {
 
     srcFunc(number) {
         return `${this.props.photoListDir}/${number}_photo.jpg`;
+    }
+
+    async loadDropdownSearchOptions() {
+        const fetchOptions = async () => {
+            try {
+                const res = await fetch("/api/search_photographers/dropdown_options");
+                return res.json();
+            } catch {
+                console.log("ERROR FETCHING OPTIONS FOR DROPDOWN SEARCH");
+                return initialDropdownOptions;
+            }
+        };
+        const searchOptions = await fetchOptions();
+        this.setState({ dropdownSearchOptions: searchOptions });
     }
 
     refetchPhotographers() {
@@ -184,43 +219,13 @@ export class PhotographerListView extends React.Component {
         this.setState({ pageNumber: 0, isLastPage: false, photographers: [] });
     }
 
-    handleScroll = () => {
-        // Detecting scroll end adapted from https://stackoverflow.com/a/4620986
-        if (this.scrollOverTimer !== null) {
-            clearTimeout(this.scrollOverTimer);
-        }
-
-        let dropdowns = document.getElementsByClassName("dropdown-items");
-        for (const elt of dropdowns) {
-            elt.classList.add("d-none");
-        }
-
-        let banner = document.getElementById("banner");
-
-        this.scrollOverTimer = setTimeout(() => {
-            banner.classList.add("grow");
-            banner.classList.remove("shrink");
-        }, 1000);
-
-        banner.classList.add("shrink");
-        banner.classList.remove("grow");
-
-        if (window.scrollY > 70) {
-            banner.style.position = "fixed";
-            banner.style.top = "0px";
-        } else {
-            banner.style.position = "absolute";
-            banner.style.top = "70px";
-        }
-    };
-
     toggleActiveDropdown = (dropDown) => {
         this.setState({ activeDropdown: dropDown });
     };
 
     componentDidMount() {
+        this.loadDropdownSearchOptions();
         this.refetchPhotographers();
-        window.addEventListener("scroll", this.handleScroll);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -242,10 +247,6 @@ export class PhotographerListView extends React.Component {
                 overlay.classList.remove("show");
             }
         }
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("scroll", this.handleScroll);
     }
 
     render() {
@@ -276,7 +277,7 @@ export class PhotographerListView extends React.Component {
                                     <DropDown
                                         id="loc-filter"
                                         blue={true}
-                                        items={this.LOCATIONS}
+                                        items={this.state.dropdownSearchOptions.locations}
                                         placeholder={"Locations"}
                                         activeDropdown={this.state.activeDropdown}
                                         toggleActiveDropdown={this.toggleActiveDropdown}
@@ -284,7 +285,7 @@ export class PhotographerListView extends React.Component {
                                     <DropDown
                                         id="sq-filter"
                                         blue={true}
-                                        items={this.SQUARES}
+                                        items={this.state.dropdownSearchOptions.squares}
                                         placeholder={"Map Square"}
                                         activeDropdown={this.state.activeDropdown}
                                         toggleActiveDropdown={this.toggleActiveDropdown}
@@ -292,7 +293,7 @@ export class PhotographerListView extends React.Component {
                                     <DropDown
                                         id="alph-filter"
                                         blue={true}
-                                        items={this.ALPHABET}
+                                        items={this.state.dropdownSearchOptions.nameStartWith}
                                         placeholder={"Alphabet"}
                                         activeDropdown={this.state.activeDropdown}
                                         toggleActiveDropdown={this.toggleActiveDropdown}
@@ -304,7 +305,7 @@ export class PhotographerListView extends React.Component {
                                 <DropDown
                                     id="sort"
                                     blue={false}
-                                    items={this.SORTS}
+                                    items={this.state.dropdownSearchOptions.orderBy}
                                     placeholder={"---"}
                                     activeDropdown={this.state.activeDropdown}
                                     toggleActiveDropdown={this.toggleActiveDropdown}
@@ -315,15 +316,8 @@ export class PhotographerListView extends React.Component {
                 </div>
 
                 <div className="photographerGallery">
-                    <ul
-                        className="list-inline"
-                        style={{
-                            overflowY: "scroll",
-                            maxHeight: "700px",
-                            width: "99%",
-                        }}
-                        onScroll={this.handleScroll}
-                    >
+                    <ul className="list-inline" onScroll={this.handleScroll}>
+                        {this.getPhotoList()}
                         <div>{this.state.isLastPage ? "End of Results!!!" : "Loading..."}</div>
                     </ul>
                 </div>
