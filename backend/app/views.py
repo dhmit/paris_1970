@@ -151,7 +151,7 @@ def get_search_photographers_dropdown_options(request):
     res = Response({
         "locations": locations,
         "squares": squares,
-        "nameStartWith": nameStartsWith,
+        "nameStartsWith": nameStartsWith,
         "orderBy": orderBy
 	})
     return res

@@ -6,10 +6,11 @@ import { debounce } from "../../common";
 import Chevron from "../../images/icons/chevron_down.svg";
 import RedBlueBox from "../../images/icons/red_blue_box.svg";
 
+// Change this value to more realisitic values that can replace the actual ones in case of error
 const initialDropdownOptions = {
     locations: ["1", "2", "3"],
     squares: ["1", "2", "3"],
-    nameStartWith: ["A", "B", "..."],
+    nameStartsWith: ["A", "B", "..."],
     orderBy: ["name asc", "name desc", "..."],
 };
 class DropDown extends React.Component {
@@ -36,6 +37,12 @@ class DropDown extends React.Component {
     componentWillUnmount() {
         document.removeEventListener("mousedown", this.handleClickOutside);
     }
+
+    // componentDidUpdate() {
+    //     if (this.props.onChange) {
+    //         this.props.onChange(this.state.selected);
+    //     }
+    // }
 
     render() {
         return (
@@ -108,12 +115,11 @@ export class PhotographerListView extends React.Component {
 
         this.state = {
             timer: null,
-            searchQueries: { name: "" },
+            searchQueries: { name: "", location: "", square: "", nameStartWith: "" },
             activeDropdown: null,
             photographers: [],
             pageNumber: 1,
             isLastPage: false,
-            // These are dummy values. The actual value and options should be fetched from the backend
             dropdownSearchOptions: initialDropdownOptions,
         };
         this.refetchPhotographers = this.refetchPhotographers.bind(this);
@@ -281,6 +287,9 @@ export class PhotographerListView extends React.Component {
                                         placeholder={"Locations"}
                                         activeDropdown={this.state.activeDropdown}
                                         toggleActiveDropdown={this.toggleActiveDropdown}
+                                        onChange={(value) => {
+                                            this.setState({ searchQueries: { location: value } });
+                                        }}
                                     />
                                     <DropDown
                                         id="sq-filter"
@@ -293,7 +302,7 @@ export class PhotographerListView extends React.Component {
                                     <DropDown
                                         id="alph-filter"
                                         blue={true}
-                                        items={this.state.dropdownSearchOptions.nameStartWith}
+                                        items={this.state.dropdownSearchOptions.nameStartsWith}
                                         placeholder={"Alphabet"}
                                         activeDropdown={this.state.activeDropdown}
                                         toggleActiveDropdown={this.toggleActiveDropdown}
@@ -341,4 +350,5 @@ DropDown.propTypes = {
     placeholder: PropTypes.string,
     toggleActiveDropdown: PropTypes.func,
     activeDropdown: PropTypes.string,
+    onChange: PropTypes.func,
 };
