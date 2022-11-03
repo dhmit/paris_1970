@@ -61,9 +61,9 @@ if __name__ == "__main__":
     Usage:
     python imageconversion.py PATH_TO/SOURCE_IMG_FOLDER PATH_TO/DEST_IMAGE_FOLDER optional_img_magick_flags
     """
-    src_dir_path = Path(sys.argv[1])
-    dest_dir_path = Path(sys.argv[2])
+    src_dir_path_arg = Path(sys.argv[1])
+    dest_dir_path_arg = Path(sys.argv[2])
     commands_arg = sys.argv[3:]
 
-    convert(src_dir_path, dest_dir_path, commands_arg)
+    convert(src_dir_path_arg, dest_dir_path_arg, commands_arg)
 

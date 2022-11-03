@@ -15,3 +15,4 @@ with open(pw_path, 'r', encoding='utf-8') as pw_file:
 
 DATABASES['default']['USER'] = 'postgres'
 DATABASES['default']['PASSWORD'] = db_pw
+

@@ -1,7 +1,5 @@
-import os
 from pathlib import Path
 
-from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from app.models import Photo, MapSquare
@@ -53,9 +51,9 @@ class Command(BaseCommand):
                 if file_num % 2: 
                     # since we only need one Photo per pair of images
                     continue
-                else:
-                    photo_num = file_num / 2
-                    map_square_obj = MapSquare.objects.get(number=map_square_num)
-                    Photo.objects.create(number=photo_num,
-                                         map_square=map_square_obj,
-                                         folder=folder_num)
+
+                photo_num = file_num / 2
+                map_square_obj = MapSquare.objects.get(number=map_square_num)
+                Photo.objects.create(number=photo_num,
+                                     map_square=map_square_obj,
+                                     folder=folder_num)
