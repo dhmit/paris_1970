@@ -114,7 +114,7 @@ def search_photographers(request):
     page_number = request.GET.get("page", None)
 
     is_searching_by_name = name is not None and name.strip() != ""
-    count_per_page = 100
+    count_per_page = 50 
 
     if is_searching_by_name:
         matching_photographers = Photographer.objects.filter(name__icontains=name).order_by("name")
