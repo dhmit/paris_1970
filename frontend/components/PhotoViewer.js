@@ -28,12 +28,13 @@ export class PhotoViewer extends React.Component {
             config,
             "titleFunc",
             (k, photo) => `Map Square: ${photo["map_square_number"]}` +
-                `, Photo: ${photo["number"]}`
+                `, Folder: ${photo.folder}, Photo: ${photo["number"]}`
         );
+
         const hrefFunc = getValue(
             config,
             "hrefFunc",
-            (k, photo) => `/photo/${photo["map_square_number"]}/${photo["number"]}/`
+            (k, photo) => `/photo/${photo.map_square_number}/${photo.folder}/${photo.number}/`
         );
 
         const onClickFunc = getValue(

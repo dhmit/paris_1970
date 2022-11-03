@@ -189,7 +189,7 @@ class MapPage extends React.Component {
                 });
             }
         });
-        const mapSquareDetails = await fetch("/api/map_square_details/" + mapSquare);
+        const mapSquareDetails = await fetch("/api/map_square/" + mapSquare);
         const mapSquareDetailsJSON = await mapSquareDetails.json();
         this.setState({
             photos: mapSquareDetailsJSON.photos,
