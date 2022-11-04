@@ -21,14 +21,15 @@ BACKEND_DATA_DIR = os.path.join(BACKEND_DIR, 'data')
 GOOGLE_TOKEN_FILE = os.path.join(BACKEND_DIR, 'token.pickle')
 ANALYSIS_DIR = Path(PROJECT_ROOT, 'backend', 'app', 'analysis')
 ANALYSIS_PICKLE_PATH = Path(BACKEND_DIR, ANALYSIS_DIR, 'analysis_results')
-LOCAL_PHOTOS_DIR = "/static/images/photos"
+LOCAL_PHOTOS_DIR = Path(PROJECT_ROOT, 'static', 'images', 'photos')
 LOCAL_PHOTOS_LOCATION = Path(PROJECT_ROOT, 'assets', 'images', 'photos')
+PHOTOGRAPHERS_DIR = Path(PROJECT_ROOT, 'static', 'images', 'photographers')
 TEST_PHOTOS_DIR = Path(PROJECT_ROOT, 'backend', 'data', 'test_photos')
 TESSDATA_DIR = Path(PROJECT_ROOT, 'backend', 'data', 'tessdata')
 TEXT_DETECTION_PATH = Path(BACKEND_DATA_DIR, 'frozen_east_text_detection.pb')
 YOLO_DIR = Path(ANALYSIS_DIR, 'yolo_files')
 BLOG_ROOT_URL = "blog"
-AWS_S3_PHOTOS_DIR = "https://paris1970-fa22-dev-assets.s3.amazonaws.com/photos"
+AWS_S3_PHOTOS_DIR = "https://paris1970-fa22-dev-assets.s3.amazonaws.com/jpg_size_25"
 
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
