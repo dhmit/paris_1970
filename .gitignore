@@ -154,6 +154,8 @@ yarn-error.log*
 *.swp
 db_password.txt
 remote_db_superuser_password.txt
+google_api_credentials.json
+map_square_metadata.csv
 
 
 # Build byproducts
