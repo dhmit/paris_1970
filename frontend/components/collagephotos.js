@@ -9,6 +9,8 @@ import Roof from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_002.jpg";
 import Neighbourhood from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_012.jpg";
 import House from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_030.jpg";
 
+import photo_1 from "../images/featured/BHVP_PH_CetaitParis_DP_0031_01_002.jpg";
+import photo_2 from "../images/featured/BHVP_PH_CetaitParis_DP_0031_01"
 
 
 if (window.matchMedia('(min-width: 769px)').matches) {
@@ -32,7 +34,7 @@ if (window.matchMedia('(min-width: 769px)').matches) {
 // const height = (window.screen.height*window.devicePixelRatio)/6;
 
 export const images = [
-    {
+   [ {
         src : Map_Page,
         width:width,
         height:height,
@@ -95,5 +97,6 @@ export const images = [
         width: width,
         height: height,
     
-      },
+      },],
+
 ];
