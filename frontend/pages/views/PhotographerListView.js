@@ -16,18 +16,14 @@ const initialDropdownOptions = {
 class DropDown extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            selected: null,
-        };
-
         this.wrapperRef = React.createRef();
         this.handleClickOutside = this.handleClickOutside.bind(this);
     }
 
-    handleClickOutside() {
-        if (this.wrapperRef && !this.wrapperRef.current.contains(event.target)) {
-            this.props.toggleActiveDropdown(null);
-        }
+    handleClickOutside(event) {
+        // if (this.wrapperRef && !this.wrapperRef.current.contains(event.target)) {
+        //     this.props.toggleActiveDropdown(null);
+        // }
     }
 
     componentDidMount() {
@@ -37,12 +33,6 @@ class DropDown extends React.Component {
     componentWillUnmount() {
         document.removeEventListener("mousedown", this.handleClickOutside);
     }
-
-    // componentDidUpdate() {
-    //     if (this.props.onChange) {
-    //         this.props.onChange(this.state.selected);
-    //     }
-    // }
 
     render() {
         return (
@@ -74,7 +64,7 @@ class DropDown extends React.Component {
                 <div
                     className={`dropdown-select ${this.props.blue ? "blue-border" : "red-border"}`}
                 >
-                    <p>{this.state.selected || this.props.placeholder}</p>
+                    <p>{this.props.value || this.props.placeholder}</p>
                     <Chevron />
                 </div>
                 <div
@@ -89,13 +79,13 @@ class DropDown extends React.Component {
                             <div
                                 key={item}
                                 className={`dropdown-itm ${
-                                    this.state.selected === item ? "selected-itm" : "unselected-itm"
+                                    this.props.value === item ? "selected-itm" : "unselected-itm"
                                 }`}
                                 onClick={() => {
-                                    if (this.state.selected !== item) {
-                                        this.setState({ selected: item });
+                                    if (this.props.value !== item) {
+                                        this.props.onChange(item);
                                     } else {
-                                        this.setState({ selected: null });
+                                        this.props.onChange(null);
                                     }
                                 }}
                             >
@@ -115,11 +105,12 @@ export class PhotographerListView extends React.Component {
 
         this.state = {
             timer: null,
-            searchQueries: { name: "", location: "", square: "", nameStartWith: "" },
+            searchQueries: { name: "", location: "", square: "", nameStartsWith: "" },
             activeDropdown: null,
             photographers: [],
             pageNumber: 1,
             isLastPage: false,
+            sortBy: "",
             dropdownSearchOptions: initialDropdownOptions,
         };
         this.refetchPhotographers = this.refetchPhotographers.bind(this);
@@ -273,8 +264,14 @@ export class PhotographerListView extends React.Component {
                             id="photographerList-search"
                             placeholder="Search by name"
                             onChange={(e) => {
-                                this.setState({ searchQueries: { name: e.target.value } });
+                                this.setState((prev) => ({
+                                    searchQueries: {
+                                        ...prev.searchQueries,
+                                        name: e.target.value,
+                                    },
+                                }));
                             }}
+                            value={this.state.name}
                         />
                         <div className="advancedSearch-container">
                             <div className="filterBy-container">
@@ -288,8 +285,14 @@ export class PhotographerListView extends React.Component {
                                         activeDropdown={this.state.activeDropdown}
                                         toggleActiveDropdown={this.toggleActiveDropdown}
                                         onChange={(value) => {
-                                            this.setState({ searchQueries: { location: value } });
+                                            this.setState((prev) => ({
+                                                searchQueries: {
+                                                    ...prev.searchQueries,
+                                                    location: value,
+                                                },
+                                            }));
                                         }}
+                                        value={this.state.searchQueries.location}
                                     />
                                     <DropDown
                                         id="sq-filter"
@@ -298,6 +301,15 @@ export class PhotographerListView extends React.Component {
                                         placeholder={"Map Square"}
                                         activeDropdown={this.state.activeDropdown}
                                         toggleActiveDropdown={this.toggleActiveDropdown}
+                                        value={this.state.searchQueries.square}
+                                        onChange={(value) => {
+                                            this.setState((prev) => ({
+                                                searchQueries: {
+                                                    ...prev.searchQueries,
+                                                    square: value,
+                                                },
+                                            }));
+                                        }}
                                     />
                                     <DropDown
                                         id="alph-filter"
@@ -306,6 +318,15 @@ export class PhotographerListView extends React.Component {
                                         placeholder={"Alphabet"}
                                         activeDropdown={this.state.activeDropdown}
                                         toggleActiveDropdown={this.toggleActiveDropdown}
+                                        value={this.state.searchQueries.nameStartsWith}
+                                        onChange={(value) => {
+                                            this.setState((prev) => ({
+                                                searchQueries: {
+                                                    ...prev.searchQueries,
+                                                    nameStartsWith: value,
+                                                },
+                                            }));
+                                        }}
                                     />
                                 </div>
                             </div>
@@ -318,6 +339,12 @@ export class PhotographerListView extends React.Component {
                                     placeholder={"---"}
                                     activeDropdown={this.state.activeDropdown}
                                     toggleActiveDropdown={this.toggleActiveDropdown}
+                                    value={this.state.sortBy}
+                                    onChange={(value) => {
+                                        this.setState({
+                                            sortBy: value,
+                                        });
+                                    }}
                                 />
                             </div>
                         </div>
@@ -351,4 +378,5 @@ DropDown.propTypes = {
     toggleActiveDropdown: PropTypes.func,
     activeDropdown: PropTypes.string,
     onChange: PropTypes.func,
+    value: PropTypes.string,
 };
