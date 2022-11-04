@@ -25,7 +25,7 @@ function HomeSections() {
                         height: 475
                     }}>
                     <Col xs={8} sm={4} className="home-section-text">
-                        <h5>Photography Archive:Explore Photos</h5>
+                        <h5><strong>Photography Archive:Explore Photos</strong></h5>
                         <p>Capture a time of change in the city</p>
                         <span className="large-arrow d-none d-md-block d-lg-block">&#10230;</span>
                         <i className="bi bi-chevron-right"/>
