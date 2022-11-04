@@ -25,20 +25,6 @@ class DropDown extends React.Component {
                         this.props.toggleActiveDropdown(this.props.id);
                     }
                 }}
-                // onMouseEnter={() => {
-                //     this.setState({toggleDropDown: true});
-                //     let dropdowns = document.getElementsByClassName("dropdown-items");
-                //     for (const elt of dropdowns) {
-                //         if (elt.id !== this.props.id) {
-                //             elt.classList.add("d-none");
-                //         }
-                //     }
-                //     this.props.toggleActiveDropdown(this.props.id);
-                // }}
-                // onMouseLeave={() => {
-                //     this.setState({toggleDropDown: false});
-                //     this.props.toggleActiveDropdown(null);
-                // }}
             >
                 <div
                     className={`dropdown-select ${this.props.blue?"blue-border":"red-border"}`}
@@ -216,7 +202,7 @@ export class PhotographerListView extends React.Component {
                             />
                             <div className="advancedSearch-container">
                                 <div className="filterBy-container">
-                                    <p>Filter by:</p>
+                                    <div className="filter-label"><p>Filter by:</p></div>
                                     <div className="filters-container">
                                         <DropDown
                                             id="loc-filter"
@@ -244,8 +230,8 @@ export class PhotographerListView extends React.Component {
                                         />
                                     </div>
                                 </div>
-                                <div className="sortBy-container">
-                                    <p>Sort by:</p>
+                                <div className="filterBy-container">
+                                    <div className="filter-label"><p>Sort by:</p></div>
                                     <DropDown
                                         id="sort"
                                         blue={false}

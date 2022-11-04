@@ -32,7 +32,7 @@
 
     #banner {
         background-color: white;
-        transition: height 0.5s, background-color 0.5s;
+        transition: max-height 0.5s, background-color 0.5s;
         position: absolute;
         z-index: 2;
         display: flex;
@@ -45,11 +45,14 @@
         top: 70px;
 
         &.grow {
-            height: 30vh;
+            max-height: 30vh;
+            @media screen and (max-width: 600px) {
+                max-height: 45vh;
+            }
         }
 
         &.shrink {
-            height: calc(4vh + 30px + 1rem + 2vh);
+            max-height: calc(4vh + 30px + 1rem + 2vh);
         }
 
         .header {
@@ -89,6 +92,10 @@
                 background-repeat: no-repeat;
                 background-size: 3vh;
                 background-position: left 2vh top 0.75vh;
+
+                @media screen and (max-width: 600px) {
+                        width: 100%;
+                }
             }
 
             .advancedSearch-container {
@@ -97,16 +104,33 @@
                 justify-content: space-between;
                 align-items: center;
 
-                .filterBy-container,
-                .sortBy-container {
+                @media screen and (max-width: 600px) {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    row-gap: 1vh;
+                }
+
+                .filterBy-container {
                     display: flex;
                     flex-direction: row;
                     column-gap: 2vw;
                     align-items: center;
+                    width: 100%;
+
+                    .filter-label {
+                        @media screen and (max-width: 600px) {
+                            width: 20%;
+                        }
+                    }
 
                     .dropdown-container {
                         width: 150px;
                         position: relative;
+
+                        @media screen and (max-width: 600px) {
+                            min-width: 0;
+                            // font-size: 1rem;
+                        }
 
                         .dropdown-select {
                             padding: 5px 10px;
@@ -130,6 +154,7 @@
                             width: 180px;
                             max-height: 30vh;
                             overflow-y: auto;
+                            z-index: 2;
 
                             .dropdown-spacer {
                                 height: 1vh;
@@ -159,6 +184,10 @@
                     display: flex;
                     flex-direction: row;
                     column-gap: 5vw;
+
+                    @media screen and (max-width: 600px) {
+                        min-width: 0;
+                    }
                 }
 
                 p {
@@ -189,7 +218,6 @@
 
     .photographerGallery {
         margin: 8vh 5vw;
-        // border: 1px solid black;
         height: fit-content;
         top: 30vh;
         overflow: auto;
