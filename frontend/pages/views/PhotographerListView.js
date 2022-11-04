@@ -85,7 +85,7 @@ class DropDown extends React.Component {
                                     if (this.props.value !== item) {
                                         this.props.onChange(item);
                                     } else {
-                                        this.props.onChange(null);
+                                        this.props.onChange("");
                                     }
                                 }}
                             >
@@ -151,13 +151,12 @@ export class PhotographerListView extends React.Component {
             try {
                 const res = await fetch(
                     `/api/search_photographers?
-						name=${name}&
-						page=${newPageNumber}&
-						location=${location}&
-						name_starts_with=${nameStartsWith}&
-						square=${square}&
-						order_by=${orderBy}&
-						page=${newPageNumber}&
+						name=${!name ? "" : name}&
+						location=${!location ? "" : location}&
+						name_starts_with=${!nameStartsWith ? "" : nameStartsWith}&
+						square=${square === "" || square === undefined || square === null ? "" : square}&
+						order_by=${!orderBy ? "" : orderBy}&
+						page=${newPageNumber}
 					`
                 );
                 return res.json();
@@ -204,8 +203,12 @@ export class PhotographerListView extends React.Component {
     }
 
     searchQueryChanged(oldQuery, newQuery) {
-        // update as we add more queries
-        return oldQuery.name !== newQuery.name;
+        return (
+            oldQuery.name !== newQuery.name ||
+            oldQuery.nameStartsWith !== newQuery.nameStartsWith ||
+            oldQuery.square !== newQuery.square ||
+            oldQuery.location !== newQuery.location
+        );
     }
 
     handleScroll(e) {
@@ -236,11 +239,10 @@ export class PhotographerListView extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.searchQueryChanged(prevState.searchQueries, this.state.searchQueries)) {
-            this.resetPaginationParameters();
-            this.refetchPhotographers();
-        }
-        if (this.searchQueryChanged(prevState.searchQueries, this.state.searchQueries)) {
+        if (
+            this.searchQueryChanged(prevState.searchQueries, this.state.searchQueries) ||
+            this.state.sortBy !== prevState.sortBy
+        ) {
             this.resetPaginationParameters();
             this.refetchPhotographers();
         }
@@ -388,5 +390,5 @@ DropDown.propTypes = {
     toggleActiveDropdown: PropTypes.func,
     activeDropdown: PropTypes.string,
     onChange: PropTypes.func,
-    value: PropTypes.string,
+    value: PropTypes.any,
 };

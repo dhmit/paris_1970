@@ -141,8 +141,8 @@ def search_photographers(request):
             return None
         
         field, asc = order_by.split(":")
-        field = field.strip().lowercase()
-        asc = asc.strip().lowercase()
+        field = field.strip().lower()
+        asc = asc.strip().lower()
         if field == "location":
             field = "approx_loc"
         elif field == "map square #":
@@ -171,12 +171,21 @@ def search_photographers(request):
     # Validating and adding all of the params
     if name is not None and name.strip() != "":
         search_params["name__icontains"] = name
-    if location is not None and location in locations:
+    if location is not None and location.strip() != "" and location in locations:
         search_params["approx_loc"] = location 
-    if map_square is not None and map_square in squares:
-        search_params["map_square"] = map_square 
-    if name_start is not None and name_start in nameStartsWith:
-        search_params["name_istartswith"] = name_start 
+    if map_square is not None and map_square.strip() != "":
+        try:
+            map_square = int(map_square)
+            if map_square in squares:
+                search_params["map_square"] = map_square 
+        except TypeError:
+            pass
+    
+    # Planning to check for multiple name starts for this field 
+    # Implmenetaiton example in this stackoverflow entry (https://stackoverflow.com/questions/5783588/django-filter-on-same-option-with-multiple-possibilities)
+    if name_start is not None and name_start.strip() != "" and name_start in nameStartsWith:
+        search_params["name__istartswith"] = name_start 
+    print(search_params)
 
     order_by_field = parse_order_by(order_by)
 
@@ -185,7 +194,8 @@ def search_photographers(request):
     else:
         matching_photographers = Photographer.objects.filter(**search_params)
 
-    matching_photographers = matching_photographers.order_by(order_by_field)
+    if order_by_field is not None:
+        matching_photographers = matching_photographers.order_by(order_by_field)
     photographers_paginator = Paginator(matching_photographers, count_per_page)
     current_page = photographers_paginator.get_page(page_number)
 
