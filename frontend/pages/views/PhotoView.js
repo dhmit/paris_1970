@@ -38,7 +38,7 @@ export class PhotoView extends PhotoViewer {
     }
 
     async componentDidMount() {
-        const mapPhotoString = `${this.props.mapSquareNumber}/${this.props.photoNumber}/`;
+        const mapPhotoString = `${this.props.mapSquareNumber}/${this.props.folderNumber}/${this.props.photoNumber}/`;
         try {
             const apiURL = "/api/photo/" + mapPhotoString;
             const response = await fetch(apiURL);
@@ -309,6 +309,7 @@ export class PhotoView extends PhotoViewer {
 
 PhotoView.propTypes = {
     photoNumber: PropTypes.number,
+    folderNumber: PropTypes.number,
     mapSquareNumber: PropTypes.number,
     photo_dir: PropTypes.string,
     photographer_name: PropTypes.string,
