@@ -36,6 +36,31 @@ from .serializers import (
     CorpusAnalysisResultsSerializer
 )
 
+locations = sorted(
+    filter(
+        lambda x: x is not None, 
+        list(
+            set(Photographer.objects.all().values_list('approx_loc', flat=True))
+        )
+    )
+)
+squares = sorted(
+    filter(
+        lambda x: x is not None, 
+        list(
+            set(Photographer.objects.all().values_list('map_square_id', flat=True))
+        )
+    )
+)
+nameStartsWith = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+orderBy = ["Name: ascending", "Name: descending", "Location: ascending", "Location: descedning", "Map Square #: ascending", "Map Square #: descending"]
+photographer_search_options = {
+    "locations": locations,
+    "squares": squares,
+    "nameStartsWith": nameStartsWith,
+    "orderBy": orderBy
+}
+
 @api_view(['GET'])
 def photo(request, map_square_number, photo_number):
     """
@@ -110,17 +135,57 @@ def search_photographers(request):
     TODO: Add pagination for both cases (when given a search query and when nothing is given) 
     so that the user is sent the first 50 results and they can view more results as they scroll down the page.
     """
-    name = request.GET.get("name", None)
-    page_number = request.GET.get("page", None)
 
-    is_searching_by_name = name is not None and name.strip() != ""
+    def parse_order_by(order_by):
+        if order_by not in orderBy:
+            return None
+        
+        field, asc = order_by.split(":")
+        field = field.strip().lowercase()
+        asc = asc.strip().lowercase()
+        if field == "location":
+            field = "approx_loc"
+        elif field == "map square #":
+            field = "map_square"
+        
+        if asc == "ascending":
+            asc = True
+        else:
+            asc = False
+        
+        return f'{"" if asc else "-"}{field}'
+
+    # Pulling the params from the request
+    name = request.GET.get("name", None)
+    location = request.GET.get("location", None)
+    map_square = request.GET.get("square", None)
+    name_start = request.GET.get("name_starts_with", None)
+    order_by = request.GET.get("order_by", None)
+
+    # Pagination params
+    page_number = request.GET.get("page", None)
     count_per_page = 50 
 
-    if is_searching_by_name:
-        matching_photographers = Photographer.objects.filter(name__icontains=name).order_by("name")
-    else:
-        matching_photographers = Photographer.objects.all().order_by("name")
+    search_params = {}
+    
+    # Validating and adding all of the params
+    if name is not None and name.strip() != "":
+        search_params["name__icontains"] = name
+    if location is not None and location in locations:
+        search_params["approx_loc"] = location 
+    if map_square is not None and map_square in squares:
+        search_params["map_square"] = map_square 
+    if name_start is not None and name_start in nameStartsWith:
+        search_params["name_istartswith"] = name_start 
 
+    order_by_field = parse_order_by(order_by)
+
+    if len(search_params) == 0:
+        matching_photographers = Photographer.objects.all()
+    else:
+        matching_photographers = Photographer.objects.filter(**search_params)
+
+    matching_photographers = matching_photographers.order_by(order_by_field)
     photographers_paginator = Paginator(matching_photographers, count_per_page)
     current_page = photographers_paginator.get_page(page_number)
 
@@ -153,7 +218,7 @@ def get_search_photographers_dropdown_options(request):
         "squares": squares,
         "nameStartsWith": nameStartsWith,
         "orderBy": orderBy
-	})
+    })
     return res
 
 @api_view(['GET'])

@@ -142,14 +142,23 @@ export class PhotographerListView extends React.Component {
     }
 
     refetchPhotographers() {
-        const fetchPhotographers = async (sq) => {
+        const fetchPhotographers = async (searchQueries, orderBy) => {
             if (this.state.isLastPage) {
                 return;
             }
+            const { name, nameStartsWith, location, square } = searchQueries;
             const newPageNumber = this.state.pageNumber + 1;
             try {
                 const res = await fetch(
-                    `/api/search_photographers?name=${sq}&page=${newPageNumber}`
+                    `/api/search_photographers?
+						name=${name}&
+						page=${newPageNumber}&
+						location=${location}&
+						name_starts_with=${nameStartsWith}&
+						square=${square}&
+						order_by=${orderBy}&
+						page=${newPageNumber}&
+					`
                 );
                 return res.json();
             } catch {
@@ -159,7 +168,8 @@ export class PhotographerListView extends React.Component {
         debounce(async () => {
             try {
                 const { results, is_last_page, page_number } = await fetchPhotographers(
-                    this.state.searchQueries.name
+                    this.state.searchQueries,
+                    this.state.sortBy
                 );
                 this.setState({
                     photographers: this.state.photographers.concat(results),
