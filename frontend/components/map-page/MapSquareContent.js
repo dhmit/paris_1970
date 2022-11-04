@@ -1,6 +1,6 @@
 import React from "react";
 import * as PropTypes from "prop-types";
-import {PhotoViewer, getValue} from "../../components/PhotoViewer";
+import {PhotoViewer} from "../../components/PhotoViewer";
 import {Row, Col} from "react-bootstrap";
 
 export class MapSquareContent extends PhotoViewer {
@@ -8,37 +8,33 @@ export class MapSquareContent extends PhotoViewer {
         super(props);
     }
 
-    getPhotographersGrid(photographerData, config = {}){
-        
-        const className = getValue(config, "className", "");
-        const titleFunc = getValue(
-            config,
-            "titleFunc",
-            (k, photographer) => `Map Square: ${photographer["map_square"]}` +
-                `, Photographer: ${photographer["name"]}`
-        );
-        const hrefFunc = getValue(
-            config,
-            "hrefFunc",
-            (k, photographer) => `/photographer/${photographer["number"]}/`
-        );
-        const onClickFunc = getValue(
-            config, "onClickFunc", (_k, _photographer) => (_e) => {
-            }
-        );
-        return photographerData.map((photographer, k) => {
+    getPhotographersGrid(photographerData, config = {
+        className: "",
+        titleFunc: (_key, photographer) => 
+            `Map Square: ${photographer["map_square"]}, Photographer: ${photographer["name"]}`,
+        hrefFunc: (_key, photographer) => `/photographer/${photographer["number"]}/`,
+        onClickFunc: (_key, _photographer) => (_e) => {}
+    }){
+        const {
+            className,
+            titleFunc,
+            hrefFunc,
+            onClickFunc
+        } = config;
+
+        return photographerData.map((photographer, key) => {
             return (
                 <li className={`default-photographer list-inline-item ${className}`}
-                    key={k}
+                    key={key}
                     onClick={(e) => {
-                        onClickFunc(k, photographer)(e);
-                        window.open(hrefFunc(k, photographer), "_self");
+                        onClickFunc(key, photographer)(e);
+                        window.open(hrefFunc(key, photographer), "_self");
                     }}>
                     <button type= "button" 
                         className="btn-secondary-blue"
-                        title={titleFunc(k, photographer)}
-                        href={hrefFunc(k, photographer)}
-                        onClick={onClickFunc(k, photographer)}>
+                        title={titleFunc(key, photographer)}
+                        href={hrefFunc(key, photographer)}
+                        onClick={onClickFunc(key, photographer)}>
                             {photographer["name"]}
                     </button>
                 </li>
@@ -100,9 +96,7 @@ export class MapSquareContent extends PhotoViewer {
 MapSquareContent.propTypes = {
     mapSquare: PropTypes.number,
     photos: PropTypes.array,
-    // photographers: PropTypes.array,
     photographers: PropTypes.string,
-    photoDir: PropTypes.string
 };
 
 export default MapSquareContent;

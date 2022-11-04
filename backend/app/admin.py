@@ -39,6 +39,7 @@ class MapSquareAdmin(admin.ModelAdmin):
         """
 
         # filter for all photo objects with obj's map square number
+        # TODO(ra): use the reverse relationship and count() here
         photo_obj = Photo.objects.filter(map_square__number=obj.number)
         return len(photo_obj)
 
@@ -51,6 +52,7 @@ class MapSquareAdmin(admin.ModelAdmin):
         """
         link = ''
         # filter for all photo objects of obj map square
+        # TODO(ra): use the reverse relationship here
         photo_obj = Photo.objects.filter(map_square__number=obj.number)
         for photo in photo_obj:
             # path to photo
