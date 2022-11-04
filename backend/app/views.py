@@ -62,23 +62,25 @@ photographer_search_options = {
 }
 
 @api_view(['GET'])
-def photo(request, map_square_number, photo_number):
+def photo(request, map_square_number, folder_number, photo_number):
     """
     API endpoint to get a photo with a map square number of map_square_number
     and photo number of photo_number
     """
-    photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
+    photo_obj = Photo.objects.get(number=photo_number, folder=folder_number, map_square__number=map_square_number)
     serializer = PhotoSerializer(photo_obj)
     return Response(serializer.data)
 
 
 @api_view(['GET'])
-def previous_next_photos(request, map_square_number, photo_number):
+def previous_next_photos(request, map_square_number, folder_number, photo_number):
     """
     API endpoint to get the previous and next photos given the map square number and
     photo number of the current photo
     """
-    photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
+    photo_obj = Photo.objects.get(number=photo_number,
+                                  folder=folder_number,
+                                  map_square__number=map_square_number)
     resp = []
     if photo_obj.id > 1:
         previous_photo_object = Photo.objects.get(id=photo_obj.id - 1)
@@ -125,6 +127,7 @@ def all_map_squares(request):
     map_square_obj = MapSquare.objects.all().prefetch_related("photo_set")
     serializer = MapSquareSerializerWithoutPhotos(map_square_obj, many=True)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 def search_photographers(request):
@@ -334,8 +337,8 @@ def get_photos_by_tag(request, tag_name):
     return Response(serializer.data)
 
 
-def photo_tag_helper(map_square_number, photo_number):
-    photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
+def photo_tag_helper(map_square_number, folder_number, photo_number):
+    photo_obj = Photo.objects.get(number=photo_number, folder=folder_number, map_square__number=map_square_number)
     analysis_obj = PhotoAnalysisResult.objects.filter(name='yolo_model', photo=photo_obj)
     if analysis_obj:
         parsed_obj = analysis_obj[0].parsed_result()
@@ -345,12 +348,12 @@ def photo_tag_helper(map_square_number, photo_number):
 
 
 @api_view(['GET'])
-def get_photo_tags(request, map_square_number, photo_number):
+def get_photo_tags(request, map_square_number, folder_number, photo_number):
     """
     Given a specific photo, identified by map_square_number and photo_number, outputs the tags
     identified in that photo
     """
-    return photo_tag_helper(map_square_number, photo_number)
+    return photo_tag_helper(map_square_number, folder_number, photo_number)
 
 
 @api_view(['GET'])
@@ -366,14 +369,14 @@ def get_all_photos_in_order(request):
 
 
 @api_view(['GET'])
-def get_photo_by_similarity(request, map_square_number, photo_number, num_similar_photos):
+def get_photo_by_similarity(request, map_square_number, folder_number, photo_number, num_similar_photos):
     """
     API endpoint to get top similar photos of a specific photo, specified by map_square_number
     and photo_number
     Number of similar photos to GET specified by num_similar_photos
     """
 
-    photo_obj = Photo.objects.get(number=photo_number, map_square__number=map_square_number)
+    photo_obj = Photo.objects.get(number=photo_number, folder=folder_number, map_square__number=map_square_number)
     analysis_obj_list = PhotoAnalysisResult.objects.filter(
         name="photo_similarity.resnet18_cosine_similarity",
         photo=photo_obj,
@@ -383,14 +386,16 @@ def get_photo_by_similarity(request, map_square_number, photo_number, num_simila
     if analysis_obj_list:
         analysis_obj = analysis_obj_list[0]
         # splices the list of similar photos to get top 'num_similar_photos' photos
+        # TODO(ra): Probably this should be a JSON parse, not a literal eval
         similarity_list = ast.literal_eval(analysis_obj.result)[::-1][:num_similar_photos]
 
-        for simPhoto in similarity_list:
-            map_square = simPhoto[0]
-            id_number = simPhoto[1]
+        for similar_photo in similarity_list:
             similar_photos.append(
-                Photo.objects.get(number=id_number, map_square__number=map_square)
-            )
+                Photo.objects.get(number=similar_photo.number, 
+                                  map_square__number=similar_photo.map_square_number,
+                                  folder=similar_photo.folder_number,
+                                  )
+                                )
 
     serializer = PhotoSerializer(similar_photos, many=True)
     return Response(serializer.data)
@@ -501,7 +506,7 @@ def get_arrondissements_map_squares(request, arr_number=None):
 
 
 @api_view(['GET'])
-def get_photo_distances(request, photographer_num):
+def get_photo_distances(request, photographer_number):
     photo_data = [
         {
             'number': analysis_result.photo.number,
@@ -510,7 +515,7 @@ def get_photo_distances(request, photographer_num):
         }
         for analysis_result in PhotoAnalysisResult.objects.filter(
             name='photographer_dist',
-            photo__photographer__number=photographer_num
+            photo__photographer__number=photographer_number
         )
     ]
 
@@ -520,27 +525,11 @@ def get_photo_distances(request, photographer_num):
     return Response(sorted_photo_data)
 
 
-@api_view(['GET'])
-def get_map_square_details(request, map_square_number):
-    map_square = MapSquare.objects.get(number=map_square_number)
-    photos = Photo.objects.filter(map_square=map_square)
-    photos_data = SimplePhotoSerializer(photos[:4], many=True).data
-    photographers = Photographer.objects.filter(map_square=map_square)
-    photographers_data = PhotographerSerializer(photographers, many=True).data
-    data = {
-        "photos": photos_data,
-        "photographers": photographers_data
-    }
-    return Response(data)
 
 
 # app views
 def render_view(request, context):
     context.setdefault('component_props', {})
-
-    # TODO(ra): We're mid-refactor here: ultimately we want a switch
-    # for where to look for photos, rather than hardcoding this right here!
-    context['component_props']['photoDir'] = str(settings.AWS_S3_PHOTOS_DIR)
     return render(request, 'index.html', context)
 
 
@@ -588,7 +577,6 @@ def map_page(request):
         'component_name': 'MapPage',
         'component_props': {
             'arrondissement_data': json.dumps(arrondissement_data),
-            'photoDir': str(settings.AWS_S3_PHOTOS_DIR),
         }
     }
 
@@ -609,7 +597,7 @@ def search_view(request):
     return render_view(request, context)
 
 
-def map_square_view(request, map_square_num):
+def map_square_view(request, map_square_number):
     """
     Map square page, specified by map_square_num
     """
@@ -619,13 +607,13 @@ def map_square_view(request, map_square_num):
         },
         'component_name': 'MapSquareView',
         'component_props': {
-            'mapSquareNumber': map_square_num
+            'mapSquareNumber': map_square_number
         }
     }
     return render_view(request, context)
 
 
-def photographer_view(request, photographer_num):
+def photographer_view(request, photographer_number):
     """
     Photographer page, specified by photographer_num
     """
@@ -635,7 +623,7 @@ def photographer_view(request, photographer_num):
         },
         'component_name': 'PhotographerView',
         'component_props': {
-            'photographerNumber': photographer_num
+            'photographerNumber': photographer_number
         }
     }
     return render_view(request, context)
@@ -662,13 +650,14 @@ def photographer_list_view(request):
     return render_view(request, context)
 
 
-def photo_view(request, map_square_num, photo_num):
+def photo_view(request, map_square_number, folder_number, photo_number):
     """
-    Photo page, specified by map_square_num and photo_num
+    Photo page, specified by map_square_number, folder_number, photo_num
     """
-    tag_data = photo_tag_helper(map_square_num, photo_num)
-    photographer = Photo.objects.get(number=photo_num,
-                                     map_square__number=map_square_num).photographer
+    tag_data = photo_tag_helper(map_square_number, folder_number, photo_number)
+    photographer = Photo.objects.get(number=photo_number,
+                                     folder=folder_number,
+                                     map_square__number=map_square_number).photographer
 
     context = {
         'page_metadata': {
@@ -676,8 +665,9 @@ def photo_view(request, map_square_num, photo_num):
         },
         'component_name': 'PhotoView',
         'component_props': {
-            'mapSquareNumber': map_square_num,
-            'photoNumber': photo_num,
+            'mapSquareNumber': map_square_number,
+            'photoNumber': photo_number,
+            'folderNumber': folder_number,
             'photoTags': tag_data,
             'photographer_name': "",
             'photographer_number': ""
