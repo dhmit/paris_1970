@@ -19,8 +19,7 @@ from dataclasses import dataclass
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from app.models import Photo, MapSquare, Photographer
-from app.common import print_header
+from app.models import Photo, Photographer
 
 @dataclass
 class PhotoMetadata:
@@ -49,7 +48,10 @@ class Command(BaseCommand):
             for row in rows:
                 split_row = [field.strip().strip('\"') for field in row.split('","')]
 
-                map_square_number, folder_number, photo_number, full_text, photographer_number, street_name, public_notes, private_notes = split_row
+                map_square_number, folder_number, photo_number, \
+                full_text, photographer_number, street_name, \
+                public_notes, private_notes = split_row
+
 
                 # ? in the photographer number means that we weren't sure but could infer from
                 # context (i.e., the same hand as surrounding photographer numbers).
@@ -59,7 +61,8 @@ class Command(BaseCommand):
                 try:
                     photographer_number = int(photographer_number)
                 except ValueError:
-                    print(f"Skipped {map_square_number}_{folder_number}_{photo_number} because of invalid photographer number {photographer_number}")
+                    print(f"Skipped {map_square_number}_{folder_number}_{photo_number}"
+                          + f"because of invalid photographer number {photographer_number}")
                     continue
 
                 metadata = PhotoMetadata(map_square_number=int(map_square_number),
@@ -84,10 +87,12 @@ class Command(BaseCommand):
                     photographer = Photographer.objects.get(number=photographer_number)
                     photo.photographer = photographer
                     photo.save()
-                    print(f"Updated {map_square_number}_{folder_number}_{photo_number} with photographer number {photographer_number}.")
+                    print(f"Updated {map_square_number}_{folder_number}_{photo_number} "
+                          + f"with photographer number {photographer_number}.")
                 except Photographer.DoesNotExist:
-                    print(f"Photographer {metadata.photographer_number} does not exist! Skipping {map_square_number}_{folder_number}_{photo_number}.")
-                    print(f"Need to check the photographer entry list.")
+                    print(f"Photographer {metadata.photographer_number} does not exist! "
+                          + f"Skipping {map_square_number}_{folder_number}_{photo_number}.")
+                    print("Need to check the photographer entry list.")
                     continue
 
 
