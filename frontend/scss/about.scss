@@ -1,56 +1,48 @@
 .about-text {
     font-size: 20px;
-    padding-bottom: 30px;
+    padding-bottom: 100px;
     display: inline-block;
 }
 
-/* added this */
 .project-description {
-    font-weight: 400;
-    position: absolute;
-    width: 783px;
-    height: 387px;
+    position: relative;
+    width: 50%;
+    height: 30%;
     left: 151px;
-    top: 183px;
-}
-/////////////////////
-
-.about-title {
-    font-size: 50px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
+    top: 20px;
+    margin-bottom: 30px;
 }
 
 .prof-img-div {
-    position: absolute;
-    width: 383px;
-    height: 435px;
+    position: relative;
+    width: 90%;
+    height: 10%;
     left: 126px;
-    top: 600px;
-
+    top: 40px;
+    margin-bottom: 40px;
     display: flex;
-    align-items: center;
-    margin-bottom: 10px;
+    flex-direction: row;
 }
 
 .prof-img {
-    //border-radius: 270px;
-    width: 100%;
-    margin-right: 20px;
+    width: 400px;
+    margin-right: 60px;
 }
 
-.prof-description {
+.prof-description { 
+    position: relative;
+    top: 120px;
+    width: 50%;
+    left: 583px;
+}
+
+.prof-description > p {
     position: absolute;
-    width: 783px;
-    height: 387px;
-    left: 611px;
-    top: 687px;
+    top: 0;
 }
 
 .team {
-    position: absolute;
-    top: 1200px;
+    position: relative;
 }
 
 .text-wrap {
@@ -91,4 +83,19 @@
 
 .urop-text {
     margin: 1em;
+}
+
+.staff-name {
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: .05em;
+}
+
+figure {
+    width: 100%;
+}
+
+.figure-caption {
+    font-weight: 400;
+    font-size: 20px;
 }
