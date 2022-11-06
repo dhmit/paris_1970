@@ -158,10 +158,7 @@ def search_photographers(request):
         elif field == "map square #":
             field = "map_square"
         
-        if asc == "ascending":
-            asc = True
-        else:
-            asc = False
+        asc = asc == 'ascending'
         
         return f'{"" if asc else "-"}{field}'
 
