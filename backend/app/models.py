@@ -21,14 +21,31 @@ class Photo(models.Model):
     to the Map Square that the photo belongs to and the Photographer who
     took the photo.
     """
-
     # Use number and map_square to uniquely identify a photo
     # DO NOT use the database pk, as that may change as we rebuild the database
-    number = models.IntegerField(null=True)  # NOT the database PK, but rather based on shelfmark
+
+    # The source image filenames have the following structure:
+    # BHVP_PH_CetaitParis_DP_MAP-SQUARE-NUMBER_FOLDER-NUMBER_FILE-NUMBER
+
+    # The FILE-NUMBER comes in pairs, but numbered straight through. e.g., 
+    # BHVP_PH_CetaitParis_DP_0031_01_001 -- this is a scan of the slide, including its frame
+    # BHVP_PH_CetaitParis_DP_0031_01_002 -- this is a high quality scan of the photo itself
+    # We collapse these two into a single number: 1
+    # The next pair (01_003 and 01_004) become photo 2, etc.
+    number = models.IntegerField()
+
+    # Furthermore, many map squares contained multiple folders.
+    # These folders seemed meaningful -- they often represent boundary points between photographers.
+    folder = models.IntegerField()
+
+    # The original full filename of the SLIDE as provided to us by 
+    # e.g., "BHVP_PH_CetaitParis_DP_0031_01_001"
+    shelfmark = models.CharField(max_length=252)
+
     map_square = models.ForeignKey('MapSquare', on_delete=models.CASCADE, null=True)
     photographer = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
 
-    shelfmark = models.CharField(max_length=252)
+    # TODO(ra 2022-10-28): We are likely to drop a bunch of these old metadata fields.
     contains_sticker = models.BooleanField(null=True)
     alt = models.CharField(max_length=252)
     librarian_caption = models.CharField(max_length=252)
@@ -86,8 +103,30 @@ class Photo(models.Model):
         else:
             return None
 
+    @property
+    def photo_file_number(self):
+        return self.number*2
+
+    @property
+    def slide_file_number(self):
+        return self.number*2 - 1
+
+    def get_photo_url(self):
+        return (
+            settings.AWS_S3_PHOTOS_DIR
+            + f'/BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}'
+            + f'/BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}_{self.photo_file_number:03}.jpg'
+        )
+
+    def get_slide_url(self):
+        return (
+            settings.AWS_S3_PHOTOS_DIR
+            + f'/BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}'
+            + f'/BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}_{self.slide_file_number:03}.jpg'
+        )
+
     class Meta:
-        unique_together = ['number', 'map_square']
+        unique_together = ['number', 'folder', 'map_square']
 
 
 class MapSquare(models.Model):
