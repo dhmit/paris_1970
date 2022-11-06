@@ -1,7 +1,7 @@
 import React from "react";
 import Footer from "../../components/Footer";
 import * as PropTypes from "prop-types";
-import { debounce } from "../../common";
+import {debounce} from "../../common";
 
 import Chevron from "../../images/icons/chevron_down.svg";
 import RedBlueBox from "../../images/icons/red_blue_box.svg";
@@ -20,7 +20,7 @@ class DropDown extends React.Component {
         this.handleClickOutside = this.handleClickOutside.bind(this);
     }
 
-    handleClickOutside(event) {
+    handleClickOutside() {
         // if (this.wrapperRef && !this.wrapperRef.current.contains(event.target)) {
         //     this.props.toggleActiveDropdown(null);
         // }
@@ -105,7 +105,7 @@ export class PhotographerListView extends React.Component {
 
         this.state = {
             timer: null,
-            searchQueries: { name: "", location: "", square: "", nameStartsWith: "" },
+            searchQueries: {name: "", location: "", square: "", nameStartsWith: ""},
             activeDropdown: null,
             photographers: [],
             pageNumber: 1,
@@ -138,7 +138,7 @@ export class PhotographerListView extends React.Component {
             }
         };
         const searchOptions = await fetchOptions();
-        this.setState({ dropdownSearchOptions: searchOptions });
+        this.setState({dropdownSearchOptions: searchOptions});
     }
 
     refetchPhotographers() {
@@ -146,7 +146,7 @@ export class PhotographerListView extends React.Component {
             if (this.state.isLastPage) {
                 return;
             }
-            const { name, nameStartsWith, location, square } = searchQueries;
+            const {name, nameStartsWith, location, square} = searchQueries;
             const newPageNumber = this.state.pageNumber + 1;
             try {
                 const res = await fetch(
@@ -166,7 +166,7 @@ export class PhotographerListView extends React.Component {
         };
         debounce(async () => {
             try {
-                const { results, is_last_page, page_number } = await fetchPhotographers(
+                const {results, is_last_page, page_number} = await fetchPhotographers(
                     this.state.searchQueries,
                     this.state.sortBy
                 );
@@ -226,11 +226,11 @@ export class PhotographerListView extends React.Component {
     }
 
     resetPaginationParameters() {
-        this.setState({ pageNumber: 0, isLastPage: false, photographers: [] });
+        this.setState({pageNumber: 0, isLastPage: false, photographers: []});
     }
 
     toggleActiveDropdown = (dropDown) => {
-        this.setState({ activeDropdown: dropDown });
+        this.setState({activeDropdown: dropDown});
     };
 
     componentDidMount() {
@@ -366,7 +366,13 @@ export class PhotographerListView extends React.Component {
                 <div className="photographerGallery">
                     <ul className="list-inline" onScroll={this.handleScroll}>
                         {this.getPhotoList()}
-                        <div>{this.state.isLastPage ? "End of Results!!!" : "Loading..."}</div>
+                        <div className="photographers-results-footer">
+							{this.state.isLastPage
+								? (this.state.photographers.length === 0
+									? "No photographers found that match your search query!"
+									: "End of Results!!!")
+								: "Loading..."}
+                        </div>
                     </ul>
                 </div>
                 <div>
