@@ -32,11 +32,11 @@ class DropDown extends React.Component {
                     <p>{this.state.selected || this.props.placeholder}</p>
                     <Chevron/>
                 </div>
+                <div className="dropdown-spacer"></div>
                 <div
                     className={`dropdown-items ${this.props.id === this.props.activeDropdown ? "" : "d-none"}`}
                     id={this.props.id}
                 >
-                    <div className="dropdown-spacer"></div>
                     {this.props.items.map((item) => {
                         return (
                             <div
@@ -44,7 +44,8 @@ class DropDown extends React.Component {
                                 className={`dropdown-itm ${
                                     this.state.selected === item ? "selected-itm" : "unselected-itm"
                                 }`}
-                                onClick={() => {
+                                onClick={(e) => {
+                                    e.stopPropagation();
                                     if (this.state.selected !== item) {
                                         this.setState({selected: item});
                                     } else {
@@ -52,6 +53,7 @@ class DropDown extends React.Component {
                                     }
                                 }}
                             >
+                                <input type="checkbox" onClick={(e)=>{e.stopPropagation();}}/> 
                                 {item}
                             </div>
                         );
@@ -76,7 +78,7 @@ export class PhotographerListView extends React.Component {
         // THIS IS DUMMY DATA
         this.LOCATIONS = ["1", "2", "3"];
         this.SQUARES = ["4", "5", "6"];
-        this.ALPHABET = ["7", "8", "9"];
+        this.ALPHABET = ["7", "8", "9", "10", "11", "12"];
         this.SORTS = ["10", "11", "12"];
     }
 
@@ -192,14 +194,21 @@ export class PhotographerListView extends React.Component {
                         <p className="heading">Photographers</p>
                         </div>
                         <form className={"filterContainer"}>
-                            <input
-                                type="text"
-                                id="photographerList-search"
-                                placeholder="Search by name"
-                                onChange={(e) => {
-                                    this.updatePhotographers(e.target.value);
+                            <div className={"search-reset-container"}>
+                                <input
+                                    type="text"
+                                    id="photographerList-search"
+                                    placeholder="Search by name"
+                                    onChange={(e) => {
+                                        this.updatePhotographers(e.target.value);
+                                    }}
+                                />
+                                <button className="btn-primary"
+                                onClick={()=>{
+                                    /* reset filter, sort and search functionality here */
                                 }}
-                            />
+                                >Reset Settings</button>
+                            </div>
                             <div className="advancedSearch-container">
                                 <div className="filterBy-container">
                                     <div className="filter-label"><p>Filter by:</p></div>

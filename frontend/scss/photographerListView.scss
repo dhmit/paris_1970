@@ -9,6 +9,13 @@
     justify-content: center;
 }
 
+.photographerList-container :not(.heading) {
+    font-size: 20px;
+    @media screen and (max-width: 500px) {
+        font-size: 13px;
+    }
+  }
+
 .child{
     width: 13.7%;
     margin: 20px 10px;
@@ -26,13 +33,14 @@
     }
 }
 
+
 .photographerList-container {
     top: 0;
     margin-top: 40vh;
 
     #banner {
         background-color: white;
-        transition: max-height 0.5s, background-color 0.5s;
+        transition: max-height 0.75s, background-color 0.5s;
         position: absolute;
         z-index: 2;
         display: flex;
@@ -45,9 +53,9 @@
         top: 70px;
 
         &.grow {
-            max-height: 30vh;
-            @media screen and (max-width: 600px) {
-                max-height: 45vh;
+            max-height: 100vh;
+            @media screen and (max-width: 500px) {
+                max-height: 100vh;
             }
         }
 
@@ -75,26 +83,38 @@
             display: flex;
             flex: 0;
 
-            input#photographerList-search:focus {
-                outline-width: 0;
-            }
+            .search-reset-container {
+ 
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
 
-            #photographerList-search {
-                height: 5vh;
-                width: 60vw;
-                background-color: #ebf3f4;
-                border: 2px solid #000000;
-                padding: 10px 10px 10px 7vh;
-                -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-                -moz-box-sizing: border-box; /* Firefox, other Gecko */
-                box-sizing: border-box; /* Opera/IE 8+ */
-                background-image: url("/frontend/images/icons/magnify_glass.svg");
-                background-repeat: no-repeat;
-                background-size: 3vh;
-                background-position: left 2vh top 0.75vh;
+                input#photographerList-search:focus {
+                    outline-width: 0;
+                }
 
-                @media screen and (max-width: 600px) {
+                #photographerList-search {
+                    height: 40;
+                    width: 60vw;
+                    background-color: #ebf3f4;
+                    border: 2px solid #000000;
+                    padding: 7px 7px 7px 60px;
+                    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+                    -moz-box-sizing: border-box; /* Firefox, other Gecko */
+                    box-sizing: border-box; /* Opera/IE 8+ */
+                    background-image: url("/frontend/images/icons/magnify_glass.svg");
+                    background-repeat: no-repeat;
+                    background-size: 30px;
+                    background-position: left 2vh top 7px;
+
+                    @media screen and (max-width: 500px) {
                         width: 100%;
+                        background-size: 20px;
+                        background-position: left 1vh top 7px;
+                        padding: 5px 5px 5px 40px;
+                        height: 40px;
+                    }
                 }
             }
 
@@ -103,33 +123,49 @@
                 flex-direction: row;
                 justify-content: space-between;
                 align-items: center;
+                width: 100%;
 
-                @media screen and (max-width: 600px) {
+                @media screen and (max-width: 500px) {
                     flex-direction: column;
                     align-items: flex-start;
-                    row-gap: 1vh;
+                    row-gap: 1.5vh;
                 }
 
                 .filterBy-container {
                     display: flex;
                     flex-direction: row;
-                    column-gap: 2vw;
+                    column-gap: 1vw;
                     align-items: center;
-                    width: 100%;
+                    justify-content: flex-start;
+
+                    @media screen and (max-width: 500px) {
+                        display: grid;
+                        grid-template-columns: 1fr 5fr;
+                        width: 100%;
+                        column-gap: 3vw;
+                        align-items: flex-start;
+                    }
 
                     .filter-label {
-                        @media screen and (max-width: 600px) {
-                            width: 20%;
+                        @media screen and (max-width: 500px) {
+                            width: fit-content;
+                            white-space: nowrap;
                         }
                     }
 
                     .dropdown-container {
-                        width: 150px;
+                        min-width: 150px;
                         position: relative;
 
-                        @media screen and (max-width: 600px) {
-                            min-width: 0;
-                            // font-size: 1rem;
+                        @media screen and (max-width: 500px) {
+                            min-width: 100px;
+                            max-width: 150px;
+                        }
+
+                        .dropdown-spacer {
+                            height: 1vh;
+                            background-color: transparent;
+                            pointer-events: none;
                         }
 
                         .dropdown-select {
@@ -139,6 +175,7 @@
                             justify-content: space-between;
                             align-items: center;
                             border: 1px solid $color-turquoise;
+                            column-gap: 10px;
 
                             &.blue-border {
                                 border: 1px solid $color-turquoise;
@@ -156,16 +193,19 @@
                             overflow-y: auto;
                             z-index: 2;
 
-                            .dropdown-spacer {
-                                height: 1vh;
-                                background-color: transparent;
-                                pointer-events: none;
+                            @media screen and (max-width: 500px) {
+                                width: calc(40%);
                             }
+
+                
 
                             .dropdown-itm {
                                 background: #1c1a1a;
                                 padding: 0.5rem;
                                 width: 100%;
+                                display: flex;
+                                flex-direction: row;
+                                column-gap: 10px;
 
                                 &.unselected-itm {
                                     color: white;
@@ -184,9 +224,13 @@
                     display: flex;
                     flex-direction: row;
                     column-gap: 5vw;
+                    flex-wrap: wrap;
+                    row-gap: 1vh;
 
-                    @media screen and (max-width: 600px) {
+                    @media screen and (max-width: 500px) {
                         min-width: 0;
+                        
+                  
                     }
                 }
 
