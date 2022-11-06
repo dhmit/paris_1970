@@ -53,7 +53,14 @@ squares = sorted(
     )
 )
 nameStartsWith = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-orderBy = ["Name: ascending", "Name: descending", "Location: ascending", "Location: descedning", "Map Square #: ascending", "Map Square #: descending"]
+orderBy = [
+    "Name: ascending", 
+    "Name: descending", 
+    "Location: ascending", 
+    "Location: descedning", 
+    "Map Square #: ascending", 
+    "Map Square #: descending"
+]
 photographer_search_options = {
     "locations": locations,
     "squares": squares,
@@ -185,7 +192,8 @@ def search_photographers(request):
             pass
     
     # Planning to check for multiple name starts for this field 
-    # Implmenetaiton example in this stackoverflow entry (https://stackoverflow.com/questions/5783588/django-filter-on-same-option-with-multiple-possibilities)
+    # Implmenetaiton example in this stackoverflow entry 
+    #  (https://stackoverflow.com/questions/5783588/django-filter-on-same-option-with-multiple-possibilities)
     if name_start is not None and name_start.strip() != "" and name_start in nameStartsWith:
         search_params["name__istartswith"] = name_start 
     print(search_params)
@@ -222,16 +230,7 @@ def get_search_photographers_dropdown_options(request):
     TODO: Add pagination for both cases (when given a search query and when nothing is given) 
     so that the user is sent the first 50 results and they can view more results as they scroll down the page.
     """
-    locations = sorted(filter(lambda x: x is not None, list(set(Photographer.objects.all().values_list('approx_loc', flat=True)))))
-    squares = sorted(filter(lambda x: x is not None, list(set(Photographer.objects.all().values_list('map_square_id', flat=True)))))
-    nameStartsWith = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-    orderBy = ["Name: ascending", "Name: descending", "Location: ascending", "Location: descedning", "Map Square #: ascending", "Map Square #: descending"]
-    res = Response({
-        "locations": locations,
-        "squares": squares,
-        "nameStartsWith": nameStartsWith,
-        "orderBy": orderBy
-    })
+    res = Response(photographer_search_options)
     return res
 
 @api_view(['GET'])
