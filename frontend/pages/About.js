@@ -222,26 +222,24 @@ class About extends React.Component {
                                 <figcaption className="figure-caption">
                                 Faculty Director & Associate Professor of History and French Studies
                                 </figcaption>
+                                <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                eiusmod tempor incididunt ut labore et dolore magna aliqua. Odio
+                                eu feugiat pretium nibh ipsum consequat nisl vel pretium. Malesuada
+                                nunc vel risus commodo viverra maecenas accumsan lacus vel. Cras
+                                pulvinar mattis nunc sed blandit libero volutpat. Aliquam faucibus
+                                purus in massa tempor nec feugiat nisl pretium. Quam nulla porttitor
+                                massa id neque aliquam. Quam quisque id diam vel quam elementum
+                                pulvinar etiam non. Etiam dignissim diam quis enim lobortis scelerisque
+                                fermentum. Fringilla urna porttitor rhoncus dolor purus non. Vel
+                                fringilla est ullamcorper eget nulla facilisi etiam. Tristique et
+                                egestas quis ipsum suspendisse ultrices gravida. Vehicula ipsum a arcu
+                                cursus vitae. Donec et odio pellentesque diam. Morbi tincidunt ornare
+                                massa eget egestas purus viverra accumsan. Neque vitae tempus quam
+                                pellentesque nec nam aliquam sem. Vitae congue mauris rhoncus aenean.
+                                </p> 
                             </div>
                         </figure>
-                    </div>
-                    <div className="prof-description">     
-                        <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                        eiusmod tempor incididunt ut labore et dolore magna aliqua. Odio
-                        eu feugiat pretium nibh ipsum consequat nisl vel pretium. Malesuada
-                        nunc vel risus commodo viverra maecenas accumsan lacus vel. Cras
-                        pulvinar mattis nunc sed blandit libero volutpat. Aliquam faucibus
-                        purus in massa tempor nec feugiat nisl pretium. Quam nulla porttitor
-                        massa id neque aliquam. Quam quisque id diam vel quam elementum
-                        pulvinar etiam non. Etiam dignissim diam quis enim lobortis scelerisque
-                        fermentum. Fringilla urna porttitor rhoncus dolor purus non. Vel
-                        fringilla est ullamcorper eget nulla facilisi etiam. Tristique et
-                        egestas quis ipsum suspendisse ultrices gravida. Vehicula ipsum a arcu
-                        cursus vitae. Donec et odio pellentesque diam. Morbi tincidunt ornare
-                        massa eget egestas purus viverra accumsan. Neque vitae tempus quam
-                        pellentesque nec nam aliquam sem. Vitae congue mauris rhoncus aenean.
-                        </p> 
                     </div>
                 </div>
                 <div className="team">
