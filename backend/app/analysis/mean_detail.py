@@ -12,8 +12,6 @@ from .detail_fft2 import analyze as detail_analyze
 from .stdev import analyze as square_analyze
 from .local_variance import analyze as lv_analyze
 
-MODEL = Photo
-
 
 def analyze(photo: Photo):
     """

@@ -12,8 +12,6 @@ from math import sin, cos, sqrt, atan2, radians
 from django.conf import settings
 from ..models import Photo
 
-MODEL = Photo
-
 DATA_PATH = os.path.join(settings.BACKEND_DATA_DIR, "photographer_locations.json")
 
 

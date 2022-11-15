@@ -8,8 +8,6 @@ or outdoors
 from app.models import Photo
 from app.analysis.indoor_analysis import courtyard_frame, find_windows, gradient_analysis
 
-MODEL = Photo
-
 
 def analyze(photo: Photo):
     """
