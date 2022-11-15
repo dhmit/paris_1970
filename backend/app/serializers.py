@@ -90,7 +90,8 @@ class PhotoSerializer(serializers.ModelSerializer):
             'id', 'number', 'folder', 'map_square_number',
             'alt', 'photographer_name', 'photographer_number',
             'shelfmark', 'librarian_caption', 'photographer_caption',
-            'contains_sticker', 'analyses', 'map_square_coords', 'slide_url', 'photo_url'
+            'contains_sticker', 'analyses', 'map_square_coords', 'slide_url', 'photo_url',
+            'photo_page_url'
         ]
 
 
