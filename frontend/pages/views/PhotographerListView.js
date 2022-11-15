@@ -27,7 +27,7 @@ class DropDown extends React.Component {
                 }}
                 // onMouseEnter={() => {
                 //     this.setState({toggleDropDown: true});
-                //     let dropdowns = document.getElementsByClassName("dropdown-items");
+                //     let dropdowns = document.getElementsByClassName("dropdown-items")
                 //     for (const elt of dropdowns) {
                 //         if (elt.id !== this.props.id) {
                 //             elt.classList.add("d-none");
@@ -99,7 +99,8 @@ export class PhotographerListView extends React.Component {
     }
 
     srcFunc(number) {
-        return `${this.props.photoListDir}/${number}_photo.jpg`;
+        // return `${this.props.photoListDir}/${number}_photo.jpg`;
+        return `/api/photographer/${number}/photographs`;
     }
 
     updatePhotographers(name) {
@@ -127,7 +128,7 @@ export class PhotographerListView extends React.Component {
                             <img
                                 alt={photographer.number}
                                 width={photoSize[0]}
-                                src={this.srcFunc(photographer.number)}
+                                src={photographer.photo.src}
                             />
                         </a>
                         <p>{photographer.name ? photographer.name : "No Name"}</p>

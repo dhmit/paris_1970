@@ -139,6 +139,17 @@ def get_photographer(request, photographer_number=None):
     serializer = PhotographerSerializer(photographer_obj, many=photographer_number is None)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def get_photographer_photos(request, photographer_number):
+    """
+    API endpoint to get a photographer based on the photographer_id
+    If given photographer_number, GETs associated photographs
+    """
+    photo_obj = Photo.objects.filter(photographer__number = photographer_number)
+    print(photo_obj)
+    serializer = PhotoSerializer(photo_obj, many=photographer_number is None)
+    return Response(serializer.data)
+
 
 @api_view(['GET'])
 def get_corpus_analysis_results(request):
