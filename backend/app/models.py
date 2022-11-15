@@ -2,11 +2,9 @@
 Models for the paris_1970 app.
 
 """
-import os
 import json
 
-from urllib.error import HTTPError
-from http.client import RemoteDisconnected
+from pathlib import Path
 
 from skimage import io
 from PIL import Image
@@ -51,57 +49,33 @@ class Photo(models.Model):
     librarian_caption = models.CharField(max_length=252)
     photographer_caption = models.CharField(max_length=252)
 
-    def has_valid_source(self, photo_dir=settings.LOCAL_PHOTOS_LOCATION):
-        return os.path.exists(os.path.join(photo_dir, f"{self.map_square.number}/"
-                                                      f"{self.number}_photo.jpg"))
-
-    def get_image_data(self, as_gray=False, use_pillow=False, src_dir=settings.LOCAL_PHOTOS_LOCATION):
+    def get_image_data(self, as_gray=False, use_pillow=False, photos_dir=settings.LOCAL_PHOTOS_DIR):
         """
         Get the image data via skimage's imread, for use in analyses
-
-        We try for a local filepath first, as that's faster,
-        and we fallback on Google Drive if there's nothing local.
 
         Optionally use Pillow instead (for pytorch analyses)
         and return as_gray
 
         TODO: implement as_gray for use_pillow
         """
-        source = os.path.join(
-            src_dir,
-            str(self.map_square.number),
-            f"{self.number}_photo.jpg"
-        )
+        photo_path = self.image_local_filepath(photos_dir=photos_dir)
+        if use_pillow:
+            image = Image.open(photo_path)
+        else:
+            image = io.imread(photo_path, as_gray)
 
-        try:
-            if use_pillow:
-                image = Image.open(source)
-            else:
-                image = io.imread(source, as_gray)
-        except (HTTPError, RemoteDisconnected) as base_exception:
-            raise Exception(
-                f'Failed to download image data for {self} due to Google API rate limiting.'
-            ) from base_exception
         return image
 
-    def get_image_local_filepath(self, src_dir=settings.LOCAL_PHOTOS_LOCATION):
-        """
-        Get the image local filepath if it exists.
-
-        We try for a local filepath first, as that's faster,
-        and we fallback on Google Drive if there's nothing local.
-        """
-
-        source = os.path.join(
-            src_dir,
-            str(self.map_square.number),
-            f"{self.number}_photo.jpg"
-        )
-
-        if source:
-            return source
+    def image_local_filepath(self, photos_dir=settings.LOCAL_PHOTOS_DIR):
+        photo_path = Path(photos_dir, self.folder_name, self.photo_filename)
+        if photo_path.exists():
+            return photo_path
         else:
             return None
+
+    def has_valid_source(self, photos_dir=settings.LOCAL_PHOTOS_DIR):
+        photo_path = self.image_local_filepath(photos_dir=photos_dir) 
+        return photo_path is not None
 
     @property
     def photo_file_number(self):
@@ -111,19 +85,27 @@ class Photo(models.Model):
     def slide_file_number(self):
         return self.number*2 - 1
 
+    @property
+    def folder_name(self):
+        """ returns the folder name in the format given by BHVP """
+        return f'BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}'
+
+    @property
+    def slide_filename(self):
+        return f'BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}_{self.slide_file_number:03}.jpg'
+
+    @property
+    def photo_filename(self):
+        return f'BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}_{self.photo_file_number:03}.jpg'
+
     def get_photo_url(self):
-        return (
-            settings.AWS_S3_PHOTOS_DIR
-            + f'/BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}'
-            + f'/BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}_{self.photo_file_number:03}.jpg'
-        )
+        return settings.AWS_S3_PHOTOS_DIR + '/' + self.folder_name + '/' + self.photo_filename
 
     def get_slide_url(self):
-        return (
-            settings.AWS_S3_PHOTOS_DIR
-            + f'/BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}'
-            + f'/BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}_{self.slide_file_number:03}.jpg'
-        )
+        return settings.AWS_S3_PHOTOS_DIR + '/' + self.folder_name + '/' + self.slide_filename
+
+    def get_photo_page_url(self):
+        return f'/photo/{self.map_square.number}/{self.folder}/{self.number}/'
 
     class Meta:
         unique_together = ['number', 'folder', 'map_square']
