@@ -5,13 +5,11 @@ Syncs local db with data from project Google Sheet
 """
 
 import sys
-import os
 import json
 
 from importlib import import_module
 from typing import Callable
 
-from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from app.common import print_header
@@ -58,21 +56,16 @@ class Command(BaseCommand):
             photos = Photo.objects.all()
 
         print_header(f'Running {analysis_name} on {photos.count()} photos')
-        skipped = []
-        errors = []
         photos_done = 0
         for photo in photos:
-
             if verbose:
                 print(f'\nRunning on {photo_id_str(photo)}')
-            elif photos_done % 100 == 0:
-                print(f'\nAnalyzed {photos_done} so far...')
-
 
             if not photo.has_valid_source():
                 print(f'Photo {photo_id_str(photo)} - could not find a source image file. Skipping.')
                 continue
-            elif verbose:
+
+            if verbose:
                 print(photo.image_local_filepath())
 
             try:
@@ -93,7 +86,13 @@ class Command(BaseCommand):
                 analysis_result = PhotoAnalysisResult(name=analysis_name, result=result_json, photo=photo)
                 analysis_result.save()
             except Exception as e:  # pylint: disable=bare-except
-                err_msg = f'Photo {photo_id_str(photo)} - an analysis exists and we are not overwriting. Error: {e}. Skipping.'
+                err_msg = (
+                    f'Photo {photo_id_str(photo)} - an analysis exists and we are not overwriting.'
+                    + f'\nError: {e}.\nSkipping.'
+                )
                 print(err_msg)
 
             photos_done += 1
+            if photos_done % 100 == 0:
+                print(f'\nAnalyzed {photos_done} so far...')
+
