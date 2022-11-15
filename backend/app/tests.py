@@ -42,24 +42,28 @@ class MainAPITests(TestCase):
         CorpusAnalysisResult.objects.create(name="corpus_analysis_result", result=json.dumps(''))
 
         # create 3 map squares
+        folder_num = 1
         for i in range(1, 4):
             map_square = MapSquare.objects.create(number=i, coordinates="24, 25")
             photographer = Photographer.objects.create(map_square=map_square, number=i,
                                                        name=names[i-1], approx_loc="Popstar")
-            test_photos_dir = Path(settings.TEST_PHOTOS_DIR, str(i))
-            Path(test_photos_dir).mkdir(exist_ok=True, mode=0o755)
+
 
             # in each map square, create 4 empty photos and some PhotoAnalysisResult
             # objects for each photo, and add photo to either cluster 0 or 1 (photo_number mod 2)
             for photo_num in range(1, 5):
                 photo = Photo.objects.create(
-                        number=photo_num,
-                        folder=1,
-                        map_square=map_square,
-                        photographer=photographer
+                            number=photo_num,
+                            folder=1,
+                            map_square=map_square,
+                            photographer=photographer
                         )
 
-                photo_path = Path(test_photos_dir, f"{photo_num}_photo.jpg")
+                photo_folder_dir = Path(settings.TEST_PHOTOS_DIR, photo.folder_name)
+                photo_folder_dir.mkdir(exist_ok=True, mode=0o755)
+                photo_path = Path(photo_folder_dir, photo.photo_filename)
+
+                # write a fake file - we don't need any data, just that it exists
                 with open(photo_path, "w+") as f:
                     pass
 
@@ -67,28 +71,23 @@ class MainAPITests(TestCase):
                                           "width": 135, "height": 82, "confidence": 90}],
                                "labels": {"car": 1}}
 
-                PhotoAnalysisResult.objects.create(name="yolo_model", result=json.dumps(
-                    yolo_result), photo=photo)
-                PhotoAnalysisResult.objects.create(name="resnet18_cosine_similarity", result=
-                json.dumps([]),
+                PhotoAnalysisResult.objects.create(name="yolo_model", 
+                                                   result=json.dumps(yolo_result), 
                                                    photo=photo)
-                PhotoAnalysisResult.objects.create(name="photo_similarity.resnet18_cosine_"
-                                                        "similarity", result=json.dumps([]),
+
+                PhotoAnalysisResult.objects.create(name="resnet18_cosine_similarity", 
+                                                   result=json.dumps([]),
                                                    photo=photo)
+
+                PhotoAnalysisResult.objects.create(name="photo_similarity.resnet18_cosine_similarity", 
+                                                   result=json.dumps([]),
+                                                   photo=photo)
+
                 Cluster.objects.get(label=photo_num % 2).photos.add(photo)
+
         assert MapSquare.objects.count() == 3
         assert Photographer.objects.count() == 3
         assert Photo.objects.count() == 12
-
-    def tearDown(self):
-        """
-        Remove TEST_PHOTOS_DIR files.
-        """
-        for i in range(3):
-            path = os.path.join(settings.TEST_PHOTOS_DIR, f"{i + 1}", "")
-            for j in range(len(os.listdir(path))):
-                os.remove(os.path.join(path, f"{j + 1}_photo.jpg"))
-            os.rmdir(path)
 
     def _test_get_api_endpoint(self, name, args=[]):
         """
@@ -102,7 +101,7 @@ class MainAPITests(TestCase):
         assert response.status_code == 200
         return response.json()
 
-    def add_photo(self, map_square, photo_name_or_path):
+    def add_photo(self, map_square):
         """
         Creates a Photo object and adds it to self.photo_dict given
         the name of the photo or path relative to settings.TEST_PHOTOS_DIR
@@ -113,37 +112,42 @@ class MainAPITests(TestCase):
         else:
             photo_number = 0
 
-        # create new file in test directory
-        directory = os.path.join(settings.TEST_PHOTOS_DIR, f"{map_square.number}", "")
-        os.makedirs(directory, exist_ok=True)
-        current_photos_in_square = len(os.listdir(directory))
-        path = os.path.join(directory, f"{current_photos_in_square + 1}_photo.jpg")
-        fp = open(path, "x")
-        fp.close()
-        assert os.path.exists(path)
-
         # create new Photo object in database as well as a few PhotoAnalysisResult objects
         photo = Photo(number=photo_number, folder=1, map_square=map_square)
         photo.save()
 
-        PhotoAnalysisResult.objects.create(name="yolo_model", result=json.dumps({"boxes": [],
-                                                                                 "labels": {}}),
+        photo_folder_dir = Path(settings.TEST_PHOTOS_DIR, photo.folder_name)
+        photo_folder_dir.mkdir(exist_ok=True, mode=0o755)
+        photo_path = Path(photo_folder_dir, photo.photo_filename)
+
+        # write a fake file - we don't need any data, just that it exists
+        with open(photo_path, "w+") as f:
+            pass
+
+        PhotoAnalysisResult.objects.create(name="yolo_model", 
+                                           result=json.dumps({"boxes": [], "labels": {}}),
                                            photo=photo)
-        PhotoAnalysisResult.objects.create(name="resnet18_cosine_similarity", result=
-        json.dumps([]), photo=photo)
+
+        PhotoAnalysisResult.objects.create(name="resnet18_cosine_similarity", 
+                                           result=json.dumps([]),
+                                           photo=photo)
+
         PhotoAnalysisResult.objects.create(name="photo_similarity.resnet18_cosine_similarity",
-                                           result=json.dumps([]), photo=photo)
+                                           result=json.dumps([]),
+                                           photo=photo)
+
         Cluster.objects.get(label=photo_number % 2).photos.add(photo)
+
         return photo
 
     # testing database retrieval
 
     def test_photo_functions(self):
-        photo = self.add_photo(MapSquare.objects.get(number=1), "example")
-        self.assertTrue(photo.has_valid_source(photo_dir=settings.TEST_PHOTOS_DIR))
+        photo = self.add_photo(MapSquare.objects.get(number=1))
+        self.assertTrue(photo.has_valid_source(photos_dir=settings.TEST_PHOTOS_DIR))
 
         for photo in Photo.objects.all():
-            self.assertTrue(photo.has_valid_source(photo_dir=settings.TEST_PHOTOS_DIR))
+            self.assertTrue(photo.has_valid_source(photos_dir=settings.TEST_PHOTOS_DIR))
 
     def test_get_all_photos(self):
         res = self._test_get_api_endpoint("all_photos")
@@ -202,8 +206,8 @@ class MainAPITests(TestCase):
 
     def test_prev_next_photos(self):
         # need to decrease number of tries, currently too many
-        photo = self.add_photo(MapSquare.objects.get(number=1), "example")
-        self.assertTrue(photo.has_valid_source(photo_dir=settings.TEST_PHOTOS_DIR))
+        photo = self.add_photo(MapSquare.objects.get(number=1))
+        self.assertTrue(photo.has_valid_source(photos_dir=settings.TEST_PHOTOS_DIR))
 
         for map_square_num in range(1, 4):
             for photo_num in range(1, 5):
