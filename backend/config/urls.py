@@ -72,6 +72,7 @@ urlpatterns = [
     path('api/corpus_analysis/', views.get_corpus_analysis_results, name="get_corpus"),
     path('api/clustering/<int:number_of_clusters>/<int:cluster_number>/',
          views.get_photos_by_cluster, name="clustering"),
+    path('api/text_ocr/', views.get_images_with_text),
 
     path('api/search/', views.search, name="search"),
 

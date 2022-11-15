@@ -42,7 +42,6 @@ AWS_S3_PHOTOS_DIR = "https://paris1970-fa22-dev-assets.s3.amazonaws.com/jpg_size
 LOCAL_PHOTOS_DIR = None
 
 
-
 BLOG_ROOT_URL = "blog"
 
 
