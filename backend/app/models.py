@@ -104,6 +104,9 @@ class Photo(models.Model):
     def get_slide_url(self):
         return settings.AWS_S3_PHOTOS_DIR + '/' + self.folder_name + '/' + self.slide_filename
 
+    def get_photo_page_url(self):
+        return f'/photo/{self.map_square.number}/{self.folder}/{self.number}/'
+
     class Meta:
         unique_together = ['number', 'folder', 'map_square']
 

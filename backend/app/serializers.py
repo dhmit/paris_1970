@@ -26,6 +26,7 @@ class PhotoSerializer(serializers.ModelSerializer):
     map_square_coords = serializers.SerializerMethodField()
     photo_url = serializers.SerializerMethodField()
     slide_url = serializers.SerializerMethodField()
+    photo_page_url = serializers.SerializerMethodField()
 
     @staticmethod
     def get_photographer_name(instance):
@@ -50,6 +51,10 @@ class PhotoSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_photo_url(instance):
         return instance.get_photo_url()
+
+    @staticmethod
+    def get_photo_page_url(instance):
+        return instance.get_photo_page_url()
 
     @staticmethod
     def get_slide_url(instance):
