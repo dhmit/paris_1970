@@ -188,6 +188,29 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def get_images_with_text(request):
+    """
+    API endpoint to get photos that have text on them, according to our text_ocr analysis.
+    """
+    ocr_results = PhotoAnalysisResult.objects.filter(name='text_ocr')
+
+    photos_with_text = []
+
+    for result_obj in ocr_results:
+        text_data = result_obj.parsed_result()
+        if text_data:
+            # TODO(ra) probably use a serializer instead but we're working fast...
+            photos_with_text.append({
+                'photo_page_url': result_obj.photo.get_photo_page_url(),
+                'photo_url': result_obj.photo.get_photo_url(),
+                'alt': result_obj.photo.alt,
+                'text': text_data,
+            })
+
+    return Response(photos_with_text)
+
+
 
 def format_photo(photo_obj, photo_values_to_keep):
     formatted_photo = {}
@@ -501,6 +524,18 @@ def map_square_view(request, map_square_number):
         'component_props': {
             'mapSquareNumber': map_square_number
         }
+    }
+    return render_view(request, context)
+
+def text_ocr_view(request):
+    """
+    Sketchy prototype view for viewing all the text ocr photos
+    """
+    context = {
+        'page_metadata': {
+            'title': 'Text OCR'
+        },
+        'component_name': 'TextOCRView',
     }
     return render_view(request, context)
 
