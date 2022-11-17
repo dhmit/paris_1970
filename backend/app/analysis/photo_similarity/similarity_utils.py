@@ -57,6 +57,7 @@ def analyze_similarity(photo: Photo, similarity_function, reverse=True):
         similarities.append({
             'number': other_photo.number,
             'map_square_number': other_photo.map_square.number,
+            'folder_number': other_photo.folder,
             'alt': other_photo.alt,
             'similarity': similarity_value
         })

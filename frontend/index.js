@@ -11,6 +11,7 @@ import {HomePage} from "./pages/Home";
 import {PhotoView} from "./pages/views/PhotoView";
 import {PhotographerView} from "./pages/views/PhotographerView";
 import {MapSquareView} from "./pages/views/MapSquareView";
+import {TextOCRView} from "./pages/views/TextOCRView";
 import {Search} from "./pages/Search";
 import About from "./pages/About";
 import Blog from "./pages/Blog";
@@ -18,6 +19,7 @@ import BlogPost from "./pages/views/BlogPostView";
 import MapPage from "./pages/views/MapPageView";
 import TagView from "./pages/TagView";
 import {PhotographerListView} from "./pages/views/PhotographerListView";
+import Logo from "./components/Logo";
 
 // Import all styles
 import "./scss/styles.scss";
@@ -36,8 +38,10 @@ const COMPONENTS = {
     PhotographerView,
     MapSquareView,
     MapPage,
+    TextOCRView,
     TagView,
-    PhotographerListView
+    PhotographerListView,
+    Logo
 };
 
 const PreselectedComponent = COMPONENTS[COMPONENT_NAME || "ErrorNotFoundComponent"];
