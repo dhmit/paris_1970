@@ -151,6 +151,18 @@ const studentMembers = [
         photoSrc: Zheng_Vicky
     },
     {
+        name: "Bukunmi Shodipo",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Mena Filfil",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Kelly Fang",
+        photoSrc: Zheng_Vicky
+    },
+    {
         name: "Kamau Njendu",
         photoSrc: Zheng_Vicky
     },
