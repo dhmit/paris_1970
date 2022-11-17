@@ -37,6 +37,16 @@ from .serializers import (
 )
 
 
+# TODO(ra): See if we can move this elsewhere.
+PHOTOGRAPHER_SEARCH_ORDER_BY = [
+    "Name: ascending", 
+    "Name: descending", 
+    "Location: ascending", 
+    "Location: descedning", 
+    "Map Square #: ascending", 
+    "Map Square #: descending"
+]
+
 @api_view(['GET'])
 def photo(request, map_square_number, folder_number, photo_number):
     """
@@ -116,9 +126,9 @@ def search_photographers(request):
     """
 
     def parse_order_by(order_by):
-        if order_by not in orderBy:
+        if order_by not in PHOTOGRAPHER_SEARCH_ORDER_BY:
             return None
-        
+
         field, asc = order_by.split(":")
         field = field.strip().lower()
         asc = asc.strip().lower()
@@ -145,24 +155,23 @@ def search_photographers(request):
     search_params = {}
     
     # Validating and adding all of the params
-    if name is not None and name.strip() != "":
+    name = name.strip()
+    location = location.strip()
+    map_square = map_square.strip()
+
+    if name:
         search_params["name__icontains"] = name
-    if location is not None and location.strip() != "" and location in locations:
+    if location:
         search_params["approx_loc"] = location 
-    if map_square is not None and map_square.strip() != "":
-        try:
-            map_square = int(map_square)
-            if map_square in squares:
-                search_params["map_square"] = map_square 
-        except TypeError:
-            pass
+    if map_square:
+        map_square = int(map_square)
+        search_params["map_square"] = map_square 
     
     # Planning to check for multiple name starts for this field 
     # Implmenetaiton example in this stackoverflow entry 
     #  (https://stackoverflow.com/questions/5783588/django-filter-on-same-option-with-multiple-possibilities)
-    if name_start is not None and name_start.strip() != "" and name_start in nameStartsWith:
+    if name_start is not None and name_start.strip() != "":
         search_params["name__istartswith"] = name_start 
-    print(search_params)
 
     order_by_field = parse_order_by(order_by)
 
@@ -218,20 +227,11 @@ def get_search_photographers_dropdown_options(request):
 
     nameStartsWith = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-    orderBy = [
-        "Name: ascending", 
-        "Name: descending", 
-        "Location: ascending", 
-        "Location: descedning", 
-        "Map Square #: ascending", 
-        "Map Square #: descending"
-    ]
-
     photographer_search_options = {
         "locations": locations,
         "squares": squares,
         "nameStartsWith": nameStartsWith,
-        "orderBy": orderBy
+        "orderBy": PHOTOGRAPHER_SEARCH_ORDER_BY
     }
 
     res = Response(photographer_search_options)
