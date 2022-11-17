@@ -12,6 +12,7 @@ from rest_framework.renderers import JSONRenderer
 
 from django.shortcuts import render
 from django.db.models import Q
+from django.core.paginator import Paginator
 from django.conf import settings
 
 from app import view_helpers
@@ -34,6 +35,17 @@ from .serializers import (
     PhotographerSearchSerializer,
     CorpusAnalysisResultsSerializer
 )
+
+
+# TODO(ra): See if we can move this elsewhere.
+PHOTOGRAPHER_SEARCH_ORDER_BY = [
+    "Name: ascending", 
+    "Name: descending", 
+    "Location: ascending", 
+    "Location: descedning", 
+    "Map Square #: ascending", 
+    "Map Square #: descending"
+]
 
 @api_view(['GET'])
 def photo(request, map_square_number, folder_number, photo_number):
@@ -112,23 +124,118 @@ def search_photographers(request):
     TODO: Add pagination for both cases (when given a search query and when nothing is given) 
     so that the user is sent the first 50 results and they can view more results as they scroll down the page.
     """
+
+    def parse_order_by(order_by):
+        if order_by not in PHOTOGRAPHER_SEARCH_ORDER_BY:
+            return None
+
+        field, asc = order_by.split(":")
+        field = field.strip().lower()
+        asc = asc.strip().lower()
+        if field == "location":
+            field = "approx_loc"
+        elif field == "map square #":
+            field = "map_square"
+        
+        asc = asc == 'ascending'
+        
+        return f'{"" if asc else "-"}{field}'
+
+    # Pulling the params from the request
     name = request.GET.get("name", None)
-    is_searching_by_name = name is not None and name.strip() != ""
-    if is_searching_by_name:
-        matching_photographers = (Photographer.objects.filter(name__icontains=name)
-                                                      .order_by("name")
-                                                      .prefetch_related("photo_set"))
+    location = request.GET.get("location", None)
+    map_square = request.GET.get("square", None)
+    name_start = request.GET.get("name_starts_with", None)
+    order_by = request.GET.get("order_by", None)
+
+    # Pagination params
+    page_number = request.GET.get("page", None)
+    count_per_page = 50 
+
+    search_params = {}
+    
+    # Validating and adding all of the params
+    name = name.strip()
+    location = location.strip()
+    map_square = map_square.strip()
+
+    if name:
+        search_params["name__icontains"] = name
+    if location:
+        search_params["approx_loc"] = location 
+    if map_square:
+        map_square = int(map_square)
+        search_params["map_square"] = map_square 
+    
+    # Planning to check for multiple name starts for this field 
+    # Implmenetaiton example in this stackoverflow entry 
+    #  (https://stackoverflow.com/questions/5783588/django-filter-on-same-option-with-multiple-possibilities)
+    if name_start is not None and name_start.strip() != "":
+        search_params["name__istartswith"] = name_start 
+
+    order_by_field = parse_order_by(order_by)
+
+    if len(search_params) == 0:
+        matching_photographers = Photographer.objects.all()
     else:
-        matching_photographers = (Photographer.objects.all()
-                                                      .order_by("name")
-                                                      .prefetch_related("photo_set")[:50])
+        matching_photographers = Photographer.objects.filter(**search_params)
+
+    matching_photographers.prefetch_related("photo_set")
+
+    if order_by_field is not None:
+        matching_photographers = matching_photographers.order_by(order_by_field)
+    photographers_paginator = Paginator(matching_photographers, count_per_page)
+    current_page = photographers_paginator.get_page(page_number)
 
     serialized_photographers = (
-        PhotographerSearchSerializer(matching_photographers, many=True)
+        PhotographerSearchSerializer(current_page.object_list, many=True)
     ) # add pagination here
-    res = Response(serialized_photographers.data)
+    res = Response({
+        "page_number": page_number,
+        "results": serialized_photographers.data,
+        "is_last_page": not current_page.has_next()
+    })
     return res
 
+
+@api_view(['GET'])
+def get_search_photographers_dropdown_options(request):
+    """
+    API endpoint to get a list of photographers based on a search query that looks the photographers by name 
+    If not given a search query it will return the first 50 photographers sorted by name
+
+    TODO: Add pagination for both cases (when given a search query and when nothing is given) 
+    so that the user is sent the first 50 results and they can view more results as they scroll down the page.
+    """
+    locations = sorted(
+        filter(
+            lambda x: x is not None, 
+            list(
+                set(Photographer.objects.all().values_list('approx_loc', flat=True))
+            )
+        )
+    )
+
+    squares = sorted(
+        filter(
+            lambda x: x is not None, 
+            list(
+                set(Photographer.objects.all().values_list('map_square_id', flat=True))
+            )
+        )
+    )
+
+    nameStartsWith = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+    photographer_search_options = {
+        "locations": locations,
+        "squares": squares,
+        "nameStartsWith": nameStartsWith,
+        "orderBy": PHOTOGRAPHER_SEARCH_ORDER_BY
+    }
+
+    res = Response(photographer_search_options)
+    return res
 
 @api_view(['GET'])
 def get_photographer(request, photographer_number=None):
