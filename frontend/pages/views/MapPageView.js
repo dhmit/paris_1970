@@ -189,7 +189,7 @@ class MapPage extends React.Component {
                 });
             }
         });
-        const mapSquareDetails = await fetch("/api/map_square_details/" + mapSquare);
+        const mapSquareDetails = await fetch("/api/map_square/" + mapSquare);
         const mapSquareDetailsJSON = await mapSquareDetails.json();
         this.setState({
             photos: mapSquareDetailsJSON.photos,
@@ -247,7 +247,7 @@ class MapPage extends React.Component {
                                                 <MapSquareContent mapSquare={this.state.mapSquare}
                                                                   photos={this.state.photos}
                                                                   photographers={this.state.photographers}
-                                                                  photoDir={this.props.photoDir}/>
+                                                />
                                             </>
                                             : <>
                                                 <TitleDecoratorContainer title="Map"/>
@@ -313,7 +313,6 @@ class MapPage extends React.Component {
 
 MapPage.propTypes = {
     arrondissement_data: PropTypes.string,
-    photoDir: PropTypes.string
 };
 
 export default MapPage;

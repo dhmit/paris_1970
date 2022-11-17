@@ -2,8 +2,7 @@
 This file controls the administrative interface for paris_1970 app
 """
 import os
-
-from django.conf import settings
+from django.db import models
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from .models import (
@@ -39,6 +38,7 @@ class MapSquareAdmin(admin.ModelAdmin):
         """
 
         # filter for all photo objects with obj's map square number
+        # TODO(ra): use the reverse relationship and count() here
         photo_obj = Photo.objects.filter(map_square__number=obj.number)
         return len(photo_obj)
 
@@ -51,18 +51,13 @@ class MapSquareAdmin(admin.ModelAdmin):
         """
         link = ''
         # filter for all photo objects of obj map square
+        # TODO(ra): use the reverse relationship here
         photo_obj = Photo.objects.filter(map_square__number=obj.number)
         for photo in photo_obj:
-            # path to photo
-            obj_path = os.path.join(settings.AWS_S3_PHOTOS_DIR, str(obj.number),
-                                    str(photo.number) + '_photo.jpg')
-        
-
-
             # path to photo's admin change page
             photo_path = os.path.join('/admin/app/photo', str(photo.id))
             link += '<a target="blank" href="{photo_url}"> <img src="{url}" ' \
-                    'width="90px"></a>'.format(photo_url=photo_path, url=obj_path) + '\n'
+                    'width="90px"></a>'.format(photo_url=photo_path, url=obj.get_photo_url()) + '\n'
         return mark_safe(link)
 
 
@@ -111,11 +106,9 @@ class PhotoAdmin(admin.ModelAdmin):
         """
 
         # taking photos from local dir
-        obj_path = os.path.join(settings.AWS_S3_PHOTOS_DIR, str(obj.map_square.number),
-                                str(obj.number) + '_photo.jpg')
         return mark_safe(
             '<a target="blank" href="{url}"> <img src="{url}" width="90px"></a>'.format(
-                url=obj_path))
+                url=obj.get_photo_url()))
 
     photo_thumbnail.short_description = 'Photo'
 
@@ -124,18 +117,40 @@ class PhotoAdmin(admin.ModelAdmin):
         Displays slide of photo obj
         """
 
-        # taking photos from local dir
-        obj_path = os.path.join(settings.AWS_S3_PHOTOS_DIR, str(obj.map_square.number),
-                                str(obj.number) + '_slide.jpg')
         return mark_safe('<a target="blank" href="{url}"> <img src="{url}" width="90px" '
-                         '></a>'.format(url=obj_path))
+                         '></a>'.format(url=obj.get_photo_url()))
 
     photo_slide.short_description = 'Slide'
 
 
 class PhotographerAdmin(admin.ModelAdmin):
+    list_display = ["id", "name", "number", "approx_loc", "map_square"]
+    search_fields = ['id', 'number', "name", "approx_loc", "map_square__number"]
+    
+    def map_square(self, obj):
+        """
+        Returns map square number
+        """
+        link = os.path.join('/admin/app/mapsquare', str(obj.map_square.id))
+        cmd = '<a target="blank" href="{url}">{title}</a>'.format(url=link,
+                                                                  title=obj.map_square.number)
+        return mark_safe(cmd)
     list_display = ["id", "name", "number"]
 
+class PhotoAnalysisResultAdmin(admin.ModelAdmin):
+    """
+    Photo Analysis Result
+    """
+    list_display = ('id','number','distance','photo_analysis_result','map_square_number',
+                    'photo_thumbnail','photographer__name','photographer_info')
+    search_fields = ['id','number','map_square_number','photo_thumbnail','photographer__name',
+                    'photographer_info']
+    readonly_fields = ('photo_thumbnail','photo_analysis_result')
+    
+    photo = models.ForeignKey(Photo, on_delete=models.CASCADE, null=False)
+
+    def __str__(self):
+        return f'PhotoAnalysisResult {self.name} for photo with id {self.photo.id}'
 
 admin.site.register(CorpusAnalysisResult)
 admin.site.register(MapSquare, MapSquareAdmin)

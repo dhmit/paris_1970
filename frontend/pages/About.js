@@ -150,6 +150,18 @@ const studentMembers = [
         name: "Vicky Zheng",
         photoSrc: Zheng_Vicky
     },
+    { 
+        name: "Cindy Zheng",
+        photoSrc: Zheng_Vicky
+    },
+    { 
+        name: "Lisa Li-Liang",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Kingston Lew",
+        photoSrc: Lew_Kingston
+    },
     {
         name: "Nisha Nkya",
         photoSrc: Zheng_Vicky
