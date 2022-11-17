@@ -3,7 +3,6 @@ This file controls the administrative interface for paris_1970 app
 """
 import os
 from django.db import models
-from django.conf import settings
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from .models import (
