@@ -39,6 +39,7 @@ class MapSquareAdmin(admin.ModelAdmin):
         """
 
         # filter for all photo objects with obj's map square number
+        # TODO(ra): use the reverse relationship and count() here
         photo_obj = Photo.objects.filter(map_square__number=obj.number)
         return len(photo_obj)
 
@@ -51,11 +52,14 @@ class MapSquareAdmin(admin.ModelAdmin):
         """
         link = ''
         # filter for all photo objects of obj map square
+        # TODO(ra): use the reverse relationship here
         photo_obj = Photo.objects.filter(map_square__number=obj.number)
         for photo in photo_obj:
             # path to photo
-            obj_path = os.path.join(settings.LOCAL_PHOTOS_DIR, str(obj.number),
+            obj_path = os.path.join(settings.AWS_S3_PHOTOS_DIR, str(obj.number),
                                     str(photo.number) + '_photo.jpg')
+        
+
 
             # path to photo's admin change page
             photo_path = os.path.join('/admin/app/photo', str(photo.id))
@@ -109,7 +113,7 @@ class PhotoAdmin(admin.ModelAdmin):
         """
 
         # taking photos from local dir
-        obj_path = os.path.join(settings.LOCAL_PHOTOS_DIR, str(obj.map_square.number),
+        obj_path = os.path.join(settings.AWS_S3_PHOTOS_DIR, str(obj.map_square.number),
                                 str(obj.number) + '_photo.jpg')
         return mark_safe(
             '<a target="blank" href="{url}"> <img src="{url}" width="90px"></a>'.format(
@@ -123,7 +127,7 @@ class PhotoAdmin(admin.ModelAdmin):
         """
 
         # taking photos from local dir
-        obj_path = os.path.join(settings.LOCAL_PHOTOS_DIR, str(obj.map_square.number),
+        obj_path = os.path.join(settings.AWS_S3_PHOTOS_DIR, str(obj.map_square.number),
                                 str(obj.number) + '_slide.jpg')
         return mark_safe('<a target="blank" href="{url}"> <img src="{url}" width="90px" '
                          '></a>'.format(url=obj_path))

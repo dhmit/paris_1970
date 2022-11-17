@@ -1,7 +1,6 @@
 import React from "react";
-import * as PropTypes from "prop-types";
 
-function getValue(dictionary, key, default_val) {
+export function getValue(dictionary, key, default_val) {
     let result = dictionary[key];
     if (typeof result === "undefined") {
         result = default_val;
@@ -15,10 +14,11 @@ export class PhotoViewer extends React.Component {
     }
 
     getSource(photoData, displaySide = "photo") {
-        photoData.propTypes = {
-            map_square_number: PropTypes.object
-        };
-        return `${this.props.photoDir}/${photoData.map_square_number}/${photoData.number}_${displaySide}.jpg`;
+        if (displaySide === "photo") {
+            return photoData.photo_url;
+        } else {
+            return photoData.slide_url;
+        }
     };
 
     getPhotoGrid(photoData, config = {}) {
@@ -28,12 +28,13 @@ export class PhotoViewer extends React.Component {
             config,
             "titleFunc",
             (k, photo) => `Map Square: ${photo["map_square_number"]}` +
-                `, Photo: ${photo["number"]}`
+                `, Folder: ${photo.folder}, Photo: ${photo["number"]}`
         );
+
         const hrefFunc = getValue(
             config,
             "hrefFunc",
-            (k, photo) => `/photo/${photo["map_square_number"]}/${photo["number"]}/`
+            (k, photo) => `/photo/${photo.map_square_number}/${photo.folder}/${photo.number}/`
         );
 
         const onClickFunc = getValue(
@@ -41,8 +42,6 @@ export class PhotoViewer extends React.Component {
             }
         );
         return photoData.map((photo, k) => {
-            // TODO: This is where we cap up to 10 photos. Maybe this needs to live on the backend?
-            if (k >= 10) return <></>;
             return (
                 <li className={`default-photo photo-item-background text-center list-inline-item ${className}`}
                     key={k}
@@ -99,9 +98,5 @@ export class PhotoViewer extends React.Component {
         );
     }
 }
-
-PhotoViewer.propTypes = {
-    photoDir: PropTypes.string
-};
 
 export default PhotoViewer;
