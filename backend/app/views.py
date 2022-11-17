@@ -1,4 +1,4 @@
-"""
+"""_photo_url()
 These view functions and classes implement API endpoints
 """
 import ast
@@ -115,9 +115,13 @@ def search_photographers(request):
     name = request.GET.get("name", None)
     is_searching_by_name = name is not None and name.strip() != ""
     if is_searching_by_name:
-        matching_photographers = Photographer.objects.filter(name__icontains=name).order_by("name")
+        matching_photographers = (Photographer.objects.filter(name__icontains=name)
+                                                      .order_by("name")
+                                                      .prefetch_related("photo_set"))
     else:
-        matching_photographers = Photographer.objects.all().order_by("name")[:50]
+        matching_photographers = (Photographer.objects.all()
+                                                      .order_by("name")
+                                                      .prefetch_related("photo_set")[:50])
 
     serialized_photographers = (
         PhotographerSearchSerializer(matching_photographers, many=True)
