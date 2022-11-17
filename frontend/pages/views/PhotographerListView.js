@@ -5,6 +5,7 @@ import {debounce} from "../../common";
 
 import Chevron from "../../images/icons/chevron_down.svg";
 import RedBlueBox from "../../images/icons/red_blue_box.svg";
+import RedBlueBoxUrl from "../../images/icons/red_blue_box.svg?url";
 
 class DropDown extends React.Component {
     constructor(props) {
@@ -94,15 +95,6 @@ export class PhotographerListView extends React.Component {
         this.SORTS = ["10", "11", "12"];
     }
 
-    hrefFunc(number) {
-        return `/photographer/${number}`;
-    }
-
-    srcFunc(number) {
-        // return `${this.props.photoListDir}/${number}_photo.jpg`;
-        return `/api/photographer/${number}/photographs`;
-    }
-
     updatePhotographers(name) {
         const fetchPhotographers = async (sq) => {
             try {
@@ -120,22 +112,31 @@ export class PhotographerListView extends React.Component {
 
     getPhotoList() {
         const photoSize = [100, 100];
-        return this.state.photographers.map((photographer, k) => {
+
+        const photoList = this.state.photographers.map((photographer, k) => {
+            const examplePhotoSrc = photographer.example_photo_src;
+            let imgElement;
+
+            if (examplePhotoSrc) {
+                const altText = `An example photograph by ${photographer.name}`;
+                imgElement = <img alt={altText} width={photoSize[0]} src={photographer.example_photo_src} />;
+            } else {
+                const altText = "A placeholder image because an example photograph by " + 
+                                `${photographer.name} is missing.`;
+                imgElement = <img alt={altText} width={photoSize[0]} src={RedBlueBoxUrl} />;
+            }
+
             return (
                 <li className="col-2 col-lg-2 one-photographer list-inline-item" key={k}>
-                    <div className="child">
-                        <a key={k} href={this.hrefFunc(photographer.number)}>
-                            <img
-                                alt={photographer.number}
-                                width={photoSize[0]}
-                                src={photographer.photo.src}
-                            />
-                        </a>
-                        <p>{photographer.name ? photographer.name : "No Name"}</p>
-                    </div>
+                    <a key={k} href={`/photographer/${photographer.number}`}>
+                        {imgElement}
+                    </a>
+                    <p>{photographer.name ? photographer.name : "No Name"}</p>
                 </li>
             );
         });
+
+        return photoList;
     }
 
     handleScroll = () => {

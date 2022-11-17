@@ -1,4 +1,4 @@
-"""
+"""_photo_url()
 These view functions and classes implement API endpoints
 """
 import ast
@@ -6,6 +6,7 @@ import json
 import os
 import re
 
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
@@ -115,9 +116,13 @@ def search_photographers(request):
     name = request.GET.get("name", None)
     is_searching_by_name = name is not None and name.strip() != ""
     if is_searching_by_name:
-        matching_photographers = Photographer.objects.filter(name__icontains=name).order_by("name")
+        matching_photographers = (Photographer.objects.filter(name__icontains=name)
+                                                      .order_by("name")
+                                                      .prefetch_related("photo_set"))
     else:
-        matching_photographers = Photographer.objects.all().order_by("name")[:50]
+        matching_photographers = (Photographer.objects.all()
+                                                      .order_by("name")
+                                                      .prefetch_related("photo_set")[:50])
 
     serialized_photographers = (
         PhotographerSearchSerializer(matching_photographers, many=True)
@@ -137,17 +142,6 @@ def get_photographer(request, photographer_number=None):
     else:
         photographer_obj = Photographer.objects.all()
     serializer = PhotographerSerializer(photographer_obj, many=photographer_number is None)
-    return Response(serializer.data)
-
-@api_view(['GET'])
-def get_photographer_photos(request, photographer_number):
-    """
-    API endpoint to get a photographer based on the photographer_id
-    If given photographer_number, GETs associated photographs
-    """
-    photo_obj = Photo.objects.filter(photographer__number = photographer_number)
-    print(photo_obj)
-    serializer = PhotoSerializer(photo_obj, many=photographer_number is None)
     return Response(serializer.data)
 
 
