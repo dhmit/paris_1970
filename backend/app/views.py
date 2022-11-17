@@ -36,37 +36,6 @@ from .serializers import (
     CorpusAnalysisResultsSerializer
 )
 
-locations = sorted(
-    filter(
-        lambda x: x is not None, 
-        list(
-            set(Photographer.objects.all().values_list('approx_loc', flat=True))
-        )
-    )
-)
-squares = sorted(
-    filter(
-        lambda x: x is not None, 
-        list(
-            set(Photographer.objects.all().values_list('map_square_id', flat=True))
-        )
-    )
-)
-nameStartsWith = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-orderBy = [
-    "Name: ascending", 
-    "Name: descending", 
-    "Location: ascending", 
-    "Location: descedning", 
-    "Map Square #: ascending", 
-    "Map Square #: descending"
-]
-photographer_search_options = {
-    "locations": locations,
-    "squares": squares,
-    "nameStartsWith": nameStartsWith,
-    "orderBy": orderBy
-}
 
 @api_view(['GET'])
 def photo(request, map_square_number, folder_number, photo_number):
@@ -229,6 +198,42 @@ def get_search_photographers_dropdown_options(request):
     TODO: Add pagination for both cases (when given a search query and when nothing is given) 
     so that the user is sent the first 50 results and they can view more results as they scroll down the page.
     """
+    locations = sorted(
+        filter(
+            lambda x: x is not None, 
+            list(
+                set(Photographer.objects.all().values_list('approx_loc', flat=True))
+            )
+        )
+    )
+
+    squares = sorted(
+        filter(
+            lambda x: x is not None, 
+            list(
+                set(Photographer.objects.all().values_list('map_square_id', flat=True))
+            )
+        )
+    )
+
+    nameStartsWith = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+    orderBy = [
+        "Name: ascending", 
+        "Name: descending", 
+        "Location: ascending", 
+        "Location: descedning", 
+        "Map Square #: ascending", 
+        "Map Square #: descending"
+    ]
+
+    photographer_search_options = {
+        "locations": locations,
+        "squares": squares,
+        "nameStartsWith": nameStartsWith,
+        "orderBy": orderBy
+    }
+
     res = Response(photographer_search_options)
     return res
 
