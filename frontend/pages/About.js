@@ -162,6 +162,18 @@ const studentMembers = [
         name: "Kelly Fang",
         photoSrc: Zheng_Vicky
     },
+    {
+        name: "Kamau Njendu",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Supriya Lall",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: 'David Chaudhari',
+        photoSrc: Zheng_Vicky
+    },
     { 
         name: "Cindy Zheng",
         photoSrc: Zheng_Vicky
