@@ -160,7 +160,7 @@ const studentMembers = [
     },
     {
         name: "Kingston Lew",
-        photoSrc: Lew_Kingston
+        photoSrc: Zheng_Vicky,
     },
     {
         name: "Nisha Nkya",
