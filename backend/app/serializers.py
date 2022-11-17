@@ -166,10 +166,20 @@ class PhotographerSearchSerializer(serializers.ModelSerializer):
     """
     Serializes a photographer for the search page
     """
+    example_photo_src = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_example_photo_src(instance):
+        # TODO(ra): Maybe this should be random?
+        example_photo = instance.photo_set.first()
+        if example_photo:
+            return example_photo.get_photo_url()
+        else:
+            return None
 
     class Meta:
         model = Photographer
-        fields = ['id', 'name', 'number']
+        fields = ['id', 'name', 'number', 'example_photo_src']
 
 
 class PhotoForPhotographerSerializer(serializers.ModelSerializer):
