@@ -150,16 +150,34 @@ const studentMembers = [
         name: "Vicky Zheng",
         photoSrc: Zheng_Vicky
     },
+    { 
+        name: "Cindy Zheng",
+        photoSrc: Zheng_Vicky
+    },
+    { 
+        name: "Lisa Li-Liang",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Kingston Lew",
+        photoSrc: Zheng_Vicky,
+    },
+    {
+        name: "Nisha Nkya",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Vivian Chinoda",
+        photoSrc: Zheng_Vicky
+    },
     {
         name: "Amanda Paredes Rioboo",
         photoSrc: Zheng_Vicky
     },
-    
     {
         name: "Disha Kohli",
         photoSrc: Ahmed_Ryaan
     },
-
     {
         name: "Maggie Yao",
         photoSrc: Zen_Hilary

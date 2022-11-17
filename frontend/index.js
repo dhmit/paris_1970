@@ -11,6 +11,7 @@ import {HomePage} from "./pages/Home";
 import {PhotoView} from "./pages/views/PhotoView";
 import {PhotographerView} from "./pages/views/PhotographerView";
 import {MapSquareView} from "./pages/views/MapSquareView";
+import {TextOCRView} from "./pages/views/TextOCRView";
 import {Search} from "./pages/Search";
 import About from "./pages/About";
 import Blog from "./pages/Blog";
@@ -37,6 +38,7 @@ const COMPONENTS = {
     PhotographerView,
     MapSquareView,
     MapPage,
+    TextOCRView,
     TagView,
     PhotographerListView,
     Logo

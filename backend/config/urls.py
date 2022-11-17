@@ -51,7 +51,9 @@ urlpatterns = [
 
     # Photographers
    	path('api/search_photographers/', views.search_photographers),
+   	path('api/search_photographers/dropdown_options', views.get_search_photographers_dropdown_options),
     path('api/photographer/', views.get_photographer, name="all_photographers"),
+    
     path('api/photographer/<int:photographer_number>/', views.get_photographer,
          name='photographer'),
 
@@ -72,6 +74,7 @@ urlpatterns = [
     path('api/corpus_analysis/', views.get_corpus_analysis_results, name="get_corpus"),
     path('api/clustering/<int:number_of_clusters>/<int:cluster_number>/',
          views.get_photos_by_cluster, name="clustering"),
+    path('api/text_ocr/', views.get_images_with_text),
 
     path('api/search/', views.search, name="search"),
 
@@ -112,6 +115,7 @@ urlpatterns = [
 
     # Map Squares
     path('map_square/<int:map_square_number>/', views.map_square_view),
+    path('text_ocr/', views.text_ocr_view),
 
     # path('clustering/<int:num_of_clusters>/<int:cluster_num>/', views.cluster_view),
     # BFlog urls
