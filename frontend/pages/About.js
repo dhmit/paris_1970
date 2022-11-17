@@ -160,7 +160,15 @@ const studentMembers = [
     },
     {
         name: "Kingston Lew",
-        photoSrc: Lew_Kingston
+        photoSrc: Zheng_Vicky,
+    },
+    {
+        name: "Nisha Nkya",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Vivian Chinoda",
+        photoSrc: Zheng_Vicky
     },
     {
         name: "Amanda Paredes Rioboo",
