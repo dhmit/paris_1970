@@ -7,8 +7,6 @@ from torch import nn
 from app.models import Photo
 from app.analysis.photo_similarity import similarity_utils
 
-MODEL = Photo
-
 
 def analyze(photo: Photo):
     """

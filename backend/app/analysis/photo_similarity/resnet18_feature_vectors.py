@@ -12,8 +12,6 @@ from django.conf import settings
 
 from app.models import Photo
 
-MODEL = Photo
-
 
 def analyze(photo: Photo):
     """

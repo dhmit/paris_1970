@@ -30,18 +30,8 @@ DATABASES = {
        'NAME': 'paris1970-urop-fa22',
        'PORT': '5432',
        'PASSWORD': db_pw,
-   }
+    }
 }
-
-# NOTE(ra): AWS RDS is down on 2022-09-09 during our first hack session,
-# so we're patching in this temporary sqlite3 DB. We'll restore the original
-# situation once it's back up.
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BACKEND_DIR, 'db.sqlite3'),
-#     }
-# }
 
 
 SITE_ID = 1

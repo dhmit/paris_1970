@@ -10,8 +10,6 @@ from django.conf import settings
 
 from ..models import Photo
 
-MODEL = Photo
-
 
 # Code Source:
 # https://www.pyimagesearch.com/2018/09/17/opencv-ocr-and-text-recognition-with-tesseract/

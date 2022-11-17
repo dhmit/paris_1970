@@ -2,21 +2,23 @@
 @import "fonts";
 
 .legend {
-    background-color: white;
+    position: absolute; 
+    background-color: $color-white;
     border: 1px solid $color-black;
     z-index: 999;
     padding: 0.4em;
-    position: absolute;
-    text-align: left;
-    line-height: 18px;
-    color: #555;
-    width: 7em;
-    overflow-x: scroll;
+    width: 7.8em;
+    height: 5.6em; 
     right: 0.5em;
     top: 0.5em;
+    color: $color-black;
+    text-align: left;
+    line-height: 0px;
+    font-family: $font-family-bold;
+    overflow-x: scroll;
 
     h6 {
-        font-family: $font-family-bold;
+        font-weight: 700;
     }
 
     ul {
@@ -28,34 +30,42 @@
     }
 
     .label {
-        font-family: $font-family-bold;
-        font-size: .6em;
         position: relative;
-        top: 0.3em;
+        font-size: .7em;
+        bottom: 0.5em;
+    }
+
+    .photos-available-subtext {
+        position: absolute;
+        bottom: 1.2em;
+        right: 1.5em;
+        font-size: .55em;
+        text-align: center;
     }
 }
 
 .legend-square {
-    height: 1em;
-    width: 1em;
-    cursor: pointer;
+    height: 1.5em;
+    width: 1.5em;
     margin-right: 0.2em;
+    cursor: pointer;
 
-    &.photo {
-        background-color: #FF7E7A;
-        border: 3px solid $color-red;
+    &.photos {
+        border: 0.1px solid $color-white;
+        background: url("../images/icons/photo_density_legend_icon.svg");
+        background-size: cover;
+    }
+    &.photos.inactive {
+        filter: grayscale(60%);
     }
 
-    &.photo.inactive {
-        background-color: #7e5756;
-        border: 3px solid #693a38;
+    &.arrondissement {
+        background-color: #70D8F1;
+        border: 4px solid #00B1DB;
     }
-
-    &.arrondissements {
-        border: 3px solid $color-link;
-    }
-
-    &.arrondissements.inactive {
-        border: 3px solid #6f989d;
+    &.arrondissement.inactive {
+        filter: grayscale(60%);
     }
 }
+
+

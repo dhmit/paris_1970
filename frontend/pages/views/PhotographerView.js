@@ -21,7 +21,10 @@ export class PhotographerView extends PhotoViewer {
     async componentDidMount() {
         try {
             const response = await fetch(`/api/photographer/${this.props.photographerNumber}/`);
-            const selected = await fetch("/api/photo/1554/70");
+
+            // TODO(ra): This looks like it was temporary progress code. Needs to be replaced by fetching
+            // a real photo by the photographer.
+            const selected = await fetch("/api/photo/120/1/1");
             if (!response.ok) {
                 this.setState({loading: false});
             } else {

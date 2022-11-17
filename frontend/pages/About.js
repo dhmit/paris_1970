@@ -153,7 +153,6 @@ const studentMembers = [
         name: "Amanda Paredes Rioboo",
         photoSrc: Zheng_Vicky
     },
-    
     {
         name: "Disha Kohli",
         photoSrc: Ahmed_Ryaan,
@@ -163,6 +162,62 @@ const studentMembers = [
         name: "Maggie Yao",
         photoSrc: Zen_Hilary,
     },
+    {
+        name: "Bukunmi Shodipo",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Mena Filfil",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Kelly Fang",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Kamau Njendu",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Supriya Lall",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: 'David Chaudhari',
+        photoSrc: Zheng_Vicky
+    },
+    { 
+        name: "Cindy Zheng",
+        photoSrc: Zheng_Vicky
+    },
+    { 
+        name: "Lisa Li-Liang",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Kingston Lew",
+        photoSrc: Zheng_Vicky,
+    },
+    {
+        name: "Nisha Nkya",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Vivian Chinoda",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Amanda Paredes Rioboo",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Disha Kohli",
+        photoSrc: Ahmed_Ryaan
+    },
+    {
+        name: "Maggie Yao",
+        photoSrc: Zen_Hilary
+    }
 ];
 
 function TeamMember(props) {
