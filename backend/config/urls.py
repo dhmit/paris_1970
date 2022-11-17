@@ -53,6 +53,7 @@ urlpatterns = [
    	path('api/search_photographers/', views.search_photographers),
    	path('api/search_photographers/dropdown_options', views.get_search_photographers_dropdown_options),
     path('api/photographer/', views.get_photographer, name="all_photographers"),
+    
     path('api/photographer/<int:photographer_number>/', views.get_photographer,
          name='photographer'),
 

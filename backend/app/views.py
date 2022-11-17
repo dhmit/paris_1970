@@ -1,4 +1,4 @@
-"""
+"""_photo_url()
 These view functions and classes implement API endpoints
 """
 import ast
@@ -201,6 +201,8 @@ def search_photographers(request):
         matching_photographers = Photographer.objects.all()
     else:
         matching_photographers = Photographer.objects.filter(**search_params)
+
+    matching_photographers.prefetch_related("photo_set")
 
     if order_by_field is not None:
         matching_photographers = matching_photographers.order_by(order_by_field)

@@ -1,15 +1,6 @@
 .one-photographer {
     flex-direction: row;
     justify-content: space-evenly;
-}
-
-.photographers-container {
-    padding: 1px;
-    justify-content: center;
-}
-
-.child {
-    width: 13.7%;
     margin: 20px 10px;
     background-color: $color-turquoise-light;
 
@@ -19,10 +10,18 @@
         margin-right: auto;
         width: 100%;
     }
+
     p {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
         text-align: center;
-        font-size: 12px;
+        font-size: 1rem;
     }
+}
+
+.photographers-container {
+    padding: 1px;
+    justify-content: center;
 }
 
 .photographerList-container {
