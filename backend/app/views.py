@@ -6,6 +6,7 @@ import json
 import os
 import re
 
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
@@ -402,28 +403,28 @@ def get_photo_by_similarity(request, map_square_number, folder_number, photo_num
     Number of similar photos to GET specified by num_similar_photos
     """
 
-    photo_obj = Photo.objects.get(number=photo_number, folder=folder_number, map_square__number=map_square_number)
-    analysis_obj_list = PhotoAnalysisResult.objects.filter(
-        name="photo_similarity.resnet18_cosine_similarity",
-        photo=photo_obj,
-    )
+    try:
+        analysis_obj = PhotoAnalysisResult.objects.get(
+            name="photo_similarity.resnet18_cosine_similarity",
+            photo__number=photo_number,
+            photo__map_square__number=map_square_number,
+            photo__folder=folder_number,
+        )
+    except PhotoAnalysisResult.DoesNotExist:
+        return Response("No such image", status=status.HTTP_204_NO_CONTENT)
+
+    # splices the list of similar photos to get top 'num_similar_photos' photos
+    similarity_list = analysis_obj.parsed_result()[:num_similar_photos]
 
     similar_photos = []
-    if analysis_obj_list:
-        analysis_obj = analysis_obj_list[0]
-        # splices the list of similar photos to get top 'num_similar_photos' photos
-        # TODO(ra): Probably this should be a JSON parse, not a literal eval
-        similarity_list = ast.literal_eval(analysis_obj.result)[::-1][:num_similar_photos]
+    for similar_photo in similarity_list:
+        photo = (Photo.objects.prefetch_related('map_square')
+                              .get(number=similar_photo['number'],
+                                   map_square__number=similar_photo['map_square_number'],
+                                   folder=similar_photo['folder_number']))
+        similar_photos.append(photo)
 
-        for similar_photo in similarity_list:
-            similar_photos.append(
-                Photo.objects.get(number=similar_photo.number, 
-                                  map_square__number=similar_photo.map_square_number,
-                                  folder=similar_photo.folder_number,
-                                  )
-                                )
-
-    serializer = PhotoSerializer(similar_photos, many=True)
+    serializer = SimplePhotoSerializer(similar_photos, many=True)
     return Response(serializer.data)
 
 
@@ -647,6 +648,23 @@ def text_ocr_view(request):
             'title': 'Text OCR'
         },
         'component_name': 'TextOCRView',
+    }
+    return render_view(request, context)
+
+def similar_photos_view(request, map_square_number, folder_number, photo_number):
+    """
+    Sketchy prototype view for viewing all the images similar to a given image
+    """
+    context = {
+        'page_metadata': {
+            'title': 'Similar Photos'
+        },
+        'component_name': 'SimilarityView',
+        'component_props': {
+            'mapSquareNumber': map_square_number,
+            'folderNumber': folder_number,
+            'photoNumber': photo_number,
+        }
     }
     return render_view(request, context)
 

@@ -52,10 +52,13 @@ class Command(BaseCommand):
         if run_one:
             # in a list because this has to be iterable for the loop below...
             photos = [Photo.objects.first()]
+            num_photos = 1
         else:
             photos = Photo.objects.all()
+            num_photos = photos.count()
 
-        print_header(f'Running {analysis_name} on {photos.count()} photos')
+        print_header(f'Running {analysis_name} on {num_photos} photos')
+
         photos_done = 0
         for photo in photos:
             if verbose:
@@ -87,7 +90,7 @@ class Command(BaseCommand):
                 analysis_result.save()
             except Exception as e:  # pylint: disable=bare-except
                 err_msg = (
-                    f'Photo {photo_id_str(photo)} - an analysis exists and we are not overwriting.'
+                        f'Photo {photo_id_str(photo)} - an error occured:'
                     + f'\nError: {e}.\nSkipping.'
                 )
                 print(err_msg)
