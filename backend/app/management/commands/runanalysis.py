@@ -59,6 +59,15 @@ class Command(BaseCommand):
 
         print_header(f'Running {analysis_name} on {num_photos} photos')
 
+        if '_similarity' in analysis_name:
+            feature_vectors = []
+            feature_vector_results = (
+                PhotoAnalysisResult.objects.filter(name='photo_similarity.resnet18_feature_vectors')
+                                           .prefetch_related('photo', 'photo__map_square'))
+            for result in feature_vector_results:
+
+
+
         photos_done = 0
         for photo in photos:
             if verbose:
@@ -96,6 +105,6 @@ class Command(BaseCommand):
                 print(err_msg)
 
             photos_done += 1
-            if photos_done % 100 == 0:
+            if photos_done % 25 == 0:
                 print(f'\nAnalyzed {photos_done} so far...')
 

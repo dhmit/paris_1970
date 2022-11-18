@@ -38,26 +38,11 @@ def analyze(photo: Photo):
                                      std=[0.229, 0.224, 0.225])
     to_tensor = transforms.ToTensor()
     image_tensor = Variable(normalize(to_tensor(scale(image))).unsqueeze(0))
-
-    # Create a vector of zeros that will hold our feature vector
-    # NOTE(ra): this is a hack until I figure out what's going on: should be torch.zeros(512)
-    # not (1, 512, 1, 512), but the vector I'm copying in is the wrong size...
-    get_feature_vector = {'conv1': torch.zeros(1, 64, 112, 112),
-                          'bn1': torch.zeros(1, 64, 112, 112),
-                          'relu': torch.zeros(1, 64, 112, 112),
-                          'maxpool': torch.zeros(1, 64, 56, 56),
-                          'layer1': torch.zeros(1, 64, 56, 56),
-                          'layer2': torch.zeros(1, 128, 28, 28),
-                          'layer3': torch.zeros(1, 256, 14, 14),
-                          'layer4': torch.zeros(1, 512, 7, 7),
-                          'avgpool': torch.zeros(1, 512, 1, 512),
-                          'fc': torch.zeros(1, 1000, 1, 1000)}
-
-    feature_vector = get_feature_vector[layer_name]
+    feature_vector = torch.zeros(512)
 
     # Define a function that will copy the output of a layer
     def copy_data(_module, _input, output):
-        feature_vector.copy_(output.data)
+        feature_vector.copy_(output.data.reshape(output.data.size(1)))
 
     # Attach that function to our selected layer
     hook = layer.register_forward_hook(copy_data)

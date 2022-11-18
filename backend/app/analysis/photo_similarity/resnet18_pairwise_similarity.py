@@ -9,11 +9,11 @@ from app.analysis.photo_similarity import similarity_utils
 
 
 
-def analyze(photo: Photo):
+def analyze(photo: Photo, feature_vector_dicts):
     """
     Produce a list of all other photos by cosine similarity to this photo's feature vector
     """
-    return similarity_utils.analyze_similarity(photo, pairwise_distance, reverse=True)
+    return similarity_utils.analyze_similarity(photo, feature_vector_dicts, pairwise_distance, reverse=True)
 
 
 def pairwise_distance(photo_features, other_photo_features):
