@@ -153,6 +153,8 @@ yarn-debug.log*
 yarn-error.log*
 *.swp
 db_password.txt
+remote_db_superuser_password.txt
+
 
 # Build byproducts
 webpack-stats-dev.json
