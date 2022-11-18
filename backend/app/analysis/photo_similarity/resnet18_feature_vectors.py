@@ -12,8 +12,6 @@ from django.conf import settings
 
 from app.models import Photo
 
-MODEL = Photo
-
 
 def analyze(photo: Photo):
     """
@@ -22,23 +20,11 @@ def analyze(photo: Photo):
     Totally based on https://github.com/christiansafka/img2vec/
     and the accompanying article.
     """
-
-    # Look for an existing, serialized feature vector
-    dir_path = Path(settings.ANALYSIS_PICKLE_PATH,
-                    'resnet18_features',
-                    str(photo.map_square.number))
-    dir_path.mkdir(parents=True, exist_ok=True)
-    out_path = Path(dir_path, f'{photo.number}.pt')
-
-    if out_path.exists():
-        # don't recompute -- if you need to, delete the serialized version
-        return None
-
     # Load the image using Pillow
     image = photo.get_image_data(use_pillow=True)
 
     if not image:
-        return None
+        raise ValueError(f"No image exists for {photo}")
 
     # Load the pretrained model, set to evaluation mode, and select the desired layer
     model = models.resnet18(pretrained=True)
@@ -82,7 +68,5 @@ def analyze(photo: Photo):
     # Detach our copy function from the layer
     hook.remove()
 
-    # Serialize out the result
-    torch.save(feature_vector, out_path)
-
-    return None
+    # Save the tensor as a list
+    return feature_vector.tolist()
