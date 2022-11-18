@@ -36,7 +36,7 @@ def get_tensor_for_image(photo, verbose=True):
         return None
 
 
-def analyze_similarity(photo: Photo, similarity_function, reverse=True):
+def analyze_similarity(photo: Photo, feature_vector_dicts, similarity_function, reverse=True):
     """
     Produce a list of all other photos by similarity to this photo's feature vector.
     Similarity is measured using similarity_function, a binary operation between feature
@@ -50,18 +50,15 @@ def analyze_similarity(photo: Photo, similarity_function, reverse=True):
         return []
 
     similarities = []
-    for other_photo in Photo.objects.all().prefetch_related('analyses'):
-        other_photo_features = get_tensor_for_image(other_photo, verbose=False)
-        if other_photo_features is None:
-            continue
+    for feature_vector_dict in feature_vector_dicts:
+        other_photo_features = torch.FloatTensor(feature_vector_dict['vector'])
 
         similarity_value = similarity_function(photo_features, other_photo_features)
 
         similarities.append({
-            'number': other_photo.number,
-            'map_square_number': other_photo.map_square.number,
-            'folder_number': other_photo.folder,
-            'alt': other_photo.alt,
+            'number': feature_vector_dict['number'],
+            'map_square_number': feature_vector_dict['map_square.number'],
+            'folder_number': feature_vector_dict['folder'],
             'similarity': similarity_value
         })
 
