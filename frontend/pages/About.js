@@ -1,7 +1,8 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 import Footer from "../components/Footer";
-import TitleDecoratorContainer from "../components/TitleDecoratorContainer";
+import TitleDecoratorContainer from "../components/TitleDecoratorContainer"; 
+/*import TitleDecorator from "../images/logos/title_decorator.svg"; */
 
 // Images
 import Clark_Catherine from "../images/team/Clark_Catherine.jpg";
@@ -209,6 +210,7 @@ class About extends React.Component {
                         pellentesque nec nam aliquam sem. Vitae congue mauris rhoncus aenean.
                     </p>
                     <TitleDecoratorContainer title={"Project Director"}/>
+                    
                     <div className="prof-img-div text-wrap col-xs-2 col-sm-5 col-md-5 col-lg-3">
                         <figure className="figure">
                             <img
