@@ -11,8 +11,6 @@ import cv2
 from ..models import Photo
 
 
-MODEL = Photo
-
 def analyze(photo: Photo):
     """
     Analysis function that returns the length of the photographer caption for a Photo object

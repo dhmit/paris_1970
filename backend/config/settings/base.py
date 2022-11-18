@@ -13,22 +13,36 @@ from pathlib import Path
 
 CONFIG_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BACKEND_DIR = os.path.dirname(CONFIG_DIR)
+PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
 MIGRATIONS_DIR = os.path.join(os.path.dirname(CONFIG_DIR), 'app/migrations')
 SETTINGS_DIR = os.path.join(CONFIG_DIR, 'settings')
-DB_PATH = os.path.join(BACKEND_DIR, 'db.sqlite3')
-PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
+
 BACKEND_DATA_DIR = os.path.join(BACKEND_DIR, 'data')
-GOOGLE_TOKEN_FILE = os.path.join(BACKEND_DIR, 'token.pickle')
+
 ANALYSIS_DIR = Path(PROJECT_ROOT, 'backend', 'app', 'analysis')
 ANALYSIS_PICKLE_PATH = Path(BACKEND_DIR, ANALYSIS_DIR, 'analysis_results')
-LOCAL_PHOTOS_DIR = "/static/images/photos"
-LOCAL_PHOTOS_LOCATION = Path(PROJECT_ROOT, 'assets', 'images', 'photos')
+
+PHOTOGRAPHERS_DIR = Path(PROJECT_ROOT, 'static', 'images', 'photographers')
+
+# Analysis paths
 TEST_PHOTOS_DIR = Path(PROJECT_ROOT, 'backend', 'data', 'test_photos')
 TESSDATA_DIR = Path(PROJECT_ROOT, 'backend', 'data', 'tessdata')
 TEXT_DETECTION_PATH = Path(BACKEND_DATA_DIR, 'frozen_east_text_detection.pb')
 YOLO_DIR = Path(ANALYSIS_DIR, 'yolo_files')
+
+# Photo paths
+AWS_S3_PHOTOS_DIR = "https://paris1970-fa22-dev-assets.s3.amazonaws.com/jpg_size_25"
+
+# NOTE(Ryaan 2022-11-15)
+# This directory is where runanalysis looks for image data, rather than looking
+# at our S3 bucket. This means in order to run analyses, you need to have a local
+# copy of all of the images.
+# We used to use this directory as a fallback in development for _showing_ images
+# as well, but we no longer do this: all image display is via the S3 bucket.
+LOCAL_PHOTOS_DIR = None
+
 BLOG_ROOT_URL = "blog"
-AWS_S3_PHOTOS_DIR = "https://paris1970-fa22-dev-assets.s3.amazonaws.com/photos"
+
 
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 

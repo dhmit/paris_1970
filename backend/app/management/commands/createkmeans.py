@@ -73,6 +73,7 @@ class Command(BaseCommand):
             # assigned
             for photo_id in photo_ids:
                 number, map_square_number = photo_id.split('_')
+                # TODO(ra): fix this to incorporate folder number (maybe?)
                 valid_photos.append(
                     Photo.objects.filter(
                         number=int(number),

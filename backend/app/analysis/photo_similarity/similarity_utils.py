@@ -9,18 +9,17 @@ import torch
 
 from django.conf import settings
 
-from app.models import Photo
+from app.models import Photo, PhotoAnalysisResult
 
 
-def deserialize_tensor(photo, verbose=True):
+def get_tensor_for_image(photo, verbose=True):
     """
     Retrieve and deserialize the tensor that was generated for the input photo.
     """
-    dir_path = Path(settings.ANALYSIS_PICKLE_PATH,
-                    'resnet18_features',
-                    str(photo.map_square.number))
-    serialized_feature_vector_path = Path(dir_path, f'{photo.number}.pt')
-    if not serialized_feature_vector_path.exists():
+
+    try:
+        analysis = photos.analyses.filter(name='photo_similarity.resnet18_feature_vectors')
+    except PhotoAnalysisResult.DoesNotExist:
         if verbose:
             print(
                 f'A feature vector for photo {photo.number} in map square {photo.map_square.number} '
@@ -29,8 +28,12 @@ def deserialize_tensor(photo, verbose=True):
             )
         return None
 
-    tensor = torch.load(serialized_feature_vector_path)
-    return tensor
+    feature_vector_list = analysis.parsed_result()
+    if feature_vector_list:  # for testing, this might be None
+        tensor = torch.FloatTensor(feature_vector_list)
+        return tensor
+    else:
+        return None
 
 
 def analyze_similarity(photo: Photo, similarity_function, reverse=True):
@@ -42,13 +45,13 @@ def analyze_similarity(photo: Photo, similarity_function, reverse=True):
     reverse argument is needed because the output sort order from the sim function
     is sometimes ascending, sometimes descending
     """
-    photo_features = deserialize_tensor(photo, verbose=True)
+    photo_features = get_tensor_for_image(photo, verbose=True)
     if photo_features is None:
         return []
 
     similarities = []
-    for other_photo in Photo.objects.all():
-        other_photo_features = deserialize_tensor(other_photo, verbose=False)
+    for other_photo in Photo.objects.all().prefetch_related('analyses'):
+        other_photo_features = get_tensor_for_image(other_photo, verbose=False)
         if other_photo_features is None:
             continue
 
@@ -57,6 +60,7 @@ def analyze_similarity(photo: Photo, similarity_function, reverse=True):
         similarities.append({
             'number': other_photo.number,
             'map_square_number': other_photo.map_square.number,
+            'folder_number': other_photo.folder,
             'alt': other_photo.alt,
             'similarity': similarity_value
         })

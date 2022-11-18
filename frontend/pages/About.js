@@ -34,132 +34,197 @@ import Yang_Funing from "../images/team/Yang_Funing.jpg";
 import Zen_Hilary from "../images/team/Zen_Hilary.jpg";
 import Zheng_Vicky from "../images/team/Zheng_Vicky.jpg";
 
-
 const staffMembers = [
     {
         name: "Stephanie Frampton",
         title: "Faculty Director & Associate Professor of Literature",
-        photoSrc: Frampton_Stephanie
+        photoSrc: Frampton_Stephanie,
     },
     {
         name: "Ryaan Ahmed",
         title: "Technical Director & Senior Research Engineer",
-        photoSrc: Ahmed_Ryaan
+        photoSrc: Ahmed_Ryaan,
     },
     {
         name: "Erica Zimmer",
         title: "Research Associate",
-        photoSrc: Zimmer_Erica
+        photoSrc: Zimmer_Erica,
     },
     {
         name: "Cole Fountain",
         title: "Administrative Assistant II",
-        photoSrc: Fountain_Cole
-    }
+        photoSrc: Fountain_Cole,
+    },
 ];
 
 const studentMembers = [
     {
         name: "Adanna Abraham-Igwe",
-        photoSrc: Abraham_Igwe_Adanna
+        photoSrc: Abraham_Igwe_Adanna,
     },
     {
         name: "Tolulope Akinbo",
-        photoSrc: Akinbo_Tolulope
+        photoSrc: Akinbo_Tolulope,
     },
     {
         name: "Eesha Banerjee",
-        photoSrc: Banerjee_Eesha
+        photoSrc: Banerjee_Eesha,
     },
     {
         name: "Joshua Feliciano",
-        photoSrc: Feliciano_Joshua
+        photoSrc: Feliciano_Joshua,
     },
     {
         name: "Raquel Garcia",
-        photoSrc: Garcia_Raquel
+        photoSrc: Garcia_Raquel,
     },
     {
         name: "Montse Garza",
-        photoSrc: Garza_Montse
+        photoSrc: Garza_Montse,
     },
     {
         name: "Michelle He",
-        photoSrc: He_Michelle
+        photoSrc: He_Michelle,
     },
     {
         name: "Peihua Huang",
-        photoSrc: Huang_Peihua
+        photoSrc: Huang_Peihua,
     },
     {
         name: "Nicole Khaimov",
-        photoSrc: Khaimov_Nicole
+        photoSrc: Khaimov_Nicole,
     },
     {
         name: "Ning-Er Lei",
-        photoSrc: Lei_Ning_Er
+        photoSrc: Lei_Ning_Er,
     },
     {
         name: "Felix Li",
-        photoSrc: Li_Felix
+        photoSrc: Li_Felix,
     },
     {
         name: "Jackie Lin",
-        photoSrc: Lin_Jackie
+        photoSrc: Lin_Jackie,
     },
     {
         name: "Jason Lin",
-        photoSrc: Lin_Jason
+        photoSrc: Lin_Jason,
     },
     {
         name: "Radha Patel",
-        photoSrc: Patel_Radha
+        photoSrc: Patel_Radha,
     },
     {
         name: "Lydia Patterson",
-        photoSrc: Patterson_Lydia
+        photoSrc: Patterson_Lydia,
     },
     {
         name: "Sabrina Romero",
-        photoSrc: Romero_Sabrina
+        photoSrc: Romero_Sabrina,
     },
     {
         name: "Justice Vidal",
-        photoSrc: Vidal_Justice
+        photoSrc: Vidal_Justice,
     },
     {
         name: "Rona Wang",
-        photoSrc: Wang_Rona
+        photoSrc: Wang_Rona,
     },
     {
         name: "Yifan Wang",
-        photoSrc: Wang_Yifan
+        photoSrc: Wang_Yifan,
     },
     {
         name: "Dylan Weber",
-        photoSrc: Weber_Dylan
+        photoSrc: Weber_Dylan,
     },
     {
         name: "Funing Yang",
-        photoSrc: Yang_Funing
+        photoSrc: Yang_Funing,
     },
     {
         name: "Hilary Zen",
-        photoSrc: Zen_Hilary
+        photoSrc: Zen_Hilary,
     },
     {
         name: "Vicky Zheng",
+        photoSrc: Zheng_Vicky,
+    },
+    {
+        name: "Amanda Paredes Rioboo",
         photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Disha Kohli",
+        photoSrc: Ahmed_Ryaan,
+    },
+
+    {
+        name: "Maggie Yao",
+        photoSrc: Zen_Hilary,
+    },
+    {
+        name: "Bukunmi Shodipo",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Mena Filfil",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Kelly Fang",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Kamau Njendu",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Supriya Lall",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: 'David Chaudhari',
+        photoSrc: Zheng_Vicky
+    },
+    { 
+        name: "Cindy Zheng",
+        photoSrc: Zheng_Vicky
+    },
+    { 
+        name: "Lisa Li-Liang",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Kingston Lew",
+        photoSrc: Zheng_Vicky,
+    },
+    {
+        name: "Nisha Nkya",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Vivian Chinoda",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Amanda Paredes Rioboo",
+        photoSrc: Zheng_Vicky
+    },
+    {
+        name: "Disha Kohli",
+        photoSrc: Ahmed_Ryaan
+    },
+    {
+        name: "Maggie Yao",
+        photoSrc: Zen_Hilary
     }
 ];
 
 function TeamMember(props) {
     return (
         <div className="urop-view">
-            <img
-                className="urop-image"
-                src={props.photoSrc}
-            />
+            <img className="urop-image" src={props.photoSrc} />
             <div className="urop-image-overlay">
                 <div className="urop-text">
                     <h4>{props.name}</h4>
@@ -172,9 +237,8 @@ function TeamMember(props) {
 
 TeamMember.propTypes = {
     name: PropTypes.bool,
-    photoSrc: PropTypes.string
+    photoSrc: PropTypes.string,
 };
-
 
 class About extends React.Component {
     constructor(props) {
@@ -275,7 +339,7 @@ class About extends React.Component {
 }
 
 About.propTypes = {
-    text: PropTypes.array
+    text: PropTypes.array,
 };
 
 export default About;
