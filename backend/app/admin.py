@@ -60,15 +60,9 @@ class MapSquareAdmin(admin.ModelAdmin):
         photo_obj = Photo.objects.filter(map_square__number=obj.number)
         for photo in photo_obj:
             # path to photo
-            obj_path = os.path.join(settings.AWS_S3_PHOTOS_DIR, str(obj.number),
-                                    str(photo.number) + '_photo.jpg')
-        
-
-
-            # path to photo's admin change page
-            photo_path = os.path.join('/admin/app/photo', str(photo.id))
+            obj_path = photo.get_photo_url()
             link += '<a target="blank" href="{photo_url}"> <img src="{url}" ' \
-                    'width="90px"></a>'.format(photo_url=photo_path, url=obj_path) + '\n'
+                    'width="90px"></a>'.format(photo_url=obj_path, url=obj_path) + '\n'
         return mark_safe(link)
 
 
@@ -117,8 +111,7 @@ class PhotoAdmin(admin.ModelAdmin):
         """
 
         # taking photos from local dir
-        obj_path = os.path.join(settings.AWS_S3_PHOTOS_DIR, str(obj.map_square.number),
-                                str(obj.number) + '_photo.jpg')
+        obj_path = obj.get_photo_url()
         return mark_safe(
             '<a target="blank" href="{url}"> <img src="{url}" width="90px"></a>'.format(
                 url=obj_path))
