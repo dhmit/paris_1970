@@ -63,14 +63,16 @@ class Command(BaseCommand):
 
         feature_vectors = []
         if running_similarity:
+            print(f'Gathering feature vectors...')
+
             feature_vector_results = (
                 PhotoAnalysisResult.objects.filter(name='photo_similarity.resnet18_feature_vectors')
                                            .prefetch_related('photo', 'photo__map_square'))
             for result in feature_vector_results:
                 feature_vectors.append({
-                    'vector': result.parsed_result()
+                    'vector': result.parsed_result(),
                     'map_square_number': result.photo.map_square.number,
-                    'folder_number': result.photo.folder_number,
+                    'folder_number': result.photo.folder,
                     'photo_number': result.photo.number,
                 })
 

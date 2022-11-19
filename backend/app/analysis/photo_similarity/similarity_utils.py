@@ -18,7 +18,7 @@ def get_tensor_for_image(photo, verbose=True):
     """
 
     try:
-        analysis = photos.analyses.filter(name='photo_similarity.resnet18_feature_vectors')
+        analysis = photo.analyses.get(name='photo_similarity.resnet18_feature_vectors')
     except PhotoAnalysisResult.DoesNotExist:
         if verbose:
             print(
@@ -56,9 +56,9 @@ def analyze_similarity(photo: Photo, feature_vector_dicts, similarity_function, 
         similarity_value = similarity_function(photo_features, other_photo_features)
 
         similarities.append({
-            'number': feature_vector_dict['number'],
-            'map_square_number': feature_vector_dict['map_square.number'],
-            'folder_number': feature_vector_dict['folder'],
+            'number': feature_vector_dict['photo_number'],
+            'map_square_number': feature_vector_dict['map_square_number'],
+            'folder_number': feature_vector_dict['folder_number'],
             'similarity': similarity_value
         })
 

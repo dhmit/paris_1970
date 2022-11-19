@@ -19,7 +19,7 @@ def cosine_similarity(photo_features, other_photo_features):
     """
     Compute the cosine similarity between two feature vectors.
     """
-    cosine_similarity_func = nn.CosineSimilarity(dim=1)
+    cosine_similarity_func = nn.CosineSimilarity(dim=0)
     similarity = cosine_similarity_func(photo_features, other_photo_features)
     cosine_similarity_mean = torch.mean(similarity).item()
     return cosine_similarity_mean
