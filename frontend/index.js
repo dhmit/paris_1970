@@ -43,6 +43,7 @@ const COMPONENTS = {
     Search,
     SimilarityView,
     TagView,
+    PhotographerListView,
     TextOCRView,
 };
 
