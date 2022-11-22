@@ -151,3 +151,26 @@ footer {
         background-color: $color-red !important;
     }
 }
+
+.scroll_down {
+    position: absolute;
+    bottom: 0;
+    top: 100%;
+    left: 50%;
+    right: 50%;
+    border: none;
+    margin: auto;
+}
+
+.transparent_button {
+    @extend .btn;
+    background-color: transparent;
+}
+
+.see_below_text {
+    @extend .btn-secondary;
+    text-align: center;
+    display: inline-block;
+    left: 50%;
+    right: 50%;
+}
