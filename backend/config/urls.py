@@ -48,6 +48,7 @@ urlpatterns = [
     path('api/similar_photos/<int:map_square_number>/<int:folder_number>/<int:photo_number>/<int:num_similar_photos>/',
          views.get_photo_by_similarity, name="similar_photos"),
     path('api/all_photos/', views.all_photos, name="all_photos"),
+    path('api/random_photos/',views.get_random_photos, name = "random_photos"),
 
     # Photographers
     path('api/search_photographers/', views.search_photographers),
