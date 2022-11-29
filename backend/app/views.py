@@ -29,6 +29,7 @@ from .models import (
 from .serializers import (
     PhotoSerializer,
     SimplePhotoSerializer,
+    SimplePhotoSerializerForCollage,
     MapSquareSerializer,
     MapSquareSerializerWithoutPhotos,
     PhotographerSerializer,
@@ -271,14 +272,8 @@ def get_random_photos(request):
 
     photos = list(Photo.objects.all())
     random_photos = random.sample(photos,9)
-    randomized_photos = []
-    for photo in random_photos:
-        random_photos.append({
-            'src': photo.photo.get_photo_url(),
-            'photo_page_url': photo.photo.get_photo_page_url(),
-            'alt': photo.photo.alt,
-        })
-    return Response(randomized_photos)
+    serializer = SimplePhotoSerializerForCollage(random_photos,many=True)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def get_photo_tags(request, map_square_number, folder_number, photo_number):
