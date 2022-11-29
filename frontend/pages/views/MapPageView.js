@@ -189,7 +189,7 @@ class MapPage extends React.Component {
                 });
             }
         });
-        const mapSquareDetails = await fetch("/api/map_square_details/" + mapSquare);
+        const mapSquareDetails = await fetch("/api/map_square/" + mapSquare);
         const mapSquareDetailsJSON = await mapSquareDetails.json();
         this.setState({
             photos: mapSquareDetailsJSON.photos,
@@ -221,10 +221,10 @@ class MapPage extends React.Component {
                                  lat={this.state.mapLat}
                                  lng={this.state.mapLng}
                                  layers={{
-                                     "Arrondissements": arrondissementsOverlay(this.state.geojsonData),
-                                     "Photo Density": densityOverlay(this.state.mapData)
+                                     "Arrondissement": arrondissementsOverlay(this.state.geojsonData),
+                                     "Photos available": densityOverlay(this.state.mapData) 
                                  }}
-                                 visibleLayers={["Photo Density"]}
+                                 visibleLayers={["Photos available", "Arrondissement"]} 
                                  layerSelectVisible={true}
                                  scrollWheelZoom={isLgViewportUp}/>
                         </Col>
@@ -247,7 +247,7 @@ class MapPage extends React.Component {
                                                 <MapSquareContent mapSquare={this.state.mapSquare}
                                                                   photos={this.state.photos}
                                                                   photographers={this.state.photographers}
-                                                                  photoDir={this.props.photoDir}/>
+                                                />
                                             </>
                                             : <>
                                                 <TitleDecoratorContainer title="Map"/>
@@ -313,7 +313,6 @@ class MapPage extends React.Component {
 
 MapPage.propTypes = {
     arrondissement_data: PropTypes.string,
-    photoDir: PropTypes.string
 };
 
 export default MapPage;

@@ -7,17 +7,20 @@ import ReactDOM from "react-dom";
 
 import Base from "./Base";
 
-import {HomePage} from "./pages/Home";
-import {PhotoView} from "./pages/views/PhotoView";
-import {PhotographerView} from "./pages/views/PhotographerView";
-import {MapSquareView} from "./pages/views/MapSquareView";
-import {Search} from "./pages/Search";
 import About from "./pages/About";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/views/BlogPostView";
+import Logo from "./components/Logo";
 import MapPage from "./pages/views/MapPageView";
 import TagView from "./pages/TagView";
+import {HomePage} from "./pages/Home";
+import {MapSquareView} from "./pages/views/MapSquareView";
+import {PhotoView} from "./pages/views/PhotoView";
 import {PhotographerListView} from "./pages/views/PhotographerListView";
+import {PhotographerView} from "./pages/views/PhotographerView";
+import {Search} from "./pages/Search";
+import {SimilarityView} from "./pages/views/SimilarityView";
+import {TextOCRView} from "./pages/views/TextOCRView";
 
 // Import all styles
 import "./scss/styles.scss";
@@ -27,17 +30,21 @@ const COMPONENT_NAME_RAW = document.getElementById("component_name").text;
 const COMPONENT_PROPS = JSON.parse(COMPONENT_PROPS_RAW);
 const COMPONENT_NAME = JSON.parse(COMPONENT_NAME_RAW);
 const COMPONENTS = {
-    HomePage,
     About,
-    Search,
     Blog,
     BlogPost,
-    PhotoView,
-    PhotographerView,
-    MapSquareView,
+    HomePage,
+    Logo,
     MapPage,
+    MapSquareView,
+    PhotoView,
+    PhotographerListView,
+    PhotographerView,
+    Search,
+    SimilarityView,
     TagView,
     PhotographerListView,
+    TextOCRView,
 };
 
 const PreselectedComponent = COMPONENTS[COMPONENT_NAME || "ErrorNotFoundComponent"];

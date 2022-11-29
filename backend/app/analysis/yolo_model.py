@@ -19,8 +19,6 @@ import torch
 from django.conf import settings
 from ..models import Photo
 
-MODEL = Photo
-
 
 # Yolo weights, yolo config, and coco names file
 WEIGHTS_PATH = os.path.join(settings.YOLO_DIR, 'yolov5x6.pt')
@@ -34,8 +32,8 @@ def load_yolo():
     if not os.path.exists(WEIGHTS_PATH):
         print(
             'Please download the YOLOv5x6 weights file at '
-            'https://github.com/ultralytics/yolov5/releases/download/v6.1/yolov5x6.pt '
-            'and place it in the yolo_files directory before running this analysis.'
+            '\nhttps://github.com/ultralytics/yolov5/releases/download/v6.1/yolov5x6.pt '
+            '\nand place it in the backend/app/analysisyolo_files directory before running this analysis.'
         )
         sys.exit(1)
     try:
@@ -53,7 +51,7 @@ def load_yolo():
     return model
 
 
-def analyze(photo: Photo, src_dir=settings.LOCAL_PHOTOS_LOCATION):
+def analyze(photo: Photo):
     """
     Uses yolo model to detect objects within photos
     Returns a dictionary consisting of each object
@@ -62,7 +60,7 @@ def analyze(photo: Photo, src_dir=settings.LOCAL_PHOTOS_LOCATION):
     # pylint: disable=too-many-locals
 
     # Get image and image dimensions
-    input_image = photo.get_image_data(src_dir=src_dir)
+    input_image = photo.get_image_data()
     if input_image is None:
         return {
             "boxes": [],
