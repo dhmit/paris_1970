@@ -91,6 +91,31 @@ export class PhotoView extends PhotoViewer {
         });
     }
 
+    sortPhotos (images, analysisName) {
+        var i, j;
+        var len = images.length;
+        var isSwapped = false;
+        
+        for(i = 0; i < len; i++){
+            isSwapped = false;
+            for(j = 0; j < len; j++){
+                if(images[j][analysisName] > images[j+1][analysisName]){
+                    var temp = images[j][analysisName];
+                    images[j][analysisName] = images[j+1][analysisName];
+                    images[j+1][analysisName] = temp;
+                    isSwapped = true;
+                }
+            }
+            if(!isSwapped){
+                break;
+            }
+        }
+   
+        return images
+        // images is a list of photorep
+        // photorep = {bonk: akljf;klesjf;, honk: lajdfl;kdsj, analyses: {whitespace: 342, people: 2}}
+    }
+
     render() {
         if (this.state.loading) {
             return (<LoadingPage/>);
@@ -219,7 +244,7 @@ export class PhotoView extends PhotoViewer {
                         </Dropdown>
                     </div>
                     {this.getPhotoSlider(
-                        similarPhotos,
+                        sortPhotos(similarPhotos, analysisName),
                         {
                             "className": "slider-photo",
                             "titleFunc": (k, photo) =>
