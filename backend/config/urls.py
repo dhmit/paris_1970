@@ -134,5 +134,6 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     # Tags
     path('tag/<str:tag_name>/', views.tag_view),
+    path('tag/<str:tag_name>/<int:page>/', views.tag_view),
 
 ]
