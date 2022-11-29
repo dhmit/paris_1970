@@ -48,10 +48,6 @@ function densityOverlay(mapSquareData) {
                         className={numberOfPhotos === 0 ? "map-grid" : mapSquareBucket}
                         key={index}
                         bounds={mapSquareBounds}>
-                        {// Shows map square numbers on each map square
-                            // <Marker position={L.polygon(mapSquareBounds).getBounds().getCenter()}
-                            //icon={L.divIcon({html: index})} />
-                        }
                         <Popup>
                             Map Square {index} <br/>
                             <a href={link}>{numberOfPhotos} photos to show</a>
@@ -89,8 +85,6 @@ class TagView extends PhotoViewer {
             filledMapSquaresData: null,
             isLgViewportUp: null,
             mapSquare: null,
-            mapLat: 48.858859,
-            mapLng: 2.3470599,
             photos: JSON.parse(this.props.tagPhotos),
             photographers: []
         };
@@ -112,22 +106,17 @@ class TagView extends PhotoViewer {
 
                 // If the map square does not have the coordinates it sets them to (0, 0)
                 // NOTE(ra): this no longer happens, so we can probably remove this safety check
+                let lat = 0;
+                let lng = 0;
                 if (roughCoords) {
                     const roughCoordsList = roughCoords.split(", ");
-                    const lat = parseFloat(roughCoordsList[0]);
-                    const lng = parseFloat(roughCoordsList[1]);
-                    mapSquare.topLeftCoords = {
-                        lat,
-                        lng
-                    };
-                } else {
-                    const lat = 0.0;
-                    const lng = 0.0;
-                    mapSquare.topLeftCoords = {
-                        lat,
-                        lng
-                    };
+                    lat = parseFloat(roughCoordsList[0]);
+                    lng = parseFloat(roughCoordsList[1]);
                 }
+                mapSquare.topLeftCoords = {
+                    lat,
+                    lng
+                };
             }
 
             this.setState({
