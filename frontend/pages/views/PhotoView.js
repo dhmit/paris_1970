@@ -11,197 +11,6 @@ import ExpandIcon from "../../images/expand.svg";
 import QuestionIcon from "../../images/question.svg";
 import TitleDecoratorContainer from "../../components/TitleDecoratorContainer";
 
-export class FindVanishingPointDisplayWidget extends React.Component {
-    render() {
-        const items = [];
-        let line;
-        for (line of this.props.lineCoords) {
-            line["1_y"] = (line["1_y"] * this.props.height) / this.props.natHeight;
-            line["2_y"] = (line["2_y"] * this.props.height) / this.props.natHeight;
-            line["1_x"] = (line["1_x"] * this.props.width) / this.props.natWidth;
-            line["2_x"] = (line["2_x"] * this.props.width) / this.props.natWidth;
-            items.push(<line
-                x1={line["1_x"]}
-                y1={line["1_y"]}
-                x2={line["2_x"]}
-                y2={line["2_y"]}
-            />);
-        }
-        if (this.props.vanishingPointCoord !== null) {
-            items.push(<circle
-                cx={(this.props.vanishingPointCoord.x * this.props.width) / this.props.natWidth}
-                cy={(this.props.vanishingPointCoord.y * this.props.height) / this.props.natHeight}
-                r="10"
-            />);
-        }
-        return (
-            <div>
-                <svg
-                    className="analysis-overlay"
-                    height={this.props.height}
-                    width={this.props.width}>
-                    {items}
-                </svg>
-            </div>
-        );
-    }
-}
-
-function configAnalysisFindVanishingPoint(parsedValue, height, width, natHeight, natWidth) {
-    const {
-        line_coords: lineCoords,
-        vanishing_point_coord: vanishingPointCoord
-    } = parsedValue;
-    return (
-        <FindVanishingPointDisplayWidget
-            vanishingPointCoord={vanishingPointCoord}
-            lineCoords={lineCoords}
-            height={height}
-            width={width}
-            natHeight={natHeight}
-            natWidth={natWidth}
-        />
-    );
-}
-
-FindVanishingPointDisplayWidget.propTypes = {
-    vanishingPointCoord: PropTypes.object,
-    lineCoords: PropTypes.array,
-    height: PropTypes.number,
-    width: PropTypes.number,
-    natHeight: PropTypes.number,
-    natWidth: PropTypes.number
-};
-
-export class ForegroundPercentageDisplayWidget extends React.Component {
-    render() {
-        const items = [];
-        const ratio = this.props.width / this.props.natWidth;
-        for (const pixel of this.props.blackPixels) {
-            items.push(<rect
-                y={pixel[0] * ratio}
-                x={pixel[1] * ratio}
-                width={20 * ratio}
-                height={20 * ratio}
-            />);
-        }
-        return (
-            <div>
-                <svg
-                    className="analysis-overlay"
-                    height={this.props.height}
-                    width={this.props.width}
-                >
-                    {items}
-                </svg>
-            </div>
-        );
-    }
-}
-
-function configAnalysisForegroundPercentage(parsedValue, height, width, natHeight, natWidth) {
-    const {
-        percent,
-        mask: blackPixels
-    } = parsedValue;
-    return (
-        <ForegroundPercentageDisplayWidget
-            percent={percent}
-            blackPixels={blackPixels}
-            height={height}
-            width={width}
-            natHeight={natHeight}
-            natWidth={natWidth}
-        />
-    );
-}
-
-ForegroundPercentageDisplayWidget.propTypes = {
-    percent: PropTypes.number,
-    blackPixels: PropTypes.array,
-    height: PropTypes.number,
-    width: PropTypes.number,
-    natHeight: PropTypes.number,
-    natWidth: PropTypes.number
-};
-
-export class YoloModelDisplayWidget extends React.Component {
-    render() {
-        const items = [];
-        let box;
-        const ratio = this.props.height / this.props.natHeight;
-        for (box of this.props.boxes) {
-            items.push(
-                <rect
-                    className="outsideBox"
-                    x={box["x_coord"] * ratio}
-                    y={box["y_coord"] * ratio}
-                    height={box["height"] * ratio}
-                    width={box["width"] * ratio}
-                />,
-                <g className={"box-group"}>
-                    <text
-                        className="label"
-                        x={box["x_coord"] * ratio}
-                        y={box["y_coord"] * ratio - 5}
-                    >
-                        {box["label"]}
-                    </text>
-                    <rect
-                        className="boundingBox"
-                        x={box["x_coord"] * ratio}
-                        y={box["y_coord"] * ratio}
-                        height={box["height"] * ratio}
-                        width={box["width"] * ratio}
-                    />
-                </g>
-            );
-        }
-
-        return (
-            <div>
-                <svg
-                    className="analysis-overlay"
-                    height={this.props.height}
-                    width={this.props.width}
-                >
-                    {items}
-                </svg>
-            </div>
-        );
-    }
-}
-
-function configAnalysisYoloModel(parsedValue, height, width, natHeight, natWidth) {
-    let boxes = [];
-    if ("boxes" in parsedValue) {
-        boxes = parsedValue["boxes"];
-    }
-    return (
-        <YoloModelDisplayWidget
-            boxes={boxes}
-            height={height}
-            width={width}
-            natHeight={natHeight}
-            natWidth={natWidth}
-        />
-    );
-}
-
-YoloModelDisplayWidget.propTypes = {
-    boxes: PropTypes.array,
-    height: PropTypes.number,
-    width: PropTypes.number,
-    natHeight: PropTypes.number,
-    natWidth: PropTypes.number
-};
-
-const VISUAL_ANALYSES = {
-    "find_vanishing_point": [configAnalysisFindVanishingPoint, 1],
-    "foreground_percentage": [configAnalysisForegroundPercentage, 2],
-    "yolo_model": [configAnalysisYoloModel, 3]
-};
-
 const TURQUOISE = "#20CCD7";
 
 
@@ -229,7 +38,7 @@ export class PhotoView extends PhotoViewer {
     }
 
     async componentDidMount() {
-        const mapPhotoString = `${this.props.mapSquareNumber}/${this.props.photoNumber}/`;
+        const mapPhotoString = `${this.props.mapSquareNumber}/${this.props.folderNumber}/${this.props.photoNumber}/`;
         try {
             const apiURL = "/api/photo/" + mapPhotoString;
             const response = await fetch(apiURL);
@@ -316,23 +125,6 @@ export class PhotoView extends PhotoViewer {
                 : null
         );
 
-        const visualAnalyses = [];
-        for (const [analysisName, result] of Object.entries(analyses)) {
-            let visualAnalysis = null;
-            if (analysisName in VISUAL_ANALYSES && this.state.displaySide === "photo") {
-                if (VISUAL_ANALYSES[analysisName][1] !== this.state.view) continue;
-                visualAnalysis = VISUAL_ANALYSES[analysisName][0](
-                    result,
-                    this.state.height,
-                    this.state.width,
-                    this.state.natHeight,
-                    this.state.natWidth
-                );
-            }
-            // handled in a different div
-            visualAnalyses.push(visualAnalysis);
-        }
-
         const similarPhotos = (
             "photo_similarity.resnet18_cosine_similarity" in analyses
                 ? analyses["photo_similarity.resnet18_cosine_similarity"]
@@ -369,7 +161,6 @@ export class PhotoView extends PhotoViewer {
                             onLoad={this.onImgLoad}
                             ref={this.photoRef}
                         />
-                        {visualAnalyses}
                     </div>
                     <div className={"center-btn mb-4"}>
                         <ExpandIcon
@@ -389,12 +180,8 @@ export class PhotoView extends PhotoViewer {
                             SLIDE
                         </button>
                     </div>
-                    <div style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        paddingTop: "10px"
-                    }}>
-                        <div className="similar-photos-header">
+                    <div className="similar-photos-header">
+                        <div className="similar-photos-title">
                             <h4>Similar Photos</h4>
                             <OverlayTrigger
                                 trigger="hover"
@@ -458,11 +245,7 @@ export class PhotoView extends PhotoViewer {
                         : <>{this.props.photographer_name} {this.props.photographer_number}</>
                     }
 
-                    <div style={{
-                        display: "flex",
-                        justifyContent: "flex-start",
-                        paddingTop: "10px"
-                    }}>
+                    <div className="tags-container">
                         <h6>TAGS</h6>
                         <OverlayTrigger
                             trigger="hover"
@@ -497,20 +280,24 @@ export class PhotoView extends PhotoViewer {
                     <h6>LOCATION</h6>
 
                     <ParisMap className="single-photo-map"
-                              lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
-                              lng={squareCoords.lng - MAPSQUARE_WIDTH / 2}
-                              zoom={15}
-                              layers={{
-                                  mapSquare: <Rectangle
-                                      className="current-map-square"
-                                      key={mapSquareNumber}
-                                      bounds={mapSquareBounds}
-                                  />
-                              }}
+                        lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
+                        lng={squareCoords.lng - MAPSQUARE_WIDTH / 2}
+                        zoom={15}
+                        layers={{
+                            mapSquare: <Rectangle
+                                className="current-map-square"
+                                key={mapSquareNumber}
+                                bounds={mapSquareBounds}
+                            />
+                        }}
                     />
                     <b>
-                        Map Square <span><a href={`/map_square/${mapSquareNumber}`}
-                                            className={"photo-link"}>{mapSquareNumber}</a></span>
+                        Map Square
+                        <span>
+                            <a className="photo-link"
+                                href={`/map_square/${mapSquareNumber}`}
+                            >{mapSquareNumber}</a>
+                        </span>
                         <br/>
                         Arrondissement 17
                     </b>
@@ -522,6 +309,7 @@ export class PhotoView extends PhotoViewer {
 
 PhotoView.propTypes = {
     photoNumber: PropTypes.number,
+    folderNumber: PropTypes.number,
     mapSquareNumber: PropTypes.number,
     photo_dir: PropTypes.string,
     photographer_name: PropTypes.string,

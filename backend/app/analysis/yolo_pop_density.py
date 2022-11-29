@@ -8,8 +8,6 @@ bounding boxes returned by the yolo_model
 from app.models import Photo
 from app.models import PhotoAnalysisResult
 
-MODEL = Photo
-
 
 def overlap_1d(line1, line2):
     """

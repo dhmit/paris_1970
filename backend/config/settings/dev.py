@@ -33,16 +33,6 @@ DATABASES = {
     }
 }
 
-# NOTE(ra): AWS RDS is down on 2022-09-09 during our first hack session,
-# so we're patching in this temporary sqlite3 DB. We'll restore the original
-# situation once it's back up.
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BACKEND_DIR, 'db.sqlite3'),
-#     }
-# }
-
 
 SITE_ID = 1
 
@@ -52,3 +42,41 @@ LANGUAGES = [
     ('en', 'English'),
     ('fr', 'French'),
 ]
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'root': {
+        'level': 'WARNING',
+        'handlers': ['console'],
+    },
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s '
+                      '%(process)d %(thread)d %(message)s'
+        },
+        'db_queries': {
+            'format': '\nDB Query - %(asctime)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'console_db': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'db_queries'
+        },
+    },
+    # Comment me in to get database query logging in the console.
+    #'loggers': {
+    #    'django.db.backends': {
+    #        'level': 'DEBUG',
+    #        'handlers': ['console_db'],
+    #        'propagate': False,
+    #    },
+    #},
+}

@@ -18,26 +18,25 @@ $footer-height: 150px;
 @import "~bootstrap/scss/utilities/api";
 
 // Our styles
-@import './fonts';
-@import './variables';
-@import './home';
-@import './home-sections';
-@import './home-main-section';
-@import './about';
-@import './photoView';
-@import './photographerView';
-@import './mapSquareView';
-@import './clusterView';
-@import './analysisView';
-@import './search';
-@import './titleDecorator';
+@import "./fonts";
+@import "./variables";
+@import "./home";
+@import "./home-sections";
+@import "./home-main-section";
+@import "./about";
+@import "./photoView";
+@import "./photographerView";
+@import "./mapSquareView";
+@import "./clusterView";
+@import "./analysisView";
+@import "./search";
+@import "./titleDecorator";
 @import "./blog";
-@import './legend';
-@import './parisMap';
-@import './mapPageView';
-@import './tags';
-@import './photographerListView';
-
+@import "./legend";
+@import "./parisMap";
+@import "./mapPageView";
+@import "./tags";
+@import "./photographerListView";
 
 html {
     position: relative;
@@ -76,13 +75,12 @@ footer {
     padding-bottom: 10px;
 }
 
-
 /**
  * Navbar styles
  */
 
 .navbar-brand {
-    font-size: 1.50rem;
+    font-size: 1.5rem;
 }
 
 .navbar-toggler,
@@ -97,13 +95,17 @@ footer {
 
 .navbar-collapse {
     text-align: right;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .nav-link {
     font-family: $font-family-bold;
     color: $color-gray-light !important;
 
-    &.selected, &:hover, &:focus {
+    &.selected,
+    &:hover,
+    &:focus {
         color: $color-link !important;
     }
 }
@@ -112,7 +114,6 @@ footer {
     width: 3rem;
     height: 3rem;
 }
-
 
 /* BUTTONS */
 .btn {
@@ -123,8 +124,9 @@ footer {
     margin: 0.25em;
 }
 
-.btn-primary, .btn-secondary {
-    padding: .125em 1em;
+.btn-primary,
+.btn-secondary {
+    padding: 0.125em 1em;
 }
 
 .btn-primary {
@@ -133,7 +135,9 @@ footer {
     border: 2px solid $color-black;
     text-transform: uppercase;
 
-    &:hover, &:focus, &:active {
+    &:hover,
+    &:focus,
+    &:active {
         background-color: $color-turquoise;
         border: 2px solid $color-turquoise;
         color: $color-black;
@@ -143,12 +147,26 @@ footer {
 .btn-secondary {
     @extend .btn;
     text-transform: uppercase;
-    font-size: .8em;
-    border: .08em solid $color-red;
+    font-size: 0.8em;
+    border: 0.08em solid $color-red;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
         color: white !important;
         background-color: $color-red !important;
+    }
+
+}
+.nav_logo_style{
+    position:relative;
+    z-index:-1
+}
+
+.btn-secondary-blue {
+    @extend .btn-secondary;
+    border: .08em solid $color-blue-light;
+    &:hover, &:focus {
+        background-color: $color-blue-light !important;
     }
 }
 
