@@ -10,7 +10,6 @@ import Base from "./Base";
 import About from "./pages/About";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/views/BlogPostView";
-import Logo from "./components/Logo";
 import MapPage from "./pages/views/MapPageView";
 import TagView from "./pages/TagView";
 import {HomePage} from "./pages/Home";
@@ -34,7 +33,6 @@ const COMPONENTS = {
     Blog,
     BlogPost,
     HomePage,
-    Logo,
     MapPage,
     MapSquareView,
     PhotoView,

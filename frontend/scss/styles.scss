@@ -175,7 +175,7 @@ footer {
     bottom: 0;
     top: 100%;
     left: 50%;
-    right: 50%;
+    transform: translateX(-50%);
     border: none;
     margin: auto;
 }
@@ -186,9 +186,5 @@ footer {
 }
 
 .see_below_text {
-    @extend .btn-secondary;
     text-align: center;
-    display: inline-block;
-    left: 50%;
-    right: 50%;
 }
