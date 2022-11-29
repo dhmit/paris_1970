@@ -18,7 +18,17 @@ from .models import (
 
 class PhotoInline(admin.TabularInline):
     model = Photo
+    exclude = ('alt', 'contains_sticker', 'librarian_caption')
+    #readonly_fields= ('photo_slide',)
 
+    """
+    def photo_slide(self,obj):
+        #Displays slide of photo obj
+
+        # taking photos from local dir
+        obj_path = obj.get_slide_url()
+        return mark_safe('<a target="blank" href="{url}"> <img src="{url}" width="90px"></a>'.format(url=obj_path))
+    """
 
 class MapSquareAdmin(admin.ModelAdmin):
     """
