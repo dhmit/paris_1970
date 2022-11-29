@@ -38,7 +38,6 @@ const COMPONENTS = {
     MapPage,
     TagView,
     PhotographerListView,
- 
 };
 
 const PreselectedComponent = COMPONENTS[COMPONENT_NAME || "ErrorNotFoundComponent"];
