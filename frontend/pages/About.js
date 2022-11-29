@@ -2,6 +2,7 @@ import React from "react";
 import * as PropTypes from "prop-types";
 import Footer from "../components/Footer";
 import TitleDecoratorContainer from "../components/TitleDecoratorContainer"; 
+import about_page_right_citylist from "../images/about_page_right_citylist.svg";
 /*import TitleDecorator from "../images/logos/title_decorator.svg"; */
 
 // Images
