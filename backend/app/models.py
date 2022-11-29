@@ -172,10 +172,10 @@ class PhotoAnalysisResult(AnalysisResult):
     """
     This model is used to store an analysis result for a single Photo
     """
-    photo = models.ForeignKey(Photo, on_delete=models.CASCADE, null=False)
+    photo = models.ForeignKey(Photo, on_delete=models.CASCADE, null=False, related_name='analyses')
 
     def __str__(self):
-        return f'PhotoAnalysisResult {self.name} for photo with id {self.photo.id}'
+        return f'PhotoAnalysisResult {self.id} - {self.name} for photo with id {self.photo.id}'
 
 
 class PhotographerAnalysisResult(AnalysisResult):

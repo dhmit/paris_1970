@@ -35,10 +35,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # pylint: disable=too-many-locals
-        analysis_name = options.get('analysis_name')
+        analysis_name: str = options.get('analysis_name')
         run_one = options.get('run_one')
         overwrite = options.get('overwrite')
         verbose = options.get('verbose')
+
+        running_similarity = '_similarity' in analysis_name
 
         try:
             analysis_module = import_module(f'.{analysis_name}', package='app.analysis')
@@ -47,15 +49,34 @@ class Command(BaseCommand):
             print_header('There is no analysis with that name.')
             sys.exit(1)
 
-        analysis_func: Callable[[object], dict] = getattr(analysis_module, 'analyze')
+        analysis_func = getattr(analysis_module, 'analyze')
 
         if run_one:
             # in a list because this has to be iterable for the loop below...
             photos = [Photo.objects.first()]
+            num_photos = 1
         else:
             photos = Photo.objects.all()
+            num_photos = photos.count()
 
-        print_header(f'Running {analysis_name} on {photos.count()} photos')
+        print_header(f'Running {analysis_name} on {num_photos} photos')
+
+        feature_vectors = []
+        if running_similarity:
+            print(f'Gathering feature vectors...')
+
+            feature_vector_results = (
+                PhotoAnalysisResult.objects.filter(name='photo_similarity.resnet18_feature_vectors')
+                                           .prefetch_related('photo', 'photo__map_square'))
+            for result in feature_vector_results:
+                feature_vectors.append({
+                    'vector': result.parsed_result(),
+                    'map_square_number': result.photo.map_square.number,
+                    'folder_number': result.photo.folder,
+                    'photo_number': result.photo.number,
+                })
+
+
         photos_done = 0
         for photo in photos:
             if verbose:
@@ -81,18 +102,23 @@ class Command(BaseCommand):
                     continue
 
             try:
-                result = analysis_func(photo)
+                if running_similarity:
+                    result = analysis_func(photo, feature_vectors)
+                else:
+                    result = analysis_func(photo)
+
+
                 result_json = json.dumps(result)
                 analysis_result = PhotoAnalysisResult(name=analysis_name, result=result_json, photo=photo)
                 analysis_result.save()
             except Exception as e:  # pylint: disable=bare-except
                 err_msg = (
-                    f'Photo {photo_id_str(photo)} - an analysis exists and we are not overwriting.'
+                        f'Photo {photo_id_str(photo)} - an error occured:'
                     + f'\nError: {e}.\nSkipping.'
                 )
                 print(err_msg)
 
             photos_done += 1
-            if photos_done % 100 == 0:
+            if photos_done % 25 == 0:
                 print(f'\nAnalyzed {photos_done} so far...')
 

@@ -39,19 +39,25 @@ urlpatterns = [
     # Django admin page
     path('admin/', admin.site.urls),
 
+    ################################################################################
     # API endpoints
-
+    ################################################################################
     # Photos
     path('api/photo/<int:map_square_number>/<int:folder_number>/<int:photo_number>/', views.photo, name="photo"),
     path('api/prev_next_photos/<int:map_square_number>/<int:folder_number>/<int:photo_number>/',
          views.previous_next_photos, name="previous_next_photos"),
-    path('api/similar_photos/<int:map_square_number>/<int:folder_number>/<int:photo_number>/<int:num_similar_photos>/',
-         views.get_photo_by_similarity, name="similar_photos"),
+
+    path(
+        'api/similar_photos/<int:map_square_number>/<int:folder_number>/<int:photo_number>/<int:num_similar_photos>/',
+        views.get_photo_by_similarity,
+        name="similar_photos"
+    ),
     path('api/all_photos/', views.all_photos, name="all_photos"),
     path('api/random_photos/',views.get_random_photos, name = "random_photos"),
 
     # Photographers
-    path('api/search_photographers/', views.search_photographers),
+   	path('api/search_photographers/', views.search_photographers),
+   	path('api/search_photographers/dropdown_options', views.get_search_photographers_dropdown_options),
     path('api/photographer/', views.get_photographer, name="all_photographers"),
     
     path('api/photographer/<int:photographer_number>/', views.get_photographer,
@@ -96,7 +102,10 @@ urlpatterns = [
     # views.get_photos_by_object_rcnn),
     # path('api/model/<str:model_name>/<str:object_name>/', views.get_photos_by_object),
 
+
+    ################################################################################
     # View Pages
+    ################################################################################
     path('', views.index),
     path('map/', views.map_page),
     path('about/', views.about),
@@ -116,9 +125,10 @@ urlpatterns = [
     # Map Squares
     path('map_square/<int:map_square_number>/', views.map_square_view),
     path('text_ocr/', views.text_ocr_view),
+    path('similarity/<int:map_square_number>/<int:folder_number>/<int:photo_number>/', views.similar_photos_view),
 
     # path('clustering/<int:num_of_clusters>/<int:cluster_num>/', views.cluster_view),
-    # BFlog urls
+    # Blog urls
     # Log in/out urls
     path('login/', auth_views.LoginView.as_view(template_name='admin/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
