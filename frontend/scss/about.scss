@@ -10,7 +10,9 @@
     height: 30%;
     left: 151px;
     top: 20px;
-    margin-bottom: 30px;
+    margin-bottom: 140px;
+    overflow: hidden;
+    min-width: 20em;
 }
 
 .prof-img-div {
@@ -98,3 +100,40 @@ figure {
     font-weight: 400;
     font-size: 20px;
 }
+
+.cropped_map, .city_list, .right_image {
+    position: absolute;
+}
+
+
+.cropped_map {
+    right: 0;
+    top: -150px;
+    z-index: -5;
+}
+
+.city_list {
+    top: 0;
+    right: -135px;
+    z-index: -4;
+}
+.right_image {
+    top: 0;
+    right: 18px;
+    z-index: -5;
+    margin-left: 10px;
+}
+
+.right_image:after {
+    position: absolute;
+    content: "";
+    left: -40px;
+    height: 40px;
+    width: 1px;
+}
+
+@media only screen and (max-width: 768px) {
+    .cropped_map, .city_list, .right_image {
+        visibility: hidden;
+    }
+  }

@@ -2,7 +2,10 @@ import React from "react";
 import * as PropTypes from "prop-types";
 import Footer from "../components/Footer";
 import TitleDecoratorContainer from "../components/TitleDecoratorContainer"; 
-import about_page_right_citylist from "../images/about_page_right_citylist.svg";
+import about_page_right_citylist from "../images/about_page_right_citylist.svg?url";
+import about_page_right_cropped_map from "../images/about_page_right_cropped_map.svg?url";
+import about_page_right_image from "../images/about_page_right_image.svg?url";
+
 /*import TitleDecorator from "../images/logos/title_decorator.svg"; */
 
 // Images
@@ -274,6 +277,9 @@ class About extends React.Component {
                         massa eget egestas purus viverra accumsan. Neque vitae tempus quam
                         pellentesque nec nam aliquam sem. Vitae congue mauris rhoncus aenean.
                     </p>
+                    <img className="cropped_map" src={about_page_right_cropped_map} width="130" height="881"/>
+                    <img className="city_list" src={about_page_right_citylist} width="700" height="700"/>
+                    <img className="right_image" src={about_page_right_image} width="700" height="700"/>
                     <TitleDecoratorContainer title={"Project Director"}/>
                     
                     <div className="prof-img-div text-wrap col-xs-2 col-sm-5 col-md-5 col-lg-3">
