@@ -92,28 +92,19 @@ export class PhotoView extends PhotoViewer {
     }
 
     sortPhotos (images, analysisName) {
-        var i, j;
-        var len = images.length;
-        var isSwapped = false;
-        
-        for(i = 0; i < len; i++){
-            isSwapped = false;
-            for(j = 0; j < len; j++){
-                if(images[j][analysisName] > images[j+1][analysisName]){
-                    var temp = images[j][analysisName];
-                    images[j][analysisName] = images[j+1][analysisName];
-                    images[j+1][analysisName] = temp;
-                    isSwapped = true;
-                }
+        images.sort((a, b) => {
+            const valueA = a[analyses][analysisName]; // ignore upper and lowercase
+            const valueB = b[analyses][analysisName]; // ignore upper and lowercase
+            if (valueA < valueB) {
+              return -1;
             }
-            if(!isSwapped){
-                break;
+            if (valueA > valueB) {
+              return 1;
             }
-        }
-   
-        return images
-        // images is a list of photorep
-        // photorep = {bonk: akljf;klesjf;, honk: lajdfl;kdsj, analyses: {whitespace: 342, people: 2}}
+            return 0;
+          });
+
+        return images;
     }
 
     render() {
