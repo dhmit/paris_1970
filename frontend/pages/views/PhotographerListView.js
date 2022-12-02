@@ -194,12 +194,14 @@ export class PhotographerListView extends React.Component {
 
     handleScroll(e) {
         // doing some arithmetic with the scroll height here to detect when the user reaches the bottom of the list
+        console.log(e.target.scrollHeight, e.target.clientHeight, e.target.scrollTop);
         const bottom =
             Math.trunc((e.target.scrollHeight - e.target.clientHeight) / 10) <=
             Math.trunc(e.target.scrollTop / 10);
 
         // if we reach bottom we load the next page of photographers
         if (bottom) {
+            console.log("reached end of page");
             if (!this.state.isLastPage) {
                 this.refetchPhotographers();
             }
@@ -349,10 +351,10 @@ export class PhotographerListView extends React.Component {
                     )}
                 </div>
 
-                <div className="photographerGallery">
+                <div className="photographerGallery" onScroll={this.handleScroll}>
                     <div id="overlay"></div>
 
-                    <ul className="list-inline" onScroll={this.handleScroll}>
+                    <ul className="list-inline" >
                         {this.getPhotoList()}
                         <div className="photographers-results-footer">
                             {this.state.isLastPage
