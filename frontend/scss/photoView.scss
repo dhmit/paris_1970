@@ -61,11 +61,13 @@ rect {
     pointer-events: all;
 }
 
-.box-gZroup:hover, .box-gZroup:focus {
+.box-gZroup:hover,
+.box-gZroup:focus {
     opacity: 1;
 }
 
-.box-gZroup rect:hover, .box-gZroup rect:focus {
+.box-gZroup rect:hover,
+.box-gZroup rect:focus {
     fill: blueviolet !important;
     fill-opacity: 0.25;
 }
@@ -89,7 +91,8 @@ rect {
     font-size: 50px;
 }
 
-.navButton:hover, .navButton:focus {
+.navButton:hover,
+.navButton:focus {
     color: black;
     text-decoration: none;
 }
@@ -116,18 +119,20 @@ rect {
     border: 0.17em solid;
     padding: 0.1em 0.5em;
     background-color: white;
-    margin-top: .6em;
+    margin-top: 0.6em;
 
     &:last-child {
-        margin-left: -.2em;
+        margin-left: -0.2em;
     }
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
         background-color: $color-turquoise !important;
     }
 }
 
-.side-button:hover, .side-button:focus {
+.side-button:hover,
+.side-button:focus {
     background-color: $color-turquoise;
 }
 
@@ -138,9 +143,9 @@ rect {
         padding: 0;
         margin: 0;
         &:first-child {
-         .tag-button {
-             margin-left: 0;
-         }
+            .tag-button {
+                margin-left: 0;
+            }
         }
         .tag-button {
             text-transform: capitalize !important;
@@ -158,7 +163,7 @@ rect {
     margin: 0.31em;
     border-radius: 0;
     background-color: white;
-    color: #5E5F5F;
+    color: #5e5f5f;
 }
 
 .photo-sort-dropdown-menu {
@@ -175,6 +180,21 @@ rect {
     position: absolute;
     top: 0;
     left: 0;
+}
+
+.map-square-pictures-navigation-arrow {
+    font-size: 1.75rem;
+    color: black;
+}
+
+.map-square-photos-navigation-container {
+    width: full;
+    background: white;
+    display: flex;
+    padding: 5px 0 5px 0;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .image-box {
@@ -200,7 +220,7 @@ rect {
     li.photo-item-background {
         position: relative;
         top: 0;
-        margin-bottom: .5em;
+        margin-bottom: 0.5em;
         flex-direction: column;
         text-align: center;
         display: flex;
@@ -215,7 +235,8 @@ rect {
             opacity: 1;
         }
 
-        &:hover, &:focus {
+        &:hover,
+        &:focus {
             background-color: $color-turquoise;
 
             img {
@@ -237,10 +258,7 @@ rect {
             /* align vertical */
         }
     }
-
-
 }
-
 
 .photos-box {
     display: flex;
@@ -293,13 +311,14 @@ rect {
     position: absolute;
     top: -3px;
     right: 0;
-    margin-top: .5em;
-    margin-bottom: .5em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
     cursor: pointer;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
         background-color: lightgrey;
-        transition-duration: .2s;
+        transition-duration: 0.2s;
     }
 }
 
@@ -310,7 +329,7 @@ rect {
 }
 
 .photo-popup {
-    height: 100%
+    height: 100%;
 }
 
 .info-button {

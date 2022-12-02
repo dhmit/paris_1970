@@ -55,6 +55,18 @@ def previous_next_photos(request, map_square_number, folder_number, photo_number
     photo_obj = Photo.objects.get(number=photo_number,
                                   folder=folder_number,
                                   map_square__number=map_square_number)
+    # square_photos_list = Photo.objects.filter(map_square__number=map_square_number)
+    
+    # resp = ["", ""]
+    # for i, current_photo in enumerate(square_photos_list):
+    #     if current_photo.number == photo_obj.number and current_photo.map_square.number == photo_obj.map_square.number:
+    #         if i > 1:
+    #             resp[0] = square_photos_list[i-1]
+    #         if i < len(square_photos_list):
+    #             resp[1] = square_photos_list[i+1]
+            
+    
+    # resp = [PhotoSerializer(element) if element != "" else "" for element in resp]
     resp = []
     if photo_obj.id > 1:
         previous_photo_object = Photo.objects.get(id=photo_obj.id - 1)
