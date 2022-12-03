@@ -72,7 +72,9 @@ urlpatterns = [
     path('api/clustering/<int:number_of_clusters>/<int:cluster_number>/',
          views.get_photos_by_cluster, name="clustering"),
 
-    path('api/search/', views.search, name="search"),
+    path('api/search/', views.search, name="search"), #was using this to test apply_filters
+
+#     path('api/search/', views.apply_filters, name="search"), #using this to test apply_filters
 
     path('api/map_square_details/<int:map_square_number>', views.get_map_square_details),
 
