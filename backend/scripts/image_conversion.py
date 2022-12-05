@@ -1,5 +1,4 @@
 import subprocess
-import sys
 import argparse
 from pathlib import Path
 
@@ -8,24 +7,26 @@ from tqdm import tqdm
 IMAGE_EXTENSIONS = ['.jpg', '.jp2']
 
 
-def convert(src_dir_path, dest_dir_path, args):
+def convert(src_dir_path, dest_dir_path, parser_args):
     """
     Python script for image conversion using Image Magick
     
     :param src_dir_path: Path - path object to directory containing subdirectories of images
     :param dest_dir_path: Path - path object where output is intended to be saved in
-    :param argparse Namespace - Namespace containing parsed command line arguments
-        :param output_type: str - indicating type of resizing to conduct [web, highres, thumbnail, none (if no presets desired)]
+    :param parser_args: argparse Namespace - Namespace containing parsed command line arguments
+        :param output_type: str - indicating type of resizing to conduct
+        [web, highres, thumbnail, none (if no presets desired)]
         :param valid_exts: (list of str) - image extensions to convert
         :param output_ext: str - extension of output images
-        :param custom_args: (list of str) - optional imagemagick args to apply after args associated with specified output type
+        :param custom_args: (list of str) - optional imagemagick args to 
+        apply after args associated with specified output type
     :return: None - output produced in new directory
     """
-    output_type = args.type
-    trim = args.trim
-    valid_exts = args.cvt_exts
-    output_ext = args.out_ext
-    custom_args = args.custom_args
+    output_type = parser_args.type
+    trim = parser_args.trim
+    valid_exts = parser_args.cvt_exts
+    output_ext = parser_args.out_ext
+    custom_args = parser_args.custom_args
 
     if output_type == 'web':
         commands = ['-quality 20%', '-resize 25%']
@@ -37,7 +38,8 @@ def convert(src_dir_path, dest_dir_path, args):
         commands = []
     else:
         raise Exception(
-            f'output_type "{output_type}" is not recognized.\noutput_type should be one of: highres, web, thumbnail, none'
+            f'''output_type "{output_type}" is not recognized.
+            output_type should be one of: highres, web, thumbnail, none'''
         )
     commands += custom_args
 
