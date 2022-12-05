@@ -8,18 +8,24 @@ from tqdm import tqdm
 IMAGE_EXTENSIONS = ['.jpg', '.jp2']
 
 
-def convert(src_dir_path, dest_dir_path, output_type='none', trim=True, valid_exts=IMAGE_EXTENSIONS, output_ext='jpg', custom_args=[]):
+def convert(src_dir_path, dest_dir_path, args):
     """
     Python script for image conversion using Image Magick
     
     :param src_dir_path: Path - path object to directory containing subdirectories of images
     :param dest_dir_path: Path - path object where output is intended to be saved in
-    :param output_type: str - indicating type of resizing to conduct [web, highres, thumbnail, none (if no presets desired)]
-    :param valid_exts: (list of str) - image extensions to convert
-    :param output_ext: str - extension of output images
-    :param custom_args: (list of str) - optional imagemagick args to apply after args associated with specified output type
+    :param argparse Namespace - Namespace containing parsed command line arguments
+        :param output_type: str - indicating type of resizing to conduct [web, highres, thumbnail, none (if no presets desired)]
+        :param valid_exts: (list of str) - image extensions to convert
+        :param output_ext: str - extension of output images
+        :param custom_args: (list of str) - optional imagemagick args to apply after args associated with specified output type
     :return: None - output produced in new directory
     """
+    output_type = args.type
+    trim = args.trim
+    valid_exts = args.cvt_exts
+    output_ext = args.out_ext
+    custom_args = args.custom_args
 
     if output_type == 'web':
         commands = ['-quality 20%', '-resize 25%']
@@ -30,7 +36,9 @@ def convert(src_dir_path, dest_dir_path, output_type='none', trim=True, valid_ex
     elif output_type == "none":
         commands = []
     else:
-        raise Exception(f'output_type "{output_type}" is not recognized.\noutput_type should be one of: highres, web, thumbnail, none')
+        raise Exception(
+            f'output_type "{output_type}" is not recognized.\noutput_type should be one of: highres, web, thumbnail, none'
+        )
     commands += custom_args
 
     if trim:
@@ -78,9 +86,11 @@ def convert(src_dir_path, dest_dir_path, output_type='none', trim=True, valid_ex
 if __name__ == "__main__":
     """
     Usage:
-    python imageconversion.py PATH_TO/SOURCE_IMG_FOLDER PATH_TO/DEST_IMAGE_FOLDER --type web --trim --custom_args optional_img_magick_flags
+    python imageconversion.py PATH_TO/SOURCE_IMG_FOLDER PATH_TO/DEST_IMAGE_FOLDER 
+    --type web --trim --custom_args optional_img_magick_flags
     """
-    parser = argparse.ArgumentParser(description='Python script for image conversion of paris_1970 source photos using Image Magick')
+    parser = argparse.ArgumentParser(
+        description='Python script for image conversion of paris_1970 source photos using Image Magick')
     parser.add_argument('src_dir_path', type=str,
                         help='PATH_TO/SOURCE_IMG_FOLDER')
     parser.add_argument('dest_dir_path', type=str,
@@ -100,4 +110,4 @@ if __name__ == "__main__":
                         help='optional imagemagick commands')
     args = parser.parse_args()
 
-    convert(Path(args.src_dir_path), Path(args.dest_dir_path), args.type, args.trim, args.cvt_exts, args.out_ext, args.custom_args)
+    convert(Path(args.src_dir_path), Path(args.dest_dir_path), args)
