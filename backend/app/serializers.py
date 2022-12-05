@@ -129,7 +129,7 @@ class SimilarPhotoSerializer(PhotoSerializer):
         model = Photo
         fields = [
             'number', 'map_square_number', 'folder', 'photographer_number',  'photographer_name',
-            'analyses', 'map_square_coords'
+            'analyses', 'map_square_coords', 'photo_url'
         ]
 
 
