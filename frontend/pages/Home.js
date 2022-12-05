@@ -14,9 +14,7 @@ export class HomePage extends React.Component {
     render() {
         return (
             <section>
-                  {/* <StrictMode>
-                    <Collage/>
-                 </StrictMode> */}
+                
                 <div className="main-section">
                     <img src={Logo_Gif} alt="Paris Logo"/>
                     <img src={Car} className="background" alt="Background image: Car"/>
