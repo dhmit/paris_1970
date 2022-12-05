@@ -91,10 +91,17 @@ export class PhotoView extends PhotoViewer {
         });
     }
 
-    sortPhotos (images, analysisName) {
+    sortPhotos = (event) => {
+        const analysisName = event.target.innerText;
+        const newPhotoData = this.state.photoData;
+        const images = (
+            "photo_similarity.resnet18_cosine_similarity" in newPhotoData.analyses
+                ? newPhotoData.analyses["photo_similarity.resnet18_cosine_similarity"]
+                : []
+        );
         images.sort((a, b) => {
-            const valueA = a[analyses][analysisName]; // ignore upper and lowercase
-            const valueB = b[analyses][analysisName]; // ignore upper and lowercase
+            const valueA = a["analyses"][analysisName];
+            const valueB = b["analyses"][analysisName];
             if (valueA < valueB) {
               return -1;
             }
@@ -102,10 +109,10 @@ export class PhotoView extends PhotoViewer {
               return 1;
             }
             return 0;
-          });
-
-        return images;
-    }
+        });
+        newPhotoData.analyses["photo_similarity.resnet18_cosine_similarity"] = images;
+        this.setState({photoData: newPhotoData});
+    };
 
     render() {
         if (this.state.loading) {
@@ -226,7 +233,7 @@ export class PhotoView extends PhotoViewer {
                                     Object.keys(analyses)
                                     .map(
                                         (analysisName, k) =>
-                                            <Dropdown.Item key={k} href={`#/action-${k}`}>
+                                            <Dropdown.Item key={k} onClick={this.sortPhotos}>
                                                 {analysisName}
                                             </Dropdown.Item>
                                     )
@@ -235,14 +242,14 @@ export class PhotoView extends PhotoViewer {
                         </Dropdown>
                     </div>
                     {this.getPhotoSlider(
-                        sortPhotos(similarPhotos, analysisName),
+                        similarPhotos,
                         {
                             className: "slider-photo",
                             titleFunc: (k, photo) =>
                                 `Map Square: ${photo["map_square_number"]}, ` +
                                 `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`,
                             hrefFunc: (k, photo) => 
-                                `/photo/${photo.map_square_number}/${photo.folder_number}/${photo.number}/`
+                                `/photo/${photo.map_square_number}/${photo.folder}/${photo.number}/`
                         }
                     )}
                 </div>
