@@ -78,7 +78,7 @@ def convert(src_dir_path, dest_dir_path, output_type='none', trim=True, valid_ex
 if __name__ == "__main__":
     """
     Usage:
-    python imageconversion.py PATH_TO/SOURCE_IMG_FOLDER PATH_TO/DEST_IMAGE_FOLDER optional_img_magick_flags
+    python imageconversion.py PATH_TO/SOURCE_IMG_FOLDER PATH_TO/DEST_IMAGE_FOLDER --type web --trim --custom_args optional_img_magick_flags
     """
     parser = argparse.ArgumentParser(description='Python script for image conversion of paris_1970 source photos using Image Magick')
     parser.add_argument('src_dir_path', type=str,
