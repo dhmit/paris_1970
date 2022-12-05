@@ -68,7 +68,7 @@ class PhotoSerializer(serializers.ModelSerializer):
         for analysis_result in analysis_results:
             name = analysis_result['name']
             result = json.loads(analysis_result['result'])
-            if "photo_similarity" in name:
+            if "resnet18_cosine_similarity" in name:
                 similar_photos = []
                 for photo_data in result[:10]:
                     similar_photo_query = Photo.objects.filter(
@@ -80,6 +80,7 @@ class PhotoSerializer(serializers.ModelSerializer):
                         continue
                     similar_photo = SimilarPhotoSerializer(similar_photo_query[0]).data
                     similar_photo["analyses"][name] = photo_data['similarity']
+                    similar_photos.append(similar_photo)
                 analyses_dict[name] = similar_photos
             else:
                 analyses_dict[name] = result
