@@ -247,7 +247,7 @@ export class PhotoView extends PhotoViewer {
                             className: "slider-photo",
                             titleFunc: (k, photo) =>
                                 `Map Square: ${photo["map_square_number"]}, ` +
-                                `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`,
+                                `Photo: ${photo["number"]}, Similarity: ${photo["analyses"]["photo_similarity.resnet18_cosine_similarity"]}`,
                             hrefFunc: (k, photo) => 
                                 `/photo/${photo.map_square_number}/${photo.folder}/${photo.number}/`
                         }
