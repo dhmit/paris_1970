@@ -22,7 +22,7 @@ call npm ci
 @echo * Copying launch configurations
 @echo --------------------------------------------------------------------------------
 IF NOT EXIST .\.vscode mkdir .\.vscode
-call cp install\launch.json .\.vscode\launch.json
+call copy install\launch.json .\.vscode\launch.json
 
 @echo /-------------------------------------------------------------------------------
 @echo * ALL DONE!

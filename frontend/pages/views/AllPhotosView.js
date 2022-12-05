@@ -52,8 +52,8 @@ export class AllPhotosView extends PhotoViewer {
             return (<LoadingPage/>);
         }
 
-        const hrefFunc = (k, photo) => `/similar_photos/${photo["map_square_number"]}/` +
-                        `${photo["number"]}/10/`;
+        const hrefFunc = (_key, photo) => `/similar_photos/${photo.map_square_number}/` +
+                                       `${photo.folder_number}/${photo.number}/10/`;
 
         const photos = this.getPhotoGrid(this.state.photoData, {"hrefFunc": hrefFunc});
 
