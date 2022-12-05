@@ -103,10 +103,10 @@ export class PhotoView extends PhotoViewer {
             const valueA = a["analyses"][analysisName];
             const valueB = b["analyses"][analysisName];
             if (valueA < valueB) {
-              return -1;
+              return 1;
             }
             if (valueA > valueB) {
-              return 1;
+              return -1;
             }
             return 0;
         });
