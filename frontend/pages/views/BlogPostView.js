@@ -26,11 +26,13 @@ export class BlogPost extends React.Component {
                                     {this.props.post.title}
                                 </a>
                             </h1>
-                            <h5 className="blog-author">{this.props.post.author + " "}
-                                <small className="text-muted">
-                                    {this.props.post.published ? "Published" : "Preview"} {this.props.post.date}
-                                </small>
+                            <h5 className="blog-author">
+                                {this.props.post.subtitle} 
                             </h5>
+
+                            <small className="text-muted">
+                                {this.props.post.published ? "Published" : "Preview"} {this.props.post.date}
+                            </small>
                             <ul className="list-inline">
                                 {this.props.tags.map(tag => {
                                     return <li key={tag}>
