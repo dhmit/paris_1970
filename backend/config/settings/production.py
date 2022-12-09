@@ -12,7 +12,7 @@ DEBUG = False
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']  # set in venv activate
 
 ADMINS = [
-    ('Ryaan', 'rahmed@mit.edu')
+    ('Ryaan Ahmed', 'rahmed@mit.edu')
 ]
 
 ALLOWED_HOSTS = [

@@ -4,14 +4,13 @@ Models for the paris_1970 app.
 """
 import json
 
-from urllib.error import HTTPError
-from http.client import RemoteDisconnected
+from pathlib import Path
 
 from skimage import io
 from PIL import Image
 
 from django.db import models
-
+from django.conf import settings
 
 class Photo(models.Model):
     """
@@ -20,79 +19,96 @@ class Photo(models.Model):
     to the Map Square that the photo belongs to and the Photographer who
     took the photo.
     """
-
     # Use number and map_square to uniquely identify a photo
     # DO NOT use the database pk, as that may change as we rebuild the database
-    number = models.IntegerField(null=True)  # NOT the database PK, but rather based on shelfmark
+
+    # The source image filenames have the following structure:
+    # BHVP_PH_CetaitParis_DP_MAP-SQUARE-NUMBER_FOLDER-NUMBER_FILE-NUMBER
+
+    # The FILE-NUMBER comes in pairs, but numbered straight through. e.g., 
+    # BHVP_PH_CetaitParis_DP_0031_01_001 -- this is a scan of the slide, including its frame
+    # BHVP_PH_CetaitParis_DP_0031_01_002 -- this is a high quality scan of the photo itself
+    # We collapse these two into a single number: 1
+    # The next pair (01_003 and 01_004) become photo 2, etc.
+    number = models.IntegerField()
+
+    # Furthermore, many map squares contained multiple folders.
+    # These folders seemed meaningful -- they often represent boundary points between photographers.
+    folder = models.IntegerField()
+
+    # The original full filename of the SLIDE as provided to us by 
+    # e.g., "BHVP_PH_CetaitParis_DP_0031_01_001"
+    shelfmark = models.CharField(max_length=252)
+
     map_square = models.ForeignKey('MapSquare', on_delete=models.CASCADE, null=True)
     photographer = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
 
-    # These are computed and set by syncdb: could be null if a photo is missing a side
-    cleaned_src = models.CharField(max_length=252, null=True)
-    front_src = models.CharField(max_length=252, null=True)
-    back_src = models.CharField(max_length=252, null=True)
-    binder_src = models.CharField(max_length=252, null=True)
-    thumbnail_src = models.CharField(max_length=252, null=True)
-    cleaned_local_path = models.CharField(max_length=252, null=True)
-    front_local_path = models.CharField(max_length=252, null=True)
-    back_local_path = models.CharField(max_length=252, null=True)
-    binder_local_path = models.CharField(max_length=252, null=True)
-
-    # We transcribe this metadata in the Google Sheet
-    shelfmark = models.CharField(max_length=252)
+    # TODO(ra 2022-10-28): We are likely to drop a bunch of these old metadata fields.
     contains_sticker = models.BooleanField(null=True)
     alt = models.CharField(max_length=252)
     librarian_caption = models.CharField(max_length=252)
     photographer_caption = models.CharField(max_length=252)
 
-    def has_valid_source(self):
-        return (self.cleaned_local_path or
-                self.front_local_path or
-                self.binder_local_path or
-                self.cleaned_src or
-                self.front_src or
-                self.binder_src)
-
-    def get_image_data(self, as_gray=False, use_pillow=False):
+    def get_image_data(self, as_gray=False, use_pillow=False, photos_dir=settings.LOCAL_PHOTOS_DIR):
         """
         Get the image data via skimage's imread, for use in analyses
-
-        We try for a local filepath first, as that's faster,
-        and we fallback on Google Drive if there's nothing local.
 
         Optionally use Pillow instead (for pytorch analyses)
         and return as_gray
 
         TODO: implement as_gray for use_pillow
         """
-        if self.cleaned_local_path:
-            source = self.cleaned_local_path
-        elif self.front_local_path:
-            source = self.front_local_path
-        elif self.binder_local_path:
-            source = self.binder_local_path
-        elif self.cleaned_src:
-            source = self.cleaned_src
-        elif self.front_src:
-            source = self.front_src
-        elif self.binder_src:
-            source = self.binder_src
+        photo_path = self.image_local_filepath(photos_dir=photos_dir)
+        if use_pillow:
+            image = Image.open(photo_path)
         else:
-            print(f'{self} has no front or binder src')
-            return None
-        try:
-            if use_pillow:
-                image = Image.open(source)
-            else:
-                image = io.imread(source, as_gray)
-        except (HTTPError, RemoteDisconnected) as base_exception:
-            raise Exception(
-                f'Failed to download image data for {self} due to Google API rate limiting.'
-            ) from base_exception
+            image = io.imread(photo_path, as_gray)
+
         return image
 
+    def image_local_filepath(self, photos_dir=settings.LOCAL_PHOTOS_DIR):
+        photo_path = Path(photos_dir, self.folder_name, self.photo_filename)
+        if photo_path.exists():
+            return photo_path
+        else:
+            return None
+
+    def has_valid_source(self, photos_dir=settings.LOCAL_PHOTOS_DIR):
+        photo_path = self.image_local_filepath(photos_dir=photos_dir) 
+        return photo_path is not None
+
+    @property
+    def photo_file_number(self):
+        return self.number*2
+
+    @property
+    def slide_file_number(self):
+        return self.number*2 - 1
+
+    @property
+    def folder_name(self):
+        """ returns the folder name in the format given by BHVP """
+        return f'BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}'
+
+    @property
+    def slide_filename(self):
+        return f'BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}_{self.slide_file_number:03}.jpg'
+
+    @property
+    def photo_filename(self):
+        return f'BHVP_PH_CetaitParis_DP_{self.map_square.number:04}_{self.folder:02}_{self.photo_file_number:03}.jpg'
+
+    def get_photo_url(self):
+        return settings.AWS_S3_PHOTOS_DIR + '/' + self.folder_name + '/' + self.photo_filename
+
+    def get_slide_url(self):
+        return settings.AWS_S3_PHOTOS_DIR + '/' + self.folder_name + '/' + self.slide_filename
+
+    def get_photo_page_url(self):
+        return f'/photo/{self.map_square.number}/{self.folder}/{self.number}/'
+
     class Meta:
-        unique_together = ['number', 'map_square']
+        unique_together = ['number', 'folder', 'map_square']
 
 
 class MapSquare(models.Model):
@@ -105,7 +121,9 @@ class MapSquare(models.Model):
     number = models.IntegerField(null=True)
     boundaries = models.CharField(max_length=252)
     coordinates = models.CharField(max_length=252)
-
+    
+    def __str__(self):
+        return "Map Square " + str(self.number)
 
 class Photographer(models.Model):
     """
@@ -114,10 +132,13 @@ class Photographer(models.Model):
     """
     name = models.CharField(max_length=252)
     number = models.IntegerField(null=True)
+    approx_loc = models.CharField(max_length=252, null=True, blank=True)
     map_square = models.ForeignKey(MapSquare, on_delete=models.SET_NULL, null=True)
     type = models.CharField(max_length=252, null=True)
     sentiment = models.CharField(max_length=252, null=True)
 
+    def __str__(self):
+        return self.name + " (" + str(self.number) + ")"
 
 class AnalysisResult(models.Model):
     """
@@ -135,7 +156,9 @@ class AnalysisResult(models.Model):
         # Make this an abstract base class, which means that Django won't create a database
         # table for this model -- it's only here as a base class for classes below
         abstract = True
-
+    
+    def __str__(self):
+        return str(self.name)
 
 class CorpusAnalysisResult(AnalysisResult):
     """
@@ -149,10 +172,10 @@ class PhotoAnalysisResult(AnalysisResult):
     """
     This model is used to store an analysis result for a single Photo
     """
-    photo = models.ForeignKey(Photo, on_delete=models.CASCADE, null=False)
+    photo = models.ForeignKey(Photo, on_delete=models.CASCADE, null=False, related_name='analyses')
 
     def __str__(self):
-        return f'PhotoAnalysisResult {self.name} for photo with id {self.photo.id}'
+        return f'PhotoAnalysisResult {self.id} - {self.name} for photo with id {self.photo.id}'
 
 
 class PhotographerAnalysisResult(AnalysisResult):

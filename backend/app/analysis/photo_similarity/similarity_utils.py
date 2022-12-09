@@ -9,30 +9,34 @@ import torch
 
 from django.conf import settings
 
-from app.models import Photo
+from app.models import Photo, PhotoAnalysisResult
 
 
-def deserialize_tensor(photo):
+def get_tensor_for_image(photo, verbose=True):
     """
     Retrieve and deserialize the tensor that was generated for the input photo.
     """
-    dir_path = Path(settings.ANALYSIS_PICKLE_PATH,
-                    'resnet18_features',
-                    str(photo.map_square.number))
-    serialized_feature_vector_path = Path(dir_path, f'{photo.number}.pt')
-    if not serialized_feature_vector_path.exists():
-        print(
-            f'A feature vector for photo {photo.number} in map square {photo.map_square.number} '
-            'was never serialized.'
-            '\nPlease run resnet18_feature_vectors first.\n'
-        )
+
+    try:
+        analysis = photo.analyses.get(name='photo_similarity.resnet18_feature_vectors')
+    except PhotoAnalysisResult.DoesNotExist:
+        if verbose:
+            print(
+                f'A feature vector for photo {photo.number} in map square {photo.map_square.number} '
+                'was never serialized.'
+                '\nPlease run resnet18_feature_vectors first.\n'
+            )
         return None
 
-    tensor = torch.load(serialized_feature_vector_path)
-    return tensor
+    feature_vector_list = analysis.parsed_result()
+    if feature_vector_list:  # for testing, this might be None
+        tensor = torch.FloatTensor(feature_vector_list)
+        return tensor
+    else:
+        return None
 
 
-def analyze_similarity(photo: Photo, similarity_function, reverse=False):
+def analyze_similarity(photo: Photo, feature_vector_dicts, similarity_function, reverse=True):
     """
     Produce a list of all other photos by similarity to this photo's feature vector.
     Similarity is measured using similarity_function, a binary operation between feature
@@ -41,24 +45,22 @@ def analyze_similarity(photo: Photo, similarity_function, reverse=False):
     reverse argument is needed because the output sort order from the sim function
     is sometimes ascending, sometimes descending
     """
-    photo_features = deserialize_tensor(photo)
+    photo_features = get_tensor_for_image(photo, verbose=True)
     if photo_features is None:
-        return None
+        return []
 
     similarities = []
-    for other_photo in Photo.objects.all():
-        other_photo_features = deserialize_tensor(other_photo)
-        if other_photo_features is None:
-            continue
+    for feature_vector_dict in feature_vector_dicts:
+        other_photo_features = torch.FloatTensor(feature_vector_dict['vector'])
 
         similarity_value = similarity_function(photo_features, other_photo_features)
 
-        similarities.append(
-            (other_photo.map_square.number, other_photo.number, similarity_value)
-        )
+        similarities.append({
+            'number': feature_vector_dict['photo_number'],
+            'map_square_number': feature_vector_dict['map_square_number'],
+            'folder_number': feature_vector_dict['folder_number'],
+            'similarity': similarity_value
+        })
 
-    if similarities is not None:
-        similarities.sort(key=lambda x: x[2], reverse=reverse)
-        return similarities
-    else:
-        return []
+    similarities.sort(key=lambda x: x['similarity'], reverse=reverse)
+    return similarities[1:]  # First photo will be current photo (100% similarity), remove it

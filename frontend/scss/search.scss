@@ -1,0 +1,86 @@
+.search-page {
+    margin-top: 30px;
+    padding-bottom: 120px;
+}
+
+.search-container {
+    margin-top: 6em;
+}
+
+.search-icon {
+    margin-left: 1em;
+    background-color: $color-turquoise-light;
+}
+
+.search-bar {
+    display: flex;
+    height: 3.5em;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    box-shadow: 0 0 40px rgba(51, 51, 51, .1);
+    border: 2px solid #000000;
+    background-color: $color-turquoise-light;
+
+    input {
+        height: 100%;
+        border: 0;
+        background-color: $color-turquoise-light;
+
+        &:focus {
+            box-shadow: none;
+            background-color: $color-turquoise-light;
+        }
+    }
+
+    button {
+        margin-right: .5em;
+        background-color: $color-turquoise-light;
+        white-space: nowrap;
+
+        &:focus {
+            box-shadow: none;
+        }
+
+        &:hover {
+            color: $color-mid-gray;
+            background-color: $color-turquoise-light;
+        }
+    }
+}
+
+.search-photo {
+    margin: .5em;
+    opacity: 1;
+    -webkit-transition: .3s ease-in-out;
+    transition: .3s ease-in-out;
+
+    &:hover, &:focus {
+        background-color: $color-turquoise;
+
+        :first-child {
+            opacity: .5;
+        }
+    }
+}
+
+.search-photo-container {
+    display: block;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+.search-bg-image-left {
+    position: absolute;
+    left: 0;
+    top: -5px;
+    z-index: -1;
+}
+
+.search-bg-image-right {
+    position: absolute;
+    right: 0;
+    top: -17px;
+    z-index: -1;
+}

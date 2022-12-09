@@ -1,0 +1,183 @@
+/*
+ * Import all styles. This file is imported in frontend/index.js.
+ */
+
+// Global CSS variables first, so they're available to stylesheets imported below
+$side-padding: 20px;
+$side-padding-mobile: 20px;
+$header-height: 100px;
+$footer-height: 150px;
+
+// Bootstrap
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";
+@import "~bootstrap/scss/helpers";
+@import "~bootstrap/scss/utilities/api";
+
+// Our styles
+@import "./fonts";
+@import "./variables";
+@import "./home";
+@import "./home-sections";
+@import "./home-main-section";
+@import "./about";
+@import "./photoView";
+@import "./photographerView";
+@import "./mapSquareView";
+@import "./clusterView";
+@import "./analysisView";
+@import "./search";
+@import "./titleDecorator";
+@import "./blog";
+@import "./legend";
+@import "./parisMap";
+@import "./mapPageView";
+@import "./tags";
+@import "./photographerListView";
+
+html {
+    position: relative;
+    height: 100% !important;
+    scroll-behavior: smooth;
+}
+
+body {
+    height: 100%;
+}
+
+#app_root {
+    height: 100% !important;
+    @extend .d-flex !optional;
+    @extend .flex-column !optional;
+}
+
+/**
+ * Footer Styles
+ */
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 101;
+    flex-shrink: 0;
+}
+
+.footer-img {
+    height: 80px;
+    max-height: 10vh;
+    max-width: 20vw;
+    object-fit: contain;
+    padding-bottom: 10px;
+}
+
+/**
+ * Navbar styles
+ */
+
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+.navbar-toggler,
+.navbar-toggler:focus {
+    border: 0;
+    border-radius: 0;
+}
+
+.navbar-dark {
+    background-color: $color-black;
+}
+
+.navbar-collapse {
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.nav-link {
+    font-family: $font-family-bold;
+    color: $color-gray-light !important;
+
+    &.selected,
+    &:hover,
+    &:focus {
+        color: $color-link !important;
+    }
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* BUTTONS */
+.btn {
+    border-radius: 0;
+    color: $color-black;
+    background-color: white;
+    text-transform: uppercase;
+    margin: 0.25em;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.125em 1em;
+}
+
+.btn-primary {
+    @extend .btn;
+    font-family: $font-family-semibold;
+    border: 2px solid $color-black;
+    text-transform: uppercase;
+
+    &:hover,
+    &:focus,
+    &:active {
+        background-color: $color-turquoise;
+        border: 2px solid $color-turquoise;
+        color: $color-black;
+    }
+}
+
+.btn-secondary {
+    @extend .btn;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    border: 0.08em solid $color-red;
+
+    &:hover,
+    &:focus {
+        color: white !important;
+        background-color: $color-red !important;
+    }
+
+}
+.nav_logo_style{
+    position:relative;
+    z-index:-1
+}
+
+.btn-secondary-blue {
+    @extend .btn-secondary;
+    border: .08em solid $color-blue-light;
+    &:hover, &:focus {
+        background-color: $color-blue-light !important;
+    }
+}
+
+.btn-seebelow {
+    @extend .btn-primary;
+    position: absolute;
+    top: 100%;
+    left: 25%;
+    right: 25%;
+    width: 250px;
+    text-align: center;
+    display: inline-block;
+    margin: auto;
+}

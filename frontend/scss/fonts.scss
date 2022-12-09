@@ -1,0 +1,63 @@
+@font-face {
+    font-family: 'eina_bold';
+    src: url('../fonts/eina-bold.woff2') format('woff2'),
+    url('../fonts/eina-bold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'eina_italic';
+    src: url('../fonts/eina-italic.woff2') format('woff2'),
+    url('../fonts/eina-italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+
+
+@font-face {
+    font-family: 'eina_light';
+    src: url('../fonts/eina-light.woff2') format('woff2'),
+    url('../fonts/eina-light.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'eina_light_italic';
+    src: url('../fonts/eina-light-italic.woff2') format('woff2'),
+    url('../fonts/eina-light-italic.woff') format('woff');
+    font-weight: 100;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'eina_regular';
+    src: url('../fonts/eina-regular.woff2') format('woff2'),
+    url('../fonts/eina-regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;     
+}
+
+
+@font-face {
+    font-family: 'eina_semibold';
+    src: url('../fonts/eina-semibold.woff2') format('woff2'),
+    url('../fonts/eina-semibold.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+}
+
+$font-family-sans-serif: "eina_regular", sans-serif !important;
+$font-family-base: "eina_regular", sans-serif !important;
+$font-family-bold: "eina_bold", sans-serif !important;
+$font-family-semibold: "eina_semibold", sans-serif !important;
+h1, h2, h4, h6 {
+    font-family: $font-family-semibold;
+}
+
+h5 {
+    font-family: $font-family-bold;
+}

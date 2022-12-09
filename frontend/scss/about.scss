@@ -1,0 +1,64 @@
+.about-text {
+    font-size: 20px;
+    padding-bottom: 30px;
+    display: inline-block;
+}
+
+.about-title {
+    font-size: 50px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.prof-img-div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.prof-img {
+    border-radius: 270px;
+    width: 100%;
+    margin-right: 20px;
+}
+
+.text-wrap {
+    float: left;
+}
+
+.urop-view {
+    position: relative;
+    width: 300px;
+    padding: 0;
+    margin: 1em;
+}
+
+.urop-image {
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+.urop-image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(250, 4, 4, 0.5);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    opacity: 0;
+    transition: opacity 0.25s;
+}
+
+.urop-image-overlay:hover {
+    opacity: 1;
+}
+
+.urop-text {
+    margin: 1em;
+}
