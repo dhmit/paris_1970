@@ -11,7 +11,7 @@ echo "Starting $NAME as `whoami`"
 
 # Activate the virtual environment
 cd $DJANGODIR
-source /home/ubuntu/paris_1970/venv/bin/activate
+source /home/ubuntu/paris_1970/../venv/bin/activate
 
 # Create the run directory if it doesn't exist
 RUNDIR=$(dirname $SOCKFILE)
