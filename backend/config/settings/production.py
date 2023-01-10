@@ -16,7 +16,8 @@ ADMINS = [
 ]
 
 ALLOWED_HOSTS = [
-    'paris1970.dhmit.xyz'
+    'paris1970.dhmit.xyz',
+    'paris1970.dhlab.mit.edu',
 ]
 
 CORS_ORIGIN_WHITELIST = []
