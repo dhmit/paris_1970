@@ -10,7 +10,6 @@ import cv2
 
 from app.models import Photo
 
-MODEL = Photo
 
 WHITESPACE_THRESHOLD = .6
 

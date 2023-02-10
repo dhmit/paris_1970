@@ -38,7 +38,7 @@ export class PhotoView extends PhotoViewer {
     }
 
     async componentDidMount() {
-        const mapPhotoString = `${this.props.mapSquareNumber}/${this.props.photoNumber}/`;
+        const mapPhotoString = `${this.props.mapSquareNumber}/${this.props.folderNumber}/${this.props.photoNumber}/`;
         try {
             const apiURL = "/api/photo/" + mapPhotoString;
             const response = await fetch(apiURL);
@@ -221,10 +221,12 @@ export class PhotoView extends PhotoViewer {
                     {this.getPhotoSlider(
                         similarPhotos,
                         {
-                            "className": "slider-photo",
-                            "titleFunc": (k, photo) =>
+                            className: "slider-photo",
+                            titleFunc: (k, photo) =>
                                 `Map Square: ${photo["map_square_number"]}, ` +
-                                `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
+                                `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`,
+                            hrefFunc: (k, photo) => 
+                                `/photo/${photo.map_square_number}/${photo.folder_number}/${photo.number}/`
                         }
                     )}
                 </div>
@@ -309,6 +311,7 @@ export class PhotoView extends PhotoViewer {
 
 PhotoView.propTypes = {
     photoNumber: PropTypes.number,
+    folderNumber: PropTypes.number,
     mapSquareNumber: PropTypes.number,
     photo_dir: PropTypes.string,
     photographer_name: PropTypes.string,
