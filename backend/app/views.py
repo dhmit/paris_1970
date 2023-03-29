@@ -332,16 +332,20 @@ def format_photo(photo_obj, photo_values_to_keep):
 
 
 def tag_helper(tag_name, page=None):
+    print('tag helper here')
     all_yolo_results = PhotoAnalysisResult.objects.filter(name='yolo_model')
 
     if not all_yolo_results.count():
         return []
 
     relevant_results = []
+    print('yolo results here: ', len(all_yolo_results))
     for result in all_yolo_results:
         data = result.parsed_result()
         if tag_name in data['labels']:
             relevant_results.append(result)
+
+    print('relevant results: ', len(relevant_results))
 
     # TODO(ra) Fix the results per page math... it looks like it's stepping through src
     # photo indexes
@@ -356,6 +360,8 @@ def tag_helper(tag_name, page=None):
         relevant_results_this_page = relevant_results[first_result:last_result]
     else:
         relevant_results_this_page = relevant_results
+
+    print(relevant_results_this_page)
 
     # sort by confidence
     by_confidence = []
@@ -755,12 +761,13 @@ def photo_view(request, map_square_number, folder_number, photo_number):
     return render_view(request, context)
 
 
-def tag_view(request, tag_name, page=None):
+def tag_view(request, tag_name, page=1):
     """
     Tag page, specified by tag_name
     """
     sorted_photo_obj, result_count, page_count = tag_helper(tag_name, page=page)
     serializer = SimplePhotoSerializer(sorted_photo_obj, many=True)
+    print('we are here')
     # there's probably a much simpler way...
     photo_data = JSONRenderer().render(serializer.data).decode("utf-8")
     context = {
