@@ -53,11 +53,11 @@ LOGGING = {
         },
     },
     # Comment me in to get database query logging in the console.
-    #'loggers': {
-    #    'django.db.backends': {
-    #        'level': 'DEBUG',
-    #        'handlers': ['console_db'],
-    #        'propagate': False,
-    #    },
-    #},
+    # 'loggers': {
+    #     'django.db.backends': {
+    #         'level': 'DEBUG',
+    #         'handlers': ['console_db'],
+    #         'propagate': False,
+    #     },
+    # },
 }

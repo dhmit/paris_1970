@@ -50,6 +50,29 @@ PHOTOGRAPHER_SEARCH_ORDER_BY = [
 ]
 
 @api_view(['GET'])
+def all_yolo_tags(request):
+    import json
+    yolo_results = PhotoAnalysisResult.objects.filter(name='yolo_model').prefetch_related('photo').prefetch_related('photo__map_square')
+
+    
+    out = []
+    for result in yolo_results:
+        data = result.parsed_result()
+        photo_path = result.photo.folder_name + '/' + result.photo.photo_filename
+        tags = data['labels']
+        out.append({
+            'path': photo_path,
+            'tags': tags})
+
+    with open("yolo-tags.json", "w", encoding="utf-8") as outfile:
+        json.dump(out, outfile, indent=2)
+
+    return Response('done!')
+
+
+
+
+@api_view(['GET'])
 def photo(request, map_square_number, folder_number, photo_number):
     """
     API endpoint to get a photo with a map square number of map_square_number

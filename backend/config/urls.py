@@ -53,6 +53,7 @@ urlpatterns = [
         name="similar_photos"
     ),
     path('api/all_photos/', views.all_photos, name="all_photos"),
+    path('api/all_yolo/', views.all_yolo_tags),
 
     # Photographers
    	path('api/search_photographers/', views.search_photographers),
