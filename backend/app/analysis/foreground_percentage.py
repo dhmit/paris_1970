@@ -11,9 +11,6 @@ import cv2 as cv
 
 from app.models import Photo
 
-MODEL = Photo
-
-
 def analyze(photo: Photo):
     """
     Returns percentage of the photo that is part of the foreground

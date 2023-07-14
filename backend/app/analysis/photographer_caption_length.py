@@ -6,8 +6,6 @@ n.b. This is just a sample! Not actually useful... probably.
 """
 from ..models import Photo
 
-MODEL = Photo
-
 
 def analyze(photo: Photo):
     """

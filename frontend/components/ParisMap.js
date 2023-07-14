@@ -14,6 +14,9 @@ import Legend from "./Legend";
 export const MAPSQUARE_WIDTH = 0.00340325568;
 export const MAPSQUARE_HEIGHT = 0.0022358;
 
+// Default latitude and longitude values for the center of the map
+export const DEFAULT_MAP_CENTER_LAT = 48.858859;
+export const DEFAULT_MAP_CENTER_LNG = 2.3470599;
 
 export class ParisMap extends React.Component {
     constructor(props) {
@@ -28,7 +31,7 @@ export class ParisMap extends React.Component {
 
         this.state = {
             visibleLayers,
-            layers: ["Photo Density", "Arrondissements"],
+            layers: ["Arrondissement", "Photos available"],
             bounds: [[48.8030, 2.1330], [48.9608, 2.6193]],
             minZoom: 12,
             zoom: this.props.zoom
@@ -60,8 +63,8 @@ export class ParisMap extends React.Component {
                 <MapContainer key={this.props.scrollWheelZoom}
                     // Initial state of Map
                               center={[
-                                  this.props.lat ? this.props.lat : 48.858859,
-                                  this.props.lng ? this.props.lng : 2.3470599
+                                  this.props.lat ? this.props.lat : DEFAULT_MAP_CENTER_LAT,
+                                  this.props.lng ? this.props.lng : DEFAULT_MAP_CENTER_LNG
                               ]}
                               zoom={this.state.zoom}
 
