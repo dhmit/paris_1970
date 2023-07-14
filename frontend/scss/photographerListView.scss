@@ -1,6 +1,31 @@
 .one-photographer {
-    flex-direction: row;
-    justify-content: space-evenly;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 150px;
+    min-height: 150px;
+
+    @media  screen and (max-width: 500px) {
+        min-width: 100px;
+        min-height: 100px;
+    }
+}
+
+.photographers-container {
+    padding: 1px;
+    justify-content: center;
+}
+
+.photographerList-container :not(.heading) {
+    font-size: 20px;
+    @media screen and (max-width: 500px) {
+        font-size: 13px;
+    }
+}
+
+.child {
+    width: 13.7%;
     margin: 20px 10px;
     background-color: $color-turquoise-light;
 
@@ -19,32 +44,31 @@
     }
 }
 
-.photographers-container {
-    padding: 1px;
-    justify-content: center;
-}
-
 .photographerList-container {
-    // top: 0;
+    height: 100vh;
+    position: relative;
 
     #banner {
         background-color: white;
-        transition: height 0.5s, background-color 0.5s;
+        transition: max-height 0.75s, background-color 0.5s;
+        position: absolute;
         z-index: 2;
         display: flex;
         flex-direction: column;
         row-gap: 2vh;
         padding: 4vh 5vw;
-        border-bottom: 1px solid black;
-        overflow: hidden;
         width: 100%;
+        border-bottom: 1px solid black;
 
         &.grow {
-            height: 30vh;
+            max-height: 100vh;
+            @media screen and (max-width: 500px) {
+                max-height: 100vh;
+            }
         }
 
         &.shrink {
-            height: calc(4vh + 30px + 1rem + 2vh);
+            max-height: calc(4vh + 30px + 1rem + 2vh);
         }
 
         .header {
@@ -58,145 +82,251 @@
             .heading {
                 font-size: 30px;
                 font-weight: 600;
+                margin: 0;
+            }
+        }
+    }
+
+    .filter-btn-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        widows: 100%;
+        .primary-btn {
+            background-color: #00BFE1;
+            border: 2px solid black;
+            width: fit-content;
+            padding: 0.25rem 0.5rem;
+        }
+    }
+
+    #filterContainer {
+        flex-direction: column;
+        row-gap: 3vh;
+        display: flex;
+        flex: 0;
+        width: 100%;
+        background-color: white;
+        z-index: 2;
+        padding-top: 0;
+
+        &.hide {
+            display: none;
+        }
+
+        input#photographerList-search:focus {
+            outline-width: 0;
+        }
+
+        #photographerList-search {
+            height: 40;
+            width: 100%;
+            background-color: #ebf3f4;
+            border: 2px solid #000000;
+            padding: 7px 7px 7px 60px;
+            -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+            -moz-box-sizing: border-box; /* Firefox, other Gecko */
+            box-sizing: border-box; /* Opera/IE 8+ */
+            background-image: url("/frontend/images/icons/magnify_glass.svg");
+            background-repeat: no-repeat;
+            background-size: 30px;
+            background-position: left 2vh top 7px;
+
+            @media screen and (max-width: 500px) {
+                width: 100%;
+                background-size: 20px;
+                background-position: left 1vh top 7px;
+                padding: 5px 5px 5px 40px;
+                height: 40px;
             }
         }
 
-        .filterContainer {
-            flex-direction: column;
-            row-gap: 3vh;
+        .advancedSearch-container {
             display: flex;
-            flex: 0;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
 
-            input#photographerList-search:focus {
-                outline-width: 0;
+            @media screen and (max-width: 500px) {
+                flex-direction: column;
+                align-items: flex-start;
+                row-gap: 1.5vh;
             }
 
-            #photographerList-search {
-                height: 5vh;
-                width: 60vw;
-                background-color: #ebf3f4;
-                border: 2px solid #000000;
-                padding: 10px 10px 10px 7vh;
-                -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-                -moz-box-sizing: border-box; /* Firefox, other Gecko */
-                box-sizing: border-box; /* Opera/IE 8+ */
-                background-image: url("/frontend/images/icons/magnify_glass.svg");
-                background-repeat: no-repeat;
-                background-size: 3vh;
-                background-position: left 2vh top 0.75vh;
-            }
-
-            .advancedSearch-container {
+            .filterBy-container {
                 display: flex;
                 flex-direction: row;
-                justify-content: space-between;
+                column-gap: 1vw;
                 align-items: center;
+                justify-content: flex-start;
 
-                .filterBy-container,
-                .sortBy-container {
-                    display: flex;
-                    flex-direction: row;
-                    column-gap: 2vw;
-                    align-items: center;
+                @media screen and (max-width: 500px) {
+                    display: grid;
+                    grid-template-columns: 1fr 5fr;
+                    width: 100%;
+                    column-gap: 3vw;
+                    align-items: flex-start;
+                }
 
-                    .dropdown-container {
-                        width: 150px;
-                        position: relative;
+                .filter-label {
+                    @media screen and (max-width: 500px) {
+                        width: fit-content;
+                        white-space: nowrap;
+                    }
+                }
 
-                        .dropdown-select {
-                            padding: 5px 10px;
-                            display: flex;
-                            flex-direction: row;
-                            justify-content: space-between;
-                            align-items: center;
+                .dropdown-container {
+                    min-width: 150px;
+                    position: relative;
+
+                    @media screen and (max-width: 500px) {
+                        min-width: 100px;
+                        max-width: 150px;
+                    }
+
+                    .dropdown-spacer {
+                        height: 1vh;
+                        background-color: transparent;
+                        pointer-events: none;
+                    }
+
+                    .dropdown-select {
+                        padding: 5px 10px;
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: space-between;
+                        align-items: center;
+                        border: 1px solid $color-turquoise;
+                        column-gap: 10px;
+
+                        &.blue-border {
                             border: 1px solid $color-turquoise;
-
-                            &.blue-border {
-                                border: 1px solid $color-turquoise;
-                            }
-
-                            &.red-border {
-                                border: 1px solid #fb2f2a;
-                            }
                         }
 
-                        .dropdown-items {
-                            position: fixed;
-                            width: 180px;
-                            max-height: 30vh;
-                            overflow-y: auto;
+                        &.red-border {
+                            border: 1px solid #fb2f2a;
+                        }
+                    }
 
-                            .dropdown-spacer {
-                                height: 1vh;
-                                background-color: transparent;
-                                pointer-events: none;
+                    /* Hide scrollbar for Chrome, Safari and Opera */
+                    .dropdown-items::-webkit-scrollbar {
+                        display: none;
+                    }
+
+                    .dropdown-items {
+                        position: absolute;
+                        width: 180px;
+                        max-height: 30vh;
+                        overflow-y: auto;
+                        z-index: 5;
+                        -ms-overflow-style: none; /* IE and Edge */
+                        scrollbar-width: none; /* Firefox */
+
+                        .dropdown-itm {
+                            background: #1c1a1a;
+                            padding: 0.5rem 0.75rem;
+                            width: 100%;
+                            display: flex;
+                            flex-direction: row;
+                            column-gap: 10px;
+
+                            &.unselected-itm {
+                                color: white;
                             }
 
-                            .dropdown-itm {
-                                background: #1c1a1a;
-                                padding: 0.5rem;
-                                width: 100%;
-
-                                &.unselected-itm {
-                                    color: white;
-                                }
-
-                                &.selected-itm,
-                                &:hover {
-                                    color: $color-turquoise;
-                                }
+                            &.selected-itm,
+                            &:hover {
+                                color: $color-turquoise;
                             }
                         }
                     }
                 }
+            }
 
-                .filters-container {
-                    display: flex;
-                    flex-direction: row;
-                    column-gap: 5vw;
-                }
+            .filters-container {
+                display: flex;
+                flex-direction: row;
+                column-gap: 5vw;
+                flex-wrap: wrap;
+                row-gap: 1vh;
 
-                p {
-                    margin: 0;
+                @media screen and (max-width: 500px) {
+                    min-width: 0;
                 }
+            }
+
+            p {
+                margin: 0;
             }
         }
     }
 
-    #overlay {
-        opacity: 0.5;
-        height: 100%;
-        width: 100%;
-        transition: background-color 0.5s;
-
-        &.show {
-            position: fixed;
-            background-color: black;
-            left: 0;
-            top: calc(26vh + 30px + 1rem + 2vh);
-        }
-
-        &.hide {
-            background-color: transparent;
-            pointer-events: none;
-        }
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .photographerGallery::-webkit-scrollbar {
+        display: none;
     }
 
     .photographerGallery {
+        height: fit-content;
+        top: 30vh;
+        overflow: auto;
+        position: absolute;
+        width: 100%;
+        padding: 0 1rem;
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+
+        @media screen and (max-width: 500px) {
+            top: 25vh;
+        }
+
+        #overlay {
+            opacity: 0.5;
+            height: 100%;
+            width: 100%;
+            transition: background-color 0.5s;
+
+            &.show {
+                position: fixed;
+                background-color: black;
+                left: 0;
+                top: calc(26vh + 30px + 1rem + 2vh);
+            }
+
+            &.hide {
+                background-color: transparent;
+                pointer-events: none;
+            }
+        }
+
         .list-inline {
-            padding: 0 5vw 0 5vw;
-            overflow-y: scroll;
+            // padding: 0 5vw 0 5vw;
+            // overflow-y: scroll;
             max-height: calc(100vh - 450px);
             height: calc(100vh - 450px);
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 150px);
             align-items: center;
-            justify-content: space-between;
+            min-height: 50vh;
+            z-index: 100;
+            width: 100%;
+            row-gap: 1rem;
+            column-gap: 1rem;
+            justify-content: center;
+
+            @media screen and (max-width: 500px) {
+                grid-template-columns: repeat(auto-fill, 100px);
+            }
         }
         .photographers-results-footer {
             display: block;
-            width: 100vw;
         }
+    }
+
+    .footer-container {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
     }
 }
