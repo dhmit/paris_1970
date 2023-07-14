@@ -141,6 +141,7 @@ node_modules
 # production
 build/
 static/
+assets/
 
 # misc
 .DS_Store
@@ -154,6 +155,8 @@ yarn-error.log*
 *.swp
 db_password.txt
 remote_db_superuser_password.txt
+google_api_credentials.json
+map_square_metadata.csv
 
 
 # Build byproducts
@@ -176,4 +179,3 @@ backend/data/local_photos/
 assets/images/
 assets/data/test_photos
 data_dump.json
-

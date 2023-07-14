@@ -7,7 +7,6 @@ analysis to calculate if there exists at least 1 face beyond the size of 200 x 2
 
 import cv2
 from app.models import Photo
-MODEL = Photo
 
 
 def analyze(photo: Photo):

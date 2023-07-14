@@ -1,17 +1,21 @@
-"""
+"""_photo_url()
 These view functions and classes implement API endpoints
 """
 import ast
 import json
 import os
 import re
+import random
+from math import ceil
 
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 
 from django.shortcuts import render
 from django.db.models import Q
+from django.core.paginator import Paginator
 from django.conf import settings
 
 from app import view_helpers
@@ -28,12 +32,24 @@ from .models import (
 from .serializers import (
     PhotoSerializer,
     SimplePhotoSerializer,
+    SimplePhotoSerializerForCollage,
     MapSquareSerializer,
     MapSquareSerializerWithoutPhotos,
     PhotographerSerializer,
     PhotographerSearchSerializer,
     CorpusAnalysisResultsSerializer
 )
+
+
+# TODO(ra): See if we can move this elsewhere.
+PHOTOGRAPHER_SEARCH_ORDER_BY = [
+    "Name: ascending", 
+    "Name: descending", 
+    "Location: ascending", 
+    "Location: descedning", 
+    "Map Square #: ascending", 
+    "Map Square #: descending"
+]
 
 @api_view(['GET'])
 def photo(request, map_square_number, folder_number, photo_number):
@@ -112,19 +128,118 @@ def search_photographers(request):
     TODO: Add pagination for both cases (when given a search query and when nothing is given) 
     so that the user is sent the first 50 results and they can view more results as they scroll down the page.
     """
+
+    def parse_order_by(order_by):
+        if order_by not in PHOTOGRAPHER_SEARCH_ORDER_BY:
+            return None
+
+        field, asc = order_by.split(":")
+        field = field.strip().lower()
+        asc = asc.strip().lower()
+        if field == "location":
+            field = "approx_loc"
+        elif field == "map square #":
+            field = "map_square"
+        
+        asc = asc == 'ascending'
+        
+        return f'{"" if asc else "-"}{field}'
+
+    # Pulling the params from the request
     name = request.GET.get("name", None)
-    is_searching_by_name = name is not None and name.strip() != ""
-    if is_searching_by_name:
-        matching_photographers = Photographer.objects.filter(name__icontains=name).order_by("name")
+    location = request.GET.get("location", None)
+    map_square = request.GET.get("square", None)
+    name_start = request.GET.get("name_starts_with", None)
+    order_by = request.GET.get("order_by", None)
+
+    # Pagination params
+    page_number = request.GET.get("page", None)
+    count_per_page = 50 
+
+    search_params = {}
+    
+    # Validating and adding all of the params
+    name = name.strip()
+    location = location.strip()
+    map_square = map_square.strip()
+
+    if name:
+        search_params["name__icontains"] = name
+    if location:
+        search_params["approx_loc"] = location 
+    if map_square:
+        map_square = int(map_square)
+        search_params["map_square"] = map_square 
+    
+    # Planning to check for multiple name starts for this field 
+    # Implmenetaiton example in this stackoverflow entry 
+    #  (https://stackoverflow.com/questions/5783588/django-filter-on-same-option-with-multiple-possibilities)
+    if name_start is not None and name_start.strip() != "":
+        search_params["name__istartswith"] = name_start 
+
+    order_by_field = parse_order_by(order_by)
+
+    if len(search_params) == 0:
+        matching_photographers = Photographer.objects.all()
     else:
-        matching_photographers = Photographer.objects.all().order_by("name")[:50]
+        matching_photographers = Photographer.objects.filter(**search_params)
+
+    matching_photographers.prefetch_related("photo_set")
+
+    if order_by_field is not None:
+        matching_photographers = matching_photographers.order_by(order_by_field)
+    photographers_paginator = Paginator(matching_photographers, count_per_page)
+    current_page = photographers_paginator.get_page(page_number)
 
     serialized_photographers = (
-        PhotographerSearchSerializer(matching_photographers, many=True)
+        PhotographerSearchSerializer(current_page.object_list, many=True)
     ) # add pagination here
-    res = Response(serialized_photographers.data)
+    res = Response({
+        "page_number": page_number,
+        "results": serialized_photographers.data,
+        "is_last_page": not current_page.has_next()
+    })
     return res
 
+
+@api_view(['GET'])
+def get_search_photographers_dropdown_options(request):
+    """
+    API endpoint to get a list of photographers based on a search query that looks the photographers by name 
+    If not given a search query it will return the first 50 photographers sorted by name
+
+    TODO: Add pagination for both cases (when given a search query and when nothing is given) 
+    so that the user is sent the first 50 results and they can view more results as they scroll down the page.
+    """
+    locations = sorted(
+        filter(
+            lambda x: x is not None, 
+            list(
+                set(Photographer.objects.all().values_list('approx_loc', flat=True))
+            )
+        )
+    )
+
+    squares = sorted(
+        filter(
+            lambda x: x is not None, 
+            list(
+                set(Photographer.objects.all().values_list('map_square_id', flat=True))
+            )
+        )
+    )
+
+    nameStartsWith = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+    photographer_search_options = {
+        "locations": locations,
+        "squares": squares,
+        "nameStartsWith": nameStartsWith,
+        "orderBy": PHOTOGRAPHER_SEARCH_ORDER_BY
+    }
+
+    res = Response(photographer_search_options)
+    return res
 
 @api_view(['GET'])
 def get_photographer(request, photographer_number=None):
@@ -153,8 +268,7 @@ def get_corpus_analysis_results(request):
 @api_view(['GET'])
 def all_analyses(request):
     """
-    API endpoint to get all available analyses
-    """
+     """
     photo_analysis_obj = PhotoAnalysisResult.objects.values_list('name').distinct()
     return Response([analysis[0] for analysis in photo_analysis_obj])
 
@@ -188,6 +302,29 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def get_images_with_text(request):
+    """
+    API endpoint to get photos that have text on them, according to our text_ocr analysis.
+    """
+    ocr_results = PhotoAnalysisResult.objects.filter(name='text_ocr')
+
+    photos_with_text = []
+
+    for result_obj in ocr_results:
+        text_data = result_obj.parsed_result()
+        if text_data:
+            # TODO(ra) probably use a serializer instead but we're working fast...
+            photos_with_text.append({
+                'photo_page_url': result_obj.photo.get_photo_page_url(),
+                'photo_url': result_obj.photo.get_photo_url(),
+                'alt': result_obj.photo.alt,
+                'text': text_data,
+            })
+
+    return Response(photos_with_text)
+
+
 
 def format_photo(photo_obj, photo_values_to_keep):
     formatted_photo = {}
@@ -195,28 +332,51 @@ def format_photo(photo_obj, photo_values_to_keep):
         formatted_photo[value] = photo_obj[value]
 
 
-def tag_helper(tag_name):
-    analysis_obj = PhotoAnalysisResult.objects.filter(name='yolo_model')
-    if len(analysis_obj) == 0:
+def tag_helper(tag_name, page=None):
+    print('tag helper here')
+    all_yolo_results = PhotoAnalysisResult.objects.filter(name='yolo_model')
+
+    if not all_yolo_results.count():
         return []
-    relevant_objects = []
-    for instance in analysis_obj:
-        data = instance.parsed_result()
+
+    relevant_results = []
+    print('yolo results here: ', len(all_yolo_results))
+    for result in all_yolo_results:
+        data = result.parsed_result()
         if tag_name in data['labels']:
-            relevant_objects.append(instance)
+            relevant_results.append(result)
+
+    print('relevant results: ', len(relevant_results))
+
+    # TODO(ra) Fix the results per page math... it looks like it's stepping through src
+    # photo indexes
+    results_per_page = 20
+    result_count = len(relevant_results)
+    page_count = ceil(result_count / results_per_page)
+
+    if page:
+        first_result = results_per_page * (page-1)
+        last_result = first_result + results_per_page
+        print(first_result, last_result)
+        relevant_results_this_page = relevant_results[first_result:last_result]
+    else:
+        relevant_results_this_page = relevant_results
+
+    print(relevant_results_this_page)
+
     # sort by confidence
     by_confidence = []
-    for instance in relevant_objects:
-        data = instance.parsed_result()
+    for result in relevant_results_this_page:
+        data = result.parsed_result()
         confidence = 0
         for box in data['boxes']:
             # an image may have several tag_name in labels, find greatest confidence
             if box['label'] == tag_name:
                 confidence = max(confidence, box['confidence'])
-        by_confidence.append((instance, confidence))
-    sorted_analysis_obj = sorted(by_confidence, key=lambda obj: obj[1],
-                                 reverse=True)
-    return [instance[0].photo for instance in sorted_analysis_obj]
+        by_confidence.append((result, confidence))
+
+    sorted_analysis_obj = sorted(by_confidence, key=lambda obj: obj[1], reverse=True)
+    return [result[0].photo for result in sorted_analysis_obj], result_count, page_count
 
 
 @api_view(['GET'])
@@ -224,7 +384,7 @@ def get_photos_by_tag(request, tag_name):
     """
     API endpoint to get all photos associated with a tag (specified by tag_name)
     """
-    sorted_photo_obj = tag_helper(tag_name)
+    sorted_photo_obj, _, _ = tag_helper(tag_name)
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
     return Response(serializer.data)
 
@@ -238,6 +398,13 @@ def photo_tag_helper(map_square_number, folder_number, photo_number):
     else:
         return None
 
+@api_view(['GET'])
+def get_random_photos(request):
+
+    photos = list(Photo.objects.all())
+    random_photos = random.sample(photos,9)
+    serializer = SimplePhotoSerializerForCollage(random_photos,many=True)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def get_photo_tags(request, map_square_number, folder_number, photo_number):
@@ -268,28 +435,28 @@ def get_photo_by_similarity(request, map_square_number, folder_number, photo_num
     Number of similar photos to GET specified by num_similar_photos
     """
 
-    photo_obj = Photo.objects.get(number=photo_number, folder=folder_number, map_square__number=map_square_number)
-    analysis_obj_list = PhotoAnalysisResult.objects.filter(
-        name="photo_similarity.resnet18_cosine_similarity",
-        photo=photo_obj,
-    )
+    try:
+        analysis_obj = PhotoAnalysisResult.objects.get(
+            name="photo_similarity.resnet18_cosine_similarity",
+            photo__number=photo_number,
+            photo__map_square__number=map_square_number,
+            photo__folder=folder_number,
+        )
+    except PhotoAnalysisResult.DoesNotExist:
+        return Response("No such image", status=status.HTTP_204_NO_CONTENT)
+
+    # splices the list of similar photos to get top 'num_similar_photos' photos
+    similarity_list = analysis_obj.parsed_result()[:num_similar_photos]
 
     similar_photos = []
-    if analysis_obj_list:
-        analysis_obj = analysis_obj_list[0]
-        # splices the list of similar photos to get top 'num_similar_photos' photos
-        # TODO(ra): Probably this should be a JSON parse, not a literal eval
-        similarity_list = ast.literal_eval(analysis_obj.result)[::-1][:num_similar_photos]
+    for similar_photo in similarity_list:
+        photo = (Photo.objects.prefetch_related('map_square')
+                              .get(number=similar_photo['number'],
+                                   map_square__number=similar_photo['map_square_number'],
+                                   folder=similar_photo['folder_number']))
+        similar_photos.append(photo)
 
-        for similar_photo in similarity_list:
-            similar_photos.append(
-                Photo.objects.get(number=similar_photo.number, 
-                                  map_square__number=similar_photo.map_square_number,
-                                  folder=similar_photo.folder_number,
-                                  )
-                                )
-
-    serializer = PhotoSerializer(similar_photos, many=True)
+    serializer = SimplePhotoSerializer(similar_photos, many=True)
     return Response(serializer.data)
 
 
@@ -309,7 +476,9 @@ def search(request):
     API endpoint to search for photos that match the search query
     Post request
     """
-    query = json.loads(request.GET.get('query', '{}'))
+    query = json.loads(request.GET.get('query', '{}')) #query object
+
+    print(query)
 
     between_quotes = r'(?<=\").*?(?=\")'
     special_characters = r'.?!,@#$%^&*_+<>/\'();:|`~\-\[\]\{\}'
@@ -321,6 +490,8 @@ def search(request):
     # but older pylint doesn't understand the | below
     # pylint: disable=unsupported-binary-operation
     django_query = Q()
+
+    print(django_query)
     photo_obj = Photo.objects.all()
     for keyword in keywords:
         sub_query = Q(
@@ -349,13 +520,40 @@ def search(request):
             default=100
         )
         return max_confidence
+    
+
+
 
     photo_obj = sorted(photo_obj, key=tag_confidence, reverse=True)
     serializer = PhotoSerializer(photo_obj, many=True)
     return Response({
-        'keywords': ', '.join([f'"{keyword}"' for keyword in keywords]),
+        'keywords': ', '.join([f'"{keyword}"' for keyword in keywords]), #this represents the query dict itself
         'searchData': serializer.data
     })
+
+
+
+
+@api_view(['GET'])
+def apply_filters(tag_request): #now need to work on the tag request
+    """
+    Given a particular request object that would specifically correlate to tag information, returns 
+    search queries corresponding to tag information. Backend filter bar in case current implementation doesn't work.
+    """
+    applied_query = json.loads(tag_request.GET.get('query', '{}')) #query object
+
+    
+    tags_applied = [x for x in applied_query if applied_query[x]] #gathering all of the tags and only add them if they are True
+    all_photo_data = [] #contains all of the information corresponding to photo data from tag_helper
+
+    for tag in tags_applied:
+        all_photo_data += tag_helper(tag) #appending all data from the photo tags
+    
+    tag_serializer = PhotoSerializer(all_photo_data, many=True) #formats it into a Django model
+
+    return Response(tag_serializer.data) 
+
+
 
 
 @api_view(['GET'])
@@ -504,6 +702,35 @@ def map_square_view(request, map_square_number):
     }
     return render_view(request, context)
 
+def text_ocr_view(request):
+    """
+    Sketchy prototype view for viewing all the text ocr photos
+    """
+    context = {
+        'page_metadata': {
+            'title': 'Text OCR'
+        },
+        'component_name': 'TextOCRView',
+    }
+    return render_view(request, context)
+
+def similar_photos_view(request, map_square_number, folder_number, photo_number):
+    """
+    Sketchy prototype view for viewing all the images similar to a given image
+    """
+    context = {
+        'page_metadata': {
+            'title': 'Similar Photos'
+        },
+        'component_name': 'SimilarityView',
+        'component_props': {
+            'mapSquareNumber': map_square_number,
+            'folderNumber': folder_number,
+            'photoNumber': photo_number,
+        }
+    }
+    return render_view(request, context)
+
 
 def photographer_view(request, photographer_number):
     """
@@ -573,12 +800,13 @@ def photo_view(request, map_square_number, folder_number, photo_number):
     return render_view(request, context)
 
 
-def tag_view(request, tag_name):
+def tag_view(request, tag_name, page=1):
     """
     Tag page, specified by tag_name
     """
-    sorted_photo_obj = tag_helper(tag_name)
+    sorted_photo_obj, result_count, page_count = tag_helper(tag_name, page=page)
     serializer = SimplePhotoSerializer(sorted_photo_obj, many=True)
+    print('we are here')
     # there's probably a much simpler way...
     photo_data = JSONRenderer().render(serializer.data).decode("utf-8")
     context = {
@@ -588,7 +816,10 @@ def tag_view(request, tag_name):
         'component_name': 'TagView',
         'component_props': {
             'tagName': tag_name,
-            'tagPhotos': photo_data
+            'tagPhotos': photo_data,
+            'totalNumPhotos': result_count,
+            'pageNum': page,
+            'numPages': page_count,
         }
     }
 

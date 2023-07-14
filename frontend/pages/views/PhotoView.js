@@ -221,10 +221,12 @@ export class PhotoView extends PhotoViewer {
                     {this.getPhotoSlider(
                         similarPhotos,
                         {
-                            "className": "slider-photo",
-                            "titleFunc": (k, photo) =>
+                            className: "slider-photo",
+                            titleFunc: (k, photo) =>
                                 `Map Square: ${photo["map_square_number"]}, ` +
-                                `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`
+                                `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`,
+                            hrefFunc: (k, photo) => 
+                                `/photo/${photo.map_square_number}/${photo.folder_number}/${photo.number}/`
                         }
                     )}
                 </div>
