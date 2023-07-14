@@ -67,7 +67,6 @@ class Blog extends React.Component {
                 <Row>
                     <Col lg={8}>
                         <h2 className="blog-list-title">Blog</h2>
-                        posts are here:::: {this.props.posts.length}
                         <Posts
                             posts={this.props.posts}
                             tags={this.props.tags}
