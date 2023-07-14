@@ -88,7 +88,9 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware'
+
+    # Disabled to allow embedding in iFrames (e.g., for our Research Showcase)
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -111,6 +113,25 @@ TEMPLATES = [
         },
     },
 ]
+
+
+# Database
+# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+pw_path = Path(PROJECT_ROOT, 'db_password.txt')
+with open(pw_path, 'r', encoding='utf-8') as pw_file:
+    db_pw = pw_file.readline().strip()
+
+DATABASES = {
+    'default': {
+       'ENGINE': 'django.db.backends.postgresql',
+       'HOST': 'paris1970-urop-fa22.crdpmszp71qh.us-east-1.rds.amazonaws.com',
+       'USER': 'urop',
+       'NAME': 'paris1970-urop-fa22',
+       'PORT': '5432',
+       'PASSWORD': db_pw,
+    }
+}
+
 
 
 WSGI_APPLICATION = 'config.wsgi.application'

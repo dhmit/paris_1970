@@ -19,7 +19,7 @@ export class PhotoViewer extends React.Component {
         } else {
             return photoData.slide_url;
         }
-    };
+    }
 
     getPhotoGrid(photoData, config = {}) {
         const className = getValue(config, "className", "");
@@ -27,7 +27,8 @@ export class PhotoViewer extends React.Component {
         const titleFunc = getValue(
             config,
             "titleFunc",
-            (k, photo) => `Map Square: ${photo["map_square_number"]}` +
+            (k, photo) =>
+                `Map Square: ${photo["map_square_number"]}` +
                 `, Folder: ${photo.folder}, Photo: ${photo["number"]}`
         );
 
@@ -37,33 +38,33 @@ export class PhotoViewer extends React.Component {
             (k, photo) => `/photo/${photo.map_square_number}/${photo.folder}/${photo.number}/`
         );
 
-        const onClickFunc = getValue(
-            config, "onClickFunc", (_k, _photo) => (_e) => {
-            }
-        );
+        const onClickFunc = getValue(config, "onClickFunc", (_k, _photo) => (_e) => {});
         return photoData.map((photo, k) => {
             return (
-                <li className={`default-photo photo-item-background text-center list-inline-item ${className}`}
+                <li
+                    className={`default-photo photo-item-background text-center list-inline-item ${className}`}
                     key={k}
                     onClick={(e) => {
                         onClickFunc(k, photo)(e);
                         window.open(hrefFunc(k, photo), "_self");
                     }}
-
                     style={{
-                        "width": photoSize[0],
-                        "height": photoSize[1]
-                    }}>
+                        width: photoSize[0],
+                        height: photoSize[1],
+                        backgroundColor: "rgb(236, 243, 244)",
+                    }}
+                >
                     <a
                         className={className}
                         title={titleFunc(k, photo)}
                         href={hrefFunc(k, photo)}
-                        onClick={onClickFunc(k, photo)}>
+                        onClick={onClickFunc(k, photo)}
+                    >
                         <img
                             alt={photo.alt}
                             style={{
                                 maxWidth: photoSize[0],
-                                maxHeight: photoSize[1]
+                                maxHeight: photoSize[1],
                             }}
                             src={this.getSource(photo)}
                         />
@@ -80,20 +81,26 @@ export class PhotoViewer extends React.Component {
                 <button
                     type="button"
                     className="slider-scroll-left btn-dark"
-                    onClick={
-                        () => document.getElementById("photo-slider").scrollLeft -=
-                            document.getElementById("photo-slider").clientWidth}
-                >&#8249;</button>
+                    onClick={() =>
+                        (document.getElementById("photo-slider").scrollLeft -=
+                            document.getElementById("photo-slider").clientWidth)
+                    }
+                >
+                    &#8249;
+                </button>
                 <ul id="photo-slider" className="slider-photos list-inline">
                     {this.getPhotoGrid(photoData, config)}
                 </ul>
                 <button
                     type="button"
                     className="slider-scroll-right btn-dark"
-                    onClick={
-                        () => document.getElementById("photo-slider").scrollLeft +=
-                            document.getElementById("photo-slider").clientWidth}
-                >&#8250;</button>
+                    onClick={() =>
+                        (document.getElementById("photo-slider").scrollLeft +=
+                            document.getElementById("photo-slider").clientWidth)
+                    }
+                >
+                    &#8250;
+                </button>
             </div>
         );
     }
