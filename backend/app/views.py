@@ -5,6 +5,7 @@ import ast
 import json
 import os
 import re
+import random
 from math import ceil
 
 from rest_framework import status
@@ -31,6 +32,7 @@ from .models import (
 from .serializers import (
     PhotoSerializer,
     SimplePhotoSerializer,
+    SimplePhotoSerializerForCollage,
     MapSquareSerializer,
     MapSquareSerializerWithoutPhotos,
     PhotographerSerializer,
@@ -397,6 +399,13 @@ def photo_tag_helper(map_square_number, folder_number, photo_number):
     else:
         return None
 
+@api_view(['GET'])
+def get_random_photos(request):
+
+    photos = list(Photo.objects.all())
+    random_photos = random.sample(photos,9)
+    serializer = SimplePhotoSerializerForCollage(random_photos,many=True)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def get_photo_tags(request, map_square_number, folder_number, photo_number):
