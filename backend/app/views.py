@@ -6,6 +6,7 @@ import json
 import os
 import re
 import random
+from math import ceil
 
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -333,34 +334,40 @@ def format_photo(photo_obj, photo_values_to_keep):
 
 
 def tag_helper(tag_name, page=None):
-    all_yolo_results = list(PhotoAnalysisResult.objects.filter(name='yolo_model'))
+    print('tag helper here')
+    all_yolo_results = PhotoAnalysisResult.objects.filter(name='yolo_model')
 
-    result_count = len(all_yolo_results)
+    if not all_yolo_results.count():
+        return []
+
+    relevant_results = []
+    print('yolo results here: ', len(all_yolo_results))
+    for result in all_yolo_results:
+        data = result.parsed_result()
+        if tag_name in data['labels']:
+            relevant_results.append(result)
+
+    print('relevant results: ', len(relevant_results))
 
     # TODO(ra) Fix the results per page math... it looks like it's stepping through src
     # photo indexes
     results_per_page = 20
+    result_count = len(relevant_results)
+    page_count = ceil(result_count / results_per_page)
 
     if page:
         first_result = results_per_page * (page-1)
-        last_result = first_result + results_per_page*2
+        last_result = first_result + results_per_page
         print(first_result, last_result)
-        results = all_yolo_results[first_result:last_result]
+        relevant_results_this_page = relevant_results[first_result:last_result]
     else:
-        results = all_yolo_results
+        relevant_results_this_page = relevant_results
 
-    if result_count == 0:
-        return []
-
-    relevant_objects = []
-    for result in results:
-        data = result.parsed_result()
-        if tag_name in data['labels']:
-            relevant_objects.append(result)
+    print(relevant_results_this_page)
 
     # sort by confidence
     by_confidence = []
-    for result in relevant_objects:
+    for result in relevant_results_this_page:
         data = result.parsed_result()
         confidence = 0
         for box in data['boxes']:
@@ -370,7 +377,7 @@ def tag_helper(tag_name, page=None):
         by_confidence.append((result, confidence))
 
     sorted_analysis_obj = sorted(by_confidence, key=lambda obj: obj[1], reverse=True)
-    return [result[0].photo for result in sorted_analysis_obj]
+    return [result[0].photo for result in sorted_analysis_obj], result_count, page_count
 
 
 @api_view(['GET'])
@@ -378,7 +385,7 @@ def get_photos_by_tag(request, tag_name):
     """
     API endpoint to get all photos associated with a tag (specified by tag_name)
     """
-    sorted_photo_obj = tag_helper(tag_name)
+    sorted_photo_obj, _, _ = tag_helper(tag_name)
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
     return Response(serializer.data)
 
@@ -763,12 +770,13 @@ def photo_view(request, map_square_number, folder_number, photo_number):
     return render_view(request, context)
 
 
-def tag_view(request, tag_name, page=None):
+def tag_view(request, tag_name, page=1):
     """
     Tag page, specified by tag_name
     """
-    sorted_photo_obj = list(tag_helper(tag_name, page=page))
+    sorted_photo_obj, result_count, page_count = tag_helper(tag_name, page=page)
     serializer = SimplePhotoSerializer(sorted_photo_obj, many=True)
+    print('we are here')
     # there's probably a much simpler way...
     photo_data = JSONRenderer().render(serializer.data).decode("utf-8")
     context = {
@@ -778,7 +786,10 @@ def tag_view(request, tag_name, page=None):
         'component_name': 'TagView',
         'component_props': {
             'tagName': tag_name,
-            'tagPhotos': photo_data
+            'tagPhotos': photo_data,
+            'totalNumPhotos': result_count,
+            'pageNum': page,
+            'numPages': page_count,
         }
     }
 
