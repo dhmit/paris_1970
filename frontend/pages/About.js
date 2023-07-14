@@ -1,7 +1,12 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 import Footer from "../components/Footer";
-import TitleDecoratorContainer from "../components/TitleDecoratorContainer";
+import TitleDecoratorContainer from "../components/TitleDecoratorContainer"; 
+import about_page_right_citylist from "../images/about_page_right_citylist.svg?url";
+import about_page_right_cropped_map from "../images/about_page_right_cropped_map.svg?url";
+import about_page_right_image from "../images/about_page_right_image.svg?url";
+
+/*import TitleDecorator from "../images/logos/title_decorator.svg"; */
 
 // Images
 import Clark_Catherine from "../images/team/Clark_Catherine.jpg";
@@ -245,92 +250,98 @@ class About extends React.Component {
         console.log("getting props?", this.props.text);
     }
     render() {
-        return (
-            <>
-                <div className="page">
-                    <TitleDecoratorContainer title={"About"} />
-                    <div className="about-text">
-                        {/*<ul>{this.props.text.map((section, key) => {*/}
-                        {/*    return <li key={key}>*/}
-                        {/*        {section.section === "intro"*/}
-                        {/*            ? <><TitleDecoratorContainer title={section.title}/> hello we're here</>*/}
-                        {/*            : <h2>{section.title}</h2>}*/}
-                        {/*    </li>;*/}
-                        {/*})}</ul>*/}
-                        <div className="prof-img-div text-wrap col-xs-2 col-sm-5 col-md-5 col-lg-3">
-                            <figure className="figure text-center">
-                                <img
-                                    className="prof-img"
-                                    src={Clark_Catherine}
-                                    alt="Catherine Clark"
-                                    align="left"
-                                />
+        return (<>
+            <div className="page">
+                <TitleDecoratorContainer title={"About"}/>
+                <div className="about-text">
+                    {/*<ul>{this.props.text.map((section, key) => {*/}
+                    {/*    return <li key={key}>*/}
+                    {/*        {section.section === "intro"*/}
+                    {/*            ? <><TitleDecoratorContainer title={section.title}/> hello we're here</>*/}
+                    {/*            : <h2>{section.title}</h2>}*/}
+                    {/*    </li>;*/}
+                    {/*})}</ul>*/}
+                    <p className="project-description">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                        eiusmod tempor incididunt ut labore et dolore magna aliqua. Odio
+                        eu feugiat pretium nibh ipsum consequat nisl vel pretium. Malesuada
+                        nunc vel risus commodo viverra maecenas accumsan lacus vel. Cras
+                        pulvinar mattis nunc sed blandit libero volutpat. Aliquam faucibus
+                        purus in massa tempor nec feugiat nisl pretium. Quam nulla porttitor
+                        massa id neque aliquam. Quam quisque id diam vel quam elementum
+                        pulvinar etiam non. Etiam dignissim diam quis enim lobortis scelerisque
+                        fermentum. Fringilla urna porttitor rhoncus dolor purus non. Vel
+                        fringilla est ullamcorper eget nulla facilisi etiam. Tristique et
+                        egestas quis ipsum suspendisse ultrices gravida. Vehicula ipsum a arcu
+                        cursus vitae. Donec et odio pellentesque diam. Morbi tincidunt ornare
+                        massa eget egestas purus viverra accumsan. Neque vitae tempus quam
+                        pellentesque nec nam aliquam sem. Vitae congue mauris rhoncus aenean.
+                    </p>
+                    <img className="cropped_map" src={about_page_right_cropped_map} width="130" height="881"/>
+                    <img className="city_list" src={about_page_right_citylist} width="700" height="700"/>
+                    <img className="right_image" src={about_page_right_image} width="700" height="700"/>
+                    <TitleDecoratorContainer title={"Project Director"}/>
+                    
+                    <div className="prof-img-div text-wrap col-xs-2 col-sm-5 col-md-5 col-lg-3">
+                        <figure className="figure">
+                            <img
+                                className="prof-img"
+                                src={Clark_Catherine}
+                                alt="Catherine Clark"
+                                align="left"
+                            />
+                            <div className="prof-titles">
                                 <div className="staff-name">Catherine Clark</div>
-                                <figcaption className="figure-caption text-center">
-                                    Associate Professor of History and French Studies
+                                <figcaption className="figure-caption">
+                                Faculty Director & Associate Professor of History and French Studies
                                 </figcaption>
-                            </figure>
-                        </div>
-                        <div>
-                            <p>
+                                <p>
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                                eiusmod tempor incididunt ut labore et dolore magna aliqua. Odio eu
-                                feugiat pretium nibh ipsum consequat nisl vel pretium. Malesuada
+                                eiusmod tempor incididunt ut labore et dolore magna aliqua. Odio
+                                eu feugiat pretium nibh ipsum consequat nisl vel pretium. Malesuada
                                 nunc vel risus commodo viverra maecenas accumsan lacus vel. Cras
                                 pulvinar mattis nunc sed blandit libero volutpat. Aliquam faucibus
                                 purus in massa tempor nec feugiat nisl pretium. Quam nulla porttitor
                                 massa id neque aliquam. Quam quisque id diam vel quam elementum
-                                pulvinar etiam non. Etiam dignissim diam quis enim lobortis
-                                scelerisque fermentum. Fringilla urna porttitor rhoncus dolor purus
-                                non. Vel fringilla est ullamcorper eget nulla facilisi etiam.
-                                Tristique et egestas quis ipsum suspendisse ultrices gravida.
-                                Vehicula ipsum a arcu cursus vitae. Donec et odio pellentesque diam.
-                                Morbi tincidunt ornare massa eget egestas purus viverra accumsan.
-                                Neque vitae tempus quam pellentesque nec nam aliquam sem. Vitae
-                                congue mauris rhoncus aenean.
-                            </p>
-                            <p>
-                                Suspendisse potenti nullam ac tortor. Ac auctor augue mauris augue
-                                neque gravida in. Vitae sapien pellentesque habitant morbi tristique
-                                senectus et netus. Pretium vulputate sapien nec sagittis. Ridiculus
-                                mus mauris vitae ultricies leo integer. Magna sit amet purus gravida
-                                quis blandit turpis cursus. Laoreet non curabitur gravida arcu ac
-                                tortor dignissim convallis aenean. Eget aliquet nibh praesent
-                                tristique magna sit. Tincidunt dui ut ornare lectus. Viverra justo
-                                nec ultrices dui sapien eget mi proin. Nulla facilisi etiam
-                                dignissim diam. Vitae justo eget magna fermentum.
-                            </p>
-                            <p>
-                                Suspendisse potenti nullam ac tortor. Ac auctor augue mauris augue
-                                neque gravida in. Vitae sapien pellentesque habitant morbi tristique
-                                senectus et netus. Pretium vulputate sapien nec sagittis. Ridiculus
-                                mus mauris vitae ultricies leo integer. Magna sit amet purus gravida
-                                quis blandit turpis cursus. Laoreet non curabitur gravida arcu ac
-                                tortor dignissim convallis aenean. Eget aliquet nibh praesent
-                                tristique magna sit. Tincidunt dui ut ornare lectus. Viverra justo
-                                nec ultrices dui sapien eget mi proin. Nulla facilisi etiam
-                                dignissim diam. Vitae justo eget magna fermentum.
-                            </p>
-                        </div>
-                    </div>
-                    <div className="team">
-                        <div className="about-title">Staff Members</div>
-                        <div className="row justify-content-center">
-                            {staffMembers.map((member, k) => (
-                                <TeamMember key={k} name={member.name} photoSrc={member.photoSrc} />
-                            ))}
-                        </div>
-                        <div className="about-title">UROP Members</div>
-                        <div className="row justify-content-center">
-                            {studentMembers.map((member, k) => (
-                                <TeamMember key={k} name={member.name} photoSrc={member.photoSrc} />
-                            ))}
-                        </div>
+                                pulvinar etiam non. Etiam dignissim diam quis enim lobortis scelerisque
+                                fermentum. Fringilla urna porttitor rhoncus dolor purus non. Vel
+                                fringilla est ullamcorper eget nulla facilisi etiam. Tristique et
+                                egestas quis ipsum suspendisse ultrices gravida. Vehicula ipsum a arcu
+                                cursus vitae. Donec et odio pellentesque diam. Morbi tincidunt ornare
+                                massa eget egestas purus viverra accumsan. Neque vitae tempus quam
+                                pellentesque nec nam aliquam sem. Vitae congue mauris rhoncus aenean.
+                                </p> 
+                            </div>
+                        </figure>
                     </div>
                 </div>
-                <Footer />
-            </>
-        );
+                <div className="team">
+                    {/* <div className="about-title">Staff Members</div> */}
+                    <TitleDecoratorContainer title={"Staff Members"}/>
+                    <div className="row justify-content-center">
+                        {staffMembers.map((member, k) => (
+                            <TeamMember
+                                key={k}
+                                name={member.name}
+                                photoSrc={member.photoSrc}
+                            />
+                        ))}
+                    </div>
+                    {/* <div className="about-title">UROP Members</div> */}
+                    <TitleDecoratorContainer title={"UROP Members"}/>
+                    <div className="row justify-content-center">
+                        {studentMembers.map((member, k) => (
+                            <TeamMember
+                                key={k}
+                                name={member.name}
+                                photoSrc={member.photoSrc}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </div>
+            <Footer/>
+        </>);
     }
 }
 

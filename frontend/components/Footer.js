@@ -7,7 +7,8 @@ import MellonLogo from "../images/logos/mellon_logo.svg";
 export class Footer extends React.Component {
     render() {
         return (
-            <Row className={"mt-3 w-100 text-center footer"}>
+            // return to edit the footer's location
+            <Row className={"mt-3 text-center footer fixed-bottom"}> 
                 <Col>
                     <a href="https://digitalhumanities.mit.edu/">
                         <DHLogo height={"40px"}/>
