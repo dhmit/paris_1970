@@ -15,11 +15,25 @@ from .models import (
     PhotographerAnalysisResult,
 )
 
+class PhotoInline(admin.TabularInline):
+    model = Photo
+    exclude = ('alt', 'contains_sticker', 'librarian_caption')
+    #readonly_fields= ('photo_slide',)
+
+    """
+    def photo_slide(self,obj):
+        #Displays slide of photo obj
+
+        # taking photos from local dir
+        obj_path = obj.get_slide_url()
+        return mark_safe('<a target="blank" href="{url}"> <img src="{url}" width="90px"></a>'.format(url=obj_path))
+    """
 
 class MapSquareAdmin(admin.ModelAdmin):
     """
     MapSquare Admin
     """
+    inlines = [PhotoInline,]
     list_display = ('id', 'number', 'show_coordinates', 'count_photos', 'boundaries')
     search_fields = ['id', 'number']
     readonly_fields = ('all_photos',)
@@ -54,10 +68,10 @@ class MapSquareAdmin(admin.ModelAdmin):
         # TODO(ra): use the reverse relationship here
         photo_obj = Photo.objects.filter(map_square__number=obj.number)
         for photo in photo_obj:
-            # path to photo's admin change page
-            photo_path = os.path.join('/admin/app/photo', str(photo.id))
+            # path to photo
+            obj_path = photo.get_photo_url()
             link += '<a target="blank" href="{photo_url}"> <img src="{url}" ' \
-                    'width="90px"></a>'.format(photo_url=photo_path, url=obj.get_photo_url()) + '\n'
+                    'width="90px"></a>'.format(photo_url=obj_path, url=obj_path) + '\n'
         return mark_safe(link)
 
 
@@ -151,6 +165,7 @@ class PhotoAnalysisResultAdmin(admin.ModelAdmin):
 
     def __str__(self):
         return f'PhotoAnalysisResult {self.name} for photo with id {self.photo.id}'
+
 
 admin.site.register(CorpusAnalysisResult)
 admin.site.register(MapSquare, MapSquareAdmin)

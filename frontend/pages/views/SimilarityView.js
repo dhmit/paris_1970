@@ -42,7 +42,7 @@ export class SimilarityView extends PhotoViewer {
         }
 
         // Load similar images
-        const numSimilarPhotos = 100;
+        const numSimilarPhotos = 40;
         try {
             const apiURL = "/api/similar_photos/" +
                 `${this.props.mapSquareNumber}/${this.props.folderNumber}/${this.props.photoNumber}/` +

@@ -15,11 +15,10 @@ REPO_ROOT_DIR="/home/ubuntu/"$PROJECT_NAME
 GIT_SSH_COMMAND="ssh -i /home/ubuntu/.ssh/id_rsa" git pull
 chown -hR ubuntu "$REPO_ROOT_DIR"
 
-source "$REPO_ROOT_DIR"/venv/bin/activate
+source "$REPO_ROOT_DIR"/../venv/bin/activate
 
 echo 'Building frontend'
-cd "$REPO_ROOT_DIR"/frontend
-npm install
+npm ci
 npm run build
 
 cd ../backend

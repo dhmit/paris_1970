@@ -53,6 +53,7 @@ urlpatterns = [
         name="similar_photos"
     ),
     path('api/all_photos/', views.all_photos, name="all_photos"),
+    path('api/random_photos/',views.get_random_photos, name = "random_photos"),
 
     # Photographers
    	path('api/search_photographers/', views.search_photographers),
@@ -133,5 +134,6 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     # Tags
     path('tag/<str:tag_name>/', views.tag_view),
+    path('tag/<str:tag_name>/<int:page>/', views.tag_view),
 
 ]
