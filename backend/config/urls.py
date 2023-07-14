@@ -53,6 +53,7 @@ urlpatterns = [
         name="similar_photos"
     ),
     path('api/all_photos/', views.all_photos, name="all_photos"),
+    path('api/random_photos/',views.get_random_photos, name = "random_photos"),
 
     # Photographers
    	path('api/search_photographers/', views.search_photographers),
@@ -81,7 +82,9 @@ urlpatterns = [
          views.get_photos_by_cluster, name="clustering"),
     path('api/text_ocr/', views.get_images_with_text),
 
-    path('api/search/', views.search, name="search"),
+    path('api/search/', views.search, name="search"), #was using this to test apply_filters
+
+#     path('api/search/', views.apply_filters, name="search"), #using this to test apply_filters
 
 
     # Arrondissements

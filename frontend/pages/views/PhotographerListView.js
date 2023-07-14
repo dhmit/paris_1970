@@ -1,7 +1,7 @@
 import React from "react";
 import Footer from "../../components/Footer";
 import * as PropTypes from "prop-types";
-import {debounce} from "../../common";
+import { debounce } from "../../common";
 
 import Chevron from "../../images/icons/chevron_down.svg";
 import RedBlueBox from "../../images/icons/red_blue_box.svg";
@@ -18,22 +18,8 @@ class DropDown extends React.Component {
     constructor(props) {
         super(props);
         this.wrapperRef = React.createRef();
-        this.handleClickOutside = this.handleClickOutside.bind(this);
     }
 
-    handleClickOutside() {
-        // if (this.wrapperRef && !this.wrapperRef.current.contains(event.target)) {
-        //     this.props.toggleActiveDropdown(null);
-        // }
-    }
-
-    componentDidMount() {
-        document.addEventListener("mousedown", this.handleClickOutside);
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener("mousedown", this.handleClickOutside);
-    }
 
     render() {
         return (
@@ -47,20 +33,6 @@ class DropDown extends React.Component {
                         this.props.toggleActiveDropdown(this.props.id);
                     }
                 }}
-                // onMouseEnter={() => {
-                //     this.setState({toggleDropDown: true});
-                //     let dropdowns = document.getElementsByClassName("dropdown-items")
-                //     for (const elt of dropdowns) {
-                //         if (elt.id !== this.props.id) {
-                //             elt.classList.add("d-none");
-                //         }
-                //     }
-                //     this.props.toggleActiveDropdown(this.props.id);
-                // }}
-                // onMouseLeave={() => {
-                //     this.setState({toggleDropDown: false});
-                //     this.props.toggleActiveDropdown(null);
-                // }}
             >
                 <div
                     className={`dropdown-select ${this.props.blue ? "blue-border" : "red-border"}`}
@@ -68,13 +40,13 @@ class DropDown extends React.Component {
                     <p>{this.props.value || this.props.placeholder}</p>
                     <Chevron />
                 </div>
+                <div className="dropdown-spacer"></div>
                 <div
                     className={`dropdown-items ${
                         this.props.id === this.props.activeDropdown ? "" : "d-none"
                     }`}
                     id={this.props.id}
                 >
-                    <div className="dropdown-spacer"></div>
                     {this.props.items.map((item) => {
                         return (
                             <div
@@ -82,7 +54,8 @@ class DropDown extends React.Component {
                                 className={`dropdown-itm ${
                                     this.props.value === item ? "selected-itm" : "unselected-itm"
                                 }`}
-                                onClick={() => {
+                                onClick={(e) => {
+                                    e.stopPropagation();
                                     if (this.props.value !== item) {
                                         this.props.onChange(item);
                                     } else {
@@ -106,13 +79,14 @@ export class PhotographerListView extends React.Component {
 
         this.state = {
             timer: null,
-            searchQueries: {name: "", location: "", square: "", nameStartsWith: ""},
+            searchQueries: { name: "", location: "", square: "", nameStartsWith: "" },
             activeDropdown: null,
             photographers: [],
             pageNumber: 1,
             isLastPage: false,
             sortBy: "",
             dropdownSearchOptions: initialDropdownOptions,
+            toggleFilter: false,
         };
         this.refetchPhotographers = this.refetchPhotographers.bind(this);
         this.loadDropdownSearchOptions = this.loadDropdownSearchOptions.bind(this);
@@ -131,7 +105,7 @@ export class PhotographerListView extends React.Component {
             }
         };
         const searchOptions = await fetchOptions();
-        this.setState({dropdownSearchOptions: searchOptions});
+        this.setState({ dropdownSearchOptions: searchOptions });
     }
 
     refetchPhotographers() {
@@ -139,7 +113,7 @@ export class PhotographerListView extends React.Component {
             if (this.state.isLastPage) {
                 return;
             }
-            const {name, nameStartsWith, location, square} = searchQueries;
+            const { name, nameStartsWith, location, square } = searchQueries;
             const newPageNumber = this.state.pageNumber + 1;
             try {
                 const res = await fetch(
@@ -159,7 +133,7 @@ export class PhotographerListView extends React.Component {
         };
         debounce(async () => {
             try {
-                const {results, is_last_page, page_number} = await fetchPhotographers(
+                const { results, is_last_page, page_number } = await fetchPhotographers(
                     this.state.searchQueries,
                     this.state.sortBy
                 );
@@ -178,21 +152,26 @@ export class PhotographerListView extends React.Component {
     getPhotoList() {
         const photoSize = [100, 100];
 
+        console.log(this.state.photographers);
+
         const photoList = this.state.photographers.map((photographer, k) => {
             const examplePhotoSrc = photographer.example_photo_src;
             let imgElement;
 
             if (examplePhotoSrc) {
                 const altText = `An example photograph by ${photographer.name}`;
-                imgElement = <img alt={altText} width={photoSize[0]} src={photographer.example_photo_src} />;
+                imgElement = (
+                    <img alt={altText} width={photoSize[0]} src={photographer.example_photo_src} />
+                );
             } else {
-                const altText = "A placeholder image because an example photograph by " + 
-                                `${photographer.name} is missing.`;
+                const altText =
+                    "A placeholder image because an example photograph by " +
+                    `${photographer.name} is missing.`;
                 imgElement = <img alt={altText} width={photoSize[0]} src={RedBlueBoxUrl} />;
             }
 
             return (
-                <li className="col-2 col-lg-2 one-photographer list-inline-item" key={k}>
+                <li className="one-photographer list-inline-item" key={k}>
                     <a key={k} href={`/photographer/${photographer.number}`}>
                         {imgElement}
                     </a>
@@ -215,12 +194,14 @@ export class PhotographerListView extends React.Component {
 
     handleScroll(e) {
         // doing some arithmetic with the scroll height here to detect when the user reaches the bottom of the list
+        console.log(e.target.scrollHeight, e.target.clientHeight, e.target.scrollTop);
         const bottom =
             Math.trunc((e.target.scrollHeight - e.target.clientHeight) / 10) <=
             Math.trunc(e.target.scrollTop / 10);
 
         // if we reach bottom we load the next page of photographers
         if (bottom) {
+            console.log("reached end of page");
             if (!this.state.isLastPage) {
                 this.refetchPhotographers();
             }
@@ -228,11 +209,11 @@ export class PhotographerListView extends React.Component {
     }
 
     resetPaginationParameters() {
-        this.setState({pageNumber: 0, isLastPage: false, photographers: []});
+        this.setState({ pageNumber: 0, isLastPage: false, photographers: [] });
     }
 
     toggleActiveDropdown = (dropDown) => {
-        this.setState({activeDropdown: dropDown});
+        this.setState({ activeDropdown: dropDown });
     };
 
     componentDidMount() {
@@ -248,23 +229,11 @@ export class PhotographerListView extends React.Component {
             this.resetPaginationParameters();
             this.refetchPhotographers();
         }
-        if (prevState.activeDropdown !== this.state.activeDropdown) {
-            let overlay = document.getElementById("overlay");
-            if (this.state.activeDropdown) {
-                overlay.classList.add("show");
-                overlay.classList.remove("hide");
-            } else {
-                overlay.classList.add("hide");
-                overlay.classList.remove("show");
-            }
-        }
     }
 
     render() {
         return (
             <div className="photographerList-container">
-                <div id="overlay"></div>
-
                 <div id={"banner"}>
                     <div className="header">
                         <div className="red-blue-box">
@@ -272,112 +241,131 @@ export class PhotographerListView extends React.Component {
                         </div>
                         <p className="heading">Photographers</p>
                     </div>
-                    <form className={"filterContainer"}>
-                        <input
-                            type="text"
-                            id="photographerList-search"
-                            placeholder="Search by name"
-                            onChange={(e) => {
-                                this.setState((prev) => ({
-                                    searchQueries: {
-                                        ...prev.searchQueries,
-                                        name: e.target.value,
-                                    },
-                                }));
+
+                    {/* onClick toggle visibility of filter container */}
+                    <div className="filter-btn-container">
+                        <button
+                            className="primary-btn"
+                            onClick={() => {
+                                this.setState({
+                                    toggleFilter: !this.state.toggleFilter,
+                                });
                             }}
-                            value={this.state.name}
-                        />
-                        <div className="advancedSearch-container">
-                            <div className="filterBy-container">
-                                <p>Filter by:</p>
-                                <div className="filters-container">
+                        >
+                            {this.state.toggleFilter ? "Hide Filters" : "Show Filters"}
+                        </button>
+                    </div>
+
+                    {this.state.toggleFilter && (
+                        <form id={"filterContainer"}>
+                            <input
+                                type="text"
+                                id="photographerList-search"
+                                placeholder="Search by name"
+                                onChange={(e) => {
+                                    this.setState((prev) => ({
+                                        searchQueries: {
+                                            ...prev.searchQueries,
+                                            name: e.target.value,
+                                        },
+                                    }));
+                                }}
+                                value={this.state.name}
+                            />
+                            <div className="advancedSearch-container">
+                                <div className="filterBy-container">
+                                    <p>Filter by:</p>
+                                    <div className="filters-container">
+                                        <DropDown
+                                            id="loc-filter"
+                                            blue={true}
+                                            items={this.state.dropdownSearchOptions.locations}
+                                            placeholder={"Locations"}
+                                            activeDropdown={this.state.activeDropdown}
+                                            toggleActiveDropdown={this.toggleActiveDropdown}
+                                            onChange={(value) => {
+                                                this.setState((prev) => ({
+                                                    searchQueries: {
+                                                        ...prev.searchQueries,
+                                                        location: value,
+                                                    },
+                                                }));
+                                            }}
+                                            value={this.state.searchQueries.location}
+                                        />
+                                        <DropDown
+                                            id="sq-filter"
+                                            blue={true}
+                                            items={this.state.dropdownSearchOptions.squares}
+                                            placeholder={"Map Square"}
+                                            activeDropdown={this.state.activeDropdown}
+                                            toggleActiveDropdown={this.toggleActiveDropdown}
+                                            value={this.state.searchQueries.square}
+                                            onChange={(value) => {
+                                                this.setState((prev) => ({
+                                                    searchQueries: {
+                                                        ...prev.searchQueries,
+                                                        square: value,
+                                                    },
+                                                }));
+                                            }}
+                                        />
+                                        <DropDown
+                                            id="alph-filter"
+                                            blue={true}
+                                            items={this.state.dropdownSearchOptions.nameStartsWith}
+                                            placeholder={"Alphabet"}
+                                            activeDropdown={this.state.activeDropdown}
+                                            toggleActiveDropdown={this.toggleActiveDropdown}
+                                            value={this.state.searchQueries.nameStartsWith}
+                                            onChange={(value) => {
+                                                this.setState((prev) => ({
+                                                    searchQueries: {
+                                                        ...prev.searchQueries,
+                                                        nameStartsWith: value,
+                                                    },
+                                                }));
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="filterBy-container">
+                                    <p>Sort by:</p>
                                     <DropDown
-                                        id="loc-filter"
-                                        blue={true}
-                                        items={this.state.dropdownSearchOptions.locations}
-                                        placeholder={"Locations"}
+                                        id="sort"
+                                        blue={false}
+                                        items={this.state.dropdownSearchOptions.orderBy}
+                                        placeholder={"---"}
                                         activeDropdown={this.state.activeDropdown}
                                         toggleActiveDropdown={this.toggleActiveDropdown}
+                                        value={this.state.sortBy}
                                         onChange={(value) => {
-                                            this.setState((prev) => ({
-                                                searchQueries: {
-                                                    ...prev.searchQueries,
-                                                    location: value,
-                                                },
-                                            }));
-                                        }}
-                                        value={this.state.searchQueries.location}
-                                    />
-                                    <DropDown
-                                        id="sq-filter"
-                                        blue={true}
-                                        items={this.state.dropdownSearchOptions.squares}
-                                        placeholder={"Map Square"}
-                                        activeDropdown={this.state.activeDropdown}
-                                        toggleActiveDropdown={this.toggleActiveDropdown}
-                                        value={this.state.searchQueries.square}
-                                        onChange={(value) => {
-                                            this.setState((prev) => ({
-                                                searchQueries: {
-                                                    ...prev.searchQueries,
-                                                    square: value,
-                                                },
-                                            }));
-                                        }}
-                                    />
-                                    <DropDown
-                                        id="alph-filter"
-                                        blue={true}
-                                        items={this.state.dropdownSearchOptions.nameStartsWith}
-                                        placeholder={"Alphabet"}
-                                        activeDropdown={this.state.activeDropdown}
-                                        toggleActiveDropdown={this.toggleActiveDropdown}
-                                        value={this.state.searchQueries.nameStartsWith}
-                                        onChange={(value) => {
-                                            this.setState((prev) => ({
-                                                searchQueries: {
-                                                    ...prev.searchQueries,
-                                                    nameStartsWith: value,
-                                                },
-                                            }));
+                                            this.setState({
+                                                sortBy: value,
+                                            });
                                         }}
                                     />
                                 </div>
                             </div>
-                            <div className="sortBy-container">
-                                <p>Sort by:</p>
-                                <DropDown
-                                    id="sort"
-                                    blue={false}
-                                    items={this.state.dropdownSearchOptions.orderBy}
-                                    placeholder={"---"}
-                                    activeDropdown={this.state.activeDropdown}
-                                    toggleActiveDropdown={this.toggleActiveDropdown}
-                                    value={this.state.sortBy}
-                                    onChange={(value) => {
-                                        this.setState({
-                                            sortBy: value,
-                                        });
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </form>
+                        </form>
+                    )}
                 </div>
 
-                <div className="photographerGallery">
-                    <ul className="list-inline" onScroll={this.handleScroll}>
+                <div className="photographerGallery" onScroll={this.handleScroll}>
+                    <div id="overlay"></div>
+
+                    <ul className="list-inline" >
                         {this.getPhotoList()}
                         <div className="photographers-results-footer">
-							{this.state.isLastPage
-								? (this.state.photographers.length === 0
-									? "No photographers found that match your search query!"
-									: "End of Results!!!")
-								: "Loading..."}
+                            {this.state.isLastPage
+                                ? this.state.photographers.length === 0
+                                    ? "No photographers found that match your search query!"
+                                    : "End of Results!!!"
+                                : "Loading..."}
                         </div>
                     </ul>
                 </div>
-                <div>
+                <div className="footer-container mb-3">
                     <Footer />
                 </div>
             </div>

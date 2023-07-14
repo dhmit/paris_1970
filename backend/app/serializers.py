@@ -141,6 +141,10 @@ class SimplePhotoSerializer(PhotoSerializer):
             'photo_url'
         ]
 
+class SimplePhotoSerializerForCollage(PhotoSerializer):
+    class Meta:
+        model = Photo
+        fields = ['photo_url','photo_page_url']
 
 class MapSquareSerializer(serializers.ModelSerializer):
     """
