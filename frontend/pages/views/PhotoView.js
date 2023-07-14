@@ -91,6 +91,29 @@ export class PhotoView extends PhotoViewer {
         });
     }
 
+    sortPhotos = (event) => {
+        const analysisName = event.target.innerText;
+        const newPhotoData = this.state.photoData;
+        const images = (
+            "photo_similarity.resnet18_cosine_similarity" in newPhotoData.analyses
+                ? newPhotoData.analyses["photo_similarity.resnet18_cosine_similarity"]
+                : []
+        );
+        images.sort((a, b) => {
+            const valueA = a["analyses"][analysisName];
+            const valueB = b["analyses"][analysisName];
+            if (valueA < valueB) {
+              return 1;
+            }
+            if (valueA > valueB) {
+              return -1;
+            }
+            return 0;
+        });
+        newPhotoData.analyses["photo_similarity.resnet18_cosine_similarity"] = images;
+        this.setState({photoData: newPhotoData});
+    };
+
     render() {
         if (this.state.loading) {
             return (<LoadingPage/>);
@@ -210,7 +233,7 @@ export class PhotoView extends PhotoViewer {
                                     Object.keys(analyses)
                                     .map(
                                         (analysisName, k) =>
-                                            <Dropdown.Item key={k} href={`#/action-${k}`}>
+                                            <Dropdown.Item key={k} onClick={this.sortPhotos}>
                                                 {analysisName}
                                             </Dropdown.Item>
                                     )
@@ -224,9 +247,10 @@ export class PhotoView extends PhotoViewer {
                             className: "slider-photo",
                             titleFunc: (k, photo) =>
                                 `Map Square: ${photo["map_square_number"]}, ` +
-                                `Photo: ${photo["number"]}, Similarity: ${photo["similarity"]}`,
+                                `Photo: ${photo["number"]}, ` +
+                                `Similarity: ${photo["analyses"]["photo_similarity.resnet18_cosine_similarity"]}`,
                             hrefFunc: (k, photo) => 
-                                `/photo/${photo.map_square_number}/${photo.folder_number}/${photo.number}/`
+                                `/photo/${photo.map_square_number}/${photo.folder}/${photo.number}/`
                         }
                     )}
                 </div>
