@@ -82,7 +82,9 @@ urlpatterns = [
          views.get_photos_by_cluster, name="clustering"),
     path('api/text_ocr/', views.get_images_with_text),
 
-    path('api/search/', views.search, name="search"),
+    path('api/search/', views.search, name="search"), #was using this to test apply_filters
+
+#     path('api/search/', views.apply_filters, name="search"), #using this to test apply_filters
 
 
     # Arrondissements

@@ -268,8 +268,7 @@ def get_corpus_analysis_results(request):
 @api_view(['GET'])
 def all_analyses(request):
     """
-    API endpoint to get all available analyses
-    """
+     """
     photo_analysis_obj = PhotoAnalysisResult.objects.values_list('name').distinct()
     return Response([analysis[0] for analysis in photo_analysis_obj])
 
@@ -477,7 +476,9 @@ def search(request):
     API endpoint to search for photos that match the search query
     Post request
     """
-    query = json.loads(request.GET.get('query', '{}'))
+    query = json.loads(request.GET.get('query', '{}')) #query object
+
+    print(query)
 
     between_quotes = r'(?<=\").*?(?=\")'
     special_characters = r'.?!,@#$%^&*_+<>/\'();:|`~\-\[\]\{\}'
@@ -489,6 +490,8 @@ def search(request):
     # but older pylint doesn't understand the | below
     # pylint: disable=unsupported-binary-operation
     django_query = Q()
+
+    print(django_query)
     photo_obj = Photo.objects.all()
     for keyword in keywords:
         sub_query = Q(
@@ -517,13 +520,40 @@ def search(request):
             default=100
         )
         return max_confidence
+    
+
+
 
     photo_obj = sorted(photo_obj, key=tag_confidence, reverse=True)
     serializer = PhotoSerializer(photo_obj, many=True)
     return Response({
-        'keywords': ', '.join([f'"{keyword}"' for keyword in keywords]),
+        'keywords': ', '.join([f'"{keyword}"' for keyword in keywords]), #this represents the query dict itself
         'searchData': serializer.data
     })
+
+
+
+
+@api_view(['GET'])
+def apply_filters(tag_request): #now need to work on the tag request
+    """
+    Given a particular request object that would specifically correlate to tag information, returns 
+    search queries corresponding to tag information. Backend filter bar in case current implementation doesn't work.
+    """
+    applied_query = json.loads(tag_request.GET.get('query', '{}')) #query object
+
+    
+    tags_applied = [x for x in applied_query if applied_query[x]] #gathering all of the tags and only add them if they are True
+    all_photo_data = [] #contains all of the information corresponding to photo data from tag_helper
+
+    for tag in tags_applied:
+        all_photo_data += tag_helper(tag) #appending all data from the photo tags
+    
+    tag_serializer = PhotoSerializer(all_photo_data, many=True) #formats it into a Django model
+
+    return Response(tag_serializer.data) 
+
+
 
 
 @api_view(['GET'])

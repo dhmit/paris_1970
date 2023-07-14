@@ -188,7 +188,7 @@ const studentMembers = [
         photoSrc: Zheng_Vicky
     },
     {
-        name: 'David Chaudhari',
+        name: "David Chaudhari",
         photoSrc: Zheng_Vicky
     },
     { 
