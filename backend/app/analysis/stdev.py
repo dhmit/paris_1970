@@ -12,7 +12,6 @@ import cv2
 
 from app.models import Photo
 
-MODEL = Photo
 
 
 def analyze(photo: Photo):

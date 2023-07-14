@@ -7,12 +7,17 @@ Production settings for dhmit/paris_1970
 from .base import *  # pylint: disable=unused-wildcard-import, wildcard-import
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-# SECRET_KEY = os.environ['DJANGO_SECRET_KEY']  # set in venv activate
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']  # set in venv activate
 
-ADMINS = [('Ahmed', 'rahmed@mit.edu')]
+ADMINS = [
+    ('Ryaan Ahmed', 'rahmed@mit.edu')
+]
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'paris1970.dhmit.xyz',
+    'paris1970.dhlab.mit.edu',
+]
 
 CORS_ORIGIN_WHITELIST = []

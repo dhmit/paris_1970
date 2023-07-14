@@ -26,6 +26,7 @@ class PhotoSerializer(serializers.ModelSerializer):
     map_square_coords = serializers.SerializerMethodField()
     photo_url = serializers.SerializerMethodField()
     slide_url = serializers.SerializerMethodField()
+    photo_page_url = serializers.SerializerMethodField()
 
     @staticmethod
     def get_photographer_name(instance):
@@ -50,6 +51,10 @@ class PhotoSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_photo_url(instance):
         return instance.get_photo_url()
+
+    @staticmethod
+    def get_photo_page_url(instance):
+        return instance.get_photo_page_url()
 
     @staticmethod
     def get_slide_url(instance):
@@ -85,7 +90,8 @@ class PhotoSerializer(serializers.ModelSerializer):
             'id', 'number', 'folder', 'map_square_number',
             'alt', 'photographer_name', 'photographer_number',
             'shelfmark', 'librarian_caption', 'photographer_caption',
-            'contains_sticker', 'analyses', 'map_square_coords', 'slide_url', 'photo_url'
+            'contains_sticker', 'analyses', 'map_square_coords', 'slide_url', 'photo_url',
+            'photo_page_url'
         ]
 
 
@@ -93,9 +99,14 @@ class SimplePhotoSerializer(PhotoSerializer):
     class Meta:
         model = Photo
         fields = [
-            'number', 'map_square_number', 'folder', 'photographer_number',  'photographer_name'
+            'number', 'map_square_number', 'folder', 'photographer_number',  'photographer_name',
+            'photo_url'
         ]
 
+class SimplePhotoSerializerForCollage(PhotoSerializer):
+    class Meta:
+        model = Photo
+        fields = ['photo_url','photo_page_url']
 
 class MapSquareSerializer(serializers.ModelSerializer):
     """
@@ -160,10 +171,20 @@ class PhotographerSearchSerializer(serializers.ModelSerializer):
     """
     Serializes a photographer for the search page
     """
+    example_photo_src = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_example_photo_src(instance):
+        # TODO(ra): Maybe this should be random?
+        example_photo = instance.photo_set.first()
+        if example_photo:
+            return example_photo.get_photo_url()
+        else:
+            return None
 
     class Meta:
         model = Photographer
-        fields = ['id', 'name', 'number']
+        fields = ['id', 'name', 'number', 'example_photo_src']
 
 
 class PhotoForPhotographerSerializer(serializers.ModelSerializer):
