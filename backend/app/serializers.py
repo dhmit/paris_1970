@@ -68,8 +68,20 @@ class PhotoSerializer(serializers.ModelSerializer):
         for analysis_result in analysis_results:
             name = analysis_result['name']
             result = json.loads(analysis_result['result'])
-            if name == "photo_similarity.resnet18_cosine_similarity":
-                analyses_dict[name] = result[:10]
+            if "resnet18_cosine_similarity" in name:
+                similar_photos = []
+                for photo_data in result[:10]:
+                    similar_photo_query = Photo.objects.filter(
+                        number=photo_data['number'], 
+                        map_square__number=photo_data['map_square_number'], 
+                        folder=photo_data['folder_number']
+                    )
+                    if not similar_photo_query:
+                        continue
+                    similar_photo = SimilarPhotoSerializer(similar_photo_query[0]).data
+                    similar_photo["analyses"][name] = photo_data['similarity']
+                    similar_photos.append(similar_photo)
+                analyses_dict[name] = similar_photos
             else:
                 analyses_dict[name] = result
             
@@ -95,6 +107,32 @@ class PhotoSerializer(serializers.ModelSerializer):
         ]
 
 
+class SimilarPhotoSerializer(PhotoSerializer):
+    analyses = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_analyses(instance):
+        analyses = PhotoAnalysisResult.objects.filter(photo=instance)
+        analysis_results = PhotoAnalysisResultSerializer(analyses, many=True).data
+
+        analyses_dict = {}
+        for analysis_result in analysis_results:
+            name = analysis_result['name']
+            result = json.loads(analysis_result['result'])
+            if "photo_similarity" in name:                
+                continue
+            analyses_dict[name] = result
+        
+        return analyses_dict
+    
+    class Meta:
+        model = Photo
+        fields = [
+            'number', 'map_square_number', 'folder', 'photographer_number',  'photographer_name',
+            'analyses', 'map_square_coords', 'photo_url'
+        ]
+
+
 class SimplePhotoSerializer(PhotoSerializer):
     class Meta:
         model = Photo
@@ -103,6 +141,10 @@ class SimplePhotoSerializer(PhotoSerializer):
             'photo_url'
         ]
 
+class SimplePhotoSerializerForCollage(PhotoSerializer):
+    class Meta:
+        model = Photo
+        fields = ['photo_url','photo_page_url']
 
 class MapSquareSerializer(serializers.ModelSerializer):
     """
