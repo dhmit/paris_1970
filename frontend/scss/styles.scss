@@ -170,14 +170,21 @@ footer {
     }
 }
 
-.btn-seebelow {
-    @extend .btn-primary;
+.scroll_down {
     position: absolute;
+    bottom: 0;
     top: 100%;
-    left: 25%;
-    right: 25%;
-    width: 250px;
-    text-align: center;
-    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+    border: none;
     margin: auto;
+}
+
+.transparent_button {
+    @extend .btn;
+    background-color: transparent;
+}
+
+.see_below_text {
+    text-align: center;
 }
