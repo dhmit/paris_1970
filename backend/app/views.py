@@ -425,6 +425,7 @@ def photo_tag_helper(map_square_number, folder_number, photo_number):
 def get_random_photos(request):
 
     photos = list(Photo.objects.all())
+    print(photos)
     random_photos = random.sample(photos,9)
     serializer = SimplePhotoSerializerForCollage(random_photos,many=True)
     return Response(serializer.data)
