@@ -10,5 +10,6 @@ baseConfig.devServer = {
     compress: true,
     hot: true
 };
+baseConfig.devtool = 'inline-source-map';
 
 module.exports = baseConfig;

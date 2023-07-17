@@ -45,6 +45,11 @@ const staffMembers = [
         photoSrc: Frampton_Stephanie,
     },
     {
+        name: "Stephanie Frampton",
+        title: "Faculty Director & Associate Professor of Literature",
+        photoSrc: Frampton_Stephanie,
+    },
+    {
         name: "Ryaan Ahmed",
         title: "Technical Director & Senior Research Engineer",
         photoSrc: Ahmed_Ryaan,
@@ -225,7 +230,12 @@ const studentMembers = [
     }
 ];
 
-function TeamMember(props) {
+interface TeamMemberProps {
+    name: string,
+    photoSrc: string,
+}
+
+function TeamMember(props: TeamMemberProps) {
     return (
         <div className="urop-view">
             <img className="urop-image" src={props.photoSrc} />
@@ -244,11 +254,15 @@ TeamMember.propTypes = {
     photoSrc: PropTypes.string,
 };
 
-class About extends React.Component {
-    constructor(props) {
+interface Props {
+    text: string[],
+};
+
+class About extends React.Component<Props> {
+    constructor(props: Props) {
         super(props);
-        console.log("getting props?", this.props.text);
     }
+
     render() {
         return (<>
             <div className="page">
@@ -288,7 +302,6 @@ class About extends React.Component {
                                 className="prof-img"
                                 src={Clark_Catherine}
                                 alt="Catherine Clark"
-                                align="left"
                             />
                             <div className="prof-titles">
                                 <div className="staff-name">Catherine Clark</div>
@@ -344,9 +357,5 @@ class About extends React.Component {
         </>);
     }
 }
-
-About.propTypes = {
-    text: PropTypes.array,
-};
 
 export default About;

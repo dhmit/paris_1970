@@ -32,6 +32,11 @@ module.exports = {
                 use: "babel-loader"
             },
             {
+                test: /\.ts|.tsx$/,
+                exclude: /node_modules/,
+                use: "ts-loader"
+            },
+            {
                 test: /\.(png|jpe?g|gif)$/i,
                 use: [{loader: "file-loader"}]
             },
@@ -61,6 +66,9 @@ module.exports = {
                 use: "url-loader"
             }
         ]
+    },
+    resolve: {
+      extensions: ['.tsx', '.ts', '.js', '.jsx'],
     },
     optimization: {
         minimize: true,

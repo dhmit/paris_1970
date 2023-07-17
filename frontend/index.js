@@ -2,8 +2,8 @@
  * The entrypoint for our application:
  * This module gets loaded into the DOM, and then it loads everything else.
  */
-import React from "react";
-import ReactDOM from "react-dom";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 
 import Base from "./Base";
 
@@ -41,11 +41,10 @@ const COMPONENTS = {
     Search,
     SimilarityView,
     TagView,
-    PhotographerListView,
     TextOCRView,
 };
 
-const PreselectedComponent = COMPONENTS[COMPONENT_NAME || "ErrorNotFoundComponent"];
+const PreselectedComponent = COMPONENTS[COMPONENT_NAME];
 
 ReactDOM.render(
     <Base>
