@@ -25,7 +25,7 @@
         "indent": ["off"],
         "linebreak-style": ["off"],
         "max-classes-per-file": ["off"],
-        "max-len": ["warn", { "code": 120, "ignoreUrls": true }],
+        "max-len": ["off"],
         "no-console": ["off"],
         "no-multi-spaces": ["off"],
         "no-multiple-empty-lines": ["off"],
@@ -43,7 +43,8 @@
         "quotes": ["off"],
         "radix": ["off"],
         "react/no-unescaped-entities": [ "error", { "forbid": [">", "}"] }],
-        "semi": ["error", "always"]
+        "semi": ["error", "always"],
+        "react/prop-types": ["off"]
     },
 
     "settings": {

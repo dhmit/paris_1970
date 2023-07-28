@@ -17,12 +17,13 @@ $footer-height: 150px;
 @import "~bootstrap/scss/helpers";
 @import "~bootstrap/scss/utilities/api";
 
+$primary-blue: #00BFE1;
+$primary-red: #FF6C6C;
+
 // Our styles
 @import "./fonts";
 @import "./variables";
 @import "./home";
-@import "./home-sections";
-@import "./home-main-section";
 @import "./about";
 @import "./photoView";
 @import "./photographerView";
@@ -38,6 +39,11 @@ $footer-height: 150px;
 @import "./tags";
 @import "./photographerListView";
 
+// NOTE(ryaan):
+// This is for stuff that I haven't figured out where it belongs
+// that was in a place it shouldn't have been before!
+@import "./misc";
+
 html {
     position: relative;
     height: 100% !important;
@@ -46,13 +52,31 @@ html {
 
 body {
     height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: $font-family-sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
+
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
 
 #app_root {
     height: 100% !important;
     @extend .d-flex !optional;
     @extend .flex-column !optional;
 }
+
+#main-container {
+    padding: 0;
+}
+
+
 
 /**
  * Footer Styles
@@ -170,21 +194,3 @@ footer {
     }
 }
 
-.scroll_down {
-    position: absolute;
-    bottom: 0;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border: none;
-    margin: auto;
-}
-
-.transparent_button {
-    @extend .btn;
-    background-color: transparent;
-}
-
-.see_below_text {
-    text-align: center;
-}

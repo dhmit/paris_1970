@@ -1,0 +1,104 @@
+.box {
+    border: 3px solid lightblue;
+    padding: 4px;
+    margin-bottom: 1px;
+}
+
+.page {
+    padding: 0 $side-padding 0;
+    flex: 1 0 auto;
+    margin-top: 1.5em;
+
+    .col-lg-6:nth-child(2) {
+        @include media-breakpoint-up(lg) {
+            padding-left: 3em;
+        }
+    }
+}
+
+@media (max-width: 992px) {
+    .page {
+        padding: 0 $side-padding-mobile 0;
+    }
+}
+
+.landing-title {
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.landing-text {
+    font-size: 20px;
+}
+
+.map-square {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 0;
+    color: black;
+}
+
+.map-popup {
+    font-family: $font-family-sans-serif;
+}
+
+.map-square:hover {
+    color: black;
+}
+
+
+#instructionButton {
+    z-index: 999;
+    position: absolute;
+    bottom: 25px;
+    right: 5px;
+}
+
+.map-grid {
+    stroke: $color-mid-gray;
+    stroke-width: 1;
+    stroke-opacity: 1;
+    fill-opacity: 0;
+}
+
+.map-square {
+    stroke-width: 2;
+    fill-opacity: 0.7;
+}
+
+.box {
+    mix-blend-mode: multiply;
+}
+
+.box-one {
+    @extend .box;
+    stroke: #FFBEBD;
+    fill: #FFBEBD;
+}
+
+.box-two {
+    @extend .box;
+    stroke: #FF9E9C;
+    fill: #FF9E9C;
+}
+
+.box-three {
+    @extend .box;
+    stroke: #FF7E7A;
+    fill: #FF7E7A;
+}
+
+.box-four {
+    @extend .box;
+    stroke: #FF5D59;
+    fill: #FF5D59;
+}
+
+.box-five {
+    @extend .box;
+    stroke: #FF3D3A;
+    fill: #FF3D3A;
+}
+

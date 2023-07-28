@@ -4,7 +4,7 @@ import * as PropTypes from "prop-types";
 const Base = ({children}) => {
     return (
         <>
-            <div id="main-container">
+            <div id="main-container" className="container-fluid">
                 <main role="main">{children}</main>
             </div>
         </>
