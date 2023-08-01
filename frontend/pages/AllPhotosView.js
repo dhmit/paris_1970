@@ -1,8 +1,8 @@
 import React from "react";
 
-import Footer from "../../components/Footer";
-import PhotoViewer from "../../components/PhotoViewer";
-import LoadingPage from "../LoadingPage";
+import Footer from "../components/Footer";
+import PhotoViewer from "../components/PhotoViewer";
+import LoadingPage from "./LoadingPage";
 
 
 export class AllPhotosView extends PhotoViewer {

@@ -1,8 +1,8 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import PhotoViewer from "../../components/PhotoViewer";
-import LoadingPage from "../LoadingPage";
+import PhotoViewer from "../components/PhotoViewer";
+import LoadingPage from "./LoadingPage";
 
 
 export class MapSquareView extends PhotoViewer {

@@ -1,7 +1,7 @@
 import React from "react";
 
-import PhotoViewer from "../../components/PhotoViewer";
-import LoadingPage from "../LoadingPage";
+import PhotoViewer from "../components/PhotoViewer";
+import LoadingPage from "./LoadingPage";
 
 
 export class TextOCRView extends PhotoViewer {
@@ -45,8 +45,8 @@ export class TextOCRView extends PhotoViewer {
                         >
                             <a href={photo.photo_page_url}>
                                 <figure>
-                                    <img alt={photo.alt} 
-                                         style={{maxWidth: 400, maxHeight: 400}} 
+                                    <img alt={photo.alt}
+                                         style={{maxWidth: 400, maxHeight: 400}}
                                          src={photo.photo_url} />
                                     <figcaption>
                                         {photo.text}

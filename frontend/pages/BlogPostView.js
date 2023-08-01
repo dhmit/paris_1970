@@ -2,7 +2,7 @@ import React from "react";
 import {Container, Row, Col} from "react-bootstrap";
 
 import * as PropTypes from "prop-types";
-import BlogSidebar from "../../components/BlogSidebar";
+import BlogSidebar from "../components/BlogSidebar";
 
 export class BlogPost extends React.Component {
     constructor(props) {
@@ -27,7 +27,7 @@ export class BlogPost extends React.Component {
                                 </a>
                             </h1>
                             <h5 className="blog-author">
-                                {this.props.post.subtitle} 
+                                {this.props.post.subtitle}
                             </h5>
 
                             <small className="text-muted">

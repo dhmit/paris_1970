@@ -9,5 +9,8 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["./frontend/**/*"]
+  "include": [
+      "./frontend/**/*.ts",
+      "./frontend/**/*.tsx"
+  ]
 }

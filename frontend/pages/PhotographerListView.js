@@ -1,11 +1,12 @@
 import React from "react";
-import Footer from "../../components/Footer";
 import * as PropTypes from "prop-types";
-import { debounce } from "../../common";
 
-import Chevron from "../../images/icons/chevron_down.svg";
-import RedBlueBox from "../../images/icons/red_blue_box.svg";
-import RedBlueBoxUrl from "../../images/icons/red_blue_box.svg?url";
+import { debounce } from "../common";
+import Footer from "../components/Footer";
+
+import Chevron from "../images/icons/chevron_down.svg";
+import RedBlueBox from "../images/icons/red_blue_box.svg";
+import RedBlueBoxUrl from "../images/icons/red_blue_box.svg?url";
 
 // Change this value to more realisitic values that can replace the actual ones in case of error
 const initialDropdownOptions = {

@@ -1,10 +1,11 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import PhotoViewer from "../../components/PhotoViewer";
-import LoadingPage from "../LoadingPage";
-import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
 import {Rectangle} from "react-leaflet";
+
+import PhotoViewer from "../components/PhotoViewer";
+import LoadingPage from "./LoadingPage";
+import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../components/ParisMap";
 
 
 export class PhotographerView extends PhotoViewer {

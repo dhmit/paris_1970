@@ -1,15 +1,15 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import PhotoViewer from "../../components/PhotoViewer";
-import LoadingPage from "../LoadingPage";
-import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
+import PhotoViewer from "../components/PhotoViewer";
+import LoadingPage from "./LoadingPage";
+import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../components/ParisMap";
 import {Rectangle} from "react-leaflet";
 
 import {Dropdown, OverlayTrigger, Popover, Modal} from "react-bootstrap";
-import ExpandIcon from "../../images/expand.svg";
-import QuestionIcon from "../../images/question.svg";
-import TitleDecoratorContainer from "../../components/TitleDecoratorContainer";
+import ExpandIcon from "../images/expand.svg";
+import QuestionIcon from "../images/question.svg";
+import TitleDecoratorContainer from "../components/TitleDecoratorContainer";
 
 const TURQUOISE = "#20CCD7";
 
@@ -249,7 +249,7 @@ export class PhotoView extends PhotoViewer {
                                 `Map Square: ${photo["map_square_number"]}, ` +
                                 `Photo: ${photo["number"]}, ` +
                                 `Similarity: ${photo["analyses"]["photo_similarity.resnet18_cosine_similarity"]}`,
-                            hrefFunc: (k, photo) => 
+                            hrefFunc: (k, photo) =>
                                 `/photo/${photo.map_square_number}/${photo.folder}/${photo.number}/`
                         }
                     )}

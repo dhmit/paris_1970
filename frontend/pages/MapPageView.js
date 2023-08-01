@@ -4,13 +4,13 @@ import * as PropTypes from "prop-types";
 import {GeoJSON, Popup, Rectangle} from "react-leaflet";
 import {Container, Row, Col} from "react-bootstrap";
 
-import {debounce} from "../../common";
+import {debounce} from "../common";
 
-import Map, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../../components/ParisMap";
-import LoadingPage from "../LoadingPage";
-import MapSquareList from "../../components/map-page/MapSquareList";
-import MapSquareContent from "../../components/map-page/MapSquareContent";
-import TitleDecoratorContainer from "../../components/TitleDecoratorContainer";
+import Map, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../components/ParisMap";
+import LoadingPage from "./LoadingPage";
+import MapSquareList from "../components/map-page/MapSquareList";
+import MapSquareContent from "../components/map-page/MapSquareContent";
+import TitleDecoratorContainer from "../components/TitleDecoratorContainer";
 
 function densityOverlay(mapData) {
     const sortedMapData = Object.values(mapData).sort((a, b) => a.num_photos - b.num_photos);
