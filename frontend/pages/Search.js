@@ -13,18 +13,13 @@ class SearchBar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            keywords: ""
+            tags: [],
+            arrondissements: [],
         };
     }
 
-    handleChange = (event) => {
-        this.setState({
-            [event.target.name]: event.target.value
-        });
-    };
-
     handleSearch = async (body) => {
-        const searchResponse = await fetch(`/api/search/?query=${JSON.stringify(body)}`);
+        const searchResponse = await fetch(`/api/search/`);
         const {
             keywords,
             searchData
@@ -49,13 +44,7 @@ class SearchBar extends React.Component {
     };
 
     render() {
-        window.addEventListener(
-            "keydown",
-            (e) => e.code.indexOf("Enter") >= 0 ? this.handleSubmit(e) : null
-        );
-
-        return (
-            <div>
+        return (<>
             <div className="search-bar">
                 <div className="search-icon"><SearchIcon /></div>
                 <input
@@ -64,18 +53,12 @@ class SearchBar extends React.Component {
                     name="keywords"
                     value={this.state.keywords}
                     onChange={this.handleChange} />
-                <button
-                    className="btn"
-                    onClick={this.handleSubmit}>
-                    Advanced Search
-                </button>
 
             </div>
             <div>
                 <FilterBar keyWords={this.state.keywords} updateSearchData={this.props.updateSearchData}/>
             </div>
-            </div>
-        );
+        </>);
     }
 }
 
@@ -87,7 +70,7 @@ class FilterBar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            
+
         };
         this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
     }
@@ -107,7 +90,7 @@ class FilterBar extends React.Component {
             if (this.state[e]){
                 filters.push(e);
             }
-        } 
+        }
         const allTags = this.props.keyWords.trim() + " " + filters.join(" ");
         console.log(allTags);
         const searchResponse = await fetch(`/api/search/?query=${JSON.stringify(allTags)}`);
@@ -142,9 +125,9 @@ class FilterBar extends React.Component {
                     <DropdownButton className="dropdown" id="dropdown-basic-button" title="Vehicles">
                         <li>
                             <label>
-                                <input 
-                                type="checkbox" 
-                                name="Car" 
+                                <input
+                                type="checkbox"
+                                name="Car"
                                 onChange={this.handleCheckboxChange}/>
                                 Car
                             </label>
@@ -152,7 +135,7 @@ class FilterBar extends React.Component {
 
                         <li>
                             <label>
-                                <input 
+                                <input
                                 type="checkbox"
                                 name="Motorcycle"
                                 onChange={this.handleCheckboxChange}/>
@@ -162,7 +145,7 @@ class FilterBar extends React.Component {
 
                         <li>
                             <label>
-                                <input 
+                                <input
                                 type="checkbox"
                                 name="Truck"
                                 onChange={this.handleCheckboxChange}/>
@@ -172,7 +155,7 @@ class FilterBar extends React.Component {
 
                         <li>
                             <label>
-                                <input 
+                                <input
                                 type="checkbox"
                                 name="Boat"
                                 onChange={this.handleCheckboxChange}/>
@@ -182,7 +165,7 @@ class FilterBar extends React.Component {
 
                         <li>
                             <label>
-                                <input 
+                                <input
                                 type="checkbox"
                                 name="Airplane"
                                 onChange={this.handleCheckboxChange}/>
@@ -192,7 +175,7 @@ class FilterBar extends React.Component {
 
                         <li>
                             <label>
-                                <input 
+                                <input
                                 type="checkbox"
                                 name="Bicycle"
                                 onChange={this.handleCheckboxChange}/>
@@ -204,7 +187,7 @@ class FilterBar extends React.Component {
                     <DropdownButton className="dropdown" id="dropdown-basic-button" title="City Features">
                         <li>
                             <label>
-                                <input 
+                                <input
                                 type="checkbox"
                                 name="Light"
                                 onChange={this.handleCheckboxChange}/>
@@ -214,7 +197,7 @@ class FilterBar extends React.Component {
 
                         <li>
                             <label>
-                                <input 
+                                <input
                                 type="checkbox"
                                 name="Stop Sign"
                                 onChange={this.handleCheckboxChange}/>
@@ -224,7 +207,7 @@ class FilterBar extends React.Component {
 
                         <li>
                             <label>
-                                <input 
+                                <input
                                 type="checkbox"
                                 name="Bench"
                                 onChange={this.handleCheckboxChange}/>
@@ -234,7 +217,7 @@ class FilterBar extends React.Component {
 
                         <li>
                             <label>
-                                <input 
+                                <input
                                 type="checkbox"
                                 name="Clock"
                                 onChange={this.handleCheckboxChange}/>
@@ -244,7 +227,7 @@ class FilterBar extends React.Component {
 
                         <li>
                             <label>
-                                <input 
+                                <input
                                 type="checkbox"
                                 name="Chair"
                                 onChange={this.handleCheckboxChange}/>
@@ -256,7 +239,7 @@ class FilterBar extends React.Component {
                     <DropdownButton className="dropdown" id="dropdown-basic-button" title="Miscellaneous">
                         <li>
                             <label>
-                                <input 
+                                <input
                                 type="checkbox"
                                 name="Person"
                                 onChange={this.handleCheckboxChange}/>
@@ -266,7 +249,7 @@ class FilterBar extends React.Component {
 
                         <li>
                             <label>
-                                <input 
+                                <input
                                 type="checkbox"
                                 name="Potted Plant"
                                 onChange={this.handleCheckboxChange}/>
@@ -276,7 +259,7 @@ class FilterBar extends React.Component {
 
                         <li>
                             <label>
-                                <input 
+                                <input
                                 type="checkbox"
                                 name="Handbag"
                                 onChange={this.handleCheckboxChange}/>
@@ -286,7 +269,7 @@ class FilterBar extends React.Component {
 
                         <li>
                             <label>
-                                <input 
+                                <input
                                 type="checkbox"
                                 name="Cat"
                                 onChange={this.handleCheckboxChange}/>
@@ -311,11 +294,6 @@ class FilterBar extends React.Component {
         }
     }
 
-FilterBar.propTypes = {
-    keyWords: PropTypes.string,
-    updateSearchData: PropTypes.func
-};
-
 export class Search extends PhotoViewer {
     constructor(props) {
         super(props);
@@ -326,21 +304,15 @@ export class Search extends PhotoViewer {
         };
     }
 
-    updateSearchData = (searchData) => {
-        this.setState({...searchData});
-    };
-
-    // Full text + advanced search model: http://photogrammar.yale.edu/search/
     render() {
         return (<>
-            <div className="search-page page row">
+            <div className="row">
                 <div className="search-container">
                     <SearchBgTopLeft className="search-bg-image-left"/>
                     <SearchBgTopRight className="search-bg-image-right"/>
                     <div className="row height d-flex justify-content-center align-items-center">
                         <div className="col-md-8">
                             <SearchBar updateSearchData={this.updateSearchData}/>
-                            {/* <FilterBar/> */}
                         </div>
                     </div>
                 </div>

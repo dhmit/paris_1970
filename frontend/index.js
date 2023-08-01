@@ -9,17 +9,17 @@ import Base from "./Base";
 
 import About from "./pages/About";
 import Blog from "./pages/Blog";
-import BlogPost from "./pages/views/BlogPostView";
-import MapPage from "./pages/views/MapPageView";
+import BlogPost from "./pages/BlogPostView";
+import MapPage from "./pages/MapPageView";
 import TagView from "./pages/TagView";
 import {HomePage} from "./pages/Home";
-import {MapSquareView} from "./pages/views/MapSquareView";
-import {PhotoView} from "./pages/views/PhotoView";
-import {PhotographerListView} from "./pages/views/PhotographerListView";
-import {PhotographerView} from "./pages/views/PhotographerView";
+import {MapSquareView} from "./pages/MapSquareView";
+import {PhotoView} from "./pages/PhotoView";
+import {PhotographerListView} from "./pages/PhotographerListView";
+import {PhotographerView} from "./pages/PhotographerView";
 import {Search} from "./pages/Search";
-import {SimilarityView} from "./pages/views/SimilarityView";
-import {TextOCRView} from "./pages/views/TextOCRView";
+import {SimilarityView} from "./pages/SimilarityView";
+import {TextOCRView} from "./pages/TextOCRView";
 
 // Import all styles
 import "./scss/styles.scss";

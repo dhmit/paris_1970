@@ -72,8 +72,8 @@ class PhotoSerializer(serializers.ModelSerializer):
                 similar_photos = []
                 for photo_data in result[:10]:
                     similar_photo_query = Photo.objects.filter(
-                        number=photo_data['number'], 
-                        map_square__number=photo_data['map_square_number'], 
+                        number=photo_data['number'],
+                        map_square__number=photo_data['map_square_number'],
                         folder=photo_data['folder_number']
                     )
                     if not similar_photo_query:
@@ -84,7 +84,7 @@ class PhotoSerializer(serializers.ModelSerializer):
                 analyses_dict[name] = similar_photos
             else:
                 analyses_dict[name] = result
-            
+
         return analyses_dict
 
     @staticmethod
@@ -119,12 +119,12 @@ class SimilarPhotoSerializer(PhotoSerializer):
         for analysis_result in analysis_results:
             name = analysis_result['name']
             result = json.loads(analysis_result['result'])
-            if "photo_similarity" in name:                
+            if "photo_similarity" in name:
                 continue
             analyses_dict[name] = result
-        
+
         return analyses_dict
-    
+
     class Meta:
         model = Photo
         fields = [
@@ -156,7 +156,7 @@ class MapSquareSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_photos(instance):
         photo_queryset = instance.photo_set.all()
-        return PhotoSerializer(photo_queryset, many=True).data
+        return SimplePhotoSerializer(photo_queryset, many=True).data
 
     @staticmethod
     def get_photographers(instance):

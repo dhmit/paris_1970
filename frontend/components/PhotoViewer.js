@@ -27,7 +27,7 @@ export class PhotoViewer extends React.Component {
         const titleFunc = getValue(
             config,
             "titleFunc",
-            (k, photo) =>
+            (_, photo) =>
                 `Map Square: ${photo["map_square_number"]}` +
                 `, Folder: ${photo.folder}, Photo: ${photo["number"]}`
         );
@@ -35,7 +35,7 @@ export class PhotoViewer extends React.Component {
         const hrefFunc = getValue(
             config,
             "hrefFunc",
-            (k, photo) => `/photo/${photo.map_square_number}/${photo.folder}/${photo.number}/`
+            (_, photo) => `/photo/${photo.map_square_number}/${photo.folder}/${photo.number}/`
         );
 
         const onClickFunc = getValue(config, "onClickFunc", (_k, _photo) => (_e) => {});

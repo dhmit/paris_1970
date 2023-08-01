@@ -1,6 +1,3 @@
-"""_photo_url()
-These view functions and classes implement API endpoints
-"""
 import ast
 import json
 import os
@@ -43,11 +40,11 @@ from .serializers import (
 
 # TODO(ra): See if we can move this elsewhere.
 PHOTOGRAPHER_SEARCH_ORDER_BY = [
-    "Name: ascending", 
-    "Name: descending", 
-    "Location: ascending", 
-    "Location: descedning", 
-    "Map Square #: ascending", 
+    "Name: ascending",
+    "Name: descending",
+    "Location: ascending",
+    "Location: descedning",
+    "Map Square #: ascending",
     "Map Square #: descending"
 ]
 
@@ -56,7 +53,7 @@ def all_yolo_tags(request):
     import json
     yolo_results = PhotoAnalysisResult.objects.filter(name='yolo_model').prefetch_related('photo').prefetch_related('photo__map_square')
 
-    
+
     out = []
     for result in yolo_results:
         data = result.parsed_result()
@@ -145,10 +142,10 @@ def all_map_squares(request):
 @api_view(['GET'])
 def search_photographers(request):
     """
-    API endpoint to get a list of photographers based on a search query that looks the photographers by name 
+    API endpoint to get a list of photographers based on a search query that looks the photographers by name
     If not given a search query it will return the first 50 photographers sorted by name
 
-    TODO: Add pagination for both cases (when given a search query and when nothing is given) 
+    TODO: Add pagination for both cases (when given a search query and when nothing is given)
     so that the user is sent the first 50 results and they can view more results as they scroll down the page.
     """
 
@@ -163,9 +160,9 @@ def search_photographers(request):
             field = "approx_loc"
         elif field == "map square #":
             field = "map_square"
-        
+
         asc = asc == 'ascending'
-        
+
         return f'{"" if asc else "-"}{field}'
 
     # Pulling the params from the request
@@ -177,10 +174,10 @@ def search_photographers(request):
 
     # Pagination params
     page_number = request.GET.get("page", None)
-    count_per_page = 50 
+    count_per_page = 50
 
     search_params = {}
-    
+
     # Validating and adding all of the params
     name = name.strip()
     location = location.strip()
@@ -189,16 +186,16 @@ def search_photographers(request):
     if name:
         search_params["name__icontains"] = name
     if location:
-        search_params["approx_loc"] = location 
+        search_params["approx_loc"] = location
     if map_square:
         map_square = int(map_square)
-        search_params["map_square"] = map_square 
-    
-    # Planning to check for multiple name starts for this field 
-    # Implmenetaiton example in this stackoverflow entry 
+        search_params["map_square"] = map_square
+
+    # Planning to check for multiple name starts for this field
+    # Implmenetaiton example in this stackoverflow entry
     #  (https://stackoverflow.com/questions/5783588/django-filter-on-same-option-with-multiple-possibilities)
     if name_start is not None and name_start.strip() != "":
-        search_params["name__istartswith"] = name_start 
+        search_params["name__istartswith"] = name_start
 
     order_by_field = parse_order_by(order_by)
 
@@ -228,15 +225,15 @@ def search_photographers(request):
 @api_view(['GET'])
 def get_search_photographers_dropdown_options(request):
     """
-    API endpoint to get a list of photographers based on a search query that looks the photographers by name 
+    API endpoint to get a list of photographers based on a search query that looks the photographers by name
     If not given a search query it will return the first 50 photographers sorted by name
 
-    TODO: Add pagination for both cases (when given a search query and when nothing is given) 
+    TODO: Add pagination for both cases (when given a search query and when nothing is given)
     so that the user is sent the first 50 results and they can view more results as they scroll down the page.
     """
     locations = sorted(
         filter(
-            lambda x: x is not None, 
+            lambda x: x is not None,
             list(
                 set(Photographer.objects.all().values_list('approx_loc', flat=True))
             )
@@ -245,7 +242,7 @@ def get_search_photographers_dropdown_options(request):
 
     squares = sorted(
         filter(
-            lambda x: x is not None, 
+            lambda x: x is not None,
             list(
                 set(Photographer.objects.all().values_list('map_square_id', flat=True))
             )
@@ -494,42 +491,24 @@ def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     serializer = PhotoSerializer(cluster.photos.all(), many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
+
+@api_view(['POST'])
 def search(request):
     """
     API endpoint to search for photos that match the search query
     Post request
     """
-    query = json.loads(request.GET.get('query', '{}')) #query object
-
-    print(query)
-
-    between_quotes = r'(?<=\").*?(?=\")'
-    special_characters = r'.?!,@#$%^&*_+<>/\'();:|`~\-\[\]\{\}'
-    keywords = re.findall(
-        rf'({between_quotes}|[\w{special_characters}]+)', query.get('keywords', '')
-    )
+    query = json.loads(request.GET.get('query', '{}'))
 
     # This shouldn't be necessary in most recent pylint,
     # but older pylint doesn't understand the | below
     # pylint: disable=unsupported-binary-operation
-    django_query = Q()
+    query = Q()
 
-    print(django_query)
     photo_obj = Photo.objects.all()
     for keyword in keywords:
-        sub_query = Q(
-            Q(photographer__name=keyword)
-            | Q(photographer_caption__icontains=keyword)
-            | Q(librarian_caption__icontains=keyword)
-            | Q(photoanalysisresult__name='yolo_model',
-                photoanalysisresult__result__icontains=keyword)
-        )
-        if keyword.isdigit():
-            sub_query |= Q(photographer__number=int(keyword))
-        django_query &= sub_query
-
-    photo_obj = photo_obj.filter(django_query).distinct()
+        sub_query = Q(photoanalysisresult__name='yolo_model', photoanalysisresult__result__icontains=keyword)
+    photo_obj = photo_obj.filter(query).distinct()
 
     def tag_confidence(photo_obj):
         analysis_result = PhotoAnalysisResult.objects.filter(
@@ -544,12 +523,9 @@ def search(request):
             default=100
         )
         return max_confidence
-    
-
-
 
     photo_obj = sorted(photo_obj, key=tag_confidence, reverse=True)
-    serializer = PhotoSerializer(photo_obj, many=True)
+    serializer = SimplePhotoSerializer(photo_obj, many=True)
     return Response({
         'keywords': ', '.join([f'"{keyword}"' for keyword in keywords]), #this represents the query dict itself
         'searchData': serializer.data
@@ -561,21 +537,21 @@ def search(request):
 @api_view(['GET'])
 def apply_filters(tag_request): #now need to work on the tag request
     """
-    Given a particular request object that would specifically correlate to tag information, returns 
+    Given a particular request object that would specifically correlate to tag information, returns
     search queries corresponding to tag information. Backend filter bar in case current implementation doesn't work.
     """
     applied_query = json.loads(tag_request.GET.get('query', '{}')) #query object
 
-    
+
     tags_applied = [x for x in applied_query if applied_query[x]] #gathering all of the tags and only add them if they are True
     all_photo_data = [] #contains all of the information corresponding to photo data from tag_helper
 
     for tag in tags_applied:
         all_photo_data += tag_helper(tag) #appending all data from the photo tags
-    
+
     tag_serializer = PhotoSerializer(all_photo_data, many=True) #formats it into a Django model
 
-    return Response(tag_serializer.data) 
+    return Response(tag_serializer.data)
 
 
 
