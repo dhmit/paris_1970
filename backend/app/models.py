@@ -12,6 +12,7 @@ from PIL import Image
 from django.db import models
 from django.conf import settings
 
+
 class Photo(models.Model):
     """
     This model holds the metadata for a single photo, which includes the
@@ -25,7 +26,7 @@ class Photo(models.Model):
     # The source image filenames have the following structure:
     # BHVP_PH_CetaitParis_DP_MAP-SQUARE-NUMBER_FOLDER-NUMBER_FILE-NUMBER
 
-    # The FILE-NUMBER comes in pairs, but numbered straight through. e.g., 
+    # The FILE-NUMBER comes in pairs, but numbered straight through. e.g.,
     # BHVP_PH_CetaitParis_DP_0031_01_001 -- this is a scan of the slide, including its frame
     # BHVP_PH_CetaitParis_DP_0031_01_002 -- this is a high quality scan of the photo itself
     # We collapse these two into a single number: 1
@@ -36,7 +37,7 @@ class Photo(models.Model):
     # These folders seemed meaningful -- they often represent boundary points between photographers.
     folder = models.IntegerField()
 
-    # The original full filename of the SLIDE as provided to us by 
+    # The original full filename of the SLIDE as provided to us by
     # e.g., "BHVP_PH_CetaitParis_DP_0031_01_001"
     shelfmark = models.CharField(max_length=252)
 
@@ -74,7 +75,7 @@ class Photo(models.Model):
             return None
 
     def has_valid_source(self, photos_dir=settings.LOCAL_PHOTOS_DIR):
-        photo_path = self.image_local_filepath(photos_dir=photos_dir) 
+        photo_path = self.image_local_filepath(photos_dir=photos_dir)
         return photo_path is not None
 
     @property
@@ -121,7 +122,7 @@ class MapSquare(models.Model):
     number = models.IntegerField(null=True)
     boundaries = models.CharField(max_length=252)
     coordinates = models.CharField(max_length=252)
-    
+
     def __str__(self):
         return "Map Square " + str(self.number)
 
@@ -156,7 +157,7 @@ class AnalysisResult(models.Model):
         # Make this an abstract base class, which means that Django won't create a database
         # table for this model -- it's only here as a base class for classes below
         abstract = True
-    
+
     def __str__(self):
         return str(self.name)
 

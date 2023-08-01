@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
-from app import views
+from app import views, api_views
 from app.common import render_react_view
 from blog import views as blog_views
 
@@ -43,67 +43,81 @@ urlpatterns = [
     # API endpoints
     ################################################################################
     # Photos
-    path('api/photo/<int:map_square_number>/<int:folder_number>/<int:photo_number>/', views.photo, name="photo"),
+    path('api/photo/<int:map_square_number>/<int:folder_number>/<int:photo_number>/',
+         api_views.photo,
+         name="photo"),
     path('api/prev_next_photos/<int:map_square_number>/<int:folder_number>/<int:photo_number>/',
-         views.previous_next_photos, name="previous_next_photos"),
-
+         api_views.previous_next_photos,
+         name="previous_next_photos"),
     path(
         'api/similar_photos/<int:map_square_number>/<int:folder_number>/<int:photo_number>/<int:num_similar_photos>/',
-        views.get_photo_by_similarity,
+        api_views.get_photo_by_similarity,
         name="similar_photos"
     ),
-    path('api/all_photos/', views.all_photos, name="all_photos"),
-    path('api/all_yolo/', views.all_yolo_tags),
-    path('api/random_photos/',views.get_random_photos, name = "random_photos"),
+    path('api/all_photos/',
+         api_views.all_photos,
+         name="all_photos"),
+    path('api/all_yolo/',
+         api_views.all_yolo_tags),
+
+    path('api/random_photos/',
+         api_views.get_random_photos,
+         name="random_photos"),
 
     # Photographers
-   	path('api/search_photographers/', views.search_photographers),
-   	path('api/search_photographers/dropdown_options', views.get_search_photographers_dropdown_options),
-    path('api/photographer/', views.get_photographer, name="all_photographers"),
-    
-    path('api/photographer/<int:photographer_number>/', views.get_photographer,
+    path('api/search_photographers/',
+         api_views.search_photographers),
+
+    path('api/search_photographers/dropdown_options',
+         api_views.get_search_photographers_dropdown_options),
+
+    path('api/photographer/',
+         api_views.get_photographer,
+         name="all_photographers"),
+
+    path('api/photographer/<int:photographer_number>/', api_views.get_photographer,
          name='photographer'),
 
     # Map Squares
-    path('api/map_square/<int:map_square_number>/', views.get_map_square, name="map_square"),
-    path('api/all_map_squares/', views.all_map_squares, name="all_map_squares"),
+    path('api/map_square/<int:map_square_number>/',
+         api_views.get_map_square,
+         name="map_square"),
+    path('api/all_map_squares/',
+         api_views.all_map_squares,
+         name="all_map_squares"),
 
     # Tags
-    path('api/tag/<str:tag_name>/', views.get_photos_by_tag, name="get_photos_by_tag"),
+    path('api/tag/<str:tag_name>/',
+         api_views.get_photos_by_tag,
+         name="get_photos_by_tag"),
 
     # Analyses
-    path('api/all_analyses/', views.all_analyses, name='all_analyses'),
-    path('api/similarity/', views.get_all_photos_in_order, name="all_photos_in_order"),
-    path('api/analysis/<str:analysis_name>/', views.get_photos_by_analysis,
+    path('api/all_analyses/', api_views.all_analyses, name='all_analyses'),
+    path('api/similarity/', api_views.get_all_photos_in_order, name="all_photos_in_order"),
+    path('api/analysis/<str:analysis_name>/', api_views.get_photos_by_analysis,
          name="get_photos_by_analysis"),
-    path('api/analysis/<str:analysis_name>/<str:object_name>/', views.get_photos_by_analysis,
+    path('api/analysis/<str:analysis_name>/<str:object_name>/', api_views.get_photos_by_analysis,
          name="get_photos_by_analysis"),
-    path('api/corpus_analysis/', views.get_corpus_analysis_results, name="get_corpus"),
+    path('api/corpus_analysis/', api_views.get_corpus_analysis_results, name="get_corpus"),
     path('api/clustering/<int:number_of_clusters>/<int:cluster_number>/',
-         views.get_photos_by_cluster, name="clustering"),
-    path('api/text_ocr/', views.get_images_with_text),
+         api_views.get_photos_by_cluster, name="clustering"),
+    path('api/text_ocr/', api_views.get_images_with_text),
 
-    path('api/search/', views.search, name="search"), #was using this to test apply_filters
+    path('api/search/', api_views.search, name="search"),
 
-#     path('api/search/', views.apply_filters, name="search"), #using this to test apply_filters
 
 
     # Arrondissements
-    path('api/arrondissements_geojson/', views.get_arrondissements_geojson,
+    path('api/arrondissements_geojson/', api_views.get_arrondissements_geojson,
          name="get_arrondissement"),
     path('api/arrondissements_geojson/<int:arr_number>/',
-         views.get_arrondissements_geojson, name="get_one_arrondissement"),
-    path('api/arrondissements_map_squares/', views.get_arrondissements_map_squares),
-    path('api/arrondissements_map_squares/<int:arr_number>', views.get_arrondissements_map_squares),
+         api_views.get_arrondissements_geojson, name="get_one_arrondissement"),
+    path('api/arrondissements_map_squares/', api_views.get_arrondissements_map_squares),
+    path('api/arrondissements_map_squares/<int:arr_number>', api_views.get_arrondissements_map_squares),
 
     # Distances
     path('api/get_photo_distances/<int:photographer_number>/',
-         views.get_photo_distances, name="get_photo_distances"),
-    # path('api/faster_rcnn_object_detection/<str:object_name>/', views.get_photos_by_object_rcnn),
-    # path('api/model/<str:model_name>/<str:object_name>/', views.get_photos_by_object),
-    # path('api/faster_rcnn_object_detection/<str:object_name>/',
-    # views.get_photos_by_object_rcnn),
-    # path('api/model/<str:model_name>/<str:object_name>/', views.get_photos_by_object),
+         api_views.get_photo_distances, name="get_photo_distances"),
 
 
     ################################################################################
