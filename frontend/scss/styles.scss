@@ -23,21 +23,24 @@ $primary-red: #FF6C6C;
 // Our styles
 @import "./fonts";
 @import "./variables";
-@import "./home";
+
+// individual pages
 @import "./about";
-@import "./photoView";
-@import "./photographerView";
-@import "./mapSquareView";
-@import "./clusterView";
 @import "./analysisView";
-@import "./search";
-@import "./titleDecorator";
 @import "./blog";
+@import "./clusterView";
+@import "./explore";
+@import "./home";
 @import "./legend";
-@import "./parisMap";
 @import "./mapPageView";
-@import "./tags";
+@import "./mapSquareView";
+@import "./parisMap";
+@import "./photoView";
 @import "./photographerListView";
+@import "./photographerView";
+@import "./search";
+@import "./tags";
+@import "./titleDecorator";
 
 // NOTE(ryaan):
 // This is for stuff that I haven't figured out where it belongs

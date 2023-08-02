@@ -137,6 +137,7 @@ class SimplePhotoSerializer(PhotoSerializer):
     class Meta:
         model = Photo
         fields = [
+            'id',
             'number',
             'map_square_number',
             'folder',

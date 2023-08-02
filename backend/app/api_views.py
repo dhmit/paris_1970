@@ -467,21 +467,6 @@ def get_photos_by_cluster(request, number_of_clusters, cluster_number):
     return Response(serializer.data)
 
 
-@api_view(['POST'])
-def search(request):
-    """
-    API endpoint to search for photos that match the search query
-    Post request
-    """
-    query = json.loads(request.GET.get('query', '{}'))
-
-
-    return Response({
-        'keywords': ', '.join([f'"{keyword}"' for keyword in keywords]),
-        'searchData': serializer.data
-    })
-
-
 
 @api_view(['POST'])
 def explore(request):
@@ -489,22 +474,22 @@ def explore(request):
     API endpoint for the explore view, which gives users a filtered view
     to all of the photos in the collection
     """
-    tag = request.data.get('selectedTags')
-    map_square = request.data.get('mapSquares')
-    print(tag, map_square)
+    tag = request.data.get('selectedTag')
+    map_square = request.data.get('selectedMapSquare')
+    ALL = 'All'
 
     query = Q()
 
     # Filter by tags
-    if tag:
+    if tag != ALL:
         query |= Q(analyses__name='yolo_model', analyses__result__icontains=tag)
 
     # Filter by map squares if provided
-    if map_square:
-        query |= Q(map_square__number=map_square)
+    if map_square != ALL:
+        query |= Q(map_square__number=int(map_square))
 
     photos = Photo.objects.filter(query).distinct()
-    if tag:
+    if tag != ALL:
         photos = sorted(photos, key=lambda photo: tag_confidence(photo, tag))
 
     # Serialize and return

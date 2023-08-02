@@ -1,7 +1,7 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 import Footer from "../components/Footer";
-import TitleDecoratorContainer from "../components/TitleDecoratorContainer"; 
+import TitleDecoratorContainer from "../components/TitleDecoratorContainer";
 import about_page_right_citylist from "../images/about_page_right_citylist.svg?url";
 import about_page_right_cropped_map from "../images/about_page_right_cropped_map.svg?url";
 import about_page_right_image from "../images/about_page_right_image.svg?url";
@@ -196,11 +196,11 @@ const studentMembers = [
         name: "David Chaudhari",
         photoSrc: Zheng_Vicky
     },
-    { 
+    {
         name: "Cindy Zheng",
         photoSrc: Zheng_Vicky
     },
-    { 
+    {
         name: "Lisa Li-Liang",
         photoSrc: Zheng_Vicky
     },
@@ -230,12 +230,7 @@ const studentMembers = [
     }
 ];
 
-interface TeamMemberProps {
-    name: string,
-    photoSrc: string,
-}
-
-function TeamMember(props: TeamMemberProps) {
+function TeamMember(props) {
     return (
         <div className="urop-view">
             <img className="urop-image" src={props.photoSrc} />
@@ -249,20 +244,7 @@ function TeamMember(props: TeamMemberProps) {
     );
 }
 
-TeamMember.propTypes = {
-    name: PropTypes.bool,
-    photoSrc: PropTypes.string,
-};
-
-interface Props {
-    text: string[],
-};
-
-class About extends React.Component<Props> {
-    constructor(props: Props) {
-        super(props);
-    }
-
+class About extends React.Component {
     render() {
         return (<>
             <div className="page">
@@ -295,7 +277,7 @@ class About extends React.Component<Props> {
                     <img className="city_list" src={about_page_right_citylist} width="700" height="700"/>
                     <img className="right_image" src={about_page_right_image} width="700" height="700"/>
                     <TitleDecoratorContainer title={"Project Director"}/>
-                    
+
                     <div className="prof-img-div text-wrap col-xs-2 col-sm-5 col-md-5 col-lg-3">
                         <figure className="figure">
                             <img
@@ -323,7 +305,7 @@ class About extends React.Component<Props> {
                                 cursus vitae. Donec et odio pellentesque diam. Morbi tincidunt ornare
                                 massa eget egestas purus viverra accumsan. Neque vitae tempus quam
                                 pellentesque nec nam aliquam sem. Vitae congue mauris rhoncus aenean.
-                                </p> 
+                                </p>
                             </div>
                         </figure>
                     </div>

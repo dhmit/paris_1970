@@ -65,8 +65,7 @@ urlpatterns = [
          api_views.get_random_photos,
          name="random_photos"),
 
-    # search and explore
-    path('api/search/', api_views.search, name="search"),
+    # explore
     path('api/explore/', api_views.explore, name="explore"),
 
     # Photographers

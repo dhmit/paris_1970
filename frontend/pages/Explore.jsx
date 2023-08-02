@@ -1,48 +1,31 @@
 import React from 'react';
 
-import SearchBgTopLeft from "../images/search_top_left.svg";
-import SearchBgTopRight from "../images/search_top_right.svg";
+import SearchBgTopLeft from "../images/search_top_left.svg?url";
+import SearchBgTopRight from "../images/search_top_right.svg?url";
+import Loading from '../components/Loading';
 
-interface Photo {
-    number: number;
-    map_square_number: number;
-    folder: string;
-    photographer_number: number;
-    photographer_name: string;
-    photo_url: string;
-    photo_page_url: string;
-}
-
-interface ExploreProps {
-    readonly objects: string[];
-    readonly arrondissements: number[];
-}
-
-interface ExploreState {
-    selectedTag: string;
-    selectedMapSquare: number;
-    photos: Photo[];
-}
-
-export class Explore extends React.Component<ExploreProps, ExploreState> {
-    constructor(props: ExploreProps) {
+export class Explore extends React.Component {
+    constructor(props) {
         super(props);
         this.state = {
-            selectedTag: "",
-            selectedMapSquare: 0,
+            selectedTag: "All",
+            selectedMapSquare: "All",
             photos: [],
+            isLoading: false
         };
     }
 
-    handleChangeTags = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    handleChangeTags = (event) => {
         this.setState({ selectedTag: event.target.value }, this.fetchData);
     };
 
-    handleChangeMapSquares = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        this.setState({ selectedMapSquare: Number(event.target.value) }, this.fetchData);
+    handleChangeMapSquares = (event) => {
+        this.setState({ selectedMapSquare: event.target.value }, this.fetchData);
     };
 
     fetchData = async () => {
+        this.setState({ isLoading: true });
+
         try {
             const response = await fetch('/api/explore/', {
                 method: 'POST',
@@ -56,60 +39,66 @@ export class Explore extends React.Component<ExploreProps, ExploreState> {
             });
 
             const data = await response.json();
-            this.setState({ photos: data.photos });
+            this.setState({ photos: data.photos, isLoading: false });
         } catch (e) {
             console.log(e);
+            this.setState({ isLoading: false });
         }
+    };
+
+    componentDidMount = async () => {
+        this.fetchData();
     };
 
     render() {
         const { objects, arrondissements } = this.props;
-        const { selectedTag, selectedMapSquare, photos } = this.state;
+        const { selectedTag, selectedMapSquare, photos, isLoading } = this.state;
 
         return (
-            <>
+            <section className="explore">
                 <div className="row">
-                    <div className="col-3">
-                        <SearchBgTopLeft className="search-bg-image-left"/>
-                        <SearchBgTopRight className="search-bg-image-right"/>
-                        <div className="sidebar">
-                            <div className="form-group">
-                                <label htmlFor="formTags">Select Tag</label>
+                    <div className="sidebar-container col-4">
+                        <div className="sidebar" style={{backgroundImage: `url(${SearchBgTopLeft})`, backgroundPosition: 'top left', backgroundRepeat: 'no-repeat'}}>
+                            <div className="form-group mb-2">
+                                <label htmlFor="formTags">Objects</label>
                                 <select className="form-control" value={selectedTag} onChange={this.handleChangeTags}>
+                                    <option key="All">All</option>
                                     {objects.map(tag => <option key={tag}>{tag}</option>)}
                                 </select>
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="formMapSquares">Select Map Square</label>
+                                <label htmlFor="formMapSquares">Arrondissement</label>
                                 <select className="form-control" value={selectedMapSquare} onChange={this.handleChangeMapSquares}>
-                                    {arrondissements.map(arr => <option key={arr} value={arr}>Arrondissement {arr}</option>)}
+                                    <option key="All" value="All">All</option>
+                                    {arrondissements.map(arr => <option key={arr} value={arr}>{arr}</option>)}
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <div className="col-9">
-                        <div className="row">
-                            {photos.length > 0 && photos.map(photo => (
-                                <div className="col-4" key={photo.number}>
-                                    <a href={photo.photo_page_url}>
-                                        <div className="card mb-4">
-                                            <img className="card-img-top" src={photo.photo_url} alt={photo.number.toString()} />
-                                            <div className="card-body">
-                                                <h5 className="card-title">Photo {photo.number}</h5>
-                                                <p className="card-text">Photographer: {photo.photographer_name}</p>
+                    <div className="photos col-8 p-5" style={{backgroundImage: `url(${SearchBgTopRight})`, backgroundPosition: 'top right', backgroundRepeat: 'no-repeat'}}>
+                        {isLoading ? (
+                            <Loading />
+                        ) : (
+                            <div className="row">
+                                {photos.length > 0 && photos.map(photo => (
+                                    <div className="col-4" key={photo.id}>
+                                        <a href={photo.photo_page_url}>
+                                            <div className="card mb-4">
+                                                <img className="card-img-top" src={photo.photo_url} alt={photo.number.toString()} />
+                                                <div className="card-body">
+                                                </div>
                                             </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            ))}
-                        </div>
+                                        </a>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
-            </>
+            </section>
         );
     }
-
 }
 
 export default Explore;
