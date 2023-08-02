@@ -8,6 +8,7 @@ import * as ReactDOM from "react-dom";
 import Base from "./Base";
 
 import About from "./pages/About";
+import Explore from "./pages/Explore";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPostView";
 import MapPage from "./pages/MapPageView";
@@ -32,6 +33,7 @@ const COMPONENTS = {
     About,
     Blog,
     BlogPost,
+    Explore,
     HomePage,
     MapPage,
     MapSquareView,

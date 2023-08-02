@@ -21,30 +21,6 @@ module.exports = {
     ],
     module: {
         rules: [
-            // eslint-disable-next-line max-len
-            {
-                test: /\.(scss|css)$/,
-                use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]
-            },
-            {
-                test: /\.js|.jsx$/,
-                exclude: /node_modules/,
-                use: "babel-loader"
-            },
-            {
-                test: /\.ts|.tsx$/,
-                exclude: /node_modules/,
-                use: "ts-loader"
-            },
-            {
-                test: /\.(png|jpe?g|gif)$/i,
-                use: [{loader: "file-loader"}]
-            },
-            {
-                test: /\.mp4$/,
-                use: "file-loader?name=videos/[name].[ext]"
-            },
-            
             // Allow SVGs to be imported either as an asset (to use in an img src, e.g.)
             // or via SVGR as a ready-to-use component.
             // See docs: https://react-svgr.com/docs/webpack/#use-svgr-and-asset-svg-in-the-same-project
@@ -60,15 +36,37 @@ module.exports = {
                 use: ['@svgr/webpack'],
             },
 
+
             // Load fonts
             {
                 test: /\.(woff|woff2|eot|ttf)$/,
                 use: "url-loader"
-            }
+            },
+
+            // eslint-disable-next-line max-len
+            {
+                test: /\.(scss|css)$/,
+                use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]
+            },
+            {
+                test: /\.js|.jsx$/,
+                exclude: /node_modules/,
+                use: "babel-loader"
+            },
+
+            {
+                test: /\.(png|jpe?g|gif)$/i,
+                use: [{loader: "file-loader"}]
+            },
+            {
+                test: /\.mp4$/,
+                use: "file-loader?name=videos/[name].[ext]"
+            },
+
         ]
     },
     resolve: {
-      extensions: ['.tsx', '.ts', '.js', '.jsx'],
+      extensions: ['.js', '.jsx'],
     },
     optimization: {
         minimize: true,

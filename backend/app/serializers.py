@@ -137,14 +137,19 @@ class SimplePhotoSerializer(PhotoSerializer):
     class Meta:
         model = Photo
         fields = [
-            'number', 'map_square_number', 'folder', 'photographer_number',  'photographer_name',
-            'photo_url'
+            'number',
+            'map_square_number',
+            'folder',
+            'photographer_number',
+            'photographer_name',
+            'photo_url',
+            'photo_page_url',
         ]
 
 class SimplePhotoSerializerForCollage(PhotoSerializer):
     class Meta:
         model = Photo
-        fields = ['photo_url','photo_page_url']
+        fields = ['photo_url', 'photo_page_url']
 
 class MapSquareSerializer(serializers.ModelSerializer):
     """

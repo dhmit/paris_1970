@@ -1,9 +1,14 @@
 import os
 import json
+import math
+from collections import Counter
+
 from django.conf import settings
 
+from app.models import Photo, PhotoAnalysisResult
 
-def get_map_square_data():
+
+def get_map_squares_by_arondissement():
     """
     Reading list of hand-compiled json data
     for each arrondissement
@@ -54,7 +59,7 @@ def tag_helper(tag_name, page=None):
     # photo indexes
     results_per_page = 20
     result_count = len(relevant_results)
-    page_count = ceil(result_count / results_per_page)
+    page_count = math.ceil(result_count / results_per_page)
 
     if page:
         first_result = results_per_page * (page-1)
@@ -79,5 +84,46 @@ def tag_helper(tag_name, page=None):
 
     sorted_analysis_obj = sorted(by_confidence, key=lambda obj: obj[1], reverse=True)
     return [result[0].photo for result in sorted_analysis_obj], result_count, page_count
+
+
+def get_all_yolo_tags():
+    yolo_results = PhotoAnalysisResult.objects.filter(name='yolo_model')
+
+    tag_counter = Counter()
+    for result in yolo_results:
+        data = result.parsed_result()
+        tags = data['labels']
+        tag_counter.update(tags)
+
+    # Sort tags by frequency (highest to least)
+    sorted_tags = sorted(tag_counter.items(), key=lambda x: x[1], reverse=True)
+
+    out = [tag for tag, count in sorted_tags]
+
+    return out
+
+
+def tag_confidence(photo_obj, tag):
+    """ given a photo object and a tag, get the maximum confidence of that tag"""
+    try:
+        analysis_result = PhotoAnalysisResult.objects.get(name='yolo_model', photo=photo_obj)
+    except PhotoAnalysisResult.DoesNotExist:
+        return 100
+
+    yolo_dict = analysis_result.parsed_result()
+
+    # there might be multiple boxes labeled with this tag,
+    # so pick the max confidence
+    confidence = max(
+        [box['confidence'] for box in yolo_dict['boxes'] if box['label'] == tag],
+        default=100
+    )
+    return confidence
+
+
+
+
+
+
 
 

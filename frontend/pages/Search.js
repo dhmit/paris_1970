@@ -307,13 +307,11 @@ export class Search extends PhotoViewer {
     render() {
         return (<>
             <div className="row">
-                <div className="search-container">
-                    <SearchBgTopLeft className="search-bg-image-left"/>
-                    <SearchBgTopRight className="search-bg-image-right"/>
-                    <div className="row height d-flex justify-content-center align-items-center">
-                        <div className="col-md-8">
-                            <SearchBar updateSearchData={this.updateSearchData}/>
-                        </div>
+                <SearchBgTopLeft className="search-bg-image-left"/>
+                <SearchBgTopRight className="search-bg-image-right"/>
+                <div className="row height d-flex justify-content-center align-items-center">
+                    <div className="col-md-8">
+                        <SearchBar updateSearchData={this.updateSearchData}/>
                     </div>
                 </div>
                 {

@@ -6,9 +6,14 @@ from rest_framework.renderers import JSONRenderer
 from django.shortcuts import render
 from django.conf import settings
 
-from app.view_helpers import get_map_square_data, photo_tag_helper, tag_helper
+from app.view_helpers import (
+    get_map_squares_by_arondissement,
+    photo_tag_helper,
+    tag_helper,
+    get_all_yolo_tags
+)
 
-from app.models import Photo
+from app.models import Photo, MapSquare
 from app.serializers import SimplePhotoSerializer
 
 
@@ -55,7 +60,7 @@ def about(request):
 
 
 def map_page(request):
-    arrondissement_data = get_map_square_data()
+    arrondissement_data = get_map_squares_by_arondissement()
     context = {
         'page_metadata': {
             'title': 'Map Page'
@@ -63,6 +68,32 @@ def map_page(request):
         'component_name': 'MapPage',
         'component_props': {
             'arrondissement_data': json.dumps(arrondissement_data),
+        }
+    }
+
+    return render_view(request, context)
+
+
+def explore_view(request):
+    """
+    Explore page
+    """
+    arrondissements_data = get_map_squares_by_arondissement()
+    arrondissements_with_photos = []
+
+    # For each arrondissement in the data, check if there are corresponding photos in the database
+    for arr in arrondissements_data['arrondissements']:
+        if Photo.objects.filter(map_square__number__in=arr['map_square_numbers']).exists():
+            arrondissements_with_photos.append(arr['number'])
+
+    context = {
+        'page_metadata': {
+            'title': 'Explore'
+        },
+        'component_name': 'Explore',
+        'component_props': {
+            'objects': get_all_yolo_tags(),
+            'arrondissements': arrondissements_with_photos
         }
     }
 
@@ -152,9 +183,6 @@ def photographer_list_view(request):
     Photographer list page
     """
     photos_dir = os.path.join(settings.AWS_S3_PHOTOS_DIR, 'photographers')
-    # serializer = PhotographerSearchSerializer(
-    #     Photographer.objects.all().order_by('name'), many=True)
-
     context = {
         'page_metadata': {
             'title': 'Photographer List View'

@@ -10,8 +10,9 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 
 from app.view_helpers import (
-    get_map_square_data,
+    get_map_squares_by_arondissement,
     get_arrondissement_geojson,
+    tag_confidence
 )
 
 from .models import (
@@ -47,7 +48,6 @@ PHOTOGRAPHER_SEARCH_ORDER_BY = [
 
 
 def tag_helper(tag_name, page=None):
-    print('tag helper here')
     all_yolo_results = PhotoAnalysisResult.objects.filter(name='yolo_model')
 
     if not all_yolo_results.count():
@@ -91,28 +91,6 @@ def tag_helper(tag_name, page=None):
 
     sorted_analysis_obj = sorted(by_confidence, key=lambda obj: obj[1], reverse=True)
     return [result[0].photo for result in sorted_analysis_obj], result_count, page_count
-
-
-@api_view(['GET'])
-def all_yolo_tags(request):
-    import json
-    yolo_results = PhotoAnalysisResult.objects.filter(name='yolo_model').prefetch_related('photo').prefetch_related('photo__map_square')
-
-    out = []
-    for result in yolo_results:
-        data = result.parsed_result()
-        photo_path = result.photo.folder_name + '/' + result.photo.photo_filename
-        tags = data['labels']
-        out.append({
-            'path': photo_path,
-            'tags': tags})
-
-    with open("yolo-tags.json", "w", encoding="utf-8") as outfile:
-        json.dump(out, outfile, indent=2)
-
-    return Response('done!')
-
-
 
 
 @api_view(['GET'])
@@ -389,12 +367,10 @@ def get_images_with_text(request):
     return Response(photos_with_text)
 
 
-
 def format_photo(photo_obj, photo_values_to_keep):
     formatted_photo = {}
     for value in photo_values_to_keep:
         formatted_photo[value] = photo_obj[value]
-
 
 
 
@@ -499,47 +475,54 @@ def search(request):
     """
     query = json.loads(request.GET.get('query', '{}'))
 
-    # This shouldn't be necessary in most recent pylint,
-    # but older pylint doesn't understand the | below
-    # pylint: disable=unsupported-binary-operation
-    query = Q()
 
-    photo_obj = Photo.objects.all()
-    for keyword in keywords:
-        sub_query = Q(photoanalysisresult__name='yolo_model', photoanalysisresult__result__icontains=keyword)
-    photo_obj = photo_obj.filter(query).distinct()
-
-    def tag_confidence(photo_obj):
-        analysis_result = PhotoAnalysisResult.objects.filter(
-            name='yolo_model',
-            photo=photo_obj,
-        ).first()
-        if not analysis_result:
-            return 100
-        yolo_dict = analysis_result.parsed_result()
-        max_confidence = max(
-            [box['confidence'] for box in yolo_dict['boxes'] if box['label'] in keywords],
-            default=100
-        )
-        return max_confidence
-
-    photo_obj = sorted(photo_obj, key=tag_confidence, reverse=True)
-    serializer = SimplePhotoSerializer(photo_obj, many=True)
     return Response({
-        'keywords': ', '.join([f'"{keyword}"' for keyword in keywords]), #this represents the query dict itself
+        'keywords': ', '.join([f'"{keyword}"' for keyword in keywords]),
         'searchData': serializer.data
     })
 
 
 
+@api_view(['POST'])
+def explore(request):
+    """
+    API endpoint for the explore view, which gives users a filtered view
+    to all of the photos in the collection
+    """
+    tag = request.data.get('selectedTags')
+    map_square = request.data.get('mapSquares')
+    print(tag, map_square)
+
+    query = Q()
+
+    # Filter by tags
+    if tag:
+        query |= Q(analyses__name='yolo_model', analyses__result__icontains=tag)
+
+    # Filter by map squares if provided
+    if map_square:
+        query |= Q(map_square__number=map_square)
+
+    photos = Photo.objects.filter(query).distinct()
+    if tag:
+        photos = sorted(photos, key=lambda photo: tag_confidence(photo, tag))
+
+    # Serialize and return
+    photo_serializer = SimplePhotoSerializer(photos[:10], many=True)
+    print(photo_serializer.data)
+
+    return Response({
+        'photos': photo_serializer.data
+    })
+
 
 @api_view(['GET'])
-def apply_filters(tag_request): #now need to work on the tag request
+def apply_filters(tag_request):
     """
     Given a particular request object that would specifically correlate to tag information, returns
     search queries corresponding to tag information. Backend filter bar in case current implementation doesn't work.
     """
-    applied_query = json.loads(tag_request.GET.get('query', '{}')) #query object
+    applied_query = json.loads(tag_request.GET.get('query', '{}'))
 
 
     tags_applied = [x for x in applied_query if applied_query[x]]
@@ -583,7 +566,7 @@ def get_arrondissements_map_squares(request, arr_number=None):
     :param arr_number:
     :return: Response
     """
-    data = get_map_square_data()
+    data = get_map_squares_by_arondissement()
 
     if arr_number is not None:
         # Get data for a single unique arrondissement

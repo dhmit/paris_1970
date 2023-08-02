@@ -46,23 +46,28 @@ urlpatterns = [
     path('api/photo/<int:map_square_number>/<int:folder_number>/<int:photo_number>/',
          api_views.photo,
          name="photo"),
+
     path('api/prev_next_photos/<int:map_square_number>/<int:folder_number>/<int:photo_number>/',
          api_views.previous_next_photos,
          name="previous_next_photos"),
+
     path(
         'api/similar_photos/<int:map_square_number>/<int:folder_number>/<int:photo_number>/<int:num_similar_photos>/',
         api_views.get_photo_by_similarity,
         name="similar_photos"
     ),
+
     path('api/all_photos/',
          api_views.all_photos,
          name="all_photos"),
-    path('api/all_yolo/',
-         api_views.all_yolo_tags),
 
     path('api/random_photos/',
          api_views.get_random_photos,
          name="random_photos"),
+
+    # search and explore
+    path('api/search/', api_views.search, name="search"),
+    path('api/explore/', api_views.explore, name="explore"),
 
     # Photographers
     path('api/search_photographers/',
@@ -82,6 +87,7 @@ urlpatterns = [
     path('api/map_square/<int:map_square_number>/',
          api_views.get_map_square,
          name="map_square"),
+
     path('api/all_map_squares/',
          api_views.all_map_squares,
          name="all_map_squares"),
@@ -102,9 +108,6 @@ urlpatterns = [
     path('api/clustering/<int:number_of_clusters>/<int:cluster_number>/',
          api_views.get_photos_by_cluster, name="clustering"),
     path('api/text_ocr/', api_views.get_images_with_text),
-
-    path('api/search/', api_views.search, name="search"),
-
 
 
     # Arrondissements
@@ -127,6 +130,7 @@ urlpatterns = [
     path('map/', views.map_page),
     path('about/', views.about),
     path('search/', views.search_view),
+    path('explore/', views.explore_view),
     # Photographers
     path('photographers/', views.photographer_list_view),
     path('photographer/<int:photographer_number>/', views.photographer_view),
