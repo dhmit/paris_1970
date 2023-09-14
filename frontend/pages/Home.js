@@ -48,7 +48,7 @@ const WorkInProgressModal = ({showModal, handleClose}) => {
 
 export class HomePage extends React.Component {
     state = {
-        showModal: false
+        showModal: true
     };
 
     handleClose = () => this.setState({showModal: false});
@@ -71,8 +71,7 @@ export class HomePage extends React.Component {
                 <a href="/explore/">
                     <Row className="section-row photo-archive gx-0">
                         <Col sm={4} className="home-section-text">
-                            <h2 className="h4">Photography Archive: Explore Photos</h2>
-                            <p>Capture a time of change in the city</p>
+                            <h2 className="h4">Explore Photos by Subject</h2>
                             <span className="large-arrow right">⟶</span>
                         </Col>
                         <Col sm={8} className="home-section-photo" style={{ backgroundImage: `url(${Walking_Man})` }} />
@@ -87,18 +86,16 @@ export class HomePage extends React.Component {
                             }}
                         />
                         <Col sm={4} className="home-section-text">
-                            <h2 className="h4">Map Squares</h2>
-                            <p>Capture a time of change in the city</p>
+                            <h2 className="h4">View Photos by Location</h2>
                             <span className="large-arrow left">⟵</span>
                         </Col>
                     </Row>
                 </a>
 
-                <a href="/blog/">
+                <a href="/articles/">
                     <Row className="section-row context gx-0">
                         <Col xs={8} sm={4} className="home-section-text">
-                            <h2 className="h4">Context: Paris 1970 photo contest</h2>
-                            <p>Capture a time of change in the city</p>
+                            <h2 className="h4">Context and Research</h2>
                             <span className="large-arrow right">⟶</span>
                         </Col>
                         <Col xs={4} sm={8} className="home-section-photo"
@@ -118,7 +115,6 @@ export class HomePage extends React.Component {
                         />
                         <Col sm={4} className="home-section-text">
                             <h2 className="h4">About the Project</h2>
-                            <p>Learn about MIT Prof. Catherine Clark and the Digital Humanities Lab</p>
                             <span className="large-arrow left">⟵</span>
                         </Col>
                     </Row>

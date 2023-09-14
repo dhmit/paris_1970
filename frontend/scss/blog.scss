@@ -65,8 +65,10 @@
         color: black;
     }
 
-    #blog-sidebar-post-list {
+    .blog-sidebar-post-list {
         max-width: 479px;
+        list-style: square;
+        margin-bottom: 0.5rem;
     }
 }
 

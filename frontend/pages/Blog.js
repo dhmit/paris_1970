@@ -12,10 +12,11 @@ function Posts(props) {
                     <div className="blog-post-short card-body">
                         <h1 className="blog-title">
                             <a href={post.absolute_url}>
-                                {truncateText(post.title, 4)}
+                                {post.title}
                             </a>
                         </h1>
-                        <h5 className="blog-author">{post.author + " "}
+                        <h5 className="blog-author">
+                            {post.subtitle}<br/>
                             <small className="text-muted">
                                 {post.published ? "Published" : "Preview"} {post.date}
                             </small>
@@ -32,7 +33,7 @@ function Posts(props) {
                         }}
                         />
                         <a className="stretched-link text-decoration-none text-uppercase post-link"
-                           href={"/blog/" + post.slug}> Read more
+                           href={"/articles/" + post.slug}> Read more
                         </a>
                         <div className="list-inline mb-4 mt-3">
                             {
@@ -66,7 +67,10 @@ class Blog extends React.Component {
         return (<Container className="blog-home" id="app_root">
                 <Row>
                     <Col lg={8}>
-                        <h2 className="blog-list-title">Blog</h2>
+                        <h2 className="blog-list-title">Articles</h2>
+            <p>
+Here you will find work exploring Paris, the contest photos, and this project’s tools. Some of this is student work; some is by more established researchers. If you use the photos and would like your work to be included here, please email <a href="https://history.mit.edu/people/catherine-clark/" target="_blank" rel="noreferrer">Catherine Clark</a>.
+            </p>
                         <Posts
                             posts={this.props.posts}
                             tags={this.props.tags}

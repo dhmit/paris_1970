@@ -15,7 +15,7 @@ class BlogPostSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_absolute_url(instance):
-        return f"/{settings.BLOG_ROOT_URL}/{instance.slug}"
+        return f"/blog/{instance.slug}"
 
     @staticmethod
     def get_author(instance):

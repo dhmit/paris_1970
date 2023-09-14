@@ -17,10 +17,6 @@ export class BlogPost extends React.Component {
                 <Container className="mt-3">
                     <Row>
                         <Col className={"blog-post"} lg={8}>
-                            {
-                                //May need to change this statement. Can pose security risks and
-                                //may also be outdated method of rendering raw HTML
-                            }
                             <h1 className="blog-title">
                                 <a href={this.props.post.absolute_url}>
                                     {this.props.post.title}

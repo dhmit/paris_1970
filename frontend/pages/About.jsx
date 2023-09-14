@@ -1,5 +1,6 @@
 import React from "react";
-import * as PropTypes from "prop-types";
+import { Container, Row, Col, Image, Figure, Card } from 'react-bootstrap';
+
 import Footer from "../components/Footer";
 import TitleDecoratorContainer from "../components/TitleDecoratorContainer";
 import about_page_right_citylist from "../images/about_page_right_citylist.svg?url";
@@ -230,113 +231,49 @@ const studentMembers = [
     }
 ];
 
+
+
 function TeamMember(props) {
     return (
-        <div className="urop-view">
-            <img className="urop-image" src={props.photoSrc} />
-            <div className="urop-image-overlay">
-                <div className="urop-text">
-                    <h4>{props.name}</h4>
-                    <p>Here is a paragraph about this person!</p>
-                </div>
-            </div>
-        </div>
+        <Card className="mb-3" style={{ width: '18rem' }}>
+            <Card.Body>
+                <Card.Title>{props.name}</Card.Title>
+                <Card.Text>Here is a paragraph about this person!</Card.Text>
+            </Card.Body>
+        </Card>
     );
 }
 
 class About extends React.Component {
     render() {
-        return (<>
-            <div className="page">
-                <TitleDecoratorContainer title={"About"}/>
-                <div className="about-text">
-                    {/*<ul>{this.props.text.map((section, key) => {*/}
-                    {/*    return <li key={key}>*/}
-                    {/*        {section.section === "intro"*/}
-                    {/*            ? <><TitleDecoratorContainer title={section.title}/> hello we're here</>*/}
-                    {/*            : <h2>{section.title}</h2>}*/}
-                    {/*    </li>;*/}
-                    {/*})}</ul>*/}
-                    <p className="project-description">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                        eiusmod tempor incididunt ut labore et dolore magna aliqua. Odio
-                        eu feugiat pretium nibh ipsum consequat nisl vel pretium. Malesuada
-                        nunc vel risus commodo viverra maecenas accumsan lacus vel. Cras
-                        pulvinar mattis nunc sed blandit libero volutpat. Aliquam faucibus
-                        purus in massa tempor nec feugiat nisl pretium. Quam nulla porttitor
-                        massa id neque aliquam. Quam quisque id diam vel quam elementum
-                        pulvinar etiam non. Etiam dignissim diam quis enim lobortis scelerisque
-                        fermentum. Fringilla urna porttitor rhoncus dolor purus non. Vel
-                        fringilla est ullamcorper eget nulla facilisi etiam. Tristique et
-                        egestas quis ipsum suspendisse ultrices gravida. Vehicula ipsum a arcu
-                        cursus vitae. Donec et odio pellentesque diam. Morbi tincidunt ornare
-                        massa eget egestas purus viverra accumsan. Neque vitae tempus quam
-                        pellentesque nec nam aliquam sem. Vitae congue mauris rhoncus aenean.
-                    </p>
-                    <img className="cropped_map" src={about_page_right_cropped_map} width="130" height="881"/>
-                    <img className="city_list" src={about_page_right_citylist} width="700" height="700"/>
-                    <img className="right_image" src={about_page_right_image} width="700" height="700"/>
-                    <TitleDecoratorContainer title={"Project Director"}/>
+        return (
+            <>
+                <Container id="aboutPage">
 
-                    <div className="prof-img-div text-wrap col-xs-2 col-sm-5 col-md-5 col-lg-3">
-                        <figure className="figure">
-                            <img
-                                className="prof-img"
-                                src={Clark_Catherine}
-                                alt="Catherine Clark"
-                            />
-                            <div className="prof-titles">
-                                <div className="staff-name">Catherine Clark</div>
-                                <figcaption className="figure-caption">
-                                Faculty Director & Associate Professor of History and French Studies
-                                </figcaption>
-                                <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                                eiusmod tempor incididunt ut labore et dolore magna aliqua. Odio
-                                eu feugiat pretium nibh ipsum consequat nisl vel pretium. Malesuada
-                                nunc vel risus commodo viverra maecenas accumsan lacus vel. Cras
-                                pulvinar mattis nunc sed blandit libero volutpat. Aliquam faucibus
-                                purus in massa tempor nec feugiat nisl pretium. Quam nulla porttitor
-                                massa id neque aliquam. Quam quisque id diam vel quam elementum
-                                pulvinar etiam non. Etiam dignissim diam quis enim lobortis scelerisque
-                                fermentum. Fringilla urna porttitor rhoncus dolor purus non. Vel
-                                fringilla est ullamcorper eget nulla facilisi etiam. Tristique et
-                                egestas quis ipsum suspendisse ultrices gravida. Vehicula ipsum a arcu
-                                cursus vitae. Donec et odio pellentesque diam. Morbi tincidunt ornare
-                                massa eget egestas purus viverra accumsan. Neque vitae tempus quam
-                                pellentesque nec nam aliquam sem. Vitae congue mauris rhoncus aenean.
-                                </p>
-                            </div>
-                        </figure>
-                    </div>
-                </div>
-                <div className="team">
-                    {/* <div className="about-title">Staff Members</div> */}
-                    <TitleDecoratorContainer title={"Staff Members"}/>
-                    <div className="row justify-content-center">
-                        {staffMembers.map((member, k) => (
-                            <TeamMember
-                                key={k}
-                                name={member.name}
-                                photoSrc={member.photoSrc}
-                            />
-                        ))}
-                    </div>
-                    {/* <div className="about-title">UROP Members</div> */}
-                    <TitleDecoratorContainer title={"UROP Members"}/>
-                    <div className="row justify-content-center">
-                        {studentMembers.map((member, k) => (
-                            <TeamMember
-                                key={k}
-                                name={member.name}
-                                photoSrc={member.photoSrc}
-                            />
-                        ))}
-                    </div>
-                </div>
-            </div>
-            <Footer/>
-        </>);
+                    <Row>
+                        <TitleDecoratorContainer title="About" />
+                        <Col>
+                            <p>
+                                In May 1970, thousands of amateur photographers spread out across Paris to take pictures. They were participants in a photo contest, “This was Paris in 1970,” organized by the cooperative electronics store the Fnac. Each contestant had been assigned to document a 250m square of the city. By the end of the month, this army of photographers had produced an unprecedented collection of 100,000 photographs: 70,000 black-and-white prints and 30,000 colors slides. This website currently hosts 5,000 color slides from the 13th and 19th arrondissements, areas of the city which were undergoing significant change in 1960s and 1970s.
+                            </p>
+                            <p>
+                                The project This was Paris in 1970 provides tools to explore the rich archive: a <a href="/map">map</a> to see the photos square by square; an <a href="/explore">object detector</a> to search for photos of many objects from people to cats, cars to strollers; a similar photo viewer to identify photos by composition rather than subject; and <a href="/articles">articles</a> providing context and analysis.
+                            </p>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <TitleDecoratorContainer title="The Team" />
+                        <p>
+                        This is Paris in 1970 was created in MIT’s Digital Humanities Lab as a collaboration between DH Fellow <a href="https://history.mit.edu/people/catherine-clark/">Prof. Catherine Clark</a>, <a href="https://digitalhumanities.mit.edu/people/alumni">four dozen undergraduate research associates</a>, and <a href="https://digitalhumanities.mit.edu/people">the instructional staff</a> of the DH Lab. Justice Vidal built out the first version of the site, and Nina Li spearheaded the design work.
+                        </p>
+                        <p>
+                            The <a href="https://www.paris.fr/lieux/bibliotheque-historique-de-la-ville-de-paris-bhvp-16">Bibliothèque historique de la Ville de Paris</a> holds the contest photographs. Its photo department made this project possible.
+                        </p>
+                    </Row>
+                </Container>
+                <Footer />
+            </>
+        );
     }
 }
 

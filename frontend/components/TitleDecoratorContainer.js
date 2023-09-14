@@ -21,18 +21,18 @@ export class TitleDecoratorContainer extends React.Component {
             marginBottom: 30,
             paddingTop: 22,
             paddingLeft: 20
-            
+
         };
 
         return (
-            <Container className="p-0 title-decorator-container">
+            <Container className="p-0 mt-4 title-decorator-container">
                 <Row className="p-0">
                     <Col className="p-0">
-                        {/* <TitleDecorator 
+                        {/* <TitleDecorator
                             id="site-decorator"
-                            top={22} left={-1.5} width={221} height={55}             
+                            top={22} left={-1.5} width={221} height={55}
                             decorator_type={"title-decorator"}/>  */}
-                                         
+
                         {/* <img src={} />  */}
                         <h2 style={headerStyle}> {this.props.title}</h2>
                     </Col>
