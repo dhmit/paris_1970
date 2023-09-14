@@ -17,7 +17,7 @@ from .models import (
 
 class PhotoInline(admin.TabularInline):
     model = Photo
-    exclude = ('alt', 'contains_sticker', 'librarian_caption')
+    exclude = ('alt',)
     #readonly_fields= ('photo_slide',)
 
     """
@@ -80,7 +80,7 @@ class PhotoAdmin(admin.ModelAdmin):
     Photo Admin
     """
     list_display = ('id', 'number', 'photo_thumbnail', 'map_square_number',
-                    'photographer_info', 'librarian_caption', 'photographer_caption')
+                    'photographer_info', 'full_text', 'location')
     search_fields = ['number', 'map_square__id', 'photographer__id', 'photographer__name']
 
     readonly_fields = ('photo_thumbnail', 'photo_slide')
@@ -140,7 +140,7 @@ class PhotoAdmin(admin.ModelAdmin):
 class PhotographerAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "number", "approx_loc", "map_square"]
     search_fields = ['id', 'number', "name", "approx_loc", "map_square__number"]
-    
+
     def map_square(self, obj):
         """
         Returns map square number
@@ -160,7 +160,7 @@ class PhotoAnalysisResultAdmin(admin.ModelAdmin):
     search_fields = ['id','number','map_square_number','photo_thumbnail','photographer__name',
                     'photographer_info']
     readonly_fields = ('photo_thumbnail','photo_analysis_result')
-    
+
     photo = models.ForeignKey(Photo, on_delete=models.CASCADE, null=False)
 
     def __str__(self):

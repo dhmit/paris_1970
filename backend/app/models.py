@@ -37,18 +37,13 @@ class Photo(models.Model):
     # These folders seemed meaningful -- they often represent boundary points between photographers.
     folder = models.IntegerField()
 
-    # The original full filename of the SLIDE as provided to us by
-    # e.g., "BHVP_PH_CetaitParis_DP_0031_01_001"
-    shelfmark = models.CharField(max_length=252)
-
     map_square = models.ForeignKey('MapSquare', on_delete=models.CASCADE, null=True)
-    photographer = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True)
+    photographer = models.ForeignKey('Photographer', on_delete=models.SET_NULL, null=True,
+                                     blank=True)
 
-    # TODO(ra 2022-10-28): We are likely to drop a bunch of these old metadata fields.
-    contains_sticker = models.BooleanField(null=True)
-    alt = models.CharField(max_length=252)
-    librarian_caption = models.CharField(max_length=252)
-    photographer_caption = models.CharField(max_length=252)
+    alt = models.CharField(max_length=252, null=True, blank=True)
+    full_text = models.TextField(null=True, blank=True)
+    location = models.CharField(max_length=252, null=True, blank=True)
 
     def get_image_data(self, as_gray=False, use_pillow=False, photos_dir=settings.LOCAL_PHOTOS_DIR):
         """
