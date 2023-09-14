@@ -103,11 +103,9 @@ def get_all_yolo_tags():
     return out
 
 
-def tag_confidence(photo_obj, tag):
+def tag_confidence(photo_obj, analysis_result, tag):
     """ given a photo object and a tag, get the maximum confidence of that tag"""
-    try:
-        analysis_result = PhotoAnalysisResult.objects.get(name='yolo_model', photo=photo_obj)
-    except PhotoAnalysisResult.DoesNotExist:
+    if not analysis_result:
         return 100
 
     yolo_dict = analysis_result.parsed_result()
@@ -119,11 +117,3 @@ def tag_confidence(photo_obj, tag):
         default=100
     )
     return confidence
-
-
-
-
-
-
-
-

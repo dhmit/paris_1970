@@ -1,6 +1,5 @@
 import React from "react";
-import {Modal, Button} from "react-bootstrap";
-import {Row, Col } from "react-bootstrap";
+import {Modal, Button, Row, Col} from "react-bootstrap";
 
 
 //Images
@@ -24,16 +23,16 @@ const WorkInProgressModal = ({showModal, handleClose}) => {
             <Modal.Body>
                 <p>
                     <strong>This was Paris in 1970</strong> is a project by
-                    the <a href = "https://digitalhumanities.mit.edu/">MIT 
+                    the <a href = "https://digitalhumanities.mit.edu/">MIT
                     Digital Humanities Lab</a> in collaboration with <a href =
                     "https://history.mit.edu/people/catherine-clark/">Catherine
-                    Clark</a>, Associate Professor of History and French Studies 
+                    Clark</a>, Associate Professor of History and French Studies
                     at MIT and Director of MIT Digital Humanities.
                 </p>
                 <p>
                     This project is still under construction and contains
                     student work, so there may be features that are
-                    currently incomplete or inaccurate.  
+                    currently incomplete or inaccurate.
                 </p>
             </Modal.Body>
             <Modal.Footer>
@@ -69,8 +68,8 @@ export class HomePage extends React.Component {
             </section>
 
             <section className="home-sections">
-                <a href="/photographers/">
-                    <Row className="section-row photo-archive">
+                <a href="/explore/">
+                    <Row className="section-row photo-archive gx-0">
                         <Col sm={4} className="home-section-text">
                             <h2 className="h4">Photography Archive: Explore Photos</h2>
                             <p>Capture a time of change in the city</p>
@@ -81,10 +80,10 @@ export class HomePage extends React.Component {
                 </a>
 
                 <a href="/map/">
-                    <Row className="section-row map-section">
-                        <Col sm={8} className="home-section-photo" 
-                            style={{ 
-                                backgroundImage: `url(${Map_Page})`, 
+                    <Row className="section-row map-section gx-0">
+                        <Col sm={8} className="home-section-photo"
+                            style={{
+                                backgroundImage: `url(${Map_Page})`,
                             }}
                         />
                         <Col sm={4} className="home-section-text">
@@ -95,20 +94,37 @@ export class HomePage extends React.Component {
                     </Row>
                 </a>
 
-                <a href="/about/">
-                    <Row className="section-row context">
+                <a href="/blog/">
+                    <Row className="section-row context gx-0">
                         <Col xs={8} sm={4} className="home-section-text">
                             <h2 className="h4">Context: Paris 1970 photo contest</h2>
                             <p>Capture a time of change in the city</p>
                             <span className="large-arrow right">⟶</span>
                         </Col>
-                        <Col xs={4} sm={8} className="home-section-photo" 
-                            style={{ 
-                                backgroundImage: `url(${Staring_Man})`, 
+                        <Col xs={4} sm={8} className="home-section-photo"
+                            style={{
+                                backgroundImage: `url(${Staring_Man})`,
                             }}
                         />
                     </Row>
                 </a>
+
+                <a href="/about/">
+                    <Row className="section-row map-section gx-0">
+                        <Col sm={8} className="home-section-photo"
+                            style={{
+                                backgroundImage: `url(${Map_Page})`,
+                            }}
+                        />
+                        <Col sm={4} className="home-section-text">
+                            <h2 className="h4">About the Project</h2>
+                            <p>Learn about MIT Prof. Catherine Clark and the Digital Humanities Lab</p>
+                            <span className="large-arrow left">⟵</span>
+                        </Col>
+                    </Row>
+                </a>
+
+
             </section>
 
         </>);

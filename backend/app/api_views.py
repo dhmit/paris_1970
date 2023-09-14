@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.core.paginator import Paginator
 
 from app.view_helpers import (
@@ -235,7 +235,8 @@ def search_photographers(request):
 
     serialized_photographers = (
         PhotographerSearchSerializer(current_page.object_list, many=True)
-    ) # add pagination here
+    )
+    # add pagination here
     res = Response({
         "page_number": page_number,
         "results": serialized_photographers.data,
@@ -398,8 +399,8 @@ def get_random_photos(request):
 
     photos = list(Photo.objects.all())
     print(photos)
-    random_photos = random.sample(photos,9)
-    serializer = SimplePhotoSerializerForCollage(random_photos,many=True)
+    random_photos = random.sample(photos, 9)
+    serializer = SimplePhotoSerializerForCollage(random_photos, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
@@ -475,7 +476,9 @@ def explore(request):
     to all of the photos in the collection
     """
     tag = request.data.get('selectedTag')
-    map_square = request.data.get('selectedMapSquare')
+    page = int(request.data.get('page', 1))
+    page_size = int(request.data.get('pageSize', 10))
+
     ALL = 'All'
 
     query = Q()
@@ -484,20 +487,36 @@ def explore(request):
     if tag != ALL:
         query |= Q(analyses__name='yolo_model', analyses__result__icontains=tag)
 
-    # Filter by map squares if provided
-    if map_square != ALL:
-        query |= Q(map_square__number=int(map_square))
-
-    photos = Photo.objects.filter(query).distinct()
     if tag != ALL:
-        photos = sorted(photos, key=lambda photo: tag_confidence(photo, tag))
+        prefetch = Prefetch('analyses', queryset=PhotoAnalysisResult.objects.filter(name='yolo_model'))
+        photos = Photo.objects.filter(query).prefetch_related(prefetch).distinct()
+        photos_with_analysis = [
+            {
+                'photo': photo,
+                'analysis_result': list(photo.analyses.all())[0] if photo.analyses.all() else None
+            }
+            for photo in photos]
 
-    # Serialize and return
-    photo_serializer = SimplePhotoSerializer(photos[:10], many=True)
-    print(photo_serializer.data)
+        photos_with_analysis.sort(key=lambda item: tag_confidence(item['photo'], item['analysis_result'], tag))
+
+        # Extract sorted photos from the photos_with_analysis list
+        photos = [item['photo'] for item in photos_with_analysis]
+
+    else:
+        photos = Photo.objects.filter(query).distinct()
+
+    start_idx = (page - 1) * page_size
+    end_idx = start_idx + page_size
+    paginated_photos = photos[start_idx:end_idx]
+    total_pages = -(-len(photos) // page_size)  # This is a way to do ceiling division in Python
+
+    photo_serializer = SimplePhotoSerializer(paginated_photos, many=True)
 
     return Response({
-        'photos': photo_serializer.data
+        'photos': photo_serializer.data,
+        'currentPage': page,
+        'totalPages': total_pages,
+        'totalCount': len(photos),
     })
 
 

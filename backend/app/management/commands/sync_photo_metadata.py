@@ -68,14 +68,14 @@ class Command(BaseCommand):
                 metadata = PhotoMetadata(map_square_number=int(map_square_number),
                                          folder_number=int(folder_number),
                                          photo_number=int(photo_number,),
-                                         full_text=full_text, 
+                                         full_text=full_text,
                                          photographer_number=photographer_number,
-                                         street_name=street_name, 
+                                         street_name=street_name,
                                          public_notes=public_notes,
                                          private_notes=private_notes)
                 photo_metadata_list.append(metadata)
-        
-        for metadata in photo_metadata_list: 
+
+        for metadata in photo_metadata_list:
             photo_number = metadata.photo_number
             map_square_number = metadata.map_square_number
             folder_number = metadata.folder_number

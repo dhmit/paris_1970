@@ -4,6 +4,13 @@
     margin-top: 30px;
     padding-bottom: 120px;
 
+    .pagination-controls {
+        border: 2px solid black;
+        padding: 1rem;
+        margin: 0;
+        margin-bottom: 2rem;
+    }
+
     .sidebar-container {
         height: 100vh;
     }
@@ -11,10 +18,9 @@
     .sidebar {
         position: sticky;
         top: 0;
-        height: 50%;
+        height: 75%;
         width: 100%;
         padding: 2rem;
-        padding-left: 0;
         margin-left: 2rem;
         overflow-y: auto; // Allow scroll if content is larger than container
         background-color: $color-turquoise-light;
@@ -38,6 +44,8 @@
                 white-space: nowrap;
                 margin:0;
                 transition: background-color .4s ease;
+                background-color: white;
+                border: 2px solid black;
             }
 
             select {
@@ -45,6 +53,7 @@
                 border: 2px solid #000000;
                 background-color: $color-turquoise-light;
                 transition: background-color .4s ease;
+                margin-left: 1rem;
 
                 &:focus {
                     box-shadow: none;
@@ -52,14 +61,22 @@
                 }
             }
         }
+
+        .explainer {
+            background-color: white;
+            border: 2px solid black;
+            padding: 1rem;
+        }
     }
 
     .photos {
+        padding-left: 5rem;
+        padding-right: 3rem;
         .card {
             border: 2px solid #000000;
             box-shadow: 0 0 40px rgba(51, 51, 51, .1);
             transition: .3s ease-in-out;
-            margin: .5em;
+            margin: 0;
 
             &:hover, &:focus {
                 background-color: $color-turquoise;
@@ -67,6 +84,8 @@
 
             .card-img-top {
                 opacity: 1;
+                max-width: 100%;
+                height: auto;
             }
         }
     }
