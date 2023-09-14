@@ -318,14 +318,8 @@ export class PhotoView extends PhotoViewer {
                         }}
                     />
                     <b>
-                        Map Square
-                        <span>
-                            <a className="photo-link"
-                                href={`/map_square/${mapSquareNumber}`}
-                            >{mapSquareNumber}</a>
-                        </span>
+                        Map Square <span><a className="photo-link" href={`/map_square/${mapSquareNumber}`} >{mapSquareNumber}</a> </span>
                         <br/>
-                        Arrondissement 17
                     </b>
                 </div>
             </div>

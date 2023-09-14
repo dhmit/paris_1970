@@ -2,20 +2,17 @@
 @import "fonts";
 
 .legend {
-    position: absolute; 
+    position: absolute;
     background-color: $color-white;
     border: 1px solid $color-black;
     z-index: 999;
-    padding: 0.4em;
-    width: 7.8em;
-    height: 5.6em; 
+    padding: .5em;
     right: 0.5em;
     top: 0.5em;
     color: $color-black;
     text-align: left;
     line-height: 0px;
     font-family: $font-family-bold;
-    overflow-x: scroll;
 
     h6 {
         font-weight: 700;
@@ -23,10 +20,15 @@
 
     ul {
         padding: 0;
+        margin: 0;
     }
 
     li {
         list-style: none;
+
+        &:last-child {
+            margin-top: 0.5rem;
+        }
     }
 
     .label {

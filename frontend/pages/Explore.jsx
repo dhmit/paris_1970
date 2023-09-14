@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { getCookie } from '../common';
 import SearchBgTopLeft from "../images/search_top_left.svg?url";
 import SearchBgTopRight from "../images/search_top_right.svg?url";
 import Loading from '../components/Loading';
@@ -49,7 +49,8 @@ export class Explore extends React.Component {
             const response = await fetch('/api/explore/', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
                 },
                 body: JSON.stringify({
                     selectedTag: this.state.selectedTag,

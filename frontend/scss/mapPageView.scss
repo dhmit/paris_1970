@@ -1,6 +1,21 @@
+.layer-select {
+    width: 20%;
+    z-index: 999;
+    right: 0.5em;
+    bottom: 2em;
+    position: absolute;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+
+#map-container {
+    z-index: 1;
+    height: calc(100vh - 96px);
+    position: relative;
+}
 .page-body {
     background-color: white;
-    max-height: 100%;
     font-size: 20px;
     line-height: 28px;
 }
@@ -29,10 +44,6 @@
         margin-left: -0.35em;
         padding: 0;
     }
-
-    .page-map {
-        min-height: 100vh !important;
-    }
 }
 
 @include media-breakpoint-between(md, lg) {
@@ -54,10 +65,6 @@
 }
 
 @include media-breakpoint-down(lg) {
-    .page-map {
-        min-height: 70vh !important;
-        height: 70vh;
-    }
 }
 
 
@@ -68,3 +75,78 @@
         margin-right: 0;
     }
 }
+
+
+#instructionButton {
+    z-index: 999;
+    position: absolute;
+    bottom: 25px;
+    right: 5px;
+}
+
+.map-grid {
+    stroke: $color-mid-gray;
+    stroke-width: 1;
+    stroke-opacity: 1;
+    fill-opacity: 0;
+}
+
+.map-square {
+    stroke-width: 2;
+    fill-opacity: 0.7;
+}
+
+.box {
+    mix-blend-mode: multiply;
+}
+
+.box-one {
+    @extend .box;
+    stroke: #FFBEBD;
+    fill: #FFBEBD;
+}
+
+.box-two {
+    @extend .box;
+    stroke: #FF9E9C;
+    fill: #FF9E9C;
+}
+
+.box-three {
+    @extend .box;
+    stroke: #FF7E7A;
+    fill: #FF7E7A;
+}
+
+.box-four {
+    @extend .box;
+    stroke: #FF5D59;
+    fill: #FF5D59;
+}
+
+.box-five {
+    @extend .box;
+    stroke: #FF3D3A;
+    fill: #FF3D3A;
+}
+
+.map-selected {
+    @extend .box;
+    stroke: #ffaaff;
+    fill: #ffaaff;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

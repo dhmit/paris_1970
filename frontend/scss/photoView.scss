@@ -1,4 +1,5 @@
 #photo-view {
+    padding: 2rem;
     .title-decorator-container {
         @include media-breakpoint-up(lg) {
             position: relative;

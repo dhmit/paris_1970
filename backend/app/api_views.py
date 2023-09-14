@@ -8,6 +8,7 @@ from rest_framework.response import Response
 
 from django.db.models import Q, Prefetch
 from django.core.paginator import Paginator
+from django.views.decorators.csrf import csrf_exempt
 
 from app.view_helpers import (
     get_map_squares_by_arondissement,

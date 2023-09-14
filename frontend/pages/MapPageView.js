@@ -1,76 +1,82 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 
-import {GeoJSON, Popup, Rectangle} from "react-leaflet";
+import {GeoJSON, Tooltip, Rectangle} from "react-leaflet";
 import {Container, Row, Col} from "react-bootstrap";
 
 import {debounce} from "../common";
 
 import Map, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../components/ParisMap";
 import LoadingPage from "./LoadingPage";
-import MapSquareList from "../components/map-page/MapSquareList";
 import MapSquareContent from "../components/map-page/MapSquareContent";
 import TitleDecoratorContainer from "../components/TitleDecoratorContainer";
 
-function densityOverlay(mapData) {
+function densityOverlay(mapData, selectMapSquare) {
     const sortedMapData = Object.values(mapData).sort((a, b) => a.num_photos - b.num_photos);
+
     // Gets the max number of photos in a single square out of all squares to form buckets later
     const maxNumOfPhotos =
         sortedMapData && sortedMapData.length
             ? sortedMapData[sortedMapData.length - 1].num_photos
             : 0;
-    // Creating 5 buckets based on lowest to highest number of photos per square
-    const twentyPctMax = Math.round(0.2 * maxNumOfPhotos);
-    const fortyPctMax = Math.round(0.4 * maxNumOfPhotos);
-    const sixtyPctMax = Math.round(0.6 * maxNumOfPhotos);
-    const eightyPctMax = Math.round(0.8 * maxNumOfPhotos);
 
-    return (
-        <>
-            {sortedMapData.map((mapSquareData) => {
-                const index = mapSquareData.number;
-                const coords = mapSquareData.topLeftCoords;
-                const numberOfPhotos = mapSquareData.num_photos;
+    const percentMax = (percent) => Math.round(percent/100 * maxNumOfPhotos);
 
-                const mapSquareBounds = [
-                    [coords.lat, coords.lng],
-                    [coords.lat - MAPSQUARE_HEIGHT, coords.lng - MAPSQUARE_WIDTH],
-                ];
-                const link = "/map_square/" + index;
-                let mapSquareBucket = "";
-                // set of conditionals to calculate photo density for heat map
-                if (numberOfPhotos > 0 && numberOfPhotos <= twentyPctMax) {
-                    mapSquareBucket = "map-square box-one";
-                } else if (numberOfPhotos <= fortyPctMax) {
-                    mapSquareBucket = "map-square box-two";
-                } else if (numberOfPhotos <= sixtyPctMax) {
-                    mapSquareBucket = "map-square box-three";
-                } else if (numberOfPhotos <= eightyPctMax) {
-                    mapSquareBucket = "map-square box-four";
-                } else if (numberOfPhotos <= maxNumOfPhotos) {
-                    mapSquareBucket = "map-square box-five";
+    const renderData = [];
+    for (const mapSquareData of sortedMapData) {
+        const coords = mapSquareData.topLeftCoords;
+        const photoCount = mapSquareData.num_photos;
+        const number = mapSquareData.number;
+
+        const bounds = [
+            [coords.lat, coords.lng],
+            [coords.lat - MAPSQUARE_HEIGHT, coords.lng - MAPSQUARE_WIDTH],
+        ];
+        let rectangleClass = "";
+
+        // Calculate photo density for heat map
+        if (photoCount > 0) {
+            if (photoCount <= percentMax(20)) {
+                rectangleClass = "map-square box-one";
+            } else if (photoCount <= percentMax(40)) {
+                rectangleClass = "map-square box-two";
+            } else if (photoCount <= percentMax(60)) {
+                rectangleClass = "map-square box-three";
+            } else if (photoCount <= percentMax(80)) {
+                rectangleClass = "map-square box-four";
+            } else {
+                rectangleClass = "map-square box-five";
+            }
+        } else {
+            rectangleClass = "map-grid"; // empty grid
+        }
+
+
+        renderData.push({
+            rectangleClass,
+            number,
+            photoCount,
+            bounds,
+        });
+    }
+
+    return renderData.map(square => (
+            <Rectangle
+                className={square.rectangleClass}
+                key={square.number}
+                bounds={square.bounds}
+                eventHandlers={
+                    square.photoCount
+                        ? { click: () => selectMapSquare(square.number) }
+                        : null
                 }
+            >
+                <Tooltip permanent={false}>
 
-                return (
-                    <Rectangle
-                        className={numberOfPhotos === 0 ? "map-grid" : mapSquareBucket}
-                        key={index}
-                        bounds={mapSquareBounds}
-                    >
-                        {
-                            // Shows map square numbers on each map square
-                            // <Marker position={L.polygon(mapSquareBounds).getBounds().getCenter()}
-                            //icon={L.divIcon({html: index})} />
-                        }
-                        <Popup>
-                            Map Square {index} <br />
-                            <a href={link}>{numberOfPhotos} photos to show</a>
-                        </Popup>
-                    </Rectangle>
-                );
-            })}
-        </>
-    );
+                    Map Square {square.number} - {square.photoCount} photos
+                </Tooltip>
+            </Rectangle>
+    ));
 }
 
 function arrondissementsOverlay(data) {
@@ -105,12 +111,12 @@ class MapPage extends React.Component {
             mapLat: 48.858859,
             mapLng: 2.3470599,
             photos: [],
-            photographers: [],
         };
         this.selectMapSquare = this.selectMapSquare.bind(this);
         this.updateViewport = this.updateViewport.bind(this);
         this.returnToMap = this.returnToMap.bind(this);
         this.arrondissementData = JSON.parse(this.props.arrondissement_data)["arrondissements"];
+        console.log(this.arrondissementData);
     }
 
     async componentDidMount() {
@@ -185,7 +191,7 @@ class MapPage extends React.Component {
     }
 
     async selectMapSquare(mapSquare) {
-        this.setState({mapSquare: mapSquare});
+        this.setState({mapSquare: mapSquare, photos: []});
         this.state.mapData.map((ms) => {
             if (ms.id === mapSquare) {
                 return this.setState({
@@ -198,7 +204,6 @@ class MapPage extends React.Component {
         const mapSquareDetailsJSON = await mapSquareDetails.json();
         this.setState({
             photos: mapSquareDetailsJSON.photos,
-            photographers: mapSquareDetailsJSON.photographers,
         });
     }
 
@@ -232,7 +237,7 @@ class MapPage extends React.Component {
                                 lng={this.state.mapLng}
                                 layers={{
                                     "Arrondissement": arrondissementsOverlay(this.state.geojsonData),
-                                    "Photos available": densityOverlay(this.state.mapData),
+                                    "Photos available": densityOverlay(this.state.mapData, this.selectMapSquare),
                                 }}
                                 visibleLayers={["Photos available", "Arrondissement"]}
                                 layerSelectVisible={true}
@@ -246,83 +251,40 @@ class MapPage extends React.Component {
                                     <Col lg={11} className="p-0">
                                         {this.state.mapSquare ? (
                                             <>
-                                                <a
+                                                <TitleDecoratorContainer
+                                                    title={`Map Square ${this.state.mapSquare}`}
+                                                />
+
+                                                <button
                                                     href={"#"}
-                                                    className={"small"}
+                                                    className="small mb-4"
                                                     onClick={() => {
                                                         this.returnToMap();
                                                     }}
                                                 >
                                                     &larr; Return
-                                                </a>
-                                                <TitleDecoratorContainer
-                                                    title={`Map Square ${this.state.mapSquare}`}
-                                                />
+                                                </button>
+
                                                 <MapSquareContent
                                                     mapSquare={this.state.mapSquare}
-                                                    photos={this.state.photos.slice(0, 4)} //slice here}
-                                                    photographers={this.state.photographers}
+                                                    photos={this.state.photos}
                                                 />
                                             </>
                                         ) : (
                                             <>
                                                 <TitleDecoratorContainer title="Map" />
                                                 <p>
-                                                    This is a small paragraph about the division of
-                                                    Paris into however many map squares for this
-                                                    competition + other information about the format
-                                                    of the competition relevant to interpreting this
-                                                    map.
-                                                    <br />
-                                                    <br /> Click on a square to learn more about it
-                                                    and see all the photos taken in it!
+                                                    In order to document the entire city, and not just its most touristy or photogenic neighborhoods,
+                                                    the organizers of “This was Paris in 1970” divided up the city in 1755 squares and assigned
+                                                    participants to document a square. Each square measured 250m by 250m. Because there were
+                                                    more participants than squares, many contain documentation by multiple people. Squares that
+                                                    contain no photos here were likely captured in black-and-white prints, which are available at the
+                                                    BHVP in Paris.
+                                                </p>
+                                                <p>
+                                                    Click on a square to see photos taken there.
                                                 </p>
 
-                                                <p className="info-header-link">
-                                                    Arrondissement 13
-                                                </p>
-
-                                                <p className="info-text">
-                                                    Map Squares:{" "}
-                                                    <MapSquareList
-                                                        setSelectedMapSquare={this.selectMapSquare}
-                                                        arrondissementData={this.arrondissementData}
-                                                        arrondissementNumber={13}
-                                                        filledMapSquares={
-                                                            this.state.filledMapSquares
-                                                        }
-                                                    />
-                                                </p>
-
-                                                <p className="info-text-small">
-                                                    Arrondissement 4 is known for being a cool place
-                                                    with many historical sites such as the Mickey
-                                                    Mouse clubhouse. Notable locations and events
-                                                    include this and that and these as well.
-                                                </p>
-
-                                                <p className="info-header-link">
-                                                    Arrondissement 19
-                                                </p>
-
-                                                <p className="info-text">
-                                                    Map Squares:{" "}
-                                                    <MapSquareList
-                                                        setSelectedMapSquare={this.selectMapSquare}
-                                                        arrondissementData={this.arrondissementData}
-                                                        arrondissementNumber={19}
-                                                        filledMapSquares={
-                                                            this.state.filledMapSquares
-                                                        }
-                                                    />
-                                                </p>
-
-                                                <p className="info-text-small">
-                                                    Arrondissement 19 is known for being a cool
-                                                    place with many historical sites such as the
-                                                    Mickey Mouse clubhouse. Notable locations and
-                                                    events include this and that and these as well.
-                                                </p>
                                             </>
                                         )}
                                     </Col>

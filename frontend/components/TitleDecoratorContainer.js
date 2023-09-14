@@ -15,10 +15,6 @@ export class TitleDecoratorContainer extends React.Component {
         const headerStyle = {
             background: `url(${TitleDecoratorURL})`,
             backgroundRepeat: `no-repeat`,
-            width: 221,
-            height: 55,
-            marginLeft: 35,
-            marginBottom: 30,
             paddingTop: 22,
             paddingLeft: 20
 
@@ -34,7 +30,7 @@ export class TitleDecoratorContainer extends React.Component {
                             decorator_type={"title-decorator"}/>  */}
 
                         {/* <img src={} />  */}
-                        <h2 style={headerStyle}> {this.props.title}</h2>
+                        <h2 style={headerStyle}>{this.props.title}</h2>
                     </Col>
                 </Row>
             </Container>

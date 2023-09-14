@@ -11,7 +11,6 @@ export class Legend extends React.Component {
     render() {
         return (
             <div className="legend">
-                <h6 className="text-uppercase">Legend</h6>
                 <ul>
                     {this.props.layers.map(layer => {
                         return <li key={layer}>
@@ -20,16 +19,11 @@ export class Legend extends React.Component {
                                     className={`legend-square
                                     ${layer.toLowerCase()}
                                     ${this.props.visibleLayers.indexOf(layer) > -1 ? "" : "inactive"}`}/>
-                                    
-
                             <span className={"label"}>{layer}</span>
                         </li>;
-                        
+
                     })}
-                </ul> 
-                <div className="photos-available-subtext">
-                    (from least to most)
-                    </div>            
+                </ul>
             </div>
         );
     }
