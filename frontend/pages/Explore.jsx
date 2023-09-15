@@ -151,8 +151,8 @@ export class Explore extends React.Component {
                             </div>
 
                             <p className="explainer">
-                            Use these tools to sort photos according to subjects and location. The object detection tool uses
-                            the YOLO (You Only Look Once) algorithm. Click on any photo to view it and its metadata,
+                            Use these tools to sort photos according to subject. The object detection tool uses
+                            the <a href="https://pjreddie.com/darknet/yolo/" target="_blank" rel="noreferrer">YOLO (You Only Look Once)</a> system. Click on any photo to view it and its metadata,
                             where you will also find a gateway to the similarity algorithm.
                             </p>
                         </div>
