@@ -2,8 +2,8 @@
 
 NAME="paris_1970"                                            # Name of the application
 DJANGODIR=/home/ubuntu/paris_1970/backend                    # Django project directory
-SOCKFILE=/home/ubuntu/run/gunicorn.sock 	                # we will communicate using this unix socket
-LOGFILE=/home/ubuntu/run/logs/gunicorn_supervisor.log
+SOCKFILE=/home/ubuntu/paris_1970/run/gunicorn.sock 	                # we will communicate using this unix socket
+LOGFILE=/home/ubuntu/paris_1970/run/gunicorn_supervisor.log
 NUM_WORKERS=4                                               # how many worker processes should Gunicorn spawn
 DJANGO_WSGI_MODULE=config.wsgi                              # WSGI module name
 

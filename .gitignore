@@ -141,7 +141,7 @@ node_modules
 # production
 build/
 static/
-assets/
+run/
 
 # misc
 .DS_Store
