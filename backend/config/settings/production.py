@@ -12,11 +12,11 @@ DEBUG = False
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']  # set in venv activate
 
 ADMINS = [
-    ('Ryaan Ahmed', 'rahmed@mit.edu')
+    ('Ryaan Ahmed', 'rahmed@mit.edu'),
+    ('Catherine Clark', 'clarkce@mit.edu')
 ]
 
 ALLOWED_HOSTS = [
-    'paris1970.dhmit.xyz',
     'paris1970.dhlab.mit.edu',
 ]
 
@@ -34,5 +34,39 @@ DATABASES = {
          'NAME': 'paris1970-urop-fa22',
          'PORT': '5432',
          'PASSWORD': db_pw,
+    }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '../run/django.log',
+            'formatter': 'standard',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console', 'file', 'mail_admins'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
     }
 }

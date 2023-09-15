@@ -81,6 +81,10 @@ INSTALLED_APPS = [
 
 ]
 
+# Needed for sites framework. We should probably turn off the sites framework,
+# but then we'd need to do a db migration, so let's just not bother for now.
+SITE_ID = 1
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -190,7 +194,6 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 # where collectstatic looks for static files
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'build'),
     os.path.join(PROJECT_ROOT, 'assets'),
 )
 

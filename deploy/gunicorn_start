@@ -3,7 +3,7 @@
 NAME="paris_1970"                                            # Name of the application
 DJANGODIR=/home/ubuntu/paris_1970/backend                    # Django project directory
 SOCKFILE=/home/ubuntu/paris_1970/run/gunicorn.sock 	                # we will communicate using this unix socket
-LOGFILE=/home/ubuntu/paris_1970/run/gunicorn_supervisor.log
+LOGFILE=/home/ubuntu/paris_1970/run/gunicorn_process.log
 NUM_WORKERS=4                                               # how many worker processes should Gunicorn spawn
 DJANGO_WSGI_MODULE=config.wsgi                              # WSGI module name
 
@@ -11,7 +11,7 @@ echo "Starting $NAME as `whoami`"
 
 # Activate the virtual environment
 cd $DJANGODIR
-source /home/ubuntu/paris_1970/../venv/bin/activate
+source /home/ubuntu/paris_1970/venv/bin/activate
 
 # Create the run directory if it doesn't exist
 RUNDIR=$(dirname $SOCKFILE)

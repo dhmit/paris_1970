@@ -1,14 +1,14 @@
 # This is a Systemd unit file for the usp Django project.
 
 [Unit]
-Description=Gunicorn instance to serve usp
+Description=Gunicorn instance to serve paris_1970
 
 # Ensures that the network is up before starting the service
 After=network.target
 
 [Service]
 # User that should run the service
-User=monuser
+User=ubuntu
 
 # The directory from which your service will be launched
 WorkingDirectory=/home/ubuntu/paris_1970
