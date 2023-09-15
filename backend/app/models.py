@@ -6,7 +6,6 @@ import json
 
 from pathlib import Path
 
-from skimage import io
 from PIL import Image
 
 from django.db import models
@@ -45,7 +44,7 @@ class Photo(models.Model):
     full_text = models.TextField(null=True, blank=True)
     location = models.CharField(max_length=252, null=True, blank=True)
 
-    def get_image_data(self, as_gray=False, use_pillow=False, photos_dir=settings.LOCAL_PHOTOS_DIR):
+    def get_image_data(self, as_gray=False, photos_dir=settings.LOCAL_PHOTOS_DIR):
         """
         Get the image data via skimage's imread, for use in analyses
 
@@ -55,10 +54,7 @@ class Photo(models.Model):
         TODO: implement as_gray for use_pillow
         """
         photo_path = self.image_local_filepath(photos_dir=photos_dir)
-        if use_pillow:
-            image = Image.open(photo_path)
-        else:
-            image = io.imread(photo_path, as_gray)
+        image = Image.open(photo_path)
 
         return image
 
