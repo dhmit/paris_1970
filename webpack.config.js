@@ -3,6 +3,7 @@ const BundleTracker = require("webpack-bundle-tracker");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ESLintPlugin = require("eslint-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
     context: __dirname,
@@ -17,7 +18,11 @@ module.exports = {
     plugins: [
         new BundleTracker({filename: "./webpack-stats.json"}),
         new MiniCssExtractPlugin({filename: "[name].bundle.css"}),
-        new ESLintPlugin()
+        new ESLintPlugin(),
+        new Dotenv({
+            path: './.env', // Path to .env file (this is the default)
+            safe: true, // load .env.example (defaults to "false" which does not use dotenv-safe)
+        })
     ],
     module: {
         rules: [
