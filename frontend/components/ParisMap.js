@@ -17,6 +17,7 @@ export const MAPSQUARE_HEIGHT = 0.0022358;
 // Default latitude and longitude values for the center of the map
 export const DEFAULT_MAP_CENTER_LAT = 48.858859;
 export const DEFAULT_MAP_CENTER_LNG = 2.3470599;
+const API_KEY = process.env.REACT_APP_STADIA_API_KEY;
 
 export class ParisMap extends React.Component {
     constructor(props) {
@@ -87,7 +88,7 @@ export class ParisMap extends React.Component {
                         // Retrieves Map image
 
                         // HOT option
-                        url="http://stamen-tiles-a.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png"
+                        url={`https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}.png?api_key=${API_KEY}`}
                     />
 
                     {Object.keys(this.props.layers)
