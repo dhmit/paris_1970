@@ -1,3 +1,4 @@
+{% load i18n %}
 {% include "base.html" %}
 {% block content %}
     <div class="blog" id="app_root">
@@ -7,9 +8,9 @@
                     {{ post.content | safe }}
                 </div>
                 <div>
-                    Blog page not found.
+                    {% trans "Blog page not found." %}
                     <a class="col-lg-8" href="/blog">
-                        Return to Blog Home
+                        {% trans "Return to Blog Home" %}
                     </a>
                 </div>
             </div>
