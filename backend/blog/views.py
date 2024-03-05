@@ -5,6 +5,8 @@ from datetime import datetime
 from django.utils import dateparse
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.utils.translation import gettext_lazy as _
+
 from blog.models import (
     BlogPost
 )
@@ -30,7 +32,7 @@ def blog_home_page(request):
 
     context = {
         'page_metadata': {
-            'title': 'Blog Home Page'
+            'title': _('Blog Home Page')
         },
         'component_name': 'Blog',
         'component_props': {
@@ -73,7 +75,7 @@ def blog_post(request, slug):
         data['tags'] = list(data['tags'].names())
         context = {
             'page_metadata': {
-                'title': 'Blog Post: ' + data['slug']
+                'title': _('Blog Post') + ': ' + data['slug']
             },
             'component_name': 'BlogPost',
             'component_props': {
