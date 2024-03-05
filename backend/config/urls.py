@@ -17,7 +17,8 @@ Including another URL configuration
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.conf.urls.i18n import i18n_patterns
+from django.urls import path, include
 
 from app import views, api_views
 from app.common import render_react_view
@@ -35,9 +36,13 @@ def react_view_path(route, component_name):
     )
 
 
-urlpatterns = [
+urlpatterns = i18n_patterns(
     # Django admin page
     path('admin/', admin.site.urls),
+
+    # Translation
+    path('rosetta/', include('rosetta.urls')),
+    path("locales/<str:language_code>/", api_views.translation, name="translation"),
 
     ################################################################################
     # API endpoints
@@ -156,4 +161,4 @@ urlpatterns = [
     path('tag/<str:tag_name>/', views.tag_view),
     path('tag/<str:tag_name>/<int:page>/', views.tag_view),
 
-]
+)
