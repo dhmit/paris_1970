@@ -10,6 +10,7 @@ import Map, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../components/ParisMap";
 import LoadingPage from "./LoadingPage";
 import MapSquareContent from "../components/map-page/MapSquareContent";
 import TitleDecoratorContainer from "../components/TitleDecoratorContainer";
+import { withTranslation } from "react-i18next";
 
 function densityOverlay(mapData, selectMapSquare) {
     const sortedMapData = Object.values(mapData).sort((a, b) => a.num_photos - b.num_photos);
@@ -61,21 +62,20 @@ function densityOverlay(mapData, selectMapSquare) {
     }
 
     return renderData.map(square => (
-            <Rectangle
-                className={square.rectangleClass}
-                key={square.number}
-                bounds={square.bounds}
-                eventHandlers={
-                    square.photoCount
-                        ? { click: () => selectMapSquare(square.number) }
-                        : null
-                }
-            >
-                <Tooltip permanent={false}>
-
-                    Map Square {square.number} - {square.photoCount} photos
-                </Tooltip>
-            </Rectangle>
+        <Rectangle
+            className={square.rectangleClass}
+            key={square.number}
+            bounds={square.bounds}
+            eventHandlers={
+                square.photoCount
+                    ? { click: () => selectMapSquare(square.number) }
+                    : null
+            }
+        >
+            <Tooltip permanent={false}>
+                {`${this.props.t('global.mapSquare')} ${square.number} - ${square.photoCount} ${this.props.t('MapPage.photos')}`}
+            </Tooltip>
+        </Rectangle>
     ));
 }
 
@@ -98,7 +98,7 @@ function arrondissementsOverlay(data) {
     );
 }
 
-class MapPage extends React.Component {
+class BaseMapPage extends React.Component {
     constructor(props) {
         super(props);
 
@@ -226,7 +226,13 @@ class MapPage extends React.Component {
         const isLgViewportUp = !!this.state.isLgViewportUp;
         const viewportZoom = isLgViewportUp ? 12.5 : 13;
 
-        return (
+        const mapLayers = {};
+        const arrondissmentLabel = this.props.t('MapPage.legend.arrondissment');
+        const photosAvailableLabel = this.props.t('MapPage.legend.photosAvailable');        
+        mapLayers[arrondissmentLabel] = arrondissementsOverlay(this.state.geojsonData);
+        mapLayers[photosAvailableLabel] = densityOverlay(this.state.mapData, this.selectMapSquare);
+
+        return (            
             <div>
                 <Container fluid>
                     <Row className="page-body">
@@ -235,11 +241,8 @@ class MapPage extends React.Component {
                                 zoom={viewportZoom}
                                 lat={this.state.mapLat}
                                 lng={this.state.mapLng}
-                                layers={{
-                                    "Arrondissement": arrondissementsOverlay(this.state.geojsonData),
-                                    "Photos available": densityOverlay(this.state.mapData, this.selectMapSquare),
-                                }}
-                                visibleLayers={["Photos available", "Arrondissement"]}
+                                layers={mapLayers}
+                                visibleLayers={[photosAvailableLabel, arrondissmentLabel]}
                                 layerSelectVisible={true}
                                 scrollWheelZoom={isLgViewportUp}
                             />
@@ -252,7 +255,7 @@ class MapPage extends React.Component {
                                         {this.state.mapSquare ? (
                                             <>
                                                 <TitleDecoratorContainer
-                                                    title={`Map Square ${this.state.mapSquare}`}
+                                                    title={`${this.props.t('global.mapSquare')} ${this.state.mapSquare}`}
                                                 />
 
                                                 <button
@@ -262,7 +265,7 @@ class MapPage extends React.Component {
                                                         this.returnToMap();
                                                     }}
                                                 >
-                                                    &larr; Return
+                                                    &larr; {this.props.t('MapPage.return')}
                                                 </button>
 
                                                 <MapSquareContent
@@ -273,17 +276,8 @@ class MapPage extends React.Component {
                                         ) : (
                                             <>
                                                 <TitleDecoratorContainer title="Map" />
-                                                <p>
-                                                    In order to document the entire city, and not just its most touristy or photogenic neighborhoods,
-                                                    the organizers of “This was Paris in 1970” divided up the city in 1755 squares and assigned
-                                                    participants to document a square. Each square measured 250m by 250m. Because there were
-                                                    more participants than squares, many contain documentation by multiple people. Squares that
-                                                    contain no photos here were likely captured in black-and-white prints, which are available at the
-                                                    BHVP in Paris.
-                                                </p>
-                                                <p>
-                                                    Click on a square to see photos taken there.
-                                                </p>
+                                                <p>{this.props.t('MapPage.description')}</p>
+                                                <p>{this.props.t('MapPage.instructions')}</p>
 
                                             </>
                                         )}
@@ -298,8 +292,9 @@ class MapPage extends React.Component {
     }
 }
 
-MapPage.propTypes = {
+BaseMapPage.propTypes = {
     arrondissement_data: PropTypes.string,
 };
 
+const MapPage = withTranslation()(BaseMapPage);
 export default MapPage;

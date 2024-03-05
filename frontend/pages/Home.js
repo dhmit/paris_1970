@@ -1,5 +1,7 @@
 import React from "react";
 import {Modal, Button, Row, Col} from "react-bootstrap";
+import { Trans, withTranslation } from "react-i18next";
+import { Embed } from "../translation/translate";
 
 
 //Images
@@ -13,31 +15,30 @@ import Walking_Man from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_078.j
 // import Neighbourhood from "../images/featured/BHVP_PH_CetaitParis_DP_0122_01_012.jpg";
 
 
+const WorkInProgressModal = ({showModal, handleClose, translator}) => {
+    // const { t } = useTranslation();
+    const t = translator;
+    // const test = gettext("hello");
 
-const WorkInProgressModal = ({showModal, handleClose}) => {
     return (
         <Modal show={showModal} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>Pardon Our Dust!</Modal.Title>
+                <Modal.Title>{t('HomePage.wipModal.title')}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <p>
-                    <strong>This was Paris in 1970</strong> is a project by
-                    the <a href = "https://digitalhumanities.mit.edu/">MIT
-                    Digital Humanities Lab</a> in collaboration with <a href =
-                    "https://history.mit.edu/people/catherine-clark/">Catherine
-                    Clark</a>, Associate Professor of History and French Studies
-                    at MIT and Director of MIT Digital Humanities.
-                </p>
-                <p>
-                    This project is still under construction and contains
-                    student work, so there may be features that are
-                    currently incomplete or inaccurate.
-                </p>
+                {/* https://react.i18next.com/latest/trans-component */}
+                <p><Trans
+                    i18nKey='HomePage.wipModal.description1' // optional -> fallbacks to defaults if not provided
+                    components={{
+                        link1: <Embed href="https://digitalhumanities.mit.edu/" title="DH link"/>,
+                        link2: <Embed href="https://history.mit.edu/people/catherine-clark/" title="Prof. Clark link"/>
+                    }}
+                /></p>
+                <p>{t('HomePage.wipModal.description2')}</p>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>
-                    Close
+                    {t('HomePage.wipModal.close')}
                 </Button>
             </Modal.Footer>
         </Modal>
@@ -45,8 +46,7 @@ const WorkInProgressModal = ({showModal, handleClose}) => {
 };
 
 
-
-export class HomePage extends React.Component {
+class BaseHomePage extends React.Component {
     state = {
         showModal: true
     };
@@ -56,13 +56,13 @@ export class HomePage extends React.Component {
     render() {
 
         return (<>
-            <WorkInProgressModal showModal={this.state.showModal} handleClose={this.handleClose} />
+            <WorkInProgressModal showModal={this.state.showModal} handleClose={this.handleClose} translator={this.props.t}/>
 
             <section className="home-hero-section">
                 <div className="main-section" style={{backgroundImage: `url(${Car})`}}>
                     <img src={Logo_Gif} alt="Paris Logo"/>
                     <div className="scroll-down">
-                        Scroll down to enter
+                        {this.props.t('HomePage.scrollDown')}
                     </div>
                 </div>
             </section>
@@ -71,7 +71,9 @@ export class HomePage extends React.Component {
                 <a href="/explore/">
                     <Row className="section-row photo-archive gx-0">
                         <Col sm={4} className="home-section-text">
-                            <h2 className="h4">Explore Photos by Subject</h2>
+                            <h2 className="h4">
+                                {this.props.t('HomePage.explore')}
+                            </h2>
                             <span className="large-arrow right">⟶</span>
                         </Col>
                         <Col sm={8} className="home-section-photo" style={{ backgroundImage: `url(${Walking_Man})` }} />
@@ -86,7 +88,7 @@ export class HomePage extends React.Component {
                             }}
                         />
                         <Col sm={4} className="home-section-text">
-                            <h2 className="h4">View Photos by Location</h2>
+                            <h2 className="h4">{this.props.t('HomePage.view')}</h2>
                             <span className="large-arrow left">⟵</span>
                         </Col>
                     </Row>
@@ -95,7 +97,7 @@ export class HomePage extends React.Component {
                 <a href="/articles/">
                     <Row className="section-row context gx-0">
                         <Col xs={8} sm={4} className="home-section-text">
-                            <h2 className="h4">Context and Research</h2>
+                            <h2 className="h4">{this.props.t('HomePage.context')}</h2>
                             <span className="large-arrow right">⟶</span>
                         </Col>
                         <Col xs={4} sm={8} className="home-section-photo"
@@ -114,7 +116,7 @@ export class HomePage extends React.Component {
                             }}
                         />
                         <Col sm={4} className="home-section-text">
-                            <h2 className="h4">About the Project</h2>
+                            <h2 className="h4">{this.props.t('HomePage.about')}</h2>
                             <span className="large-arrow left">⟵</span>
                         </Col>
                     </Row>
@@ -126,3 +128,5 @@ export class HomePage extends React.Component {
         </>);
     }
 }
+
+export const HomePage = withTranslation()(BaseHomePage);

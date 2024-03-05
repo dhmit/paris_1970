@@ -3,6 +3,8 @@ import { Container, Row, Col, Image, Figure, Card } from 'react-bootstrap';
 
 import Footer from "../components/Footer";
 import TitleDecoratorContainer from "../components/TitleDecoratorContainer";
+import { Embed } from "../translation/translate";
+import { Trans, withTranslation } from "react-i18next";
 import about_page_right_citylist from "../images/about_page_right_citylist.svg?url";
 import about_page_right_cropped_map from "../images/about_page_right_cropped_map.svg?url";
 import about_page_right_image from "../images/about_page_right_image.svg?url";
@@ -244,7 +246,7 @@ function TeamMember(props) {
     );
 }
 
-class About extends React.Component {
+class BaseAbout extends React.Component {
     render() {
         return (
             <>
@@ -253,22 +255,33 @@ class About extends React.Component {
                     <Row>
                         <TitleDecoratorContainer title="About" />
                         <Col>
-                            <p>
-                                In May 1970, thousands of amateur photographers spread out across Paris to take pictures. They were participants in a photo contest, “This was Paris in 1970,” organized by the cooperative electronics store the Fnac. Each contestant had been assigned to document a 250m square of the city. By the end of the month, this army of photographers had produced an unprecedented collection of 100,000 photographs: 70,000 black-and-white prints and 30,000 colors slides. This website currently hosts 5,000 color slides from the 13th and 19th arrondissements, areas of the city which were undergoing significant change in 1960s and 1970s.
-                            </p>
-                            <p>
-                                The project This was Paris in 1970 provides tools to explore the rich archive: a <a href="/map">map</a> to see the photos square by square; an <a href="/explore">object detector</a> to search for photos of many objects from people to cats, cars to strollers; a similar photo viewer to identify photos by composition rather than subject; and <a href="/articles">articles</a> providing context and analysis.
-                            </p>
+                            <p>{this.props.t('About.context1')}</p>
+                            <p><Trans
+                                i18nKey='About.context2' // optional -> fallbacks to defaults if not provided
+                                components={{
+                                    link1: <Embed href="/map" title="Map link"/>,
+                                    link2: <Embed href="/explore" title="Explore link"/>,
+                                    link3: <Embed href="/articles" title="Articles link"/>
+                                }}
+                            /></p>
                         </Col>
                     </Row>
                     <Row>
                         <TitleDecoratorContainer title="The Team" />
-                        <p>
-                        This is Paris in 1970 was created in MIT’s Digital Humanities Lab as a collaboration between DH Fellow <a href="https://history.mit.edu/people/catherine-clark/">Prof. Catherine Clark</a>, <a href="https://digitalhumanities.mit.edu/people/alumni">four dozen undergraduate research associates</a>, and <a href="https://digitalhumanities.mit.edu/people">the instructional staff</a> of the DH Lab. Justice Vidal built out the first version of the site, and Nina Li spearheaded the design work.
-                        </p>
-                        <p>
-                            The <a href="https://www.paris.fr/lieux/bibliotheque-historique-de-la-ville-de-paris-bhvp-16">Bibliothèque historique de la Ville de Paris</a> holds the contest photographs. Its photo department made this project possible.
-                        </p>
+                        <p><Trans
+                            i18nKey='About.team1' // optional -> fallbacks to defaults if not provided
+                            components={{
+                                link1: <Embed href="https://history.mit.edu/people/catherine-clark/" title="Prof. Clark link"/>,
+                                link2: <Embed href="https://digitalhumanities.mit.edu/people/alumni" title="Alumni link"/>,
+                                link3: <Embed href="https://digitalhumanities.mit.edu/people" title="People link"/>
+                            }}
+                        /></p>
+                        <p><Trans
+                            i18nKey='About.team2' // optional -> fallbacks to defaults if not provided
+                            components={{
+                                link1: <Embed href="https://www.paris.fr/lieux/bibliotheque-historique-de-la-ville-de-paris-bhvp-16" title="Library link"/>
+                            }}
+                        /></p>
                     </Row>
                 </Container>
                 <Footer />
@@ -277,4 +290,5 @@ class About extends React.Component {
     }
 }
 
+const About = withTranslation()(BaseAbout)
 export default About;

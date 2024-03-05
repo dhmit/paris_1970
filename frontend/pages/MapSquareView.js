@@ -3,9 +3,10 @@ import * as PropTypes from "prop-types";
 
 import PhotoViewer from "../components/PhotoViewer";
 import LoadingPage from "./LoadingPage";
+import { Trans, withTranslation } from "react-i18next";
 
 
-export class MapSquareView extends PhotoViewer {
+class BaseMapSquareView extends PhotoViewer {
     constructor(props) {
         super(props);
         this.state = {
@@ -37,9 +38,10 @@ export class MapSquareView extends PhotoViewer {
             return (<LoadingPage/>);
         }
         if (!this.state.mapSquareData) {
-            return (<>
-                Map Square {this.props.mapSquareNumber} is not in database.
-            </>);
+            return (<Trans
+                i18nKey='MapSquare.notInDB'
+                values={{ squareNum: this.props.mapSquareNumber }}
+            />);
         }
         const {
             number,
@@ -48,19 +50,21 @@ export class MapSquareView extends PhotoViewer {
 
         return (<>
             <div className="page">
-                <h1>Map Square {number}</h1>
+                <h1>{`${this.props.t('global.mapSquare')} ${number}`}</h1>
                 <ul className={"list-inline"}>
                     {photos.length
                     ? (<>{
                         this.getPhotoGrid(photos, {"photoSize": [120, 120]})
                     }</>)
-                    : "No metadata has been transcribed for these photos."
+                    : this.props.t('MapSquare.noMetadata')
                 }</ul>
             </div>
         </>);
     }
 }
 
-MapSquareView.propTypes = {
+BaseMapSquareView.propTypes = {
     mapSquareNumber: PropTypes.number
 };
+
+export const MapSquareView = withTranslation()(BaseMapSquareView);
