@@ -1,7 +1,8 @@
 import React from "react";
 import * as PropTypes from "prop-types";
+import { withTranslation } from "react-i18next";
 
-export class BlogSidebar extends React.Component {
+export class BaseBlogSidebar extends React.Component {
     constructor(props) {
         super(props);
 
@@ -17,7 +18,7 @@ export class BlogSidebar extends React.Component {
             <div className="blog-sidebar">
                 <div className="card mb-4 border-0">
                     <div className="card-body">
-                        <div className="title mb-1 fw-bold">Posts</div>
+                        <div className="title mb-1 fw-bold">{this.props.t('Blog.Sidebar.posts')}</div>
                         <ul className="list-unstyled mb-0">
                             {this.state.posts.map((post) => {
                                 if(post.published) {
@@ -38,11 +39,10 @@ export class BlogSidebar extends React.Component {
     }
 }
 
-BlogSidebar.propTypes = {
+BaseBlogSidebar.propTypes = {
     posts: PropTypes.array,
     tags: PropTypes.array
 };
 
+const BlogSidebar = withTranslation()(BaseBlogSidebar);
 export default BlogSidebar;
-
-

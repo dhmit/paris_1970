@@ -3,8 +3,9 @@ import {Container, Row, Col} from "react-bootstrap";
 
 import * as PropTypes from "prop-types";
 import BlogSidebar from "../components/BlogSidebar";
+import { withTranslation } from "react-i18next";
 
-export class BlogPost extends React.Component {
+class BaseBlogPost extends React.Component {
     constructor(props) {
         super(props);
 
@@ -55,23 +56,18 @@ export class BlogPost extends React.Component {
         ) : (
             <div className="blog" id="app_root">
                 <h5 className="important-notice">
-                    This page is only a preview of the post and is only visible to the author and
-                    site admin.
-                    To make it visible to anyone, the author or a user with blog edit access must
-                    click
-                    "published" in the admin panel.
+                    {this.props.t("BlogPost.previewNotice")}
                 </h5>
             </div>
         );
     }
 }
 
-BlogPost.propTypes = {
+BaseBlogPost.propTypes = {
     tags: PropTypes.array,
     post: PropTypes.object,
     all_posts: PropTypes.array
 };
 
+const BlogPost = withTranslation()(BaseBlogPost);
 export default BlogPost;
-
-

@@ -3,6 +3,8 @@ import {Container, Row, Col} from "react-bootstrap";
 import BlogSidebar from "../components/BlogSidebar";
 import * as PropTypes from "prop-types";
 import {truncateText} from "../common";
+import { Trans, withTranslation } from "react-i18next";
+import { Embed } from "../translation/translate";
 
 function Posts(props) {
     //Display all posts
@@ -33,7 +35,7 @@ function Posts(props) {
                         }}
                         />
                         <a className="stretched-link text-decoration-none text-uppercase post-link"
-                           href={"/articles/" + post.slug}> Read more
+                           href={"/articles/" + post.slug}> {props.t('Blog.readMore')}
                         </a>
                         <div className="list-inline mb-4 mt-3">
                             {
@@ -57,7 +59,7 @@ function Posts(props) {
 }
 
 
-class Blog extends React.Component {
+class BaseBlog extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -67,13 +69,18 @@ class Blog extends React.Component {
         return (<Container className="blog-home" id="app_root">
                 <Row>
                     <Col lg={8}>
-                        <h2 className="blog-list-title">Articles</h2>
-            <p>
-Here you will find work exploring Paris, the contest photos, and this project’s tools. Some of this is student work; some is by more established researchers. If you use the photos and would like your work to be included here, please email <a href="https://history.mit.edu/people/catherine-clark/" target="_blank" rel="noreferrer">Catherine Clark</a>.
-            </p>
+                        <h2 className="blog-list-title">{this.props.t('Blog.title')}</h2>
+                        <p><Trans
+                            i18nKey='Blog.header' // optional -> fallbacks to defaults if not provided
+                            components={{
+                                link1: <Embed href="https://history.mit.edu/people/catherine-clark/" target="_blank" rel="noreferrer"/>
+                            }}
+                        /></p>
+
                         <Posts
                             posts={this.props.posts}
                             tags={this.props.tags}
+                            t={this.props.t}
                         />
                     </Col>
                     <Col lg={4}>
@@ -94,9 +101,10 @@ Posts.propTypes = {
     tags: PropTypes.array
 };
 
-Blog.propTypes = {
+BaseBlog.propTypes = {
     posts: PropTypes.array,
     tags: PropTypes.array
 };
 
+const Blog = withTranslation()(BaseBlog);
 export default Blog;
