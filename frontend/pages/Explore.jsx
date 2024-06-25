@@ -10,8 +10,8 @@ class BaseExplore extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedTag: "All",
-            selectedMapSquare: "All",
+            selectedTag: this.props.t('Explore.objectDropdownDefault'),
+            selectedMapSquare: this.props.t('Explore.objectDropdownDefault'),
             photos: [],
             isLoading: false,
             currentPage: 1,
@@ -62,6 +62,7 @@ class BaseExplore extends React.Component {
             });
 
             const data = await response.json();
+            console.log("Data:");
             console.log(data);
             this.setState({
                 photos: data.photos,
@@ -95,10 +96,10 @@ class BaseExplore extends React.Component {
     render() {
         const { objects } = this.props;
         const { selectedTag, photos, isLoading, currentPage, totalCount, pageSize } = this.state;
-        const totalPages = Math.ceil(totalCount / pageSize);
+        const totalPages = Math.ceil(totalCount / pageSize) || 0;
 
-        const startImage = (currentPage - 1) * pageSize + 1;
-        const endImage = Math.min(currentPage * pageSize, totalCount); // Using min to ensure we don't exceed totalCount
+        const startImage = totalPages ? (currentPage - 1) * pageSize + 1 : 0;
+        const endImage = Math.min(currentPage * pageSize, totalCount) || 0; // Using min to ensure we don't exceed totalCount
 
         const paginationControls = (
             <div className="pagination-controls d-flex justify-content-between align-items-center">
@@ -109,11 +110,11 @@ class BaseExplore extends React.Component {
                 <div className="text-center">
                     <p><Trans
                         i18nKey='Explore.paginationText1'
-                        values={{ currentPage: currentPage, totalPages: totalPages}}
+                        values={{ currentPage: totalPages ? currentPage : 0, totalPages: totalPages}}
                     /></p><br/>
                     <p><Trans
                         i18nKey='Explore.paginationText2'
-                        values={{ startImage: startImage, endImage: endImage}}
+                        values={{ startImage: startImage, endImage: endImage, totalCount: totalCount || 0}}
                     /></p>
                     <div className="d-flex align-items-center justify-content-center">
                         <label>{this.props.t('Explore.goTo')}</label>
@@ -143,7 +144,7 @@ class BaseExplore extends React.Component {
                                 <label htmlFor="formTags">{this.props.t('Explore.objectsLabel')}</label>
                                 <select className="form-control" value={selectedTag} onChange={this.handleChangeTags}>
                                     <option key="All">{this.props.t('Explore.objectDropdownDefault')}</option>
-                                    {objects.map(tag => <option key={tag}>{this.props.t(`Explore.objectTags.${tag}`)}</option>)}
+                                    {objects.map(tag => <option key={tag}>{this.props.t(`global.objectTags.${tag}`)}</option>)}
                                 </select>
                             </div>
 
@@ -170,7 +171,7 @@ class BaseExplore extends React.Component {
                         ) : (<>
                             {paginationControls}
                             <div className="row">
-                                {photos.length > 0 && photos.map(photo => (
+                                {photos && photos.length > 0 && photos.map(photo => (
                                     <div className="col-4" key={photo.id}>
                                         <a href={photo.photo_page_url}>
                                             <div className="card mb-4">

@@ -10,11 +10,13 @@ import {Dropdown, OverlayTrigger, Popover, Modal} from "react-bootstrap";
 import ExpandIcon from "../images/expand.svg";
 import QuestionIcon from "../images/question.svg";
 import TitleDecoratorContainer from "../components/TitleDecoratorContainer";
+import { Trans, withTranslation } from "react-i18next";
 
 const TURQUOISE = "#20CCD7";
+const NUM_PHOTOGRAPHERS = 72;
 
 
-export class PhotoView extends PhotoViewer {
+class BasePhotoView extends PhotoViewer {
     constructor(props) {
         super(props);
         this.state = {
@@ -119,9 +121,10 @@ export class PhotoView extends PhotoViewer {
             return (<LoadingPage/>);
         }
         if (!this.state.photoData) {
-            return (<h1>
-                Photo with id {window.location.pathname.split("/")[2]} is not in database.
-            </h1>);
+            return (<h1><Trans
+                i18nKey='PhotoView.photoNotFound'
+                values={{ photoId: window.location.pathname.split("/")[2] }}
+            /></h1>);
         }
         const {
             alt,
@@ -133,8 +136,8 @@ export class PhotoView extends PhotoViewer {
         const tag_list = this.props.photoTags ? this.props.photoTags : [];
 
         const mapSquareBounds = [
-            [squareCoords.lat, squareCoords.lng],
-            [squareCoords.lat - MAPSQUARE_HEIGHT, squareCoords.lng - MAPSQUARE_WIDTH]
+            [squareCoords.lat || 0, squareCoords.lng || 0],
+            [squareCoords.lat || 0 - MAPSQUARE_HEIGHT, squareCoords.lng || 0 - MAPSQUARE_WIDTH]
         ];
 
         // Resize SVG overlays on viewport resize
@@ -194,26 +197,25 @@ export class PhotoView extends PhotoViewer {
                             className={"side-button"}
                             style={{backgroundColor: this.state.displaySide === "photo" ? TURQUOISE : "white"}}
                             onClick={() => this.changeSide("photo")}>
-                            PHOTO
+                            {this.props.t('PhotoView.PHOTO')}
                         </button>
                         <button
                             className={"side-button"}
                             style={{backgroundColor: this.state.displaySide === "slide" ? TURQUOISE : "white"}}
                             onClick={() => this.changeSide("slide")}>
-                            SLIDE
+                            {this.props.t('PhotoView.SLIDE')}
                         </button>
                     </div>
                     <div className="similar-photos-header">
                         <div className="similar-photos-title">
-                            <h4>Similar Photos</h4>
+                            <h4>{this.props.t('PhotoView.similarPhotos')}</h4>
                             <OverlayTrigger
                                 trigger="hover"
                                 placement="right"
                                 overlay={
                                     <Popover>
-                                        <Popover.Body>
-                                            This is what similar photos are and how we generate
-                                            them.
+                                        <Popover.Body>                                            
+                                            {this.props.t('PhotoView.similarPhotosHelp')}
                                         </Popover.Body>
                                     </Popover>
                                 }>
@@ -225,7 +227,7 @@ export class PhotoView extends PhotoViewer {
                         <Dropdown className="photo-sort-dropdown">
                             <Dropdown.Toggle className="photo-sort-dropdown-button"
                                              align="start">
-                                Sort By...
+                                {this.props.t('PhotoView.sortBy')}
                             </Dropdown.Toggle>
 
                             <Dropdown.Menu>
@@ -255,9 +257,9 @@ export class PhotoView extends PhotoViewer {
                     )}
                 </div>
                 <div className="image-info col-12 col-lg-6 col-md-4">
-                    <TitleDecoratorContainer title="Photograph Details"/>
+                    <TitleDecoratorContainer title={this.props.t('PhotoView.detailsHeader')}/>
                     {this.props.photographer_name
-                        ? <><h6>PHOTOGRAPHER</h6>
+                        ? <><h6>{this.props.t('PhotoView.PHOTOGRAPHER')}</h6>
                             <p>
                                 <a href={`/photographer/${this.props.photographer_number}/`}
                                    className={"photo-link"}>
@@ -266,20 +268,20 @@ export class PhotoView extends PhotoViewer {
                                 <br/>
                                 <span><strong>#23</strong></span> out of <span>
                                 <a href={`/photographer/${this.props.photographer_number}/`}
-                                   className={"photo-link"}>72</a></span> in collection
+                                   className={"photo-link"}>{NUM_PHOTOGRAPHERS}</a></span> in collection
                             </p></>
                         : <>{this.props.photographer_name} {this.props.photographer_number}</>
                     }
 
                     <div className="tags-container">
-                        <h6>TAGS</h6>
+                        <h6>{this.props.t('PhotoView.TAGS')}</h6>
                         <OverlayTrigger
                             trigger="hover"
                             placement="right"
                             overlay={
                                 <Popover>
                                     <Popover.Body>
-                                        This is what a tag is and how we generate them.
+                                        {this.props.t('PhotoView.TAGSHelp')}
                                     </Popover.Body>
                                 </Popover>
                             }>
@@ -290,20 +292,21 @@ export class PhotoView extends PhotoViewer {
                     </div>
                     <ul className="list-inline list-tags">
                         {tag_list.length !== 0
-                            ? tag_list.map((word) => (
-                                <li className="list-inline-item single-tag" key={`tag-${word}`}>
-                                    <a className="btn btn-secondary tag-button" key={`${word}-tag`}
-                                       href={`/tag/${word}/`}>
-                                        {word}
+                            ? tag_list.map((word) => {
+                                let translatedTag = this.props.t(`global.objectTags.${word}`);
+                                return <li className="list-inline-item single-tag" key={`tag-${translatedTag}`}>
+                                    <a className="btn btn-secondary tag-button" key={`${translatedTag}-tag`}
+                                       href={`/tag/${translatedTag}/`}>
+                                        {translatedTag}
                                     </a>
-                                </li>
-                            ))
-                            : <li>No tags to display for this photo.</li>
+                                </li>;
+                            })
+                            : <li>{this.props.t('PhotoView.noTags')}</li>
                         }
                     </ul>
                     <br/>
 
-                    <h6>LOCATION</h6>
+                    <h6>{this.props.t('PhotoView.LOCATION')}</h6>
 
                     <ParisMap className="single-photo-map"
                         lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
@@ -318,7 +321,7 @@ export class PhotoView extends PhotoViewer {
                         }}
                     />
                     <b>
-                        Map Square <span><a className="photo-link" href={`/map_square/${mapSquareNumber}`} >{mapSquareNumber}</a> </span>
+                        {this.props.t('global.mapSquare')} <span><a className="photo-link" href={`/map_square/${mapSquareNumber}`}>{mapSquareNumber}</a> </span>
                         <br/>
                     </b>
                 </div>
@@ -327,7 +330,7 @@ export class PhotoView extends PhotoViewer {
     }
 }
 
-PhotoView.propTypes = {
+BasePhotoView.propTypes = {
     photoNumber: PropTypes.number,
     folderNumber: PropTypes.number,
     mapSquareNumber: PropTypes.number,
@@ -335,3 +338,5 @@ PhotoView.propTypes = {
     photographer_name: PropTypes.string,
     photographer_number: PropTypes.number
 };
+
+export const PhotoView = withTranslation()(BasePhotoView);

@@ -3,7 +3,9 @@ import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../components/ParisMa
 import * as PropTypes from "prop-types";
 import PhotoViewer from "../components/PhotoViewer";
 import LoadingPage from "./LoadingPage";
+import { MapSquareViewer } from "./MapPageView";
 import {GeoJSON, Popup, Rectangle} from "react-leaflet";
+import { Trans, withTranslation } from "react-i18next";
 
 function densityOverlay(mapSquareData) {
     const sortedMapData = Object.values(mapSquareData)
@@ -74,7 +76,26 @@ function arrondissementsOverlay(data) {
     }) : <></>;
 }
 
-class TagView extends PhotoViewer {
+
+function Mix(bases) {
+    class Bases extends React.Component {
+        constructor(props) {
+            super(props);
+            bases.forEach(base => Object.assign(this, new base()));
+            this.props = props;
+        }
+    }
+    
+    bases.forEach(base => {
+        Object.getOwnPropertyNames(base.prototype)
+        .filter(prop => prop !== 'constructor')
+        .forEach(prop => Bases.prototype[prop] = base.prototype[prop]);
+    });
+    return Bases;
+}
+
+
+class BaseTagView extends Mix([PhotoViewer, MapSquareViewer]) {
     constructor(props) {
         super(props);
 
@@ -91,42 +112,7 @@ class TagView extends PhotoViewer {
     }
 
     async componentDidMount() {
-        try {
-
-            const mapResponse = await fetch("/api/all_map_squares/");
-            const mapData = await mapResponse.json();
-
-            for (const mapSquare of mapData) {
-                // This code right here might cause problems if said user hasn't run syncdb
-                const roughCoords = mapSquare.coordinates;
-
-                // If the map square has coordinates in the spreadsheet,
-                // it pulls those coordinates and makes those the coordinates of the marker
-                // Coords must be in (lat, lng)
-
-                // If the map square does not have the coordinates it sets them to (0, 0)
-                // NOTE(ra): this no longer happens, so we can probably remove this safety check
-                let lat = 0;
-                let lng = 0;
-                if (roughCoords) {
-                    const roughCoordsList = roughCoords.split(", ");
-                    lat = parseFloat(roughCoordsList[0]);
-                    lng = parseFloat(roughCoordsList[1]);
-                }
-                mapSquare.topLeftCoords = {
-                    lat,
-                    lng
-                };
-            }
-
-            this.setState({
-                mapData,
-                loading: false
-            });
-
-        } catch (e) {
-            console.log(e);
-        }
+        await this.getMapData();
         try {
             const geojsonResponse = await fetch("/api/arrondissements_geojson/");
             const geojsonData = await geojsonResponse.json();
@@ -135,16 +121,17 @@ class TagView extends PhotoViewer {
             const filledMapSquares = new Set();
             const filledMapSquaresData = {};
             for (const photo of this.state.photos) {
-                const photoMapSquare = this.state.mapData[photo["map_square_number"]-1];
+                console.log("photo: ", photo);
+                const photoMapSquare = this.state.mapData[photo["map_square_number"]];
                 const photoMapSquareNumber = photo["map_square_number"];
                 filledMapSquares.add(photoMapSquare["id"]);
-                if (!filledMapSquaresData[photoMapSquareNumber]){
+                if (!filledMapSquaresData[photoMapSquareNumber]) {
                     filledMapSquaresData[photoMapSquareNumber] = photoMapSquare;
                     filledMapSquaresData[photoMapSquareNumber].num_photos = 0;
                 }
                 filledMapSquaresData[photoMapSquareNumber].num_photos += 1;
             }
-            for (const mapSquare of this.state.mapData) {
+            for (const mapSquare of Object.values(this.state.mapData)) {
                 if (!filledMapSquaresData[mapSquare["id"]]) {
                     filledMapSquaresData[mapSquare["id"]] = mapSquare;
                     filledMapSquaresData[mapSquare["id"]].num_photos = 0;
@@ -159,9 +146,7 @@ class TagView extends PhotoViewer {
         } catch (e) {
             console.log(e);
         }
-
     }
-
 
     render() {
 
@@ -176,24 +161,32 @@ class TagView extends PhotoViewer {
         if (!this.state.mapData || !this.state.filledMapSquares || !this.state.filledMapSquaresData) {
             return (<LoadingPage/>);
         }
+        const arrondissementLabel = this.props.t("global.arrondissement");
+        const photosAvailableLabel = this.props.t("global.photosAvailable");
+        const mapLayers = {};
+        mapLayers[arrondissementLabel] = arrondissementsOverlay(this.state.geojsonData);
+        mapLayers[photosAvailableLabel] = densityOverlay(this.state.filledMapSquaresData);    
         return (<>
             <div className="row">
                 <div className="tag-info col-12 col-lg-5">
-                    <p className="tag-header">Photographs tagged</p>
+                    <p className="tag-header">{this.props.t("TagView.tagHeader")}</p>
                     <p className="tag-title">{tag}</p>
-                    <p>{this.props.totalNumPhotos} results.</p>
-                    <p>Showing page {this.props.pageNum} of {this.props.numPages}</p>
+                    <p><Trans
+                        i18nKey="TagView.numResults"
+                        values={{ numResults: this.props.totalNumPhotos }}
+                    /></p>
+                    <p><Trans
+                        i18nKey="TagView.pageIndicator"
+                        values={{ currentPage: this.props.pageNum, totalPages: this.props.numPages }}
+                    /></p>
                     <ul className="p-0">{this.getPhotoGrid(photos, {"photoSize": [120, 120]})}</ul>
                 </div>
                 <div className="tag-map col-12 col-lg-7">
                     <ParisMap
                         className="tags-map"
                         zoom={14}
-                        layers={{
-                            "Arrondissement": arrondissementsOverlay(this.state.geojsonData),
-                            "Photos available": densityOverlay(this.state.filledMapSquaresData)
-                        }}
-                        visibleLayers={["Photos available", "Arrondissement"]} 
+                        layers={mapLayers}
+                        visibleLayers={Object.keys(mapLayers)} 
                         layerSelectVisible={true}
                     />
                 </div>
@@ -202,7 +195,7 @@ class TagView extends PhotoViewer {
     }
 }
 
-TagView.propTypes = {
+BaseTagView.propTypes = {
     tagName: PropTypes.string,
     tagPhotos: PropTypes.string,
     totalNumPhotos: PropTypes.number,
@@ -210,4 +203,5 @@ TagView.propTypes = {
     numPages: PropTypes.number,
 };
 
+const TagView = withTranslation()(BaseTagView);
 export default TagView;

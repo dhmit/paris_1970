@@ -52,7 +52,6 @@ function densityOverlay(mapData, selectMapSquare) {
             rectangleClass = "map-grid"; // empty grid
         }
 
-
         renderData.push({
             rectangleClass,
             number,
@@ -73,7 +72,7 @@ function densityOverlay(mapData, selectMapSquare) {
             }
         >
             <Tooltip permanent={false}>
-                {`${this.props.t('global.mapSquare')} ${square.number} - ${square.photoCount} ${this.props.t('MapPage.photos')}`}
+                {/* {`${this.props.t('global.mapSquare')} ${square.number} - ${square.photoCount} ${this.props.t('MapPage.photos')}`} */}
             </Tooltip>
         </Rectangle>
     ));
@@ -98,7 +97,52 @@ function arrondissementsOverlay(data) {
     );
 }
 
-class BaseMapPage extends React.Component {
+export class MapSquareViewer extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    async getMapData() {
+        try {
+            const mapResponse = await fetch("/api/all_map_squares/");
+            const mapData = await mapResponse.json();
+
+            for (const mapSquare of Object.values(mapData)) {
+                // This code right here might cause problems if said user hasn't run syncdb
+                // console.log("mapSquare", mapSquare);
+                const roughCoords = mapSquare.coordinates;
+
+                // If the map square has coordinates in the spreadsheet,
+                // it pulls those coordinates and makes those the coordinates of the marker
+                // Coords must be in (lat, lng)
+
+                // If the map square does not have the coordinates it sets them to (0, 0)
+                // NOTE(ra): this no longer happens, so we can probably remove this safety check
+                let lat = 0;
+                let lng = 0;
+                if (roughCoords) {
+                    const roughCoordsList = roughCoords.split(", ");
+                    lat = parseFloat(roughCoordsList[0]);
+                    lng = parseFloat(roughCoordsList[1]);
+                }
+                mapSquare.topLeftCoords = {
+                    lat,
+                    lng,
+                };
+            }
+
+            this.setState({
+                mapData,
+                loading: false,
+            });
+
+        } catch (e) {
+            console.log(e);
+        }
+    }
+} 
+
+class BaseMapPage extends MapSquareViewer {
     constructor(props) {
         super(props);
 
@@ -117,48 +161,10 @@ class BaseMapPage extends React.Component {
         this.returnToMap = this.returnToMap.bind(this);
         this.arrondissementData = JSON.parse(this.props.arrondissement_data)["arrondissements"];
         console.log(this.arrondissementData);
-    }
+    }    
 
     async componentDidMount() {
-        try {
-            const mapResponse = await fetch("/api/all_map_squares/");
-            const mapData = await mapResponse.json();
-
-            for (const mapSquare of mapData) {
-                // This code right here might cause problems if said user hasn't run syncdb
-                const roughCoords = mapSquare.coordinates;
-
-                // If the map square has coordinates in the spreadsheet,
-                // it pulls those coordinates and makes those the coordinates of the marker
-                // Coords must be in (lat, lng)
-
-                // If the map square does not have the coordinates it sets them to (0, 0)
-                // NOTE(ra): this no longer happens, so we can probably remove this safety check
-                if (roughCoords) {
-                    const roughCoordsList = roughCoords.split(", ");
-                    const lat = parseFloat(roughCoordsList[0]);
-                    const lng = parseFloat(roughCoordsList[1]);
-                    mapSquare.topLeftCoords = {
-                        lat,
-                        lng,
-                    };
-                } else {
-                    const lat = 0.0;
-                    const lng = 0.0;
-                    mapSquare.topLeftCoords = {
-                        lat,
-                        lng,
-                    };
-                }
-            }
-
-            this.setState({
-                mapData,
-                loading: false,
-            });
-        } catch (e) {
-            console.log(e);
-        }
+        await this.getMapData();
         try {
             const geojsonResponse = await fetch("/api/arrondissements_geojson/");
             const geojsonData = await geojsonResponse.json();
@@ -167,7 +173,7 @@ class BaseMapPage extends React.Component {
             //be needed once full picture database is added.
             const filledMapSquares = new Set();
 
-            for (const mapSquare of this.state.mapData) {
+            for (const mapSquare of Object.values(this.state.mapData)) {
                 if (mapSquare["num_photos"] > 0) {
                     filledMapSquares.add(mapSquare["id"]);
                 }
@@ -227,9 +233,9 @@ class BaseMapPage extends React.Component {
         const viewportZoom = isLgViewportUp ? 12.5 : 13;
 
         const mapLayers = {};
-        const arrondissmentLabel = this.props.t('MapPage.legend.arrondissment');
-        const photosAvailableLabel = this.props.t('MapPage.legend.photosAvailable');        
-        mapLayers[arrondissmentLabel] = arrondissementsOverlay(this.state.geojsonData);
+        const arrondissementLabel = this.props.t('global.arrondissement');
+        const photosAvailableLabel = this.props.t('global.photosAvailable');
+        mapLayers[arrondissementLabel] = arrondissementsOverlay(this.state.geojsonData);
         mapLayers[photosAvailableLabel] = densityOverlay(this.state.mapData, this.selectMapSquare);
 
         return (            
@@ -242,7 +248,7 @@ class BaseMapPage extends React.Component {
                                 lat={this.state.mapLat}
                                 lng={this.state.mapLng}
                                 layers={mapLayers}
-                                visibleLayers={[photosAvailableLabel, arrondissmentLabel]}
+                                visibleLayers={Object.keys(mapLayers)}
                                 layerSelectVisible={true}
                                 scrollWheelZoom={isLgViewportUp}
                             />
@@ -275,7 +281,7 @@ class BaseMapPage extends React.Component {
                                             </>
                                         ) : (
                                             <>
-                                                <TitleDecoratorContainer title="Map" />
+                                                <TitleDecoratorContainer title={this.props.t("MapPage.descriptionHeader")} />
                                                 <p>{this.props.t('MapPage.description')}</p>
                                                 <p>{this.props.t('MapPage.instructions')}</p>
 
