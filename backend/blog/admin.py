@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.conf import settings
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 
 from tinymce.widgets import TinyMCE
 
@@ -24,7 +25,7 @@ class BlogPostAdmin(admin.ModelAdmin):
         return mark_safe('<a href="{}">{}</a>'.format(
             "/" + settings.BLOG_ROOT_URL + "/" + obj.slug, obj.slug))
 
-    custom_slug.short_description = "Slug (preview on site)"
+    custom_slug.short_description = "Slug " + _("(preview on site)")
 
 
 admin.site.register(BlogPost, BlogPostAdmin)

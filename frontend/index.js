@@ -3,9 +3,13 @@
  * This module gets loaded into the DOM, and then it loads everything else.
  */
 import * as React from "react";
+import { Suspense } from 'react';
 import * as ReactDOM from "react-dom";
+import Loading from "./components/Loading";
+
 
 import Base from "./Base";
+import './translation/i18n';
 
 import About from "./pages/About";
 import Explore from "./pages/Explore";
@@ -49,8 +53,10 @@ const COMPONENTS = {
 const PreselectedComponent = COMPONENTS[COMPONENT_NAME];
 
 ReactDOM.render(
-    <Base>
-        <PreselectedComponent {...COMPONENT_PROPS} />
-    </Base>,
+    <Suspense fallback={<Loading/>}>
+        <Base>
+            <PreselectedComponent {...COMPONENT_PROPS} />
+        </Base>
+    </Suspense>,
     document.getElementById("app_root")
 );

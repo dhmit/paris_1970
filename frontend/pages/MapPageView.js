@@ -10,8 +10,9 @@ import Map, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../components/ParisMap";
 import LoadingPage from "./LoadingPage";
 import MapSquareContent from "../components/map-page/MapSquareContent";
 import TitleDecoratorContainer from "../components/TitleDecoratorContainer";
+import { withTranslation } from "react-i18next";
 
-function densityOverlay(mapData, selectMapSquare) {
+function densityOverlay(mapData, selectMapSquare, translator) {
     const sortedMapData = Object.values(mapData).sort((a, b) => a.num_photos - b.num_photos);
 
     // Gets the max number of photos in a single square out of all squares to form buckets later
@@ -51,7 +52,6 @@ function densityOverlay(mapData, selectMapSquare) {
             rectangleClass = "map-grid"; // empty grid
         }
 
-
         renderData.push({
             rectangleClass,
             number,
@@ -61,44 +61,84 @@ function densityOverlay(mapData, selectMapSquare) {
     }
 
     return renderData.map(square => (
-            <Rectangle
-                className={square.rectangleClass}
-                key={square.number}
-                bounds={square.bounds}
-                eventHandlers={
-                    square.photoCount
-                        ? { click: () => selectMapSquare(square.number) }
-                        : null
-                }
-            >
-                <Tooltip permanent={false}>
-
-                    Map Square {square.number} - {square.photoCount} photos
-                </Tooltip>
-            </Rectangle>
+        <Rectangle
+            className={square.rectangleClass}
+            key={square.number}
+            bounds={square.bounds}
+            eventHandlers={
+                square.photoCount
+                    ? { click: () => selectMapSquare(square.number) }
+                    : null
+            }
+        >
+            <Tooltip permanent={false}>
+                {`${translator('global.mapSquare')} ${square.number} - ${square.photoCount} ${translator('global.photos')}`}
+            </Tooltip>
+        </Rectangle>
     ));
 }
 
-function arrondissementsOverlay(data) {
-    return data !== null ? (
-        data.map((tract) => {
-            return (
-                <GeoJSON
-                    style={{
-                        fillColor: "none",
-                        color: "#20CCD7",
-                    }}
-                    key={tract.properties["GISJOIN"]}
-                    data={tract}
-                />
-            );
-        })
-    ) : (
-        <></>
-    );
+export function arrondissementsOverlay(data) {
+    return data !== null ? data.map(tract => {
+        return (
+            <GeoJSON
+                style={{
+                    fillColor: "none",
+                    color: "#20CCD7"
+                }}
+                key={tract.properties["GISJOIN"]}
+                data={tract}
+            />
+        );
+    }) : <></>;
 }
 
-class MapPage extends React.Component {
+export class MapSquareViewer extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    async getMapData() {
+        try {
+            const mapResponse = await fetch("/api/all_map_squares/");
+            const mapData = await mapResponse.json();
+
+            for (const mapSquare of Object.values(mapData)) {
+                // This code right here might cause problems if said user hasn't run syncdb
+                // console.log("mapSquare", mapSquare);
+                const roughCoords = mapSquare.coordinates;
+
+                // If the map square has coordinates in the spreadsheet,
+                // it pulls those coordinates and makes those the coordinates of the marker
+                // Coords must be in (lat, lng)
+
+                // If the map square does not have the coordinates it sets them to (0, 0)
+                // NOTE(ra): this no longer happens, so we can probably remove this safety check
+                let lat = 0;
+                let lng = 0;
+                if (roughCoords) {
+                    const roughCoordsList = roughCoords.split(", ");
+                    lat = parseFloat(roughCoordsList[0]);
+                    lng = parseFloat(roughCoordsList[1]);
+                }
+                mapSquare.topLeftCoords = {
+                    lat,
+                    lng,
+                };
+            }
+
+            this.setState({
+                mapData,
+                loading: false,
+            });
+
+        } catch (e) {
+            console.log(e);
+        }
+    }
+} 
+
+class BaseMapPage extends MapSquareViewer {
     constructor(props) {
         super(props);
 
@@ -117,48 +157,10 @@ class MapPage extends React.Component {
         this.returnToMap = this.returnToMap.bind(this);
         this.arrondissementData = JSON.parse(this.props.arrondissement_data)["arrondissements"];
         console.log(this.arrondissementData);
-    }
+    }    
 
     async componentDidMount() {
-        try {
-            const mapResponse = await fetch("/api/all_map_squares/");
-            const mapData = await mapResponse.json();
-
-            for (const mapSquare of mapData) {
-                // This code right here might cause problems if said user hasn't run syncdb
-                const roughCoords = mapSquare.coordinates;
-
-                // If the map square has coordinates in the spreadsheet,
-                // it pulls those coordinates and makes those the coordinates of the marker
-                // Coords must be in (lat, lng)
-
-                // If the map square does not have the coordinates it sets them to (0, 0)
-                // NOTE(ra): this no longer happens, so we can probably remove this safety check
-                if (roughCoords) {
-                    const roughCoordsList = roughCoords.split(", ");
-                    const lat = parseFloat(roughCoordsList[0]);
-                    const lng = parseFloat(roughCoordsList[1]);
-                    mapSquare.topLeftCoords = {
-                        lat,
-                        lng,
-                    };
-                } else {
-                    const lat = 0.0;
-                    const lng = 0.0;
-                    mapSquare.topLeftCoords = {
-                        lat,
-                        lng,
-                    };
-                }
-            }
-
-            this.setState({
-                mapData,
-                loading: false,
-            });
-        } catch (e) {
-            console.log(e);
-        }
+        await this.getMapData();
         try {
             const geojsonResponse = await fetch("/api/arrondissements_geojson/");
             const geojsonData = await geojsonResponse.json();
@@ -167,7 +169,7 @@ class MapPage extends React.Component {
             //be needed once full picture database is added.
             const filledMapSquares = new Set();
 
-            for (const mapSquare of this.state.mapData) {
+            for (const mapSquare of Object.values(this.state.mapData)) {
                 if (mapSquare["num_photos"] > 0) {
                     filledMapSquares.add(mapSquare["id"]);
                 }
@@ -192,7 +194,7 @@ class MapPage extends React.Component {
 
     async selectMapSquare(mapSquare) {
         this.setState({mapSquare: mapSquare, photos: []});
-        this.state.mapData.map((ms) => {
+        Object.values(this.state.mapData).map((ms) => {
             if (ms.id === mapSquare) {
                 return this.setState({
                     mapLat: ms.topLeftCoords.lat,
@@ -226,7 +228,15 @@ class MapPage extends React.Component {
         const isLgViewportUp = !!this.state.isLgViewportUp;
         const viewportZoom = isLgViewportUp ? 12.5 : 13;
 
-        return (
+        const mapLayers = {};
+        const arrondissementLabel = this.props.t('global.arrondissement');
+        const photosAvailableLabel = this.props.t('global.photosAvailable');
+        mapLayers[arrondissementLabel] = arrondissementsOverlay(this.state.geojsonData);
+        mapLayers[photosAvailableLabel] = densityOverlay(
+            this.state.mapData, this.selectMapSquare, this.props.t
+        );
+
+        return (            
             <div>
                 <Container fluid>
                     <Row className="page-body">
@@ -235,11 +245,8 @@ class MapPage extends React.Component {
                                 zoom={viewportZoom}
                                 lat={this.state.mapLat}
                                 lng={this.state.mapLng}
-                                layers={{
-                                    "Arrondissement": arrondissementsOverlay(this.state.geojsonData),
-                                    "Photos available": densityOverlay(this.state.mapData, this.selectMapSquare),
-                                }}
-                                visibleLayers={["Photos available", "Arrondissement"]}
+                                layers={mapLayers}
+                                visibleLayers={Object.keys(mapLayers)}
                                 layerSelectVisible={true}
                                 scrollWheelZoom={isLgViewportUp}
                             />
@@ -252,7 +259,7 @@ class MapPage extends React.Component {
                                         {this.state.mapSquare ? (
                                             <>
                                                 <TitleDecoratorContainer
-                                                    title={`Map Square ${this.state.mapSquare}`}
+                                                    title={`${this.props.t('global.mapSquare')} ${this.state.mapSquare}`}
                                                 />
 
                                                 <button
@@ -262,7 +269,7 @@ class MapPage extends React.Component {
                                                         this.returnToMap();
                                                     }}
                                                 >
-                                                    &larr; Return
+                                                    &larr; {this.props.t('MapPage.return')}
                                                 </button>
 
                                                 <MapSquareContent
@@ -272,18 +279,9 @@ class MapPage extends React.Component {
                                             </>
                                         ) : (
                                             <>
-                                                <TitleDecoratorContainer title="Map" />
-                                                <p>
-                                                    In order to document the entire city, and not just its most touristy or photogenic neighborhoods,
-                                                    the organizers of “This was Paris in 1970” divided up the city in 1755 squares and assigned
-                                                    participants to document a square. Each square measured 250m by 250m. Because there were
-                                                    more participants than squares, many contain documentation by multiple people. Squares that
-                                                    contain no photos here were likely captured in black-and-white prints, which are available at the
-                                                    BHVP in Paris.
-                                                </p>
-                                                <p>
-                                                    Click on a square to see photos taken there.
-                                                </p>
+                                                <TitleDecoratorContainer title={this.props.t("MapPage.descriptionHeader")} />
+                                                <p>{this.props.t('MapPage.description')}</p>
+                                                <p>{this.props.t('MapPage.instructions')}</p>
 
                                             </>
                                         )}
@@ -298,8 +296,9 @@ class MapPage extends React.Component {
     }
 }
 
-MapPage.propTypes = {
+BaseMapPage.propTypes = {
     arrondissement_data: PropTypes.string,
 };
 
+const MapPage = withTranslation()(BaseMapPage);
 export default MapPage;

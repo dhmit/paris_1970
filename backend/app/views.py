@@ -15,7 +15,7 @@ from app.view_helpers import (
 
 from app.models import Photo, MapSquare
 from app.serializers import SimplePhotoSerializer
-
+from .translation_db import translate_tag
 
 # app views
 def render_view(request, context):
@@ -232,8 +232,9 @@ def tag_view(request, tag_name, page=1):
     """
     Tag page, specified by tag_name
     """
-    sorted_photo_obj, result_count, page_count = tag_helper(tag_name,
-                                                            page=page)
+    sorted_photo_obj, result_count, page_count = tag_helper(
+        translate_tag(tag_name), page=page
+    )
     serializer = SimplePhotoSerializer(sorted_photo_obj, many=True)
     print('we are here')
     # there's probably a much simpler way...

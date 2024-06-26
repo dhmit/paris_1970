@@ -1,6 +1,5 @@
 import json
 import random
-from math import ceil
 
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -8,12 +7,12 @@ from rest_framework.response import Response
 
 from django.db.models import Q, Prefetch
 from django.core.paginator import Paginator
-from django.views.decorators.csrf import csrf_exempt
+from django.utils.translation import gettext_lazy as _
 
 from app.view_helpers import (
     get_map_squares_by_arondissement,
     get_arrondissement_geojson,
-    tag_confidence
+    tag_confidence, tag_helper
 )
 
 from .models import (
@@ -36,6 +35,8 @@ from .serializers import (
     CorpusAnalysisResultsSerializer
 )
 
+from .translation_db import TRANSLATIONS, translate_tag
+
 
 # TODO(ra): See if we can move this elsewhere.
 PHOTOGRAPHER_SEARCH_ORDER_BY = [
@@ -48,52 +49,6 @@ PHOTOGRAPHER_SEARCH_ORDER_BY = [
 ]
 
 
-def tag_helper(tag_name, page=None):
-    all_yolo_results = PhotoAnalysisResult.objects.filter(name='yolo_model')
-
-    if not all_yolo_results.count():
-        return []
-
-    relevant_results = []
-    print('yolo results here: ', len(all_yolo_results))
-    for result in all_yolo_results:
-        data = result.parsed_result()
-        if tag_name in data['labels']:
-            relevant_results.append(result)
-
-    print('relevant results: ', len(relevant_results))
-
-    # TODO(ra) Fix the results per page math... it looks like it's stepping
-    # through src photo indexes
-    results_per_page = 20
-    result_count = len(relevant_results)
-    page_count = ceil(result_count / results_per_page)
-
-    if page:
-        first_result = results_per_page * (page-1)
-        last_result = first_result + results_per_page
-        print(first_result, last_result)
-        relevant_results_this_page = relevant_results[first_result:last_result]
-    else:
-        relevant_results_this_page = relevant_results
-
-    print(relevant_results_this_page)
-
-    # sort by confidence
-    by_confidence = []
-    for result in relevant_results_this_page:
-        data = result.parsed_result()
-        confidence = 0
-        for box in data['boxes']:
-            # an image may have several tag_name in labels, find greatest confidence
-            if box['label'] == tag_name:
-                confidence = max(confidence, box['confidence'])
-        by_confidence.append((result, confidence))
-
-    sorted_analysis_obj = sorted(by_confidence, key=lambda obj: obj[1], reverse=True)
-    return [result[0].photo for result in sorted_analysis_obj], result_count, page_count
-
-
 @api_view(['GET'])
 def photo(request, map_square_number, folder_number, photo_number):
     """
@@ -103,6 +58,14 @@ def photo(request, map_square_number, folder_number, photo_number):
     photo_obj = Photo.objects.get(number=photo_number, folder=folder_number, map_square__number=map_square_number)
     serializer = PhotoSerializer(photo_obj)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def translation(request, language_code):
+    """
+    API endpoint to get text translation dictionary
+    """
+    return Response(TRANSLATIONS)
 
 
 @api_view(['GET'])
@@ -159,7 +122,10 @@ def all_map_squares(request):
     """
     map_square_obj = MapSquare.objects.all().prefetch_related("photo_set")
     serializer = MapSquareSerializerWithoutPhotos(map_square_obj, many=True)
-    return Response(serializer.data)
+    return Response({
+        map_square["number"]: map_square
+        for map_square in serializer.data
+    })
 
 
 @api_view(['GET'])
@@ -346,6 +312,7 @@ def get_photos_by_analysis(request, analysis_name, object_name=None):
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
     return Response(serializer.data)
 
+
 @api_view(['GET'])
 def get_images_with_text(request):
     """
@@ -381,7 +348,8 @@ def get_photos_by_tag(request, tag_name):
     """
     API endpoint to get all photos associated with a tag (specified by tag_name)
     """
-    sorted_photo_obj, _, _ = tag_helper(tag_name)
+    en_tag = translate_tag(tag_name)
+    sorted_photo_obj, _, _ = tag_helper(en_tag)
     serializer = PhotoSerializer(sorted_photo_obj, many=True)
     return Response(serializer.data)
 
@@ -395,6 +363,7 @@ def photo_tag_helper(map_square_number, folder_number, photo_number):
     else:
         return None
 
+
 @api_view(['GET'])
 def get_random_photos(request):
 
@@ -403,6 +372,7 @@ def get_random_photos(request):
     random_photos = random.sample(photos, 9)
     serializer = SimplePhotoSerializerForCollage(random_photos, many=True)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 def get_photo_tags(request, map_square_number, folder_number, photo_number):
@@ -476,19 +446,19 @@ def explore(request):
     API endpoint for the explore view, which gives users a filtered view
     to all of the photos in the collection
     """
-    tag = request.data.get('selectedTag')
+    ALL = _("ALL")
+
+    tag = translate_tag(
+        request.data.get('selectedTag'), default=ALL
+    )
     page = int(request.data.get('page', 1))
     page_size = int(request.data.get('pageSize', 10))
-
-    ALL = 'All'
 
     query = Q()
 
     # Filter by tags
     if tag != ALL:
         query |= Q(analyses__name='yolo_model', analyses__result__icontains=tag)
-
-    if tag != ALL:
         prefetch = Prefetch('analyses', queryset=PhotoAnalysisResult.objects.filter(name='yolo_model'))
         photos = Photo.objects.filter(query).prefetch_related(prefetch).distinct()
         photos_with_analysis = [
