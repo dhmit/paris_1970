@@ -32,7 +32,7 @@ msgstr ""
         for line in lines:
             infile.write(line.__unicode__())
 
-def translate(fro, to, src_dir, dest_dir):
+def translate(fro, to, src_dir, dest_dir, fuzzy=False):
     # Work around using parser-based translate_po.main.run function
     # due to conflict with Django BaseCommand parser
     class Arguments:
@@ -58,6 +58,8 @@ def translate(fro, to, src_dir, dest_dir):
                 if line_part.strip(" ") else line_part
             ) for line_part in line_parts]            
             entry.msgstr = '\n'.join(translated_line_parts)
+            if fuzzy:
+                entry.flags.append("fuzzy")
 
         save_lines(new_file, entries)
 
@@ -77,11 +79,16 @@ class Command(BaseCommand):
         parser.add_argument(
             "--main_lang", type=str, action="store", default="en"
         )
+        parser.add_argument(
+            "--mark_fuzzy", action="store_true",
+            help="Mark auto-translations as fuzzy"
+        )
 
     def handle(self, *args, **options):
         no_auto_translate: bool = options.get("no_auto_trans")
         main_lang: str = options.get("main_lang")
         rebuild: bool = options.get("rebuild")
+        mark_fuzzy: bool = options.get("mark_fuzzy")
 
         def iter_locale_paths():
             for locale_path in settings.LOCALE_PATHS:
@@ -106,6 +113,7 @@ class Command(BaseCommand):
                 po_dir = os.path.join(locale_path, language_code, "LC_MESSAGES")
                 translate(
                     fro=main_lang, to=language_code,
-                    src_dir=po_dir, dest_dir=po_dir
+                    src_dir=po_dir, dest_dir=po_dir,
+                    fuzzy=mark_fuzzy
                 )
         call_command("compilemessages", ignore=["env"])
