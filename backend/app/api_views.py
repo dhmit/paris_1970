@@ -110,8 +110,7 @@ def photo(request, map_square_number, folder_number, photo_number):
 @api_view(['GET'])
 def translation(request, language_code):
     """
-    API endpoint to get a photo with a map square number of map_square_number
-    and photo number of photo_number
+    API endpoint to get text translation dictionary
     """
     return Response(TRANSLATIONS)
 
