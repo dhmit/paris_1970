@@ -269,7 +269,7 @@ class BaseAbout extends React.Component {
                     <Row>
                         <TitleDecoratorContainer title="The Team" />
                         <p><Trans
-                            i18nKey='About.team1' // optional -> fallbacks to defaults if not provided
+                            i18nKey='About.team1'
                             components={{
                                 link1: <Embed href="https://history.mit.edu/people/catherine-clark/" title="Prof. Clark link"/>,
                                 link2: <Embed href="https://digitalhumanities.mit.edu/people/alumni" title="Alumni link"/>,
@@ -277,7 +277,7 @@ class BaseAbout extends React.Component {
                             }}
                         /></p>
                         <p><Trans
-                            i18nKey='About.team2' // optional -> fallbacks to defaults if not provided
+                            i18nKey='About.team2'
                             components={{
                                 link1: <Embed href="https://www.paris.fr/lieux/bibliotheque-historique-de-la-ville-de-paris-bhvp-16" title="Library link"/>
                             }}

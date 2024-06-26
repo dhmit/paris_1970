@@ -3,11 +3,11 @@ import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../components/ParisMa
 import * as PropTypes from "prop-types";
 import PhotoViewer from "../components/PhotoViewer";
 import LoadingPage from "./LoadingPage";
-import { MapSquareViewer } from "./MapPageView";
-import {GeoJSON, Popup, Rectangle} from "react-leaflet";
+import { MapSquareViewer, arrondissementsOverlay } from "./MapPageView";
+import { Popup, Rectangle } from "react-leaflet";
 import { Trans, withTranslation } from "react-i18next";
 
-function densityOverlay(mapSquareData) {
+function densityOverlay(mapSquareData, translator) {
     const sortedMapData = Object.values(mapSquareData)
     .sort((a, b) => a.num_photos - b.num_photos);
     // Gets the max number of photos in a single square out of all squares to form buckets later
@@ -51,8 +51,8 @@ function densityOverlay(mapSquareData) {
                         key={index}
                         bounds={mapSquareBounds}>
                         <Popup>
-                            Map Square {index} <br/>
-                            <a href={link}>{numberOfPhotos} photos to show</a>
+                            {translator("global.mapSquare")} {index} <br/>
+                            <a href={link}>{numberOfPhotos} {translator("global.photos")}</a>
                         </Popup>
                     </Rectangle>
                 );
@@ -61,23 +61,9 @@ function densityOverlay(mapSquareData) {
     </>);
 }
 
-function arrondissementsOverlay(data) {
-    return data !== null ? data.map(tract => {
-        return (
-            <GeoJSON
-                style={{
-                    fillColor: "none",
-                    color: "#20CCD7"
-                }}
-                key={tract.properties["GISJOIN"]}
-                data={tract}
-            />
-        );
-    }) : <></>;
-}
-
 
 function Mix(bases) {
+    // https://stackoverflow.com/a/61860802
     class Bases extends React.Component {
         constructor(props) {
             super(props);
@@ -151,21 +137,22 @@ class BaseTagView extends Mix([PhotoViewer, MapSquareViewer]) {
     render() {
 
         if (this.props.tagPhotos.length === 0) {
-            return (<>
-                Tag {this.props.tagName} is not in the database.
-            </>);
+            return <Trans
+                i18nKey="TagView.tagNotFound"
+                values={{ tagName: this.props.tagName }}
+            />;
         }
         const tag = this.props.tagName;
         const photos = JSON.parse(this.props.tagPhotos);
 
         if (!this.state.mapData || !this.state.filledMapSquares || !this.state.filledMapSquaresData) {
-            return (<LoadingPage/>);
+            return <LoadingPage/>;
         }
         const arrondissementLabel = this.props.t("global.arrondissement");
         const photosAvailableLabel = this.props.t("global.photosAvailable");
         const mapLayers = {};
         mapLayers[arrondissementLabel] = arrondissementsOverlay(this.state.geojsonData);
-        mapLayers[photosAvailableLabel] = densityOverlay(this.state.filledMapSquaresData);    
+        mapLayers[photosAvailableLabel] = densityOverlay(this.state.filledMapSquaresData, this.props.t);    
         return (<>
             <div className="row">
                 <div className="tag-info col-12 col-lg-5">

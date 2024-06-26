@@ -13,7 +13,7 @@ import TitleDecoratorContainer from "../components/TitleDecoratorContainer";
 import { Trans, withTranslation } from "react-i18next";
 
 const TURQUOISE = "#20CCD7";
-const NUM_PHOTOGRAPHERS = 72;
+// const NUM_PHOTOGRAPHERS = 72;
 
 
 class BasePhotoView extends PhotoViewer {
@@ -266,9 +266,9 @@ class BasePhotoView extends PhotoViewer {
                                     {this.props.photographer_name}
                                 </a>
                                 <br/>
-                                <span><strong>#23</strong></span> out of <span>
+                                {/* <span><strong>#23</strong></span> out of <span>
                                 <a href={`/photographer/${this.props.photographer_number}/`}
-                                   className={"photo-link"}>{NUM_PHOTOGRAPHERS}</a></span> in collection
+                                   className={"photo-link"}>{NUM_PHOTOGRAPHERS}</a></span> in collection */}
                             </p></>
                         : <>{this.props.photographer_name} {this.props.photographer_number}</>
                     }

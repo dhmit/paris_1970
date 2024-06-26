@@ -12,7 +12,7 @@ import MapSquareContent from "../components/map-page/MapSquareContent";
 import TitleDecoratorContainer from "../components/TitleDecoratorContainer";
 import { withTranslation } from "react-i18next";
 
-function densityOverlay(mapData, selectMapSquare) {
+function densityOverlay(mapData, selectMapSquare, translator) {
     const sortedMapData = Object.values(mapData).sort((a, b) => a.num_photos - b.num_photos);
 
     // Gets the max number of photos in a single square out of all squares to form buckets later
@@ -72,29 +72,25 @@ function densityOverlay(mapData, selectMapSquare) {
             }
         >
             <Tooltip permanent={false}>
-                {/* {`${this.props.t('global.mapSquare')} ${square.number} - ${square.photoCount} ${this.props.t('MapPage.photos')}`} */}
+                {`${translator('global.mapSquare')} ${square.number} - ${square.photoCount} ${translator('global.photos')}`}
             </Tooltip>
         </Rectangle>
     ));
 }
 
-function arrondissementsOverlay(data) {
-    return data !== null ? (
-        data.map((tract) => {
-            return (
-                <GeoJSON
-                    style={{
-                        fillColor: "none",
-                        color: "#20CCD7",
-                    }}
-                    key={tract.properties["GISJOIN"]}
-                    data={tract}
-                />
-            );
-        })
-    ) : (
-        <></>
-    );
+export function arrondissementsOverlay(data) {
+    return data !== null ? data.map(tract => {
+        return (
+            <GeoJSON
+                style={{
+                    fillColor: "none",
+                    color: "#20CCD7"
+                }}
+                key={tract.properties["GISJOIN"]}
+                data={tract}
+            />
+        );
+    }) : <></>;
 }
 
 export class MapSquareViewer extends React.Component {
@@ -198,7 +194,7 @@ class BaseMapPage extends MapSquareViewer {
 
     async selectMapSquare(mapSquare) {
         this.setState({mapSquare: mapSquare, photos: []});
-        this.state.mapData.map((ms) => {
+        Object.values(this.state.mapData).map((ms) => {
             if (ms.id === mapSquare) {
                 return this.setState({
                     mapLat: ms.topLeftCoords.lat,
@@ -236,7 +232,9 @@ class BaseMapPage extends MapSquareViewer {
         const arrondissementLabel = this.props.t('global.arrondissement');
         const photosAvailableLabel = this.props.t('global.photosAvailable');
         mapLayers[arrondissementLabel] = arrondissementsOverlay(this.state.geojsonData);
-        mapLayers[photosAvailableLabel] = densityOverlay(this.state.mapData, this.selectMapSquare);
+        mapLayers[photosAvailableLabel] = densityOverlay(
+            this.state.mapData, this.selectMapSquare, this.props.t
+        );
 
         return (            
             <div>

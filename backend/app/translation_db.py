@@ -27,6 +27,7 @@ TRANSLATIONS = {
         "arrondissement": _("Arrondissement"),
         "photosAvailable": _("Photos available"),
         "mapSquare": _("Map Square"),
+        "photos": _("photos"),
         "objectTags": {
             "person": _("person"),
             "bicycle": _("bicycle"),
@@ -161,8 +162,7 @@ TRANSLATIONS = {
             where you will also find a gateway to the similarity algorithm.
         """),
     },
-    "MapPage": {        
-        "photos": _("photos"),
+    "MapPage": {
         "return": _("Return"),
         "descriptionHeader": _("Map"),
         "description": _("""
@@ -225,6 +225,7 @@ TRANSLATIONS = {
         "tagHeader": _("Photographs tagged"),
         "numResults": _("{{numResults}} results."),
         "pageIndicator": _("Showing page {{currentPage}} of {{totalPages}}"),
+        "tagNotFound": _("Tag {{tagName}} is not in the database.")
     },
     # },
     "description": _("This project is still under construction and contains student work, so there may be features that are currently incomplete or inaccurate.")
