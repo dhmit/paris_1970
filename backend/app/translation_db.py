@@ -140,8 +140,10 @@ TRANSLATIONS = {
         "about": _("About the Project")
     },
     "About": {
+        "aboutHeader": _("About"),
         "context1": _("In May 1970, thousands of amateur photographers spread out across Paris to take pictures. They were participants in a photo contest, “This was Paris in 1970,” organized by the cooperative electronics store the Fnac. Each contestant had been assigned to document a 250m square of the city. By the end of the month, this army of photographers had produced an unprecedented collection of 100,000 photographs: 70,000 black-and-white prints and 30,000 colors slides. This website currently hosts 5,000 color slides from the 13th and 19th arrondissements, areas of the city which were undergoing significant change in 1960s and 1970s."),
         "context2": _(" The project This was Paris in 1970 provides tools to explore the rich archive: a <link1>map</link1> to see the photos square by square; an <link2>object detector</link2> to search for photos of many objects from people to cats, cars to strollers; a similar photo viewer to identify photos by composition rather than subject; and <link3>articles</link3> providing context and analysis."),
+        "teamHeader": _("The Team"),
         "team1": _("This is Paris in 1970 was created in MIT’s Digital Humanities Lab as a collaboration between DH Fellow <link1>Prof. Catherine Clark</link1>, <link2>four dozen undergraduate research associates</link2>, and <link3>the instructional staff</link3> of the DH Lab. Justice Vidal built out the first version of the site, and Nina Li spearheaded the design work."),
         "team2": _("The <link1>Bibliothèque historique de la Ville de Paris</link1> holds the contest photographs. Its photo department made this project possible."),
     },

@@ -253,7 +253,7 @@ class BaseAbout extends React.Component {
                 <Container id="aboutPage">
 
                     <Row>
-                        <TitleDecoratorContainer title="About" />
+                        <TitleDecoratorContainer title={this.props.t('About.aboutHeader')} />
                         <Col>
                             <p>{this.props.t('About.context1')}</p>
                             <p><Trans
@@ -267,7 +267,7 @@ class BaseAbout extends React.Component {
                         </Col>
                     </Row>
                     <Row>
-                        <TitleDecoratorContainer title="The Team" />
+                        <TitleDecoratorContainer title={this.props.t('About.teamHeader')} />
                         <p><Trans
                             i18nKey='About.team1'
                             components={{
