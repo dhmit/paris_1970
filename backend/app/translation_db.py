@@ -1,5 +1,7 @@
-from django.utils.translation import gettext_lazy
 from textwrap import dedent
+from django.utils.translation import gettext_lazy
+
+# pylint: disable=line-too-long
 
 
 def _(text, dedent_text=True):
