@@ -118,7 +118,7 @@ class BasePhotoView extends PhotoViewer {
 
     render() {
         if (this.state.loading) {
-            return (<LoadingPage/>);
+            return <LoadingPage/>;
         }
         if (!this.state.photoData) {
             return (<h1><Trans
@@ -312,6 +312,7 @@ class BasePhotoView extends PhotoViewer {
                         lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
                         lng={squareCoords.lng - MAPSQUARE_WIDTH / 2}
                         zoom={15}
+                        t={this.props.t}
                         layers={{
                             mapSquare: <Rectangle
                                 className="current-map-square"

@@ -279,7 +279,17 @@ class BaseAbout extends React.Component {
                         <p><Trans
                             i18nKey='About.team2'
                             components={{
-                                link1: <Embed href="https://www.paris.fr/lieux/bibliotheque-historique-de-la-ville-de-paris-bhvp-16" title="Library link"/>
+                                link1: <Embed href="https://www.paris.fr/lieux/bibliotheque-historique-de-la-ville-de-paris-bhvp-16" title="Library link"/>,
+                                link2: <Embed href="https://www.mitfrench.com/" title="MIT French"/>
+                            }}
+                        /></p>
+                        <p><Trans
+                            i18nKey='About.stamenAttrib'
+                            components={{
+                                stamenLink: <Embed href="https://stamen.com/" title="Library link"/>,
+                                ccLink: <Embed href="https://creativecommons.org/licenses/by/4.0/" title="MIT French"/>,
+                                osmLink: <Embed href="https://www.openstreetmap.org" title="Open Street Map"/>,
+                                odblLink: <Embed href="https://www.openstreetmap.org/copyright" title="ODbL"/>
                             }}
                         /></p>
                     </Row>
