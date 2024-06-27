@@ -27,7 +27,7 @@ django-meta==2.4.0
 django-mptt==0.15.0
 django-parler==2.3
 django-polymorphic==3.1.0
-django-rosetta==0.10.0
+django-rosetta @ git+https://github.com/mbi/django-rosetta.git@c76d8296b2f46c536b2bbfab8c83a90a49e57364
 django-sekizai==4.1.0
 django-sortedm2m==3.1.1
 django-taggit==5.0.1
