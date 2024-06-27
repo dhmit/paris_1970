@@ -62,7 +62,7 @@ class Command(BaseCommand):
 
         feature_vectors = []
         if running_similarity:
-            print(f'Gathering feature vectors...')
+            print('Gathering feature vectors...')
 
             feature_vector_results = (
                 PhotoAnalysisResult.objects.filter(name='photo_similarity.resnet18_feature_vectors')
