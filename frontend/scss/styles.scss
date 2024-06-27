@@ -101,6 +101,12 @@ footer {
     padding-bottom: 10px;
 }
 
+.page-footer {
+    flex-direction: row;
+    background-color: white;
+    align-items: center;
+}
+
 /**
  * Navbar styles
  */

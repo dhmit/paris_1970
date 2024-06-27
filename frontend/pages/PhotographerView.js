@@ -6,9 +6,10 @@ import {Rectangle} from "react-leaflet";
 import PhotoViewer from "../components/PhotoViewer";
 import LoadingPage from "./LoadingPage";
 import ParisMap, {MAPSQUARE_HEIGHT, MAPSQUARE_WIDTH} from "../components/ParisMap";
+import { Trans, withTranslation } from "react-i18next";
 
 
-export class PhotographerView extends PhotoViewer {
+class BasePhotographerView extends PhotoViewer {
 
     constructor(props) {
         super(props);
@@ -52,9 +53,10 @@ export class PhotographerView extends PhotoViewer {
             return (<LoadingPage/>);
         }
         if (!this.state.photographerData) {
-            return (<>
-                Photographer number {this.props.photographerNumber} is not in the database.
-            </>);
+            return (<Trans
+                i18nKey='Photographer.notInDB'
+                values={{ photographerNum: this.props.photographerNumber }}
+            />);
         }
         const {
             name,
@@ -79,28 +81,30 @@ export class PhotographerView extends PhotoViewer {
                         <h5 style={{
                             paddingTop: "1em",
                             fontSize: "28px"
-                        }}><strong>Photographer Profile</strong></h5>
+                        }}><strong>{this.props.t("Photographer.profile")}</strong></h5>
                         <h1 className="photographer-name">{name}</h1>
-                        <div><strong>Number:</strong>{" " + number}</div>
-                        <div><strong>Recorded
-                            Sex:</strong>{" " + (recorded_sex ? recorded_sex : "No" +
-                            " record")}</div>
-                        <div><strong>Address:</strong>{" " + (approx_loc ? approx_loc : "No" +
-                            " record")}</div>
+                        <div><strong>{this.props.t("Photographer.number")}</strong>{": " + number}</div>
+                        <div><strong>{this.props.t("Photographer.sex")}</strong>{": " + (
+                            recorded_sex ? recorded_sex : this.props.t("Photographer.noRecord")
+                        )}</div>
+                        <div><strong>{this.props.t("Photographer.address")}</strong>{": " + (
+                            approx_loc ? approx_loc : this.props.t("Photographer.noRecord")
+                        )}</div>
                         <br/>
-                        <p>
-                            {name} took a total of {photos.length} photos for the competition.
-                        </p>
+                        <p><Trans
+                            i18nKey='Photographer.photosTaken'
+                            values={{ name: name, numPhotos: photos.length }}
+                        /></p>
                     </div>
                     <br/>
-                    <h6>MAP OF ACTIVITY</h6>
+                    <h6>{this.props.t("Photographer.activity")}</h6>
                     <ParisMap
                         className="single-photo-map"
                         lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
                         lng={squareCoords.lng - MAPSQUARE_WIDTH / 2}
                         zoom={17}
                         layers={{
-                            mapSquare: <Rectangle
+                            "Map Square": <Rectangle
                                 className="current-map-square"
                                 key={currentPhoto.map_square_number}
                                 bounds={mapSquareBounds}
@@ -130,7 +134,9 @@ export class PhotographerView extends PhotoViewer {
     }
 }
 
-PhotographerView.propTypes = {
+BasePhotographerView.propTypes = {
     photographerNumber: PropTypes.number,
     photo_dir: PropTypes.string
 };
+
+export const PhotographerView = withTranslation()(BasePhotographerView);

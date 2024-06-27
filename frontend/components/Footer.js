@@ -8,7 +8,7 @@ export class Footer extends React.Component {
     render() {
         return (
             // return to edit the footer's location
-            <Row className={"mt-3 text-center footer fixed-bottom"}> 
+            <Row className={"mt-3 text-center footer fixed-bottom page-footer"}> 
                 <Col>
                     <a href="https://digitalhumanities.mit.edu/">
                         <DHLogo height={"40px"}/>

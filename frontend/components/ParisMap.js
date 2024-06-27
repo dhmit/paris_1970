@@ -26,13 +26,13 @@ export class ParisMap extends React.Component {
         let visibleLayers = Object.keys(this.props.layers);
         if (this.props.singleLayer) {
             visibleLayers = this.props.layers[Object.keys(this.props.layers)[0]];
-        } else if (this.props.visibleLayers) {
-            visibleLayers = this.props.visibleLayers;
+        } else {
+            visibleLayers = this.props.visibleLayers ?? [];
         }
 
         this.state = {
             visibleLayers,
-            layers: ["Arrondissement", "Photos available"],
+            layers: Object.keys(this.props.layers),
             bounds: [[48.8030, 2.1330], [48.9608, 2.6193]],
             minZoom: 12,
             zoom: this.props.zoom

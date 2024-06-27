@@ -3,13 +3,15 @@ import { getCookie } from '../common';
 import SearchBgTopLeft from "../images/search_top_left.svg?url";
 import SearchBgTopRight from "../images/search_top_right.svg?url";
 import Loading from '../components/Loading';
+import { Trans, withTranslation } from "react-i18next";
+import { Embed } from "../translation/translate";
 
-export class Explore extends React.Component {
+class BaseExplore extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedTag: "All",
-            selectedMapSquare: "All",
+            selectedTag: this.props.t('Explore.objectDropdownDefault'),
+            selectedMapSquare: this.props.t('Explore.objectDropdownDefault'),
             photos: [],
             isLoading: false,
             currentPage: 1,
@@ -37,7 +39,7 @@ export class Explore extends React.Component {
         if (desiredPage >= 1 && desiredPage <= totalPages) {
             this.setState({ currentPage: desiredPage }, this.fetchData);
         } else {
-            console.warn('Desired page out of range');
+            console.warn(this.props.t('Explore.rangeError'));
         }
     };
 
@@ -60,6 +62,7 @@ export class Explore extends React.Component {
             });
 
             const data = await response.json();
+            console.log("Data:");
             console.log(data);
             this.setState({
                 photos: data.photos,
@@ -93,24 +96,28 @@ export class Explore extends React.Component {
     render() {
         const { objects } = this.props;
         const { selectedTag, photos, isLoading, currentPage, totalCount, pageSize } = this.state;
-        const totalPages = Math.ceil(totalCount / pageSize);
+        const totalPages = Math.ceil(totalCount / pageSize) || 0;
 
-        const startImage = (currentPage - 1) * pageSize + 1;
-        const endImage = Math.min(currentPage * pageSize, totalCount); // Using min to ensure we don't exceed totalCount
+        const startImage = totalPages ? (currentPage - 1) * pageSize + 1 : 0;
+        const endImage = Math.min(currentPage * pageSize, totalCount) || 0; // Using min to ensure we don't exceed totalCount
 
         const paginationControls = (
             <div className="pagination-controls d-flex justify-content-between align-items-center">
                 {this.hasPreviousPage()
-                    ? <button className="btn btn-primary" onClick={() => this.handlePageChange('previous')}>Previous Page</button>
+                    ? <button className="btn btn-primary" onClick={() => this.handlePageChange('previous')}>{this.props.t('Explore.rangeError')}</button>
                     : <div></div>
                 }
                 <div className="text-center">
-                    <p>
-                        Page {currentPage} of {totalPages}<br/>
-                        Showing Photos {startImage} - {endImage} out of {totalCount}
-                    </p>
+                    <p><Trans
+                        i18nKey='Explore.paginationText1'
+                        values={{ currentPage: totalPages ? currentPage : 0, totalPages: totalPages}}
+                    /></p><br/>
+                    <p><Trans
+                        i18nKey='Explore.paginationText2'
+                        values={{ startImage: startImage, endImage: endImage, totalCount: totalCount || 0}}
+                    /></p>
                     <div className="d-flex align-items-center justify-content-center">
-                        <label>Go to Page: </label>
+                        <label>{this.props.t('Explore.goTo')}</label>
                         <input
                             type="number"
                             className="form-control mx-4"
@@ -118,11 +125,11 @@ export class Explore extends React.Component {
                             onChange={this.handleDesiredPageChange}
                             style={{ width: '60px' }}
                         />
-                        <button className="btn btn-secondary ml-2" onClick={this.handleGoToPage}>Go</button>
+                        <button className="btn btn-secondary ml-2" onClick={this.handleGoToPage}>{this.props.t('Explore.go')}</button>
                     </div>
                 </div>
                 {this.hasNextPage() &&
-                    <button className="btn btn-primary" onClick={() => this.handlePageChange('next')}>Next Page</button>
+                    <button className="btn btn-primary" onClick={() => this.handlePageChange('next')}>{this.props.t('Explore.next')}</button>
                 }
             </div>
         );
@@ -134,15 +141,15 @@ export class Explore extends React.Component {
                     <div className="sidebar-container col-4">
                         <div className="sidebar" style={{backgroundImage: `url(${SearchBgTopLeft})`, backgroundPosition: 'top left', backgroundRepeat: 'no-repeat'}}>
                             <div className="form-group mb-2">
-                                <label htmlFor="formTags">Objects</label>
+                                <label htmlFor="formTags">{this.props.t('Explore.objectsLabel')}</label>
                                 <select className="form-control" value={selectedTag} onChange={this.handleChangeTags}>
-                                    <option key="All">All</option>
-                                    {objects.map(tag => <option key={tag}>{tag}</option>)}
+                                    <option key="All">{this.props.t('Explore.objectDropdownDefault')}</option>
+                                    {objects.map(tag => <option key={tag}>{this.props.t(`global.objectTags.${tag}`)}</option>)}
                                 </select>
                             </div>
 
                             <div className="form-group mb-2">
-                                <label>Images per Page</label>
+                                <label>{this.props.t('Explore.imagePerPageLabel')}</label>
                                 <div>
                                     <button className={`btn ${this.state.pageSize === 10 ? 'btn-primary' : 'btn-light'}`} onClick={() => this.handlePageSizeChange(10)}>10</button>
                                     <button className={`btn ml-2 ${this.state.pageSize === 25 ? 'btn-primary' : 'btn-light'}`} onClick={() => this.handlePageSizeChange(25)}>25</button>
@@ -150,11 +157,12 @@ export class Explore extends React.Component {
                                 </div>
                             </div>
 
-                            <p className="explainer">
-                            Use these tools to sort photos according to subject. The object detection tool uses
-                            the <a href="https://pjreddie.com/darknet/yolo/" target="_blank" rel="noreferrer">YOLO (You Only Look Once)</a> system. Click on any photo to view it and its metadata,
-                            where you will also find a gateway to the similarity algorithm.
-                            </p>
+                            <p className="explainer"><Trans
+                                i18nKey='Explore.toolExplanation'
+                                components={{
+                                    link1: <Embed href="https://pjreddie.com/darknet/yolo/" title="Yolo link"/>
+                                }}
+                            /></p>
                         </div>
                     </div>
                     <div className="photos col-8">
@@ -163,7 +171,7 @@ export class Explore extends React.Component {
                         ) : (<>
                             {paginationControls}
                             <div className="row">
-                                {photos.length > 0 && photos.map(photo => (
+                                {photos && photos.length > 0 && photos.map(photo => (
                                     <div className="col-4" key={photo.id}>
                                         <a href={photo.photo_page_url}>
                                             <div className="card mb-4">
@@ -184,4 +192,5 @@ export class Explore extends React.Component {
     }
 }
 
+const Explore = withTranslation()(BaseExplore);
 export default Explore;
