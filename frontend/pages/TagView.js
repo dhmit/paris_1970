@@ -175,6 +175,7 @@ class BaseTagView extends Mix([PhotoViewer, MapSquareViewer]) {
                         layers={mapLayers}
                         visibleLayers={Object.keys(mapLayers)} 
                         layerSelectVisible={true}
+                        t={this.props.t}
                     />
                 </div>
             </div>

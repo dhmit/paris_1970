@@ -103,6 +103,7 @@ class BasePhotographerView extends PhotoViewer {
                         lat={squareCoords.lat - MAPSQUARE_HEIGHT / 2}
                         lng={squareCoords.lng - MAPSQUARE_WIDTH / 2}
                         zoom={17}
+                        t={this.props.t}
                         layers={{
                             "Map Square": <Rectangle
                                 className="current-map-square"
