@@ -278,7 +278,8 @@ def get_corpus_analysis_results(request):
 @api_view(['GET'])
 def all_analyses(request):
     """
-     """
+    API endpoint to get the names of all analyses run on the photos
+    """
     photo_analysis_obj = PhotoAnalysisResult.objects.values_list('name').distinct()
     return Response([analysis[0] for analysis in photo_analysis_obj])
 
@@ -418,11 +419,11 @@ def get_photo_by_similarity(request, map_square_number, folder_number, photo_num
 
     similar_photos = []
     for similar_photo in similarity_list:
-        photo = (Photo.objects.prefetch_related('map_square')
+        photo_obj = (Photo.objects.prefetch_related('map_square')
                               .get(number=similar_photo['number'],
                                    map_square__number=similar_photo['map_square_number'],
                                    folder=similar_photo['folder_number']))
-        similar_photos.append(photo)
+        similar_photos.append(photo_obj)
 
     serializer = SimplePhotoSerializer(similar_photos, many=True)
     return Response(serializer.data)

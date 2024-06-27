@@ -13,7 +13,7 @@ from app.view_helpers import (
     get_all_yolo_tags
 )
 
-from app.models import Photo, MapSquare
+from app.models import Photo
 from app.serializers import SimplePhotoSerializer
 from .translation_db import translate_tag
 

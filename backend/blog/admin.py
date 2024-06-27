@@ -13,7 +13,7 @@ class BlogPostAdmin(admin.ModelAdmin):
     form = BlogPostAdminForm
     # TODO: make slug be a link that takes the admin user to the blog page
 
-    def formfield_for_dbfield(self, db_field, **kwargs):
+    def formfield_for_dbfield(self, db_field, _, **kwargs):
         if db_field.name == 'content':
             return db_field.formfield(widget=TinyMCE(
                 attrs={'cols': 80, 'rows': 30},

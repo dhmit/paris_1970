@@ -1,14 +1,11 @@
 """
 resnet18_feature_vectors.py
 """
-from pathlib import Path
 
 import torch
 from torchvision import models
 from torchvision import transforms
 from torch.autograd import Variable
-
-from django.conf import settings
 
 from app.models import Photo
 

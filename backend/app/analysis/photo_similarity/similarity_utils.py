@@ -3,11 +3,8 @@ similarity_utils.py
 
 Utility functions for each of the photo similarity analyses
 """
-from pathlib import Path
 
 import torch
-
-from django.conf import settings
 
 from app.models import Photo, PhotoAnalysisResult
 

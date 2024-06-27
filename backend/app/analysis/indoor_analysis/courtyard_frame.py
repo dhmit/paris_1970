@@ -35,8 +35,7 @@ def analyze(photo: Photo):
     max_pixel = 0
     for row in normalized_grayscale_image:
         for pixel in row:
-            if pixel > max_pixel:
-                max_pixel = pixel
+            max_pixel = max(max_pixel, pixel)
     dark_threshold = max_pixel * 0.5
 
     # Evaluating the top border of photo by comparing each pixel to dark_threshold

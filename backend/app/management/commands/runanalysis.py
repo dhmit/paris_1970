@@ -8,7 +8,6 @@ import sys
 import json
 
 from importlib import import_module
-from typing import Callable
 
 from django.core.management.base import BaseCommand
 
