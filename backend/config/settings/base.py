@@ -17,7 +17,7 @@ DEBUG = False  # override in dev settings
 CONFIG_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BACKEND_DIR = os.path.dirname(CONFIG_DIR)
 PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
-MIGRATIONS_DIR = os.path.join(os.path.dirname(CONFIG_DIR), 'app/migrations')
+MIGRATIONS_DIR = os.path.join(os.path.dirname(CONFIG_DIR), 'app', 'migrations')
 SETTINGS_DIR = os.path.join(CONFIG_DIR, 'settings')
 
 BACKEND_DATA_DIR = os.path.join(BACKEND_DIR, 'data')
@@ -46,6 +46,7 @@ AWS_S3_PHOTOS_DIR = "https://paris1970-fa22-dev-assets.s3.amazonaws.com/jpg_size
 # We used to use this directory as a fallback in development for _showing_ images
 # as well, but we no longer do this: all image display is via the S3 bucket.
 LOCAL_PHOTOS_DIR = None
+LOCAL_DB_PATH = os.path.join(BACKEND_DIR, 'db.sqlite3')
 
 BLOG_ROOT_URL = "articles"
 
@@ -128,19 +129,24 @@ TEMPLATES = [
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+db_config = {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': LOCAL_DB_PATH,
+}
 pw_path = Path(PROJECT_ROOT, 'db_password.txt')
-with open(pw_path, 'r', encoding='utf-8') as pw_file:
-    db_pw = pw_file.readline().strip()
-
-DATABASES = {
-    'default': {
-         'ENGINE': 'django.db.backends.postgresql',
-         'HOST': 'paris1970-urop-fa22.crdpmszp71qh.us-east-1.rds.amazonaws.com',
-         'USER': 'urop',
-         'NAME': 'paris1970-urop-fa22',
-         'PORT': '5432',
-         'PASSWORD': db_pw,
+if os.path.exists(pw_path):
+    with open(pw_path, 'r', encoding='utf-8') as pw_file:
+        db_pw = pw_file.readline().strip()
+    db_config = {
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': 'paris1970-urop-fa22.crdpmszp71qh.us-east-1.rds.amazonaws.com',
+        'USER': 'urop',
+        'NAME': 'paris1970-urop-fa22',
+        'PORT': '5432',
+        'PASSWORD': db_pw,
     }
+DATABASES = {
+    'default': db_config
 }
 
 

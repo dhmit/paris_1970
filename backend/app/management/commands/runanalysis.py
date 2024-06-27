@@ -120,4 +120,3 @@ class Command(BaseCommand):
             photos_done += 1
             if photos_done % 25 == 0:
                 print(f'\nAnalyzed {photos_done} so far...')
-

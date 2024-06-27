@@ -37,7 +37,8 @@ def translate(fro, to, src_dir, dest_dir, fuzzy=False):
     # due to conflict with Django BaseCommand parser
     class Arguments:
         def __init__(self, **kwargs):
-            [setattr(self, attr, val) for attr, val in kwargs.items()]
+            for attr, val in kwargs.items():
+                setattr(self, attr, val)
     
     arguments = Arguments(fro=fro, to=to, src=src_dir, dest=dest_dir)
     
