@@ -30,6 +30,7 @@ TRANSLATIONS = {
         "photosAvailable": _("Photos available"),
         "mapSquare": _("Map Square"),
         "photos": _("photos"),
+        "stamenAttrib": _("Map tiles by Stamen Design, under CC BY 4.0. Data by OpenStreetMap, under ODbL."),
         "objectTags": {
             "person": _("person"),
             "bicycle": _("bicycle"),
@@ -147,7 +148,8 @@ TRANSLATIONS = {
         "context2": _(" The project This was Paris in 1970 provides tools to explore the rich archive: a <link1>map</link1> to see the photos square by square; an <link2>object detector</link2> to search for photos of many objects from people to cats, cars to strollers; a similar photo viewer to identify photos by composition rather than subject; and <link3>articles</link3> providing context and analysis."),
         "teamHeader": _("The Team"),
         "team1": _("This is Paris in 1970 was created in MIT’s Digital Humanities Lab as a collaboration between DH Fellow <link1>Prof. Catherine Clark</link1>, <link2>four dozen undergraduate research associates</link2>, and <link3>the instructional staff</link3> of the DH Lab. Justice Vidal built out the first version of the site, and Nina Li spearheaded the design work."),
-        "team2": _("The <link1>Bibliothèque historique de la Ville de Paris</link1> holds the contest photographs. Its photo department made this project possible."),
+        "team2": _("The <link1>Bibliothèque historique de la Ville de Paris</link1> holds the contest photographs. Its photo department and funding from MIT's <link2>French</link2> Initiatives Endowment Fund made this project possible."),
+        "stamenAttrib": _("Map tiles by <stamenLink>Stamen Design</stamenLink>, under <ccLink>CC BY 4.0</ccLink>. Data by <osmLink>OpenStreetMap</osmLink>, under <odblLink>ODbL</odblLink>."),
     },
     "Explore": {
         "rangeError": _('Desired page out of range'),

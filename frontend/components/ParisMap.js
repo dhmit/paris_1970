@@ -1,5 +1,4 @@
 import React from "react";
-
 import * as PropTypes from "prop-types";
 import {
     MapContainer,
@@ -27,7 +26,7 @@ function getTilesUrl() {
     return `https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}.png?api_key=${API_KEY}`;
 }
 
-export class ParisMap extends React.Component {
+class ParisMap extends React.Component {
     constructor(props) {
         super(props);
 
@@ -60,6 +59,13 @@ export class ParisMap extends React.Component {
             newVisibleLayers.push(clickedLayer);
         }
         this.setState({visibleLayers: newVisibleLayers});
+    }
+
+    getTranslation(translationKey) {
+        if (!this.props.t) {
+            return translationKey;
+        }
+        return this.props.t(translationKey);
     }
 
     render() {
@@ -106,6 +112,15 @@ export class ParisMap extends React.Component {
                             : <></>;
                     })}
                 </MapContainer>
+                <div className="stamen-attrib">
+                    <a
+                        href="https://maps.stamen.com/#toner/"
+                        data-toggle="tooltip"
+                        title={this.getTranslation("global.stamenAttrib")}
+                    >
+                        Stamen Maps
+                    </a>
+                </div>
             </div>
         );
     }
@@ -120,7 +135,8 @@ ParisMap.propTypes = {
     layers: PropTypes.object,
     singleLayer: PropTypes.bool,
     layerSelectVisible: PropTypes.bool,
-    visibleLayers: PropTypes.array
+    visibleLayers: PropTypes.array,
+    t: PropTypes.func
 };
 
 export default ParisMap;

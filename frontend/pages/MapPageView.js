@@ -249,6 +249,7 @@ class BaseMapPage extends MapSquareViewer {
                                 visibleLayers={Object.keys(mapLayers)}
                                 layerSelectVisible={true}
                                 scrollWheelZoom={isLgViewportUp}
+                                t={this.props.t}
                             />
                         </Col>
                         <Col md={12} lg={5} className="m-0 p-0 min-vh-100">
