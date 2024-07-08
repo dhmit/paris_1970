@@ -61,21 +61,23 @@ def detection_iterator(yolo_output):
         yield object_class, c_x, c_y, width, height, confidence
 
 
-def analyze(photo: Photo):
+def get_analyze():
     """
     Uses yolo model to detect objects within photos
     Returns a dictionary consisting of each object
     and its frequency in the photo
     """
-    
-    # Get image and image dimensions
-    input_image = photo.get_image_data()
-    if input_image is None:
-        return {
-            "boxes": [],
-            "labels": {},
-        }
     yolo_model = load_yolo()
-    output = yolo_model(input_image)
-    detections = detection_iterator(output)
-    return make_detection_boxes(detections)
+    def run(photo: Photo):
+        # Get image and image dimensions
+        input_image = photo.get_image_data()
+        if input_image is None:
+            return {
+                "boxes": [],
+                "labels": {},
+            }
+        
+        output = yolo_model(input_image)
+        detections = detection_iterator(output)
+        return make_detection_boxes(detections)
+    return run

@@ -48,7 +48,11 @@ class Command(BaseCommand):
             print_header('There is no analysis with that name.')
             sys.exit(1)
 
-        analysis_func = getattr(analysis_module, 'analyze')
+        analysis_func = (
+            getattr(analysis_module, 'get_analyze')()  # For modules with setup across photos (yolo)
+            if hasattr(analysis_module, "get_analyze")
+            else getattr(analysis_module, 'analyze')
+        )
 
         if run_one:
             # in a list because this has to be iterable for the loop below...
