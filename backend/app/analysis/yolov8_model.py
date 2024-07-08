@@ -1,6 +1,6 @@
 """
 
-yolo_model.py -
+yolov8_model.py -
 analysis that aggregates other obj detection methods
 takes in the name of the obj we're looking for (for example, words, heads, pedestrians, stop signs)
 returns the number of that specific obj for each photo in the database
@@ -14,17 +14,15 @@ import os
 import pickle
 import requests
 
-import torch
-
 from django.conf import settings
+from ultralytics import YOLO
 from ..models import Photo
 from .object_detection_helpers import make_detection_boxes
 
-# Yolo weights, yolo config, and coco names file
-WEIGHTS_URL = "https://github.com/ultralytics/yolov5/releases/download/v6.1/yolov5x6.pt"
-WEIGHTS_FILENAME = "yolov5x6.pt"
+WEIGHTS_URL = "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8x.pt"
+WEIGHTS_FILENAME = "yolov8x.pt"
 WEIGHTS_PATH = os.path.join(settings.YOLO_DIR, WEIGHTS_FILENAME)
-MODEL_PATH = os.path.join(settings.YOLO_DIR, 'model.pkl')
+MODEL_PATH = os.path.join(settings.YOLO_DIR, 'model_v8.pkl')
 
 
 def load_yolo():
@@ -40,9 +38,9 @@ def load_yolo():
         with open(MODEL_PATH, 'rb') as model_file:
             model = pickle.load(model_file)
     except (FileNotFoundError, ModuleNotFoundError):
-        # Model loading options and their configurations can be found at
-        # https://github.com/ultralytics/yolov5/blob/master/hubconf.py
-        model = torch.hub.load('ultralytics/yolov5', 'custom', path=WEIGHTS_PATH).eval()
+        # Information about model input/output configuration found here
+        # https://docs.ultralytics.com/modes/predict/
+        model = YOLO(WEIGHTS_PATH, task="detect")
 
         # Pickle model for faster subsequent load times
         with open(MODEL_PATH, 'wb+') as model_file:
@@ -51,9 +49,15 @@ def load_yolo():
 
 
 def detection_iterator(yolo_output):
-    for obj_data in yolo_output.xywh[0]:
-        c_x, c_y, width, height, confidence, class_idx = obj_data.numpy()
-        object_class = yolo_output.names[int(class_idx)]
+    result = yolo_output[0]
+    relevant_attrs = ["cls", "conf", "xywh"]
+    attr_values = zip(*[
+        list(getattr(result.boxes, attr).numpy())
+        for attr in relevant_attrs
+    ])
+    for class_idx, confidence, box_coords in attr_values:
+        c_x, c_y, width, height = box_coords
+        object_class = result.names[int(class_idx)]
         yield object_class, c_x, c_y, width, height, confidence
 
 
@@ -63,7 +67,7 @@ def analyze(photo: Photo):
     Returns a dictionary consisting of each object
     and its frequency in the photo
     """
-
+    
     # Get image and image dimensions
     input_image = photo.get_image_data()
     if input_image is None:
